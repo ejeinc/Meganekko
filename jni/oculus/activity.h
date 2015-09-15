@@ -52,6 +52,7 @@ public:
 
     OvrGuiSys *         GuiSys;
     bool                deviceIsDocked;
+    ovrFrameParms *     FrameParms;
 
 private:
     std::unique_ptr<ovrSoundEffectContext> SoundEffectContext;

@@ -82,6 +82,7 @@ void GVRActivity::OneTimeShutdown()
 
 Matrix4f GVRActivity::DrawEyeView(const int eye, const float fovDegrees, ovrFrameParms & frameParms)
 {
+    this->FrameParms = &frameParms;
 
     const Matrix4f eyeViewMatrix = vrapi_GetEyeViewMatrix( &app->GetHeadModelParms(), &centerViewMatrix, eye );
     const Matrix4f eyeProjectionMatrix = Matrix4f::PerspectiveRH( DegreeToRad( fovDegrees ), 1.0f, 0.01f, 2000.0f );

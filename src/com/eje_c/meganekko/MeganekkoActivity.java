@@ -34,14 +34,13 @@ import android.view.Window;
 import android.view.WindowManager;
 
 /**
- * The typical GVRF application will have a single Android {@link Activity},
- * which <em>must</em> descend from {@link MeganekkoActivity}, not directly from
- * {@code Activity}.
+ * The typical Meganekko application will have a single Android {@link Activity}
+ * , which <em>must</em> descend from {@link MeganekkoActivity}, not directly
+ * from {@code Activity}.
  *
- * {@code GVRActivity} creates and manages the internal classes which use sensor
- * data to manage a viewpoint, and thus present an appropriate stereoscopic view
- * of your scene graph. {@code GVRActivity} also gives GVRF a full-screen window
- * in landscape orientation with no title bar.
+ * {@code MeganekkoActivity} creates and manages the internal classes which use
+ * sensor data to manage a viewpoint, and thus present an appropriate
+ * stereoscopic view of your scene graph.
  */
 public class MeganekkoActivity extends VrActivity {
 
@@ -76,8 +75,6 @@ public class MeganekkoActivity extends VrActivity {
     private static native void nativeOnUndock(long appPtr);
 
     private static native void nativeSetIntervalSensorValues(long appPtr, float x, float y, float z, float w);
-    
-    private static native void nativeAdjustClockLevels(long appPtr, int cpuLevel, int gpuLevel);
 
     public static native void setDebugOptionEnable(boolean enable);
 
@@ -209,10 +206,6 @@ public class MeganekkoActivity extends VrActivity {
 
     public int getMinimumVsyncs() {
         return nativeGetMinimumVsyncs(getAppPtr());
-    }
-
-    public void adjustClockLevels(int cpuLevel, int gpuLevel) {
-        nativeAdjustClockLevels(getAppPtr(), cpuLevel, gpuLevel);
     }
 
     @Override
