@@ -44,23 +44,23 @@ long Java_com_eje_1c_meganekko_MeganekkoActivity_nativeSetAppInterface(
 void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeHideGazeCursor(JNIEnv * jni, jclass clazz, jlong appPtr)
 {
     GVRActivity* activity = (GVRActivity*)((App *)appPtr)->GetAppInterface();
-    activity->GuiSys->GetGazeCursor().HideCursor();
+//    activity->GuiSys->GetGazeCursor().HideCursor();
 }
 
 void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeShowGazeCursor(JNIEnv * jni, jclass clazz, jlong appPtr)
 {
     GVRActivity* activity = (GVRActivity*)((App *)appPtr)->GetAppInterface();
-    activity->GuiSys->GetGazeCursor().ShowCursor();
+//    activity->GuiSys->GetGazeCursor().ShowCursor();
 }
 
 void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeSetMinimumVsyncs(JNIEnv * jni, jclass clazz, jlong appPtr, jint vsyncs)
 {
-    ((App *)appPtr)->GetFrameParms().MinimumVsyncs = vsyncs;
+//    ((App *)appPtr)->GetFrameParms().MinimumVsyncs = vsyncs;
 }
 
 jint Java_com_eje_1c_meganekko_MeganekkoActivity_nativeGetMinimumVsyncs(JNIEnv * jni, jclass clazz, jlong appPtr)
 {
-    return ((App *)appPtr)->GetFrameParms().MinimumVsyncs;
+//    return ((App *)appPtr)->GetFrameParms().MinimumVsyncs;
 }
 
 void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeOnDock(JNIEnv * jni, jclass clazz, jlong appPtr)
@@ -78,8 +78,8 @@ void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeOnUndock(JNIEnv * jni, jc
 
 void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeAdjustClockLevels(JNIEnv * jni, jclass clazz, jlong appPtr, jint cpuLevel, jint gpuLevel)
 {
-    ovrMobile * mobile = ((App *)appPtr)->GetOvrMobile();
-    ovr_AdjustClockLevels(mobile, cpuLevel, gpuLevel);
+//    ovrMobile * mobile = ((App *)appPtr)->GetOvrMobile();
+//    ovr_AdjustClockLevels(mobile, cpuLevel, gpuLevel);
 }
 
 void Java_com_eje_1c_meganekko_MeganekkoActivity_setDebugOptionEnable(JNIEnv * jni, jclass clazz, jboolean enable)

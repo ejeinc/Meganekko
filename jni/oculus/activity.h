@@ -19,11 +19,14 @@
 #include <OVR.h>
 #include "App.h"
 #include "AppLocal.h"
-#include "VRMenu/GuiSys.h"
-#include "VRMenu/GuiSysLocal.h"
+#include "GuiSys.h"
+#include "GuiSysLocal.h"
+#include "OVR_Locale.h"
+#include "SoundEffectContext.h"
 #include "Input.h"
 #include "context.h"
 #include "Android/JniUtils.h"
+#include "SoundEffectContext.h"
 
 using namespace OVR;
 
@@ -39,9 +42,11 @@ public:
     virtual void        Configure( ovrSettings & settings );
     virtual void        OneTimeInit( const char * fromPackage, const char * launchIntentJSON, const char * launchIntentURI );
     virtual void        OneTimeShutdown();
-    virtual Matrix4f    DrawEyeView( const int eye, const float fovDegrees );
+    virtual Matrix4f    DrawEyeView( const int eye, const float fovDegrees, ovrFrameParms & frameParms );
     virtual Matrix4f    Frame( const VrFrame & vrFrame );
     virtual bool        OnKeyEvent( const int keyCode, const int repeatCount, const KeyEventType eventType );
+
+    ovrLocale &         GetLocale() { return *Locale; }
 
     Context*            context;
 
@@ -49,6 +54,10 @@ public:
     bool                deviceIsDocked;
 
 private:
+    std::unique_ptr<ovrSoundEffectContext> SoundEffectContext;
+    std::unique_ptr<OvrGuiSys::SoundEffectPlayer> SoundEffectPlayer;
+    ovrLocale *         Locale;
+
     ovrMatrix4f         centerViewMatrix;
 
     jmethodID           frameMethodId;

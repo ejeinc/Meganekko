@@ -55,7 +55,7 @@ public class MeganekkoActivity extends VrActivity {
     private VrFrame vrFrame;
 
     static {
-        System.loadLibrary("gvrf");
+        System.loadLibrary("meganekko");
     }
 
     private static native void nativeSetContext(long appPtr, long contextPtr);
@@ -104,7 +104,7 @@ public class MeganekkoActivity extends VrActivity {
                 commandString, uriString));
 
         mDockEventReceiver = new DockEventReceiver(this, mRunOnDock, mRunOnUndock);
-        mInternalSensorManager = new InternalSensorManager(this);
+        mInternalSensorManager = new InternalSensorManager(this, getAppPtr());
 
         mGVRContext = new GLContext(this);
         nativeSetContext(getAppPtr(), mGVRContext.getNativePtr());

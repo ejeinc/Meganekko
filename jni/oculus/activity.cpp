@@ -25,8 +25,9 @@
 namespace gvr
 {
 
-GVRActivity::GVRActivity()
-    : GuiSys( OvrGuiSys::Create() )
+GVRActivity::GVRActivity() :
+      GuiSys( OvrGuiSys::Create() ),
+      Locale( NULL )
 {
     centerViewMatrix = ovrMatrix4f_CreateIdentity();
     deviceIsDocked = false;
@@ -43,7 +44,16 @@ void GVRActivity::Configure(ovrSettings & settings)
 
 void GVRActivity::OneTimeInit(const char * fromPackage, const char * launchIntentJSON, const char * launchIntentURI)
 {
-    GuiSys->Init( app, &app->GetSoundMgr(), app->LoadFontForLocale(), &app->GetDebugLines() );
+    auto java = app->GetJava();
+    SoundEffectContext.reset( new ovrSoundEffectContext( *java->Env, java->ActivityObject ) );
+    SoundEffectContext->Initialize();
+    SoundEffectPlayer.reset( new OvrGuiSys::ovrDummySoundEffectPlayer() );
+
+    Locale = ovrLocale::Create( *app, "default" );
+
+    String fontName;
+    GetLocale().GetString( "@string/font_name", "efigs.fnt", fontName );
+    GuiSys->Init( this->app, *SoundEffectPlayer, fontName.ToCStr(), &app->GetDebugLines() );
 
     jmethodID oneTimeInitMethodId = GetMethodID("oneTimeInit", "()V");
     app->GetVrJni()->CallVoidMethod(app->GetJavaObject(), oneTimeInitMethodId);
@@ -70,7 +80,7 @@ void GVRActivity::OneTimeShutdown()
     app->GetVrJni()->CallVoidMethod(app->GetJavaObject(), oneTimeShutdownMethodId);
 }
 
-Matrix4f GVRActivity::DrawEyeView(const int eye, const float fovDegrees)
+Matrix4f GVRActivity::DrawEyeView(const int eye, const float fovDegrees, ovrFrameParms & frameParms)
 {
 
     const Matrix4f eyeViewMatrix = vrapi_GetEyeViewMatrix( &app->GetHeadModelParms(), &centerViewMatrix, eye );
@@ -87,8 +97,6 @@ Matrix4f GVRActivity::DrawEyeView(const int eye, const float fovDegrees)
 
 Matrix4f GVRActivity::Frame( const VrFrame & vrFrame )
 {
-    GuiSys->BeginFrame();
-
     // Update Camera orientation
     Camera * camera = const_cast<Camera *>(context->scene->main_camera());
     JNIEnv * jni = app->GetVrJni();

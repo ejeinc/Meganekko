@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="libs"/>
+	<classpathentry exported="true" kind="lib" path="/VrApi_Prebuilt/Prebuilt_Libs/VrApi.jar"/>
+	<classpathentry exported="true" kind="lib" path="/VrAppFramework_Prebuilt/Prebuilt_Libs/VrAppFramework.jar"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>

@@ -39,13 +39,13 @@ class InternalSensorManager {
         }
     };
 
-    public InternalSensorManager(MeganekkoActivity activity) {
-        this.mAppPtr = activity.getAppPtr();
+    public InternalSensorManager(Context context, long appPtr) {
+        this.mAppPtr = appPtr;
 
         if (mAppPtr == 0l)
             throw new IllegalArgumentException("You must call GVRActivity.setAppPtr fist.");
 
-        mSensorManager = (SensorManager) activity.getSystemService(Context.SENSOR_SERVICE);
+        mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
     }
 
