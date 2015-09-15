@@ -1,3 +1,26 @@
+/////////////////////////
+// Ignored Folders      /
+/////////////////////////
+bin/
+gen/
+obj/
+ovr_mobile_sdk/
+.metadata/
+.recommenders/
+
+////////////////////////
+// Ignored Extensions  /
+////////////////////////
+*.prefs
+
+/////////////////////////
+// Ignored Files        /
+/////////////////////////
+
+lint.xml
+oculussig_*
+proguard-project.txt
+
 # Built application files
 *.apk
 *.ap_
@@ -7,10 +30,6 @@
 
 # Java class files
 *.class
-
-# Generated files
-bin/
-gen/
 
 # Gradle files
 .gradle/
@@ -25,3 +44,4 @@ proguard/
 
 # Log Files
 *.log
+libs/armeabi-v7a/
