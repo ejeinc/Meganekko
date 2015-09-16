@@ -55,8 +55,6 @@ import android.view.WindowManager;
  * {@link #setup(Context, ImageSizePolicy)} before first use; the default
  * settings are very conservative, and will usually give much smaller textures
  * than necessary.
- * 
- * @since 1.6.1
  */
 abstract class AsyncBitmapTexture {
 

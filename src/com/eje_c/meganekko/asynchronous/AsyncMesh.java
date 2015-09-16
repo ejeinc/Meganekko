@@ -27,8 +27,6 @@ import com.eje_c.meganekko.utility.Log;
 
 /**
  * Async resource loading: meshes.
- * 
- * @since 1.6.2
  */
 abstract class AsyncMesh {
 

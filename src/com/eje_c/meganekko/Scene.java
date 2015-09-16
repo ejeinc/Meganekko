@@ -74,8 +74,6 @@ public class Scene extends HybridObject {
      * 
      * @return A read-only list containing all the 'root' scene objects (those
      *         that were added directly to the scene).
-     * 
-     * @since 2.0.0
      */
     public List<SceneObject> getSceneObjects() {
         return Collections.unmodifiableList(mSceneObjects);

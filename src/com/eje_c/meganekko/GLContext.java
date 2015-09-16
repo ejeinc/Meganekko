@@ -88,8 +88,6 @@ public class GLContext {
      * apps mapping some internal score to the {@link #LOWEST_PRIORITY} to
      * {@link #HIGHEST_PRIORITY} range, and might change app behavior in subtle
      * ways that seem best avoided.
-     * 
-     * @since 1.6.1
      */
     public static final int RESERVED_PRIORITIES = 1024;
 
@@ -98,8 +96,6 @@ public class GLContext {
      * values. A simple approach to generating priorities is to score resources
      * from 0 to 1, and then map that to the range {@link #LOWEST_PRIORITY} to
      * {@link #HIGHEST_PRIORITY}.
-     * 
-     * @since 1.6.1
      */
     public static final int LOWEST_PRIORITY = Integer.MIN_VALUE
             + RESERVED_PRIORITIES;
@@ -109,8 +105,6 @@ public class GLContext {
      * values. A simple approach to generating priorities is to score resources
      * from 0 to 1, and then map that to the range {@link #LOWEST_PRIORITY} to
      * {@link #HIGHEST_PRIORITY}.
-     * 
-     * @since 1.6.1
      */
     public static final int HIGHEST_PRIORITY = Integer.MAX_VALUE;
 
@@ -119,16 +113,12 @@ public class GLContext {
      * {@link #loadBitmapTexture(AndroidResource.BitmapTextureCallback, AndroidResource)}
      * and
      * {@link #loadMesh(AndroidResource.MeshCallback, AndroidResource)}
-     * 
-     * @since 1.6.1
      */
     public static final int DEFAULT_PRIORITY = 0;
 
     /**
      * The ID of the GLthread. We use this ID to prevent non-GL thread from
      * calling GL functions.
-     * 
-     * @since 1.6.5
      */
     protected long mGLThreadID;
 
@@ -188,8 +178,6 @@ public class GLContext {
      *         {@link MeganekkoActivity#setScript(GVRScript, String)}, but returning
      *         the most-derived class here may prevent someone from having to
      *         write {@code (GVRActivity) gvrContext.getActivity();}.
-     * 
-     * @since 2.0.1
      */
     public MeganekkoActivity getActivity() {
         return mContext;
@@ -210,8 +198,6 @@ public class GLContext {
      *            handle a wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * @return The file as a GL mesh.
-     * 
-     * @since 1.6.2
      */
     public Mesh loadMesh(AndroidResource androidResource) {
         return loadMesh(androidResource,
@@ -236,8 +222,6 @@ public class GLContext {
      * @param settings
      *            Additional import {@link GVRImpotSettings settings}.
      * @return The file as a GL mesh.
-     * 
-     * @since 1.6.2
      */
     public Mesh loadMesh(AndroidResource androidResource,
             EnumSet<ImportSettings> settings) {
@@ -313,7 +297,6 @@ public class GLContext {
      *             earlier one(s) had already completed) the resource will be
      *             reloaded ... but the original descriptor will have been
      *             closed.
-     * @since 1.6.2
      */
     public void loadMesh(MeshCallback callback,
             AndroidResource androidResource) throws IllegalArgumentException {
@@ -386,7 +369,6 @@ public class GLContext {
      *             earlier one(s) had already completed) the resource will be
      *             reloaded ... but the original descriptor will have been
      *             closed.
-     * @since 1.6.2
      */
     public void loadMesh(MeshCallback callback, AndroidResource resource,
             int priority) throws IllegalArgumentException {
@@ -411,8 +393,6 @@ public class GLContext {
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * @return A {@link Future} that you can pass to
      *         {@link RenderData#setMesh(Future)}
-     * 
-     * @since 1.6.7
      * 
      * @throws IllegalArgumentException
      *             If you 'abuse' request consolidation by passing the same
@@ -456,8 +436,6 @@ public class GLContext {
      *            description</a>.
      * @return A {@link Future} that you can pass to
      *         {@link RenderData#setMesh(Future)}
-     * 
-     * @since 1.6.7
      * 
      * @throws IllegalArgumentException
      *             If you 'abuse' request consolidation by passing the same
@@ -1052,8 +1030,6 @@ public class GLContext {
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * @return The file as a texture, or {@code null} if the file can not be
      *         decoded into a Bitmap.
-     * 
-     * @since 1.6.5
      */
     public Texture loadTexture(AndroidResource resource) {
         return loadTexture(resource, DEFAULT_TEXTURE_PARAMETERS);
@@ -1131,8 +1107,6 @@ public class GLContext {
      *            +z, and -z faces of the cube map texture respectively.
      * @return The cube map texture, or {@code null} if the length of
      *         rsourceArray is not 6.
-     * 
-     * @since 1.6.9
      */
     /*
      * TODO Deprecate, and replace with an overload that takes a single
@@ -1166,9 +1140,6 @@ public class GLContext {
 
     /**
      * Throws an exception if the current thread is not a GL thread.
-     * 
-     * @since 1.6.5
-     * 
      */
     private void assertGLThread() {
 
@@ -1212,8 +1183,6 @@ public class GLContext {
      * 
      * <p>
      * TODO Take a boolean parameter that controls mipmap generation?
-     * 
-     * @since 1.6.1
      * 
      * @param callback
      *            Before loading, GVRF may call
@@ -1296,8 +1265,6 @@ public class GLContext {
      * {@code glCompressedTexImage2D()}. The GL hardware does the decoding much
      * faster than Android's {@link BitmapFactory}!
      * 
-     * @since 1.6.1
-     * 
      * @param callback
      *            Before loading, GVRF may call
      *            {@link AndroidResource.BitmapTextureCallback#stillWanted(AndroidResource)
@@ -1370,8 +1337,6 @@ public class GLContext {
      * {@link #loadCompressedTexture(AndroidResource.CompressedTextureCallback, AndroidResource, int)}
      * overload.
      * 
-     * @since 1.6.1
-     * 
      * @param callback
      *            Successful loads will call
      *            {@link AndroidResource.Callback#loaded(GVRHybridObject, AndroidResource)
@@ -1413,8 +1378,6 @@ public class GLContext {
      * 
      * GVRF currently supports ASTC, ETC2, and KTX formats: applications can add
      * new formats by implementing {@link CompressedTextureLoader}.
-     * 
-     * @since 1.6.1
      * 
      * @param callback
      *            Successful loads will call
@@ -1520,8 +1483,6 @@ public class GLContext {
      *            handle a wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * 
-     * @since 1.6.7
-     * 
      * @throws IllegalArgumentException
      *             If you 'abuse' request consolidation by passing the same
      *             {@link AndroidResource} descriptor to multiple load calls.
@@ -1612,8 +1573,6 @@ public class GLContext {
      *            can take hundreds of milliseconds to load): compressed
      *            textures load so quickly that they are not run through the
      *            request scheduler.
-     * 
-     * @since 1.6.7
      * 
      * @throws IllegalArgumentException
      *             If you 'abuse' request consolidation by passing the same
@@ -1711,8 +1670,6 @@ public class GLContext {
      *            {@linkplain BitmapTexture bitmapped textures} don't take a
      *            quality parameter.
      * 
-     * @since 1.6.7
-     * 
      * @throws IllegalArgumentException
      *             If you 'abuse' request consolidation by passing the same
      *             {@link AndroidResource} descriptor to multiple load calls.
@@ -1773,8 +1730,6 @@ public class GLContext {
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * @return A {@link Future} that you can pass to methods like
      *         {@link Shaders#setMainTexture(Future)}
-     * 
-     * @since 1.6.7
      * 
      * @throws IllegalArgumentException
      *             If you 'abuse' request consolidation by passing the same
@@ -1841,8 +1796,6 @@ public class GLContext {
      *            request scheduler.
      * @return A {@link Future} that you can pass to methods like
      *         {@link Shaders#setMainTexture(Future)}
-     * 
-     * @since 1.6.7
      * 
      * @throws IllegalArgumentException
      *             If you 'abuse' request consolidation by passing the same
@@ -1919,8 +1872,6 @@ public class GLContext {
      * @return A {@link Future} that you can pass to methods like
      *         {@link Shaders#setMainTexture(Future)}
      * 
-     * @since 1.6.7
-     * 
      * @throws IllegalArgumentException
      *             If you 'abuse' request consolidation by passing the same
      *             {@link AndroidResource} descriptor to multiple load calls.
@@ -1959,8 +1910,6 @@ public class GLContext {
      *            {@link CubemapTexture#setFaceNames(String[])}.
      * @return A {@link Future} that you can pass to methods like
      *         {@link Shaders#setMainTexture(Future)}
-     * 
-     * @since 1.6.9
      * 
      * @throws IllegalArgumentException
      *             If you 'abuse' request consolidation by passing the same

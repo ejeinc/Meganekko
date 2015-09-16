@@ -30,8 +30,6 @@ import com.eje_c.meganekko.utility.RuntimeAssertion;
  * 
  * This is mostly an internal, implementation class: You <em>may</em> find
  * {@link #mLevels} and/or {@link #mQuality} useful.
- * 
- * @since 1.6.1
  */
 public class GVRCompressedTexture extends Texture {
 

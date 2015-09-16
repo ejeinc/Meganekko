@@ -50,8 +50,6 @@ import android.opengl.GLES20;
  * the app's {@link com.eje_c.meganekko.AndroidResource.BitmapTextureCallback
  * BitmapTextureCallback}
  * </ul>
- * 
- * @since 1.6.1
  */
 public abstract class CompressedTextureLoader {
     protected CompressedTextureLoader() {
@@ -72,8 +70,6 @@ public abstract class CompressedTextureLoader {
      * 
      * @return Number of bytes of header data needed to successfully sniff or
      *         parse the file format.
-     * 
-     * @since 1.6.6
      */
     public abstract int headerLength();
 

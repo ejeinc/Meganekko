@@ -44,8 +44,6 @@ import android.util.SparseArray;
 /**
  * Asynchronous, heterogeneous resource loading with integrated thread
  * throttling.
- * 
- * @since 1.6.2
  */
 abstract class Throttler {
 

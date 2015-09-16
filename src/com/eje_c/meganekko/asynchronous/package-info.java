@@ -26,7 +26,5 @@
  * is public only so that {@link com.eje_c.meganekko.GLContext} can make cross-package
  * calls: It <em>is</em> an official part of the API, but we suggest you avoid 
  * using it directly.
- * 
- * @since 1.6.1
  */
 package com.eje_c.meganekko.asynchronous;

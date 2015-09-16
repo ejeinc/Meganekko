@@ -350,8 +350,6 @@ public abstract class HybridObject implements Closeable {
      * GVRF app. You should only {@code close()} transient objects (especially
      * those that use lots of memory, like large textures) that you
      * <em>know</em> are no longer being used.
-     * 
-     * @since 2.0.0
      */
     @Override
     public final void close() throws IOException {

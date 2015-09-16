@@ -36,8 +36,6 @@ import com.eje_c.meganekko.AndroidResource.CompressedTextureCallback;
  * {@link com.eje_c.meganekko.asynchronous.Throttler Throttler} would not be safe.
  * Passing the descriptor for a cached mesh to a get-texture call would return
  * the mesh ....
- * 
- * @since 2.0.2
  */
 public class ResourceCache<T extends HybridObject> {
     // private static final String TAG = Log.tag(ResourceCache.class);

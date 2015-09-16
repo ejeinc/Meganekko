@@ -123,8 +123,6 @@ public class BitmapTexture extends Texture {
      *             If {@code width} or {@code height} is {@literal <= 0,} or if
      *             {@code grayScaleData} is {@code null}, or if
      *             {@code grayscaleData.length < height * width}
-     * 
-     * @since 1.6.3
      */
     public BitmapTexture(GLContext gvrContext, int width, int height,
             byte[] grayscaleData) throws IllegalArgumentException {
@@ -187,8 +185,6 @@ public class BitmapTexture extends Texture {
      *             If {@code width} or {@code height} is {@literal <= 0,} or if
      *             {@code grayScaleData} is {@code null}, or if
      *             {@code grayscaleData.length < height * width}
-     * 
-     * @since 1.6.3
      */
     public boolean update(int width, int height, byte[] grayscaleData)
             throws IllegalArgumentException {
@@ -218,8 +214,6 @@ public class BitmapTexture extends Texture {
      *         depth} as the original bitmap. In particular, you can't update a
      *         grayscale texture with 'normal' {@linkplain Config#ARGB_8888
      *         32-bit} data!
-     * 
-     * @since 1.6.3
      */
     public boolean update(Bitmap bitmap) {
         glBindTexture(GL_TEXTURE_2D, getId());

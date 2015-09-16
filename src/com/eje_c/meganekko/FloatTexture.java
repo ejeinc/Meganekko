@@ -20,8 +20,6 @@ package com.eje_c.meganekko;
  * 
  * Loads an array of float pairs into a texture; you can access the individual
  * components of each 'pixel' as the {@code .r} and {code .g} swizzles.
- * 
- * @since 1.6.3
  */
 public class FloatTexture extends Texture {
 
@@ -40,8 +38,6 @@ public class FloatTexture extends Texture {
      *             If {@code width} or {@code height} is {@literal <= 0,} or if
      *             {@code data} is {@code null}, or if
      *             {@code data.length < height * width * 2}
-     * 
-     * @since 1.6.3
      */
     public FloatTexture(GLContext gvrContext, int width, int height,
             float[] data) throws IllegalArgumentException {

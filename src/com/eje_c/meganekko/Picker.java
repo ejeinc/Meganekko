@@ -236,8 +236,6 @@ public class Picker {
      *         the cast ray intersected the holder's axis-aligned bounding box,
      *         which may not be exactly where the ray would intersect the scene
      *         object itself.)
-     * 
-     * @since 1.6.6
      */
     public static final List<GVRPickedObject> findObjects(Scene scene,
             float ox, float oy, float oz, float dx, float dy, float dz) {
@@ -286,8 +284,6 @@ public class Picker {
      * The result of a
      * {@link Picker#findObjects(Scene, float, float, float, float, float, float)
      * findObjects()} call.
-     * 
-     * @since 1.6.6
      */
     public static class GVRPickedObject {
         private final SceneObject sceneObject;

@@ -38,8 +38,6 @@ import android.graphics.BitmapFactory;
  * 
  * Since ZipInputStream does not support mark() and reset(), we directly use
  * BitmapFactory .decodeStream() in loadResource().
- * 
- * @since 1.6.9
  */
 abstract class AsyncCubemapTexture {
 

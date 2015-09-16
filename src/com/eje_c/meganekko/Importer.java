@@ -60,7 +60,6 @@ class Importer {
                 gvrContext, resourceId), settings);
     }
 
-    /** @since 1.6.2 */
     static AssimpImporter readFileFromResources(GLContext gvrContext,
             AndroidResource resource, EnumSet<ImportSettings> settings) {
         try {

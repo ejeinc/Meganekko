@@ -45,8 +45,6 @@ import android.graphics.Bitmap;
  * or
  * {@link GLContext#loadMesh(AndroidResource.MeshCallback, AndroidResource)}
  * .
- * 
- * @since 1.6.1
  */
 public class AsynchronousResourceLoader {
 
@@ -431,8 +429,6 @@ public class AsynchronousResourceLoader {
      *             {@link GLContext#LOWEST_PRIORITY} or {@literal >}
      *             {@link GLContext#HIGHEST_PRIORITY}, or any of the other
      *             parameters are {@code null}.
-     * 
-     * @since 1.6.2
      */
     // This method does not take a ResourceCache<GVRMeh> parameter because it
     // (indirectly) calls GVRContext.loadMesh() which 'knows about' the cache

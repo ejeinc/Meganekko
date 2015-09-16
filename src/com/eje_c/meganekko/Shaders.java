@@ -85,8 +85,6 @@ public interface Shaders<ID> {
      *            A future texture, from one of the the
      *            {@link GLContext#loadFutureTexture(GVRAndroidResource)}
      *            methods
-     * 
-     * @since 1.6.7
      */
     public void setMainTexture(Future<Texture> texture);
 
@@ -123,8 +121,6 @@ public interface Shaders<ID> {
      *            Name of the shader uniform to bind the texture to.
      * @param texture
      *            The {@link Texture texture} to bind.
-     * 
-     * @since 1.6.7
      */
     public void setTexture(String key, Future<Texture> texture);
 

@@ -147,8 +147,6 @@ public class RenderData extends Component {
      * 
      * @param mesh
      *            The mesh to be rendered.
-     * 
-     * @since 1.6.7
      */
     public void setMesh(final Future<Mesh> mesh) {
         synchronized (this) {

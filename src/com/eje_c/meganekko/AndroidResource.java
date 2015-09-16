@@ -38,8 +38,6 @@ import android.util.TypedValue;
  * See the discussion of asset-relative filenames <i>vs.</i> {@code R.raw}
  * resource ids in the <a href="package-summary.html#assets">package
  * description</a>.
- * 
- * @since 1.6.1
  */
 public class AndroidResource {
 
@@ -213,8 +211,6 @@ public class AndroidResource {
      * reset().} Calling {@link #mark()} right after construction will allow you
      * to read the header then {@linkplain #reset() rewind the stream} if you
      * can't handle the file format.
-     * 
-     * @since 1.6.7
      */
     public void mark() {
         stream.mark(Integer.MAX_VALUE);
@@ -232,8 +228,6 @@ public class AndroidResource {
      * reset();
      * reset();
      * </pre>
-     * 
-     * @since 1.6.7
      */
     public void reset() {
         try {
@@ -427,8 +421,6 @@ public class AndroidResource {
      * Both compressed and bitmapped textures, using the
      * {@link GLContext#loadTexture(AndroidResource.TextureCallback, AndroidResource)}
      * APIs.
-     * 
-     * @since 1.6.7
      */
     public interface TextureCallback extends CancelableCallback<Texture> {
     }

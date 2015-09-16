@@ -165,8 +165,6 @@ public class SceneObject extends HybridObject {
 	 *            mesh of the object.
 	 * @param futureTexture
 	 *            texture of the object.
-	 * 
-	 * @since 1.6.8
 	 */
 	public SceneObject(GLContext gvrContext, Future<Mesh> futureMesh,
 			Future<Texture> futureTexture) {
@@ -198,8 +196,6 @@ public class SceneObject extends HybridObject {
 	 * @param texture
 	 *            Basically, a stream containing a texture file. This can be
 	 *            either a compressed texture or a regular Android bitmap file.
-	 * 
-	 * @since 1.6.7
 	 */
 	public SceneObject(GLContext gvrContext, AndroidResource mesh,
 			AndroidResource texture) {
@@ -433,8 +429,6 @@ public class SceneObject extends HybridObject {
 	 * 
 	 * @param enabled
 	 *            Should eye picking 'see' this scene object?
-	 * 
-	 * @since 2.0.2
 	 */
 	public void setPickingEnabled(boolean enabled) {
 		if (enabled != getPickingEnabled()) {
@@ -450,8 +444,6 @@ public class SceneObject extends HybridObject {
 	 * Is eye picking enabled for this scene object?
 	 * 
 	 * @return Whether eye picking can 'see' this scene object?
-	 * 
-	 * @since 2.0.2
 	 */
 	public boolean getPickingEnabled() {
 		return mEyePointeeHolder != null;
@@ -607,8 +599,6 @@ public class SceneObject extends HybridObject {
 	 * Get all the children, in a single list.
 	 * 
 	 * @return An un-modifiable list of this object's children.
-	 * 
-	 * @since 2.0.0
 	 */
 	public List<SceneObject> getChildren() {
 		return Collections.unmodifiableList(mChildren);
