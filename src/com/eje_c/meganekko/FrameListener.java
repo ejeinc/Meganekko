@@ -23,8 +23,11 @@ package com.eje_c.meganekko;
  * deactivate a callback with
  * {@link MeganekkoActivity#unregisterFrameListener(GVRDrawFrameListener)}.
  * Per-frame callbacks are called after the
- * {@linkplain MeganekkoActivity#runOnGlThread(Runnable) 'one shot' queue} has been
- * called and before {@link MeganekkoActivity#frame()}.
+ * {@linkplain MeganekkoActivity#runOnGlThread(Runnable) 'one shot' queue} has
+ * been called and before {@link MeganekkoActivity#frame()}.
+ * 
+ * @deprecated Use {@code OnFrameListener} and
+ *             {@code Scene#addOnFrameListener(OnFrameListener)}
  */
 public interface FrameListener {
     /**

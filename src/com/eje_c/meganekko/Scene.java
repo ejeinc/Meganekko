@@ -27,6 +27,7 @@ public class Scene extends HybridObject {
     private static final String TAG = Log.tag(Scene.class);
 
     private final List<SceneObject> mSceneObjects = new ArrayList<SceneObject>();
+    private final List<OnFrameListener> mOnFrameListeners = new ArrayList<>();
     private Camera mMainCamera;
 
     /**
@@ -45,6 +46,49 @@ public class Scene extends HybridObject {
 
     private Scene(GLContext gvrContext, long ptr) {
         super(gvrContext, ptr);
+    }
+
+    /**
+     * Called from GL thread in every frame.
+     * 
+     * @param vrFrame
+     */
+    protected void onFrame(VrFrame vrFrame) {
+        synchronized (this) {
+            final List<OnFrameListener> list = mOnFrameListeners;
+            final int size = mOnFrameListeners.size();
+            for (int i = 0; i < size; ++i) {
+                list.get(i).onFrame(vrFrame);
+            }
+        }
+    }
+
+    /**
+     * Register a callback to be invoked when frame update.
+     * 
+     * @param onFrameListener
+     */
+    public void addOnFrameListener(OnFrameListener onFrameListener) {
+        synchronized (this) {
+            if (onFrameListener == null) {
+                throw new IllegalArgumentException("onFrameListener must not be null");
+            }
+            mOnFrameListeners.add(onFrameListener);
+        }
+    }
+
+    /**
+     * Remove a callback for frame update listener.
+     * 
+     * @param onFrameListener
+     */
+    public void removeOnFrameListener(OnFrameListener onFrameListener) {
+        synchronized (this) {
+            if (onFrameListener == null) {
+                throw new IllegalArgumentException("onFrameListener must not be null");
+            }
+            mOnFrameListeners.remove(onFrameListener);
+        }
     }
 
     /**
@@ -88,8 +132,7 @@ public class Scene extends HybridObject {
     }
 
     /**
-     * Set the {@link Camera camera} used for rendering the scene on the
-     * screen.
+     * Set the {@link Camera camera} used for rendering the scene on the screen.
      * 
      * @param camera
      *            The {@link Camera camera} to render with.
@@ -142,11 +185,11 @@ public class Scene extends HybridObject {
 
         return null;
     }
-    
+
     public List<SceneObject> findObjectsByName(String name) {
-        
+
         List<SceneObject> objects = new ArrayList<>();
-        
+
         for (SceneObject object : getWholeSceneObjects()) {
             if (name.equals(object.getName())) {
                 objects.add(object);

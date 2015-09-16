@@ -163,6 +163,8 @@ public class MeganekkoActivity extends VrActivity {
             frameListener.frame();
         }
 
+        mGVRContext.getMainScene().onFrame(vrFrame);
+
         frame();
     }
 
@@ -363,6 +365,9 @@ public class MeganekkoActivity extends VrActivity {
      *            A callback that will fire once per frame, until it is
      *            {@linkplain #unregisterFrameListener(FrameListener)
      *            unregistered}
+     * 
+     * @deprecated Use {@code OnFrameListener} and
+     *             {@code Scene#addOnFrameListener(OnFrameListener)}
      */
     public void registerFrameListener(FrameListener frameListener) {
         if (frameListener == null) {
@@ -378,6 +383,9 @@ public class MeganekkoActivity extends VrActivity {
      *            An instance of a {@link FrameListener} implementation.
      *            Unsubscribing a listener which is not actually subscribed will
      *            not throw an exception.
+     * 
+     * @deprecated Use {@code OnFrameListener} and
+     *             {@code Scene#removeOnFrameListener(OnFrameListener)}
      */
     public void unregisterFrameListener(FrameListener frameListener) {
         if (frameListener == null) {
