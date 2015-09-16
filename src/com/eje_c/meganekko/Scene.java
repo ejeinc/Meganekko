@@ -29,6 +29,10 @@ public class Scene extends HybridObject {
     private final List<SceneObject> mSceneObjects = new ArrayList<SceneObject>();
     private final List<OnFrameListener> mOnFrameListeners = new ArrayList<>();
     private Camera mMainCamera;
+    
+    public interface OnFrameListener {
+        void onFrame(VrFrame vrFrame);
+    }
 
     /**
      * Constructs a scene with a camera rig holding left & right cameras in it.
