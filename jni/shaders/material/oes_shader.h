@@ -30,7 +30,7 @@
 
 #include "objects/recyclable_object.h"
 
-namespace gvr {
+namespace mgn {
 class GLProgram;
 class RenderData;
 class Material;

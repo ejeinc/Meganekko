@@ -33,7 +33,7 @@
 
 #include "engine/memory/gl_delete.h"
 
-namespace gvr {
+namespace mgn {
 class Mesh: public HybridObject {
 public:
     Mesh() :

@@ -29,7 +29,7 @@
 
 #include "Kernel/OVR_Math.h"
 
-namespace gvr {
+namespace mgn {
 class Color;
 
 class Material: public HybridObject {

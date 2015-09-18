@@ -24,7 +24,7 @@
 #include <vector>
 #include <memory>
 
-namespace gvr {
+namespace mgn {
 class Scene;
 class EyePointeeHolder;
 class SceneObject;

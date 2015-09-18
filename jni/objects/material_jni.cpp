@@ -21,7 +21,7 @@
 
 #include "util/gvr_jni.h"
 
-namespace gvr {
+namespace mgn {
 extern "C" {
 
 JNIEXPORT jlong JNICALL

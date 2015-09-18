@@ -28,7 +28,7 @@
 #include "engine/picker/eye_point_data.h"
 #include "objects/components/component.h"
 
-namespace gvr {
+namespace mgn {
 class EyePointee;
 
 class EyePointeeHolder: public Component {

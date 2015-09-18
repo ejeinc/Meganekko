@@ -21,7 +21,7 @@
 
 using namespace OVR;
 
-namespace gvr
+namespace mgn
 {
 
 extern "C"
@@ -42,4 +42,4 @@ void Java_com_eje_1c_meganekko_InternalSensorManager_setSensorValues(const JNIEn
 
 } // extern "C"
 
-} // namespace gvr
+} // namespace mgn

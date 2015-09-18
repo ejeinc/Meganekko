@@ -26,7 +26,7 @@
 
 #include "objects/textures/base_texture.h"
 
-namespace gvr {
+namespace mgn {
 
 class RenderTexture: public Texture {
 public:

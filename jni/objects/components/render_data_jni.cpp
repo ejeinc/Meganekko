@@ -24,7 +24,7 @@
 #include "objects/mesh.h"
 #include "objects/material.h"
 
-namespace gvr {
+namespace mgn {
 
 extern "C" {
 JNIEXPORT jlong JNICALL

@@ -30,7 +30,7 @@
 #include "util/gvr_gl.h"
 #include "util/gvr_log.h"
 
-namespace gvr {
+namespace mgn {
 
 void Renderer::RenderEyeView(Scene* scene, ShaderManager* shader_manager,
         const OVR::Matrix4f &eyeViewMatrix, const OVR::Matrix4f &eyeProjectionMatrix, const OVR::Matrix4f &eyeViewProjection, int eye) {

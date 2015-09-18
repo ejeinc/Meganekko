@@ -26,7 +26,7 @@
 #include "objects/components/render_data.h"
 #include "util/gvr_gl.h"
 
-namespace gvr {
+namespace mgn {
 CustomShader::CustomShader(std::string vertex_shader,
         std::string fragment_shader) :
         program_(0), a_position_(0), a_normal_(0), a_tex_coord_(0), u_mvp_(0), u_right_(
@@ -331,4 +331,4 @@ int CustomShader::getGLTexture(int n) {
     }
 }
 
-} /* namespace gvr */
+} /* namespace mgn */

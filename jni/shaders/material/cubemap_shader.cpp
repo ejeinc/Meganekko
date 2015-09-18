@@ -61,7 +61,7 @@
 // (http://www.nvidia.com/object/cube_map_ogl_tutorial.html)
 // (http://stackoverflow.com/questions/11685608/convention-of-faces-in-opengl-cubemapping)
 
-namespace gvr {
+namespace mgn {
 static const char VERTEX_SHADER[] = "attribute vec4 a_position;\n"
         "uniform mat4 u_model;\n"
         "uniform mat4 u_mvp;\n"

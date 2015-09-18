@@ -22,7 +22,7 @@
 #include "objects/scene_object.h"
 #include "Input.h"
 
-namespace gvr
+namespace mgn
 {
 
 GVRActivity::GVRActivity() :

@@ -23,7 +23,7 @@
 #include "gl/gl_texture.h"
 #include "objects/recyclable_object.h"
 
-namespace gvr {
+namespace mgn {
 
 class Texture: public RecyclableObject {
 public:

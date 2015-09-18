@@ -23,7 +23,7 @@
 #include "objects/textures/texture.h"
 #include "util/gvr_log.h"
 
-namespace gvr {
+namespace mgn {
 class FloatTexture: public Texture {
 public:
     explicit FloatTexture() :

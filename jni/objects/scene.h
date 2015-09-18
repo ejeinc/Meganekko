@@ -29,7 +29,7 @@
 #include "components/camera.h"
 #include "engine/renderer/renderer.h"
 
-namespace gvr {
+namespace mgn {
 class SceneObject;
 
 class Scene: public HybridObject {

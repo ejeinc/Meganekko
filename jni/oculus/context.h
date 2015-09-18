@@ -22,7 +22,7 @@
 
 using namespace OVR;
 
-namespace gvr
+namespace mgn
 {
 
 class Context

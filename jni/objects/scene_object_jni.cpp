@@ -22,7 +22,7 @@
 #include "util/gvr_log.h"
 #include "util/gvr_jni.h"
 
-namespace gvr {
+namespace mgn {
 extern "C" {
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_NativeSceneObject_ctor(JNIEnv * env,
@@ -204,4 +204,4 @@ Java_com_eje_1c_meganekko_NativeSceneObject_getLODMaxRange(
 
 } // extern "C"
 
-} // namespace gvr
+} // namespace mgn

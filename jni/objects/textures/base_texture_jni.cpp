@@ -25,7 +25,7 @@
 
 #include <png.h>
 
-namespace gvr {
+namespace mgn {
 extern "C" {
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_NativeBaseTexture_fileConstructor(JNIEnv * env,

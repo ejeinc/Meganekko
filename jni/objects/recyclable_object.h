@@ -25,7 +25,7 @@
 
 #include "util/gvr_log.h"
 
-namespace gvr {
+namespace mgn {
 
 class RecyclableObject: public HybridObject {
 public:

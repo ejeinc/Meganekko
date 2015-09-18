@@ -28,7 +28,7 @@
 
 #include "objects/recyclable_object.h"
 
-namespace gvr {
+namespace mgn {
 class Color;
 class GLProgram;
 class RenderData;

@@ -24,7 +24,7 @@
 #include "util/gvr_jni.h"
 #include "android/asset_manager_jni.h"
 
-namespace gvr {
+namespace mgn {
 extern "C" {
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_NativeMesh_ctor(JNIEnv* env, jobject obj);

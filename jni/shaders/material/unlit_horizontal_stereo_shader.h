@@ -29,7 +29,7 @@
 #include "objects/recyclable_object.h"
 #include "Kernel/OVR_Math.h"
 
-namespace gvr {
+namespace mgn {
 class GLProgram;
 class RenderData;
 class Material;

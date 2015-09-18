@@ -28,7 +28,7 @@
 #include <GLES2/gl2ext.h>
 #include <GLES3/gl3ext.h>
 
-namespace gvr {
+namespace mgn {
 
 class MSAA {
 private:

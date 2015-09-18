@@ -46,7 +46,7 @@
 #define AS_TOTAL_FEATURE_COUNT            2
 #define AS_TOTAL_GL_PROGRAM_COUNT         4
 
-namespace gvr {
+namespace mgn {
 class GLProgram;
 class RenderData;
 class Material;

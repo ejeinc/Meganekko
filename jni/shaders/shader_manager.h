@@ -36,7 +36,7 @@
 #include "shaders/material/assimp_shader.h"
 #include "util/gvr_log.h"
 
-namespace gvr {
+namespace mgn {
 class ShaderManager: public HybridObject {
 public:
     ShaderManager() :

@@ -20,7 +20,7 @@
 #include <pthread.h>
 #include "GLES3/gl3.h"
 
-namespace gvr {
+namespace mgn {
 class GlDelete {
 
 public:

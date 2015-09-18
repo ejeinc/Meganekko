@@ -26,7 +26,7 @@
 #include "objects/textures/texture.h"
 #include "util/gvr_gl.h"
 
-namespace gvr {
+namespace mgn {
 static const char VERTEX_SHADER[] = //
         "precision highp  float;\n"
                 "attribute vec3 a_position;\n"

@@ -28,7 +28,7 @@
 
 #include "objects/hybrid_object.h"
 
-namespace gvr {
+namespace mgn {
 class Color;
 
 class Light: public HybridObject {

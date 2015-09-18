@@ -20,7 +20,7 @@
 #include "float_texture.h"
 #include "util/gvr_jni.h"
 
-namespace gvr {
+namespace mgn {
 extern "C" {
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_NativeFloatTexture_ctor(JNIEnv * env,

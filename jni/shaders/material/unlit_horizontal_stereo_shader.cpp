@@ -26,7 +26,7 @@
 #include "objects/textures/texture.h"
 #include "util/gvr_gl.h"
 
-namespace gvr {
+namespace mgn {
 static const char VERTEX_SHADER[] = "attribute vec4 a_position;\n"
         "attribute vec4 a_tex_coord;\n"
         "uniform mat4 u_mvp;\n"

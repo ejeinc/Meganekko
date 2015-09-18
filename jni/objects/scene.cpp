@@ -21,7 +21,7 @@
 
 #include "objects/scene_object.h"
 
-namespace gvr {
+namespace mgn {
 Scene::Scene() :
         HybridObject(), scene_objects_(), main_camera_(), frustum_flag_(
                 false), dirtyFlag_(0), occlusion_flag_(false) {

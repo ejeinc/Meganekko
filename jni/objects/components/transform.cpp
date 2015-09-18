@@ -21,7 +21,7 @@
 
 #include "objects/scene_object.h"
 
-namespace gvr {
+namespace mgn {
 Transform::Transform() :
         Component(), position_(OVR::Vector3f(0.0f, 0.0f, 0.0f)), rotation_(
                 OVR::Quatf()), scale_(

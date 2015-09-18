@@ -21,7 +21,7 @@
 #ifndef EYE_POINTEE_HOLDER_DATA_H_
 #define EYE_POINTEE_HOLDER_DATA_H_
 
-namespace gvr {
+namespace mgn {
 
 class EyePointeeHolderData {
 public:

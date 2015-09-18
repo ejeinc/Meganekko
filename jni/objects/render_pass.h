@@ -22,7 +22,7 @@
 
 #include "objects/hybrid_object.h"
 
-namespace gvr {
+namespace mgn {
 class Material;
 
 class RenderPass : public HybridObject {

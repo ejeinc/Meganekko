@@ -23,7 +23,7 @@
 
 #include "util/gvr_java_stack_trace.h"
 
-namespace gvr {
+namespace mgn {
 
 extern "C" {
 

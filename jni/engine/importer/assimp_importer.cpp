@@ -21,7 +21,7 @@
 
 #include "objects/mesh.h"
 
-namespace gvr {
+namespace mgn {
 Mesh* AssimpImporter::getMesh(int index) {
     Mesh* mesh = new Mesh();
 

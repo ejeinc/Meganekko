@@ -18,7 +18,7 @@ void GVRF_installExternalRenderer(GVRF_ExternalRenderer fct) {
     externalRenderer = fct;
 }
 
-namespace gvr {
+namespace mgn {
 
 void ExternalRendererShader::render(const OVR::Matrix4f& mvp_matrix, RenderData* render_data) {
     if (externalRenderer == NULL) {

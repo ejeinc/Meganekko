@@ -28,7 +28,7 @@
 
 #include "util/gvr_log.h"
 
-namespace gvr {
+namespace mgn {
 
 #define AS_TOTAL_SHADER_STRINGS_COUNT    AS_TOTAL_FEATURE_COUNT + 1
 

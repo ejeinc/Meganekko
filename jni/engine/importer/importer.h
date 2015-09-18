@@ -28,7 +28,7 @@
 
 #include "engine/importer/assimp_importer.h"
 
-namespace gvr {
+namespace mgn {
 class Importer {
 private:
     Importer();

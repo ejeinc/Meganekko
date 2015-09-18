@@ -16,7 +16,7 @@
 #include "context.h"
 #include <jni.h>
 
-namespace gvr
+namespace mgn
 {
 
 extern "C"
@@ -44,6 +44,6 @@ void Java_com_eje_1c_meganekko_GLContext_nativeSetShaderManager(JNIEnv * jni,
     context->shaderManager = shaderManager;
 }
 
-} // namespace gvr
+} // namespace mgn
 
 } // extern "C"

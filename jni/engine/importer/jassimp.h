@@ -47,7 +47,7 @@
 #include "assimp/scene.h"
 #include "util/gvr_log.h"
 
-namespace gvr {
+namespace mgn {
 
 bool create_instance(JNIEnv *env, const char* class_name,
         jobject& new_instance);

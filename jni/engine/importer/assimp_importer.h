@@ -42,7 +42,7 @@
 
 #include "jassimp.h"
 
-namespace gvr {
+namespace mgn {
 class Mesh;
 
 class AssimpImporter: public HybridObject {

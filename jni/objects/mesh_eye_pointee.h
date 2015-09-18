@@ -25,7 +25,7 @@
 
 #include "objects/eye_pointee.h"
 
-namespace gvr {
+namespace mgn {
 class Mesh;
 
 class MeshEyePointee: public EyePointee {

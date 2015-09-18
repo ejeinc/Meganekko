@@ -12,7 +12,7 @@
 // the data field can be used to pass data between the gvrf application
 // and the external renderer
 
-namespace gvr {
+namespace mgn {
 
 class ExternalRendererTexture: public Texture {
 public:

@@ -28,7 +28,7 @@
 #include "objects/components/transform.h"
 #include "util/gvr_gl.h"
 
-namespace gvr {
+namespace mgn {
 class Camera;
 class EyePointeeHolder;
 class RenderData;

@@ -23,7 +23,7 @@
 
 #include "Kernel/OVR_Math.h"
 
-namespace gvr {
+namespace mgn {
 
 class RotationSensorData {
 public:

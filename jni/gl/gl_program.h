@@ -26,7 +26,7 @@
 
 #include "util/gvr_log.h"
 
-namespace gvr {
+namespace mgn {
 class GLProgram {
 public:
     GLProgram(const char* pVertexSourceStrings,

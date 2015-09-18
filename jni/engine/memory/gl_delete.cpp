@@ -16,7 +16,7 @@
 //#include "util/gvr_log.h"
 #include "gl_delete.h"
 
-namespace gvr {
+namespace mgn {
 
 GlDelete gl_delete;
 

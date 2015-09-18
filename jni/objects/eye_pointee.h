@@ -24,7 +24,7 @@
 #include "engine/picker/eye_point_data.h"
 #include "objects/hybrid_object.h"
 
-namespace gvr {
+namespace mgn {
 
 class EyePointee: public HybridObject {
 public:

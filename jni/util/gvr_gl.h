@@ -34,7 +34,7 @@
 
 #define _GVRF_USE_GLES3_  1
 
-namespace gvr {
+namespace mgn {
 
 static void checkGlError(const char* op) {
     for (GLint error = glGetError(); error; error = glGetError()) {

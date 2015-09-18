@@ -23,7 +23,7 @@
 #include "util/gvr_jni.h"
 #include "util/gvr_log.h"
 
-namespace gvr {
+namespace mgn {
 extern "C" {
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_ctor(JNIEnv * env,

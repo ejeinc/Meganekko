@@ -22,7 +22,7 @@
 
 #include "util/gvr_jni.h"
 
-namespace gvr {
+namespace mgn {
 extern "C" {
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_NativeCustomShader_addTextureKey(JNIEnv * env,

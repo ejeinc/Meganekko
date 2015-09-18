@@ -27,7 +27,7 @@
 #include "objects/textures/texture.h"
 #include "util/gvr_log.h"
 
-namespace gvr {
+namespace mgn {
 class CubemapTexture: public Texture {
 public:
     explicit CubemapTexture(JNIEnv* env, jobjectArray bitmapArray,

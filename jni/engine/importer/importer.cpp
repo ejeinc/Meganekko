@@ -19,7 +19,7 @@
 
 #include "importer.h"
 
-namespace gvr {
+namespace mgn {
 AssimpImporter* Importer::readFileFromAssets(char* buffer, long size,
         const char * filename, int settings) {
     Assimp::Importer* importer = new Assimp::Importer();

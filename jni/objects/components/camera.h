@@ -20,7 +20,7 @@
 
 #include "objects/scene_object.h"
 
-namespace gvr {
+namespace mgn {
 
 class Camera: public SceneObject {
 public:

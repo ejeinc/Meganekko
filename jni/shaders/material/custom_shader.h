@@ -31,7 +31,7 @@
 #include "objects/eye_type.h"
 #include "objects/recyclable_object.h"
 
-namespace gvr {
+namespace mgn {
 
 class GLProgram;
 class RenderData;

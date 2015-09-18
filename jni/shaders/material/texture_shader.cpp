@@ -29,7 +29,7 @@
 
 #include "util/gvr_log.h"
 
-namespace gvr {
+namespace mgn {
 static const char USE_LIGHT[] = "#define USE_LIGHT\n";
 static const char NOT_USE_LIGHT[] = "#undef USE_LIGHT\n";
 static const char VERTEX_SHADER[] =

@@ -5,7 +5,7 @@
 
 using namespace OVR;
 
-namespace gvr
+namespace mgn
 {
 
 extern "C"
@@ -55,4 +55,4 @@ jint Java_com_eje_1c_meganekko_VrFrame_getButtonReleased(JNIEnv * jni, jclass cl
 
 } // extern "C"
 
-} // namespace gvr
+} // namespace mgn

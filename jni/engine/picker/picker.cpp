@@ -28,7 +28,7 @@
 #include "objects/components/camera.h"
 #include "objects/components/eye_pointee_holder.h"
 
-namespace gvr {
+namespace mgn {
 
 Picker::Picker() {
 }

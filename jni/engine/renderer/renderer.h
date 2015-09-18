@@ -35,7 +35,7 @@
 #include "gl/gl_program.h"
 #include "Kernel/OVR_Math.h"
 
-namespace gvr {
+namespace mgn {
 class Camera;
 class Scene;
 class SceneObject;

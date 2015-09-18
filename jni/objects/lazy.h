@@ -21,7 +21,7 @@
 #ifndef LAZY_H_
 #define LAZY_H_
 
-namespace gvr {
+namespace mgn {
 template<class T>
 class Lazy {
 public:

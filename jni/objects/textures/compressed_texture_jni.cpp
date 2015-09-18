@@ -20,7 +20,7 @@
 #include "compressed_texture.h"
 #include "util/gvr_jni.h"
 
-namespace gvr {
+namespace mgn {
 extern "C" {
 JNIEXPORT jlong JNICALL
 // Note that "asynchronous_textures" becomes "asynchronous_1textures"

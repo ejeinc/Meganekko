@@ -28,7 +28,7 @@
 #include "objects/components/component.h"
 #include "objects/render_pass.h"
 
-namespace gvr {
+namespace mgn {
 class Mesh;
 class Material;
 class Light;

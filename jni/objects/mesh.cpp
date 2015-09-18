@@ -28,7 +28,7 @@
 #include "util/gvr_log.h"
 #include "util/gvr_gl.h"
 
-namespace gvr {
+namespace mgn {
 Mesh* Mesh::getBoundingBox() {
     Mesh* mesh = new Mesh();
 

@@ -16,7 +16,7 @@
 #include "context.h"
 #include "../engine/renderer/renderer.h"
 
-namespace gvr
+namespace mgn
 {
 
 Context::Context() :

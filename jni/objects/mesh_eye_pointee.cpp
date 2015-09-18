@@ -25,7 +25,7 @@
 #include "objects/mesh.h"
 #include "util/gvr_log.h"
 
-namespace gvr {
+namespace mgn {
 MeshEyePointee::MeshEyePointee(Mesh* mesh) :
         EyePointee(), mesh_(mesh) {
 }

@@ -28,7 +28,7 @@
 
 #include "Kernel/OVR_Math.h"
 
-namespace gvr {
+namespace mgn {
 class Transform: public Component {
 public:
     Transform();

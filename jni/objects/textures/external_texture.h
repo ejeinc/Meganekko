@@ -27,7 +27,7 @@
 
 #include "objects/textures/texture.h"
 
-namespace gvr {
+namespace mgn {
 
 class ExternalTexture: public Texture {
 public:

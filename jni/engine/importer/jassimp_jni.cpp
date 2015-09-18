@@ -36,7 +36,7 @@
 
 #include "util/gvr_jni.h"
 
-namespace gvr {
+namespace mgn {
 extern "C" {
 JNIEXPORT jint JNICALL
 Java_com_eje_1c_meganekko_jassimp_Jassimp_getVKeysize(JNIEnv *env,

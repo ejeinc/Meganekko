@@ -22,7 +22,7 @@
 
 #include "objects/scene_object.h"
 
-namespace gvr {
+namespace mgn {
 
 Camera::Camera() :
         SceneObject(){

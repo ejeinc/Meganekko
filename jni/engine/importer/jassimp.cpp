@@ -34,7 +34,7 @@
 
 #include "jassimp.h"
 
-namespace gvr {
+namespace mgn {
 
 class DeleteLocalRef {
 private:

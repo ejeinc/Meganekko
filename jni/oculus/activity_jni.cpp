@@ -21,7 +21,7 @@
 #include "objects/scene.h"
 #include "objects/scene_object.h"
 
-namespace gvr
+namespace mgn
 {
 
 extern "C"
@@ -89,4 +89,4 @@ void Java_com_eje_1c_meganekko_MeganekkoActivity_recenterPose(JNIEnv * jni, jcla
 
 } // extern "C"
 
-} // namespace gvr
+} // namespace mgn

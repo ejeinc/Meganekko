@@ -13,7 +13,7 @@ typedef void (*GVRF_ExternalRenderer)(long data, const float* vertices,
                                       int vcount, const float* projection, int pcount);
 extern "C" void GVRF_installExternalRenderer(GVRF_ExternalRenderer renderer);
 
-namespace gvr {
+namespace mgn {
 class RenderData;
 
 class ExternalRendererShader : public RecyclableObject {

@@ -22,7 +22,7 @@
 
 #include "jni.h"
 
-namespace gvr {
+namespace mgn {
 static void printJavaCallStack(JNIEnv *env, const char *msg) {
     jclass exception = env->FindClass(
             "org/gearvrf/utility/GVRJniException");

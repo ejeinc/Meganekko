@@ -23,7 +23,7 @@
 #include "objects/scene_object.h"
 #include "objects/eye_pointee.h"
 
-namespace gvr {
+namespace mgn {
 EyePointeeHolder::EyePointeeHolder() :
         Component(), enable_(true), pointees_() {
 }

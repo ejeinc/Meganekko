@@ -24,7 +24,7 @@
 #include "util/gvr_log.h"
 #include "mesh.h"
 
-namespace gvr {
+namespace mgn {
 SceneObject::SceneObject() :
         HybridObject(), name_(""), transform_(), render_data_(), eye_pointee_holder_(), parent_(), children_(), visible_(
                 true), in_frustum_(false), query_currently_issued_(false), vis_count_(0), lod_min_range_(0), lod_max_range_(MAXFLOAT), using_lod_(false) {

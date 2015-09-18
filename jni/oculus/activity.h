@@ -30,7 +30,7 @@
 
 using namespace OVR;
 
-namespace gvr
+namespace mgn
 {
 
 class GVRActivity : public VrAppInterface
