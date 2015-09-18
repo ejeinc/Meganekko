@@ -1,0 +1,8 @@
+.gradle/
+build/
+obj/
+bin/
+.settings/
+gen/
+proguard-project.txt
+lint.xml

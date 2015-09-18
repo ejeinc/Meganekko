@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.eje_c</groupId>
+  <artifactId>meganekko</artifactId>
+  <version>0.6.1-SNAPSHOT</version>
+  <versioning>
+    <versions>
+      <version>0.6.1-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20150918140944</lastUpdated>
+  </versioning>
+</metadata>
