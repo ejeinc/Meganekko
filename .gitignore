@@ -7,6 +7,7 @@ obj/
 ovr_mobile_sdk/
 .metadata/
 .recommenders/
+repository/
 
 ////////////////////////
 // Ignored Extensions  /
