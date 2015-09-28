@@ -27,11 +27,11 @@ public class BitmapTexture extends Texture {
      * Constructs a texture using a pre-existing {@link Bitmap}.
      * 
      * @param gvrContext
-     *            Current {@link GLContext}
+     *            Current {@link VrContext}
      * @param bitmap
      *            A non-null {@link Bitmap} instance.
      */
-    public BitmapTexture(GLContext gvrContext, Bitmap bitmap) {
+    public BitmapTexture(VrContext gvrContext, Bitmap bitmap) {
         this(gvrContext, bitmap, gvrContext.DEFAULT_TEXTURE_PARAMETERS);
     }
 
@@ -40,14 +40,14 @@ public class BitmapTexture extends Texture {
      * defined filters {@link TextureParameters}.
      * 
      * @param gvrContext
-     *            Current {@link GLContext}
+     *            Current {@link VrContext}
      * @param bitmap
      *            A non-null {@link Bitmap} instance.
      * @param textureParameters
      *            User defined object for {@link TextureParameters} which may
      *            also contain default values.
      */
-    public BitmapTexture(GLContext gvrContext, Bitmap bitmap,
+    public BitmapTexture(VrContext gvrContext, Bitmap bitmap,
             TextureParameters textureParameters) {
         super(gvrContext, NativeBaseTexture.bareConstructor(textureParameters
                 .getCurrentValuesArray()));
@@ -61,18 +61,18 @@ public class BitmapTexture extends Texture {
      * This method uses a native code path to create a texture directly from a
      * {@code .png} file; it does not create an Android {@link Bitmap}. It may
      * thus be slightly faster than loading a {@link Bitmap} and creating a
-     * texture with {@link #GVRBitmapTexture(GLContext, Bitmap)}, and it should
+     * texture with {@link #GVRBitmapTexture(VrContext, Bitmap)}, and it should
      * reduce memory pressure, a bit.
      * 
      * @param gvrContext
-     *            Current {@link GLContext}
+     *            Current {@link VrContext}
      * @param pngAssetFilename
      *            The name of a {@code .png} file, relative to the assets
      *            directory. The assets directory may contain an arbitrarily
      *            complex tree of subdirectories; the file name can specify any
      *            location in or under the assets directory.
      */
-    public BitmapTexture(GLContext gvrContext, String pngAssetFilename) {
+    public BitmapTexture(VrContext gvrContext, String pngAssetFilename) {
         this(gvrContext, pngAssetFilename,
                 gvrContext.DEFAULT_TEXTURE_PARAMETERS);
     }
@@ -86,11 +86,11 @@ public class BitmapTexture extends Texture {
      * {@code .png} file along with the filters defined by the calling API; it
      * does not create an Android {@link Bitmap}. It may thus be slightly faster
      * than loading a {@link Bitmap} and creating a texture with
-     * {@link #GVRBitmapTexture(GLContext, Bitmap)}, and it should reduce
+     * {@link #GVRBitmapTexture(VrContext, Bitmap)}, and it should reduce
      * memory pressure, a bit.
      * 
      * @param gvrContext
-     *            Current {@link GLContext}
+     *            Current {@link VrContext}
      * @param pngAssetFilename
      *            The name of a {@code .png} file, relative to the assets
      *            directory. The assets directory may contain an arbitrarily
@@ -100,7 +100,7 @@ public class BitmapTexture extends Texture {
      *            User defined object for {@link TextureParameters} which may
      *            also contain default values.
      */
-    public BitmapTexture(GLContext gvrContext, String pngAssetFilename,
+    public BitmapTexture(VrContext gvrContext, String pngAssetFilename,
             TextureParameters textureParameters) {
         super(gvrContext, NativeBaseTexture.fileConstructor(gvrContext
                 .getContext().getAssets(), pngAssetFilename, textureParameters
@@ -111,7 +111,7 @@ public class BitmapTexture extends Texture {
      * Create a new, grayscale texture, from an array of luminance bytes.
      * 
      * @param gvrContext
-     *            Current {@link GLContext}
+     *            Current {@link VrContext}
      * @param width
      *            Texture width, in pixels
      * @param height
@@ -124,7 +124,7 @@ public class BitmapTexture extends Texture {
      *             {@code grayScaleData} is {@code null}, or if
      *             {@code grayscaleData.length < height * width}
      */
-    public BitmapTexture(GLContext gvrContext, int width, int height,
+    public BitmapTexture(VrContext gvrContext, int width, int height,
             byte[] grayscaleData) throws IllegalArgumentException {
         this(gvrContext, width, height, grayscaleData,
                 gvrContext.DEFAULT_TEXTURE_PARAMETERS);
@@ -135,7 +135,7 @@ public class BitmapTexture extends Texture {
      * user defined filters {@link TextureParameters}.
      * 
      * @param gvrContext
-     *            Current {@link GLContext}
+     *            Current {@link VrContext}
      * @param width
      *            Texture width, in pixels
      * @param height
@@ -151,7 +151,7 @@ public class BitmapTexture extends Texture {
      *             {@code grayScaleData} is {@code null}, or if
      *             {@code grayscaleData.length < height * width}
      */
-    public BitmapTexture(GLContext gvrContext, int width, int height,
+    public BitmapTexture(VrContext gvrContext, int width, int height,
             byte[] grayscaleData, TextureParameters textureParameters)
             throws IllegalArgumentException {
         super(gvrContext, NativeBaseTexture.bareConstructor(textureParameters

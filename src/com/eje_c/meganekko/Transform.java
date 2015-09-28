@@ -26,11 +26,11 @@ package com.eje_c.meganekko;
  * components or as Euler angles.
  */
 public class Transform extends Component {
-    Transform(GLContext gvrContext) {
+    Transform(VrContext gvrContext) {
         super(gvrContext, NativeTransform.ctor());
     }
 
-    private Transform(GLContext gvrContext, long ptr) {
+    private Transform(VrContext gvrContext, long ptr) {
         super(gvrContext, ptr);
     }
 

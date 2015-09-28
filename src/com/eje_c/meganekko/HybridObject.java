@@ -29,10 +29,10 @@ import java.util.Set;
 import com.eje_c.meganekko.utility.Log;
 
 /**
- * Root of the GVRF object hierarchy.
+ * Root of the Meganekko object hierarchy.
  * 
  * Descendant classes all have native (JNI) implementations; this base class
- * manages the native lifecycles.
+ * manages the native life cycles.
  */
 public abstract class HybridObject implements Closeable {
 
@@ -42,7 +42,7 @@ public abstract class HybridObject implements Closeable {
      * Instance fields
      */
 
-    private final GLContext mGVRContext;
+    private final VrContext mVrContext;
     /**
      * This is not {@code final}: the first call to {@link #close()} sets
      * {@link #mNativePointer} to 0, so that {@link #close()} can safely be
@@ -57,21 +57,21 @@ public abstract class HybridObject implements Closeable {
     /**
      * Normal constructor
      * 
-     * @param gvrContext
-     *            The current GVRF context
+     * @param vrContext
+     *            The current VR context
      * @param nativePointer
      *            The native pointer, returned by the native constructor
      */
-    protected HybridObject(GLContext gvrContext, long nativePointer) {
-        this(gvrContext, nativePointer, null);
+    protected HybridObject(VrContext vrContext, long nativePointer) {
+        this(vrContext, nativePointer, null);
     }
 
     /**
      * Special constructor, for descendants like {#link GVRMeshEyePointee} that
      * need to 'unregister' instances.
      * 
-     * @param gvrContext
-     *            The current GVRF context
+     * @param vrContext
+     *            The current Meganekko context
      * @param nativePointer
      *            The native pointer, returned by the native constructor
      * @param cleanupHandlers
@@ -88,13 +88,13 @@ public abstract class HybridObject implements Closeable {
      *            concatenated lists - see {@link EyePointeeHolder} for an
      *            example.
      */
-    protected HybridObject(GLContext gvrContext, long nativePointer,
+    protected HybridObject(VrContext vrContext, long nativePointer,
             List<NativeCleanupHandler> cleanupHandlers) {
-        mGVRContext = gvrContext;
+        mVrContext = vrContext;
         mNativePointer = nativePointer;
 
         sReferenceSet
-                .add(new GVRReference(this, nativePointer, cleanupHandlers));
+                .add(new Reference(this, nativePointer, cleanupHandlers));
     }
 
     /*
@@ -102,45 +102,12 @@ public abstract class HybridObject implements Closeable {
      */
 
     /**
-     * Set or clear the keep-wrapper flag.
+     * Get the {@link VrContext} this object is attached to.
      * 
-     * @deprecated This is a no-op as of version 2.0, and will be removed
-     *             sometime in (or after) Q4 2015.
+     * @return The object's {@link VrContext}.
      */
-    public void setKeepWrapper(boolean keep) {
-    }
-
-    /**
-     * Get the current state of the keep-wrapper flag.
-     * 
-     * @deprecated As of version 2.0 this always returns {@code false}, and will
-     *             be removed sometime in (or after) Q4 2015.
-     */
-    public boolean getKeepWrapper() {
-        return false;
-    }
-
-    /**
-     * Get the {@link GLContext} this object is attached to.
-     * 
-     * @return The object's {@link GLContext}.
-     */
-    public GLContext getGVRContext() {
-        return mGVRContext;
-    }
-
-    /**
-     * The address of the {@code std:shared_ptr} pointing to the native object.
-     * 
-     * <p>
-     * This is an internal method that may be useful in diagnostic code.
-     * 
-     * @deprecated As of version 2.0, this is synonymous with
-     *             {@link #getNative()}, and will be removed sometime in (or
-     *             after) Q4 2015.
-     */
-    public long getPtr() {
-        return getNative();
+    public VrContext getVrContext() {
+        return mVrContext;
     }
 
     /**
@@ -183,37 +150,24 @@ public abstract class HybridObject implements Closeable {
         return nativePointer.hashCode();
     }
 
-    /**
-     * How many references are there to the native object?
-     * 
-     * <p>
-     * This is an internal method that may be useful in diagnostic code.
-     * 
-     * @deprecated This is meaningless, as of version 2.0, and will be removed
-     *             sometime in (or after) Q4 2015.
-     */
-    public int getUseCount() {
-        return 0;
-    }
-
     /*
      * Native memory management
      */
 
     /**
-     * Our {@linkplain GVRReference references} are placed on this queue, once
+     * Our {@linkplain Reference references} are placed on this queue, once
      * they've been finalized
      */
     private static final ReferenceQueue<HybridObject> sReferenceQueue = new ReferenceQueue<HybridObject>();
     /**
-     * We need hard references to {@linkplain GVRReference our references} -
+     * We need hard references to {@linkplain Reference our references} -
      * otherwise, the references get garbage collected (usually before their
      * objects) and never get enqueued.
      */
-    private static final Set<GVRReference> sReferenceSet = new HashSet<GVRReference>();
+    private static final Set<Reference> sReferenceSet = new HashSet<Reference>();
 
     static {
-        new GVRFinalizeThread();
+        new FinalizeThread();
     }
 
     /** Optional after-finalization callback to 'deregister' native pointers. */
@@ -235,7 +189,7 @@ public abstract class HybridObject implements Closeable {
      * cleanup handlers to a minimum.
      * 
      * Maintains a prefix list (the static list that the descendant class passes
-     * to {@link HybridObject#GVRHybridObject(GLContext, long, List)}) and a
+     * to {@link HybridObject#GVRHybridObject(VrContext, long, List)}) and a
      * {@code Map} of suffixes: the {@code Map} lets there be one list per
      * descendant class that adds a list of cleanup handler(s), instead of
      * (potentially) one list per instance.
@@ -288,14 +242,14 @@ public abstract class HybridObject implements Closeable {
         }
     }
 
-    private static class GVRReference extends PhantomReference<HybridObject> {
+    private static class Reference extends PhantomReference<HybridObject> {
 
         // private static final String TAG = Log.tag(GVRReference.class);
 
         private long mNativePointer;
         private final List<NativeCleanupHandler> mCleanupHandlers;
 
-        private GVRReference(HybridObject object, long nativePointer,
+        private Reference(HybridObject object, long nativePointer,
                 List<NativeCleanupHandler> cleanupHandlers) {
             super(object, sReferenceQueue);
 
@@ -317,12 +271,12 @@ public abstract class HybridObject implements Closeable {
         }
     }
 
-    private static class GVRFinalizeThread extends Thread {
+    private static class FinalizeThread extends Thread {
 
         // private static final String TAG = Log.tag(GVRFinalizeThread.class);
 
-        private GVRFinalizeThread() {
-            setName("GVRF Finalize Thread");
+        private FinalizeThread() {
+            setName("Finalize Thread");
             setPriority(MAX_PRIORITY);
             start();
         }
@@ -331,7 +285,7 @@ public abstract class HybridObject implements Closeable {
         public void run() {
             try {
                 while (true) {
-                    GVRReference reference = (GVRReference) sReferenceQueue
+                    Reference reference = (Reference) sReferenceQueue
                             .remove();
                     reference.close();
                 }
@@ -354,7 +308,7 @@ public abstract class HybridObject implements Closeable {
     @Override
     public final void close() throws IOException {
         if (mNativePointer != 0L) {
-            GVRReference reference = findReference(mNativePointer);
+            Reference reference = findReference(mNativePointer);
             if (reference != null) {
                 reference.close();
                 mNativePointer = 0L;
@@ -366,10 +320,10 @@ public abstract class HybridObject implements Closeable {
      * Explicitly close()ing an object is going to be relatively rare - most
      * native memory will be freed when the owner-objects are garbage collected.
      * Doing a lookup in these rare cases means that we can avoid giving every @link
-     * {@link HybridObject} a hard reference to its {@link GVRReference}.
+     * {@link HybridObject} a hard reference to its {@link Reference}.
      */
-    private static GVRReference findReference(long nativePointer) {
-        for (GVRReference reference : sReferenceSet) {
+    private static Reference findReference(long nativePointer) {
+        for (Reference reference : sReferenceSet) {
             if (reference.mNativePointer == nativePointer) {
                 return reference;
             }

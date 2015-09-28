@@ -17,7 +17,7 @@ package com.eje_c.meganekko.asynchronous;
 
 import static android.opengl.GLES20.*;
 
-import com.eje_c.meganekko.GLContext;
+import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.Texture;
 import com.eje_c.meganekko.TextureParameters;
 import com.eje_c.meganekko.utility.Log;
@@ -25,7 +25,7 @@ import com.eje_c.meganekko.utility.RuntimeAssertion;
 
 /**
  * A GL compressed texture; you get it from
- * {@linkplain GLContext#loadCompressedTexture(com.eje_c.meganekko.GVRAndroidResource.CompressedTextureCallback, com.eje_c.meganekko.GVRAndroidResource)
+ * {@linkplain VrContext#loadCompressedTexture(com.eje_c.meganekko.GVRAndroidResource.CompressedTextureCallback, com.eje_c.meganekko.GVRAndroidResource)
  * GVRContext.loadCompressedTexture()}.
  * 
  * This is mostly an internal, implementation class: You <em>may</em> find
@@ -49,7 +49,7 @@ public class GVRCompressedTexture extends Texture {
 
     /**
      * The speed/quality parameter passed to
-     * {@link GLContext#loadCompressedTexture(com.eje_c.meganekko.GVRAndroidResource.CompressedTextureCallback, com.eje_c.meganekko.GVRAndroidResource, int)
+     * {@link VrContext#loadCompressedTexture(com.eje_c.meganekko.GVRAndroidResource.CompressedTextureCallback, com.eje_c.meganekko.GVRAndroidResource, int)
      * GVRContext.loadCompressedTexture()}.
      * 
      * This copy has been 'clamped' to one of the
@@ -58,14 +58,14 @@ public class GVRCompressedTexture extends Texture {
      */
     public final int mQuality;
 
-    GVRCompressedTexture(GLContext gvrContext, int internalFormat, int width,
+    GVRCompressedTexture(VrContext gvrContext, int internalFormat, int width,
             int height, int imageSize, byte[] data, int levels, int quality) {
         this(gvrContext, internalFormat, width, height, imageSize, data,
                 levels, quality, gvrContext.DEFAULT_TEXTURE_PARAMETERS);
     }
 
     // Texture parameters
-    GVRCompressedTexture(GLContext gvrContext, int internalFormat, int width,
+    GVRCompressedTexture(VrContext gvrContext, int internalFormat, int width,
             int height, int imageSize, byte[] data, int levels, int quality,
             TextureParameters textureParameters) {
         super(gvrContext, NativeCompressedTexture.normalConstructor(GL_TARGET,
@@ -77,7 +77,7 @@ public class GVRCompressedTexture extends Texture {
         updateMinification();
     }
 
-    GVRCompressedTexture(GLContext gvrContext, int target, int levels,
+    GVRCompressedTexture(VrContext gvrContext, int target, int levels,
             int quality) {
         super(gvrContext, NativeCompressedTexture.mipmappedConstructor(target));
         mLevels = levels;

@@ -23,7 +23,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import com.eje_c.meganekko.Camera;
-import com.eje_c.meganekko.GLContext;
+import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.Scene;
 import com.eje_c.meganekko.SceneObject;
 
@@ -31,10 +31,10 @@ import android.util.Xml;
 
 public class XmlSceneParser {
 
-    private final GLContext context;
+    private final VrContext context;
     private final XmlSceneObjectParser objectParser;
 
-    public XmlSceneParser(GLContext context) {
+    public XmlSceneParser(VrContext context) {
         this.context = context;
         this.objectParser = new XmlSceneObjectParser(context);
     }

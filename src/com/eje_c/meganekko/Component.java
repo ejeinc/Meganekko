@@ -34,7 +34,7 @@ class Component extends HybridObject {
      * @param nativePointer
      *            The native pointer, returned by the native constructor
      */
-    protected Component(GLContext gvrContext, long ptr) {
+    protected Component(VrContext gvrContext, long ptr) {
         super(gvrContext, ptr);
     }
 
@@ -60,7 +60,7 @@ class Component extends HybridObject {
      *            concatenated lists - see {@link EyePointeeHolder} for an
      *            example.
      */
-    protected Component(GLContext gvrContext, long nativePointer,
+    protected Component(VrContext gvrContext, long nativePointer,
             List<NativeCleanupHandler> cleanupHandlers) {
         super(gvrContext, nativePointer, cleanupHandlers);
     }

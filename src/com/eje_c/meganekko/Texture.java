@@ -17,7 +17,7 @@ package com.eje_c.meganekko;
 
 /** Wrapper for a GL texture. */
 public class Texture extends HybridObject {
-    protected Texture(GLContext gvrContext, long ptr) {
+    protected Texture(VrContext gvrContext, long ptr) {
         super(gvrContext, ptr);
     }
 

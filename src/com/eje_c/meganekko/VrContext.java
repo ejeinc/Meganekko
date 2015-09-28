@@ -61,8 +61,8 @@ import android.opengl.GLES20;
  * also holds the {@linkplain Scene main scene} and miscellaneous information
  * like {@linkplain #getFrameTime() the frame time.}
  */
-public class GLContext {
-    private static final String TAG = Log.tag(GLContext.class);
+public class VrContext {
+    private static final String TAG = Log.tag(VrContext.class);
 
     private final long nativePtr;
     private final MeganekkoActivity mContext;
@@ -139,7 +139,7 @@ public class GLContext {
      * Methods
      */
 
-    GLContext(MeganekkoActivity context) {
+    VrContext(MeganekkoActivity context) {
         mContext = context;
         nativePtr = nativeInit();
 
@@ -245,7 +245,7 @@ public class GLContext {
      * overload that takes a priority} are generally going to be your best
      * choices for loading {@link Mesh} resources: mesh loading can take
      * hundreds - and even thousands - of milliseconds, and so should not be
-     * done on the GL thread in either {@link GVRScript#onInit(GLContext)
+     * done on the GL thread in either {@link GVRScript#onInit(VrContext)
      * onInit()} or {@link GVRScript#onStep() onStep()}.
      * 
      * <p>
@@ -311,7 +311,7 @@ public class GLContext {
      * overload that supplies a default priority} are generally going to be your
      * best choices for loading {@link Mesh} resources: mesh loading can take
      * hundreds - and even thousands - of milliseconds, and so should not be
-     * done on the GL thread in either {@link GVRScript#onInit(GLContext)
+     * done on the GL thread in either {@link GVRScript#onInit(VrContext)
      * onInit()} or {@link GVRScript#onStep() onStep()}.
      * 
      * <p>
@@ -1719,7 +1719,7 @@ public class GLContext {
      * {@link Material#setMainTexture(Future)} use an extra thread from the
      * thread pool to wait for the blocking {@link Future#get()} call. For
      * modest numbers of loads, this overhead is acceptable - but thread
-     * creation is not free, and if your {@link GVRScript#onInit(GLContext)
+     * creation is not free, and if your {@link GVRScript#onInit(VrContext)
      * onInit()} method fires of dozens of future loads, you may well see an
      * impact.
      * 
@@ -1777,7 +1777,7 @@ public class GLContext {
      * {@link Material#setMainTexture(Future)} use an extra thread from the
      * thread pool to wait for the blocking {@link Future#get()} call. For
      * modest numbers of loads, this overhead is acceptable - but thread
-     * creation is not free, and if your {@link GVRScript#onInit(GLContext)
+     * creation is not free, and if your {@link GVRScript#onInit(VrContext)
      * onInit()} method fires of dozens of future loads, you may well see an
      * impact.
      * 
@@ -1842,7 +1842,7 @@ public class GLContext {
      * {@link Material#setMainTexture(Future)} use an extra thread from the
      * thread pool to wait for the blocking {@link Future#get()} call. For
      * modest numbers of loads, this overhead is acceptable - but thread
-     * creation is not free, and if your {@link GVRScript#onInit(GLContext)
+     * creation is not free, and if your {@link GVRScript#onInit(VrContext)
      * onInit()} method fires of dozens of future loads, you may well see an
      * impact.
      * 
@@ -2043,7 +2043,7 @@ public class GLContext {
 
     /**
      * Register a method that is called every time GVRF creates a new
-     * {@link GLContext}.
+     * {@link VrContext}.
      * 
      * Android apps aren't mapped 1:1 to Linux processes; the system may keep a
      * process loaded even after normal complete shutdown, and call Android

@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#include "context.h"
 #include <jni.h>
+#include "vr_context.h"
 
 namespace mgn
 {
@@ -22,12 +22,12 @@ namespace mgn
 extern "C"
 {
 
-jlong Java_com_eje_1c_meganekko_GLContext_nativeInit(JNIEnv * jni, jobject object)
+jlong Java_com_eje_1c_meganekko_VrContext_nativeInit(JNIEnv * jni, jobject object)
 {
     return (jlong) new Context();
 }
 
-void Java_com_eje_1c_meganekko_GLContext_nativeSetMainScene(JNIEnv * jni, jclass clazz,
+void Java_com_eje_1c_meganekko_VrContext_nativeSetMainScene(JNIEnv * jni, jclass clazz,
         jlong contextPtr, jlong jscene)
 {
     Context* context = reinterpret_cast<Context*>(contextPtr);
@@ -35,7 +35,7 @@ void Java_com_eje_1c_meganekko_GLContext_nativeSetMainScene(JNIEnv * jni, jclass
     context->scene = scene;
 }
 
-void Java_com_eje_1c_meganekko_GLContext_nativeSetShaderManager(JNIEnv * jni,
+void Java_com_eje_1c_meganekko_VrContext_nativeSetShaderManager(JNIEnv * jni,
         jclass clazz, jlong contextPtr, jlong jshader_manager)
 {
     Context* context = reinterpret_cast<Context*>(contextPtr);

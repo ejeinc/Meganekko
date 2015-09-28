@@ -9,7 +9,7 @@ public class ExternalRendererTexture extends Texture {
     /**
      * @param gvrContext Current gvrContext
      */
-    public ExternalRendererTexture(GLContext gvrContext) {
+    public ExternalRendererTexture(VrContext gvrContext) {
         super(gvrContext, NativeExternalRendererTexture.ctor());
     }
 

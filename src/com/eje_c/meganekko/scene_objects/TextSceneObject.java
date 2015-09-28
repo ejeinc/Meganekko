@@ -15,7 +15,7 @@
 package com.eje_c.meganekko.scene_objects;
 
 import com.eje_c.meganekko.BitmapTexture;
-import com.eje_c.meganekko.GLContext;
+import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
@@ -43,7 +43,7 @@ public class TextSceneObject extends SceneObject {
     private boolean mAutoUpdate = true;
     private Paint mAntiAliasPaint = new Paint(Paint.FILTER_BITMAP_FLAG | Paint.ANTI_ALIAS_FLAG);
 
-    public TextSceneObject(GLContext gvrContext) {
+    public TextSceneObject(VrContext gvrContext) {
         super(gvrContext);
         mPaint.setTextSize(20.0f);
     }
@@ -114,9 +114,9 @@ public class TextSceneObject extends SceneObject {
         Material material;
 
         if (renderData == null) {
-            renderData = new RenderData(getGVRContext());
+            renderData = new RenderData(getVrContext());
 
-            material = new Material(getGVRContext());
+            material = new Material(getVrContext());
             renderData.setMaterial(material);
 
             attachRenderData(renderData);
@@ -125,10 +125,10 @@ public class TextSceneObject extends SceneObject {
             material = renderData.getMaterial();
         }
 
-        Mesh mesh = getGVRContext().createQuad(mWidth, mHeight);
+        Mesh mesh = getVrContext().createQuad(mWidth, mHeight);
         renderData.setMesh(mesh);
 
-        Texture texture = new BitmapTexture(getGVRContext(), textureImage);
+        Texture texture = new BitmapTexture(getVrContext(), textureImage);
         material.setMainTexture(texture);
     }
 

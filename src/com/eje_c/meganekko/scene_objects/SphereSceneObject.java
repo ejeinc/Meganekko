@@ -17,7 +17,7 @@ package com.eje_c.meganekko.scene_objects;
 
 import java.util.concurrent.Future;
 
-import com.eje_c.meganekko.GLContext;
+import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
@@ -51,9 +51,9 @@ public class SphereSceneObject extends SceneObject {
      * will be applied to each side of the sphere.
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      */
-    public SphereSceneObject(GLContext gvrContext) {
+    public SphereSceneObject(VrContext gvrContext) {
         super(gvrContext);
 
         generateSphereObject(gvrContext, STACK_NUMBER, SLICE_NUMBER, true,
@@ -68,13 +68,13 @@ public class SphereSceneObject extends SceneObject {
      * same texture will be applied to each side of the sphere.
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      * 
      * @param facingOut
      *            whether the triangles and normals should be facing in or
      *            facing out.
      */
-    public SphereSceneObject(GLContext gvrContext, boolean facingOut) {
+    public SphereSceneObject(VrContext gvrContext, boolean facingOut) {
         super(gvrContext);
 
         generateSphereObject(gvrContext, STACK_NUMBER, SLICE_NUMBER, facingOut,
@@ -89,7 +89,7 @@ public class SphereSceneObject extends SceneObject {
      * same texture will be applied to each side of the sphere.
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      * 
      * @param facingOut
      *            whether the triangles and normals should be facing in or
@@ -99,7 +99,7 @@ public class SphereSceneObject extends SceneObject {
      *            the texture for the sphere. {@code Future<GVRTexture>} is used
      *            here for asynchronously loading the texture.
      */
-    public SphereSceneObject(GLContext gvrContext, boolean facingOut,
+    public SphereSceneObject(VrContext gvrContext, boolean facingOut,
             Future<Texture> futureTexture) {
         super(gvrContext);
 
@@ -117,7 +117,7 @@ public class SphereSceneObject extends SceneObject {
      * same material will be applied to each side of the sphere.
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      * 
      * @param facingOut
      *            whether the triangles and normals should be facing in or
@@ -126,7 +126,7 @@ public class SphereSceneObject extends SceneObject {
      * @param material
      *            the material for the sphere.
      */
-    public SphereSceneObject(GLContext gvrContext, boolean facingOut,
+    public SphereSceneObject(VrContext gvrContext, boolean facingOut,
             Material material) {
         super(gvrContext);
 
@@ -142,7 +142,7 @@ public class SphereSceneObject extends SceneObject {
      * same material will be applied to each side of the sphere.
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      * 
      * @param stackNumber
      *            the number of stacks for the sphere. It should be equal or
@@ -159,7 +159,7 @@ public class SphereSceneObject extends SceneObject {
      * @param material
      *            the material for the sphere.
      */
-    public SphereSceneObject(GLContext gvrContext, int stackNumber,
+    public SphereSceneObject(VrContext gvrContext, int stackNumber,
             int sliceNumber, boolean facingOut, Material material) {
         super(gvrContext);
 
@@ -187,7 +187,7 @@ public class SphereSceneObject extends SceneObject {
      * same material will be applied to each side of the sphere.
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      * 
      * @param stackNumber
      *            the number of stacks for the sphere. It should be equal or
@@ -215,7 +215,7 @@ public class SphereSceneObject extends SceneObject {
      *            Number of slices (i.e. sliceNumber) should be divisible by
      *            sliceSegmentNumber.
      */
-    public SphereSceneObject(GLContext gvrContext, int stackNumber,
+    public SphereSceneObject(VrContext gvrContext, int stackNumber,
             int sliceNumber, boolean facingOut, Material material,
             int stackSegmentNumber, int sliceSegmentNumber) {
         super(gvrContext);
@@ -248,7 +248,7 @@ public class SphereSceneObject extends SceneObject {
                 facingOut, material, stackSegmentNumber, sliceSegmentNumber);
     }
 
-    private void generateSphereObject(GLContext gvrContext, int stackNumber,
+    private void generateSphereObject(VrContext gvrContext, int stackNumber,
             int sliceNumber, boolean facingOut, Material material) {
         generateSphere(stackNumber, sliceNumber, facingOut);
 
@@ -555,7 +555,7 @@ public class SphereSceneObject extends SceneObject {
 
     }
 
-    private void generateComplexSphereObject(GLContext gvrContext,
+    private void generateComplexSphereObject(VrContext gvrContext,
             int stackNumber, int sliceNumber, boolean facingOut,
             Material material, int stackSegmentNumber, int sliceSegmentNumber) {
         // bottom cap
@@ -577,7 +577,7 @@ public class SphereSceneObject extends SceneObject {
         attachRenderData(renderData);
     }
 
-    private void createComplexCap(GLContext gvrContext, int stackNumber,
+    private void createComplexCap(VrContext gvrContext, int stackNumber,
             int sliceNumber, boolean top, boolean facingOut,
             Material material, int sliceSegmentNumber) {
         int slicePerSegment = sliceNumber / sliceSegmentNumber;
@@ -728,7 +728,7 @@ public class SphereSceneObject extends SceneObject {
         }
     }
 
-    private void createComplexBody(GLContext gvrContext, int stackNumber,
+    private void createComplexBody(VrContext gvrContext, int stackNumber,
             int sliceNumber, boolean facingOut, Material material,
             int stackSegmentNumber, int sliceSegmentNumber) {
         int stackPerSegment = (stackNumber - 2) / stackSegmentNumber;

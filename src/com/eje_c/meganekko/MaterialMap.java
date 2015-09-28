@@ -28,7 +28,7 @@ package com.eje_c.meganekko;
  * programs.
  */
 public class MaterialMap extends HybridObject implements ShaderMaps {
-    MaterialMap(GLContext gvrContext, long ptr) {
+    MaterialMap(VrContext gvrContext, long ptr) {
         super(gvrContext, ptr);
     }
 

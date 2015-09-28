@@ -26,7 +26,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import com.eje_c.meganekko.FutureWrapper;
 import com.eje_c.meganekko.AndroidResource;
 import com.eje_c.meganekko.BitmapTexture;
-import com.eje_c.meganekko.GLContext;
+import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
@@ -55,10 +55,10 @@ import android.util.Xml;
 public class XmlSceneObjectParser {
 
     public static final float DEFAULT_TEXT_SIZE = 30.0f;
-    private final GLContext context;
+    private final VrContext context;
     private boolean useAsyncLoading = true;
 
-    public XmlSceneObjectParser(GLContext context) {
+    public XmlSceneObjectParser(VrContext context) {
         this.context = context;
     }
 
@@ -377,7 +377,7 @@ public class XmlSceneObjectParser {
                 Class<?> clazz = Class.forName(name);
 
                 if (SceneObject.class.isAssignableFrom(clazz)) {
-                    return (SceneObject) clazz.getConstructor(GLContext.class).newInstance(context);
+                    return (SceneObject) clazz.getConstructor(VrContext.class).newInstance(context);
                 }
 
             } catch (ClassNotFoundException e) {

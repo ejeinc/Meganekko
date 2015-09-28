@@ -21,7 +21,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 
-import com.eje_c.meganekko.GLContext;
+import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.TextureParameters;
 import com.eje_c.meganekko.asynchronous.CompressedTextureLoader.Reader;
 
@@ -29,7 +29,7 @@ import android.opengl.GLES20;
 
 /**
  * Represents a texture file, loaded into memory. Pass to EGL by calling
- * {@link #toTexture(GLContext, int)}. Instances of this class hold the texture
+ * {@link #toTexture(VrContext, int)}. Instances of this class hold the texture
  * file contents in memory: don't hold onto them any longer than necessary.
  * 
  * <p>
@@ -38,7 +38,7 @@ import android.opengl.GLES20;
  * {@link CompressedTextureLoader#register(CompressedTextureLoader)}.
  * 
  * <p>
- * Note that {@link #toTexture(GLContext, int)} <em>must</em> be called from
+ * Note that {@link #toTexture(VrContext, int)} <em>must</em> be called from
  * the GL thread; other methods may be called from any thread.
  */
 class CompressedTexture {
@@ -89,13 +89,13 @@ class CompressedTexture {
         this.data = data;
     }
 
-    GVRCompressedTexture toTexture(GLContext gvrContext, int quality) {
+    GVRCompressedTexture toTexture(VrContext gvrContext, int quality) {
         return new GVRCompressedTexture(gvrContext, internalformat, width,
                 height, imageSize, data.array(), levels, quality);
     }
 
     // Texture parameters
-    GVRCompressedTexture toTexture(GLContext gvrContext, int quality,
+    GVRCompressedTexture toTexture(VrContext gvrContext, int quality,
             TextureParameters textureParameters) {
         return new GVRCompressedTexture(gvrContext, internalformat, width,
                 height, imageSize, data.array(), levels, quality, textureParameters);

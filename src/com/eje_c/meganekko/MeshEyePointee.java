@@ -39,12 +39,12 @@ public class MeshEyePointee extends EyePointee {
      * to use {@link Mesh#getBoundingBox()} instead of the raw mesh.
      * 
      * @param gvrContext
-     *            The {@link GLContext} used by the app.
+     *            The {@link VrContext} used by the app.
      * 
      * @param mesh
      *            The {@link Mesh} that the picking ray will test against.
      */
-    public MeshEyePointee(GLContext gvrContext, Mesh mesh) {
+    public MeshEyePointee(VrContext gvrContext, Mesh mesh) {
         super(gvrContext, NativeMeshEyePointee.ctor(mesh.getNative()));
         mMesh = mesh;
     }
@@ -59,7 +59,7 @@ public class MeshEyePointee extends EyePointee {
      *            The {@link Mesh} that the picking ray will test against.
      */
     public MeshEyePointee(Mesh mesh) {
-        this(mesh.getGVRContext(), mesh);
+        this(mesh.getVrContext(), mesh);
     }
 
     /**
@@ -82,7 +82,7 @@ public class MeshEyePointee extends EyePointee {
      * enum: mesh, box, box-then-mesh?
      */
     public MeshEyePointee(Mesh mesh, boolean useBoundingBox) {
-        this(mesh.getGVRContext(), useBoundingBox ? mesh.getBoundingBox()
+        this(mesh.getVrContext(), useBoundingBox ? mesh.getBoundingBox()
                 : mesh);
     }
 

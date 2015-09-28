@@ -20,7 +20,7 @@ import static android.opengl.GLES20.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import com.eje_c.meganekko.GLContext;
+import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.utility.Log;
 import com.eje_c.meganekko.utility.RuntimeAssertion;
 
@@ -162,7 +162,7 @@ class KTX extends CompressedTextureLoader {
         }
 
         @Override
-        public GVRCompressedTexture toTexture(GLContext gvrContext, int quality) {
+        public GVRCompressedTexture toTexture(VrContext gvrContext, int quality) {
             GVRCompressedTexture result = new GVRCompressedTexture(gvrContext,
                     GVRCompressedTexture.GL_TARGET, levels, quality);
 

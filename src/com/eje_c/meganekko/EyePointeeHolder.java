@@ -51,7 +51,7 @@ public class EyePointeeHolder extends Component {
 
     private final List<EyePointee> pointees = new ArrayList<EyePointee>();
 
-    static EyePointeeHolder lookup(GLContext gvrContext, long nativePointer) {
+    static EyePointeeHolder lookup(VrContext gvrContext, long nativePointer) {
         WeakReference<EyePointeeHolder> weakReference = sEyePointeeHolders
                 .get(nativePointer);
         return weakReference == null ? null : weakReference.get();
@@ -61,13 +61,13 @@ public class EyePointeeHolder extends Component {
      * Constructor
      * 
      * @param gvrContext
-     *            Current {@link GLContext}
+     *            Current {@link VrContext}
      */
-    public EyePointeeHolder(GLContext gvrContext) {
+    public EyePointeeHolder(VrContext gvrContext) {
         this(gvrContext, NativeEyePointeeHolder.ctor());
     }
 
-    private EyePointeeHolder(GLContext gvrContext, long nativePointer) {
+    private EyePointeeHolder(VrContext gvrContext, long nativePointer) {
         super(gvrContext, nativePointer, sCleanup);
         registerNativePointer(nativePointer);
     }
@@ -92,7 +92,7 @@ public class EyePointeeHolder extends Component {
      *            should use a {@link CleanupHandlerListManager} of their own,
      *            in the same way that this class does.
      */
-    protected EyePointeeHolder(GLContext gvrContext, long nativePointer,
+    protected EyePointeeHolder(VrContext gvrContext, long nativePointer,
             List<NativeCleanupHandler> descendantsCleanupHandlerList) {
         super(gvrContext, nativePointer, sConcatenations
                 .getUniqueConcatenation(descendantsCleanupHandlerList));

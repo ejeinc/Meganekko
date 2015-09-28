@@ -97,9 +97,9 @@ public class RenderData extends Component {
      * Constructor.
      * 
      * @param gvrContext
-     *            Current {@link GLContext}
+     *            Current {@link VrContext}
      */
-    public RenderData(GLContext gvrContext) {
+    public RenderData(VrContext gvrContext) {
         super(gvrContext, NativeRenderData.ctor());
         
         RenderPass basePass = new RenderPass(gvrContext);
@@ -108,7 +108,7 @@ public class RenderData extends Component {
         isLightEnabled = false;
     }
 
-    private RenderData(GLContext gvrContext, long ptr) {
+    private RenderData(VrContext gvrContext, long ptr) {
         super(gvrContext, ptr);
         
         RenderPass basePass = new RenderPass(gvrContext);

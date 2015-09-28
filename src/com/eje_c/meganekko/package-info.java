@@ -94,7 +94,7 @@
  * GVRF includes an asynchronous loading facility, which improves throughput in 
  * three ways. First, by doing all the work on a background thread, then 
  * delivering the loaded resource to the GL thread on a {@link 
- * com.eje_c.meganekko.GLContext#runOnGlThread(Runnable)
+ * com.eje_c.meganekko.VrContext#runOnGlThread(Runnable)
  * runOnGlThread()} callback. Second, they use a throttler to avoid
  * overloading the system and/or running out of memory. Third, they do
  * 'request consolidation' - if you issue any requests for a particular file
@@ -109,8 +109,8 @@
  * 
  * <li>Priorities are 32-bit Java {@code int}s, but not every {@code int} is a 
  * valid priority. Priorities run from {@link 
- * com.eje_c.meganekko.GLContext#LOWEST_PRIORITY} to {@link 
- * com.eje_c.meganekko.GLContext#HIGHEST_PRIORITY}. 
+ * com.eje_c.meganekko.VrContext#LOWEST_PRIORITY} to {@link 
+ * com.eje_c.meganekko.VrContext#HIGHEST_PRIORITY}. 
  * 
  * <li>Priorities use numerical order: a 2 is higher than a 1, and will run first.
  * 

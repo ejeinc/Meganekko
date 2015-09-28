@@ -25,11 +25,11 @@ import com.eje_c.meganekko.utility.Exceptions;
  * A GL mesh is a net of triangles that define an object's surface geometry.
  */
 public class Mesh extends HybridObject {
-    public Mesh(GLContext gvrContext) {
+    public Mesh(VrContext gvrContext) {
         super(gvrContext, NativeMesh.ctor());
     }
 
-    Mesh(GLContext gvrContext, long ptr) {
+    Mesh(VrContext gvrContext, long ptr) {
         super(gvrContext, ptr);
     }
 
@@ -260,14 +260,14 @@ public class Mesh extends HybridObject {
      * "ray casting" to detect which scene object you're pointing to. Ray
      * casting is computationally expensive, and you generally want to limit the
      * number of {@linkplain EyePointeeHolder triangles to check.} A simple
-     * {@linkplain GLContext#createQuad(float, float) quad} is cheap enough,
+     * {@linkplain VrContext#createQuad(float, float) quad} is cheap enough,
      * but with complex meshes you will probably want to cut search time by
      * registering the object's bounding box, not the whole mesh.
      * 
      * @return A {@link Mesh} of the bounding box.
      */
     public Mesh getBoundingBox() {
-        return new Mesh(getGVRContext(),
+        return new Mesh(getVrContext(),
                 NativeMesh.getBoundingBox(getNative()));
     }
 

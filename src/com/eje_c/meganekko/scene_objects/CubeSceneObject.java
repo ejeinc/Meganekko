@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.concurrent.Future;
 
 import com.eje_c.meganekko.FutureWrapper;
-import com.eje_c.meganekko.GLContext;
+import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
@@ -192,9 +192,9 @@ public class CubeSceneObject extends SceneObject {
      * be applied to each side of the cube.
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      */
-    public CubeSceneObject(GLContext gvrContext) {
+    public CubeSceneObject(VrContext gvrContext) {
         super(gvrContext);
 
         createSimpleCube(gvrContext, true, new Material(gvrContext));
@@ -207,13 +207,13 @@ public class CubeSceneObject extends SceneObject {
      * texture will be applied to each side of the cube.
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      * 
      * @param facingOut
      *            whether the triangles and normals should be facing in or
      *            facing out.
      */
-    public CubeSceneObject(GLContext gvrContext, boolean facingOut) {
+    public CubeSceneObject(VrContext gvrContext, boolean facingOut) {
         super(gvrContext);
 
         createSimpleCube(gvrContext, facingOut, new Material(gvrContext));
@@ -227,7 +227,7 @@ public class CubeSceneObject extends SceneObject {
      * same texture.
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      * 
      * @param facingOut
      *            whether the triangles and normals should be facing in or
@@ -237,7 +237,7 @@ public class CubeSceneObject extends SceneObject {
      *            the texture for six faces. {@code Future<GVRTexture>}
      *            is used here for asynchronously loading the texture.
      */
-    public CubeSceneObject(GLContext gvrContext, boolean facingOut,
+    public CubeSceneObject(VrContext gvrContext, boolean facingOut,
             Future<Texture> futureTexture) {
         super(gvrContext);
 
@@ -254,7 +254,7 @@ public class CubeSceneObject extends SceneObject {
      * same material (i.e. same texture and same shader).
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      * 
      * @param facingOut
      *            whether the triangles and normals should be facing in or
@@ -263,7 +263,7 @@ public class CubeSceneObject extends SceneObject {
      * @param material
      *            the material for six faces.
      */
-    public CubeSceneObject(GLContext gvrContext, boolean facingOut,
+    public CubeSceneObject(VrContext gvrContext, boolean facingOut,
             Material material) {
         super(gvrContext);
 
@@ -277,7 +277,7 @@ public class CubeSceneObject extends SceneObject {
      * has its own texture.
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      * 
      * @param facingOut
      *            whether the triangles and normals should be facing in or
@@ -289,7 +289,7 @@ public class CubeSceneObject extends SceneObject {
      *            loading the texture. The six textures are for front, right,
      *            back, left, top, and bottom faces respectively.
      */
-    public CubeSceneObject(GLContext gvrContext, boolean facingOut,
+    public CubeSceneObject(VrContext gvrContext, boolean facingOut,
             ArrayList<Future<Texture>> futureTextureList) {
         super(gvrContext);
 
@@ -311,7 +311,7 @@ public class CubeSceneObject extends SceneObject {
      * texture.
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      * 
      * @param facingOut
      *            whether the triangles and normals should be facing in or
@@ -326,7 +326,7 @@ public class CubeSceneObject extends SceneObject {
      *            the segment number along each axis. 
      *            
      */
-    public CubeSceneObject(GLContext gvrContext, boolean facingOut,
+    public CubeSceneObject(VrContext gvrContext, boolean facingOut,
             ArrayList<Future<Texture>> futureTextureList, int segmentNumber) {
         super(gvrContext);
 
@@ -339,7 +339,7 @@ public class CubeSceneObject extends SceneObject {
         createComplexCube(gvrContext, facingOut, futureTextureList, segmentNumber);
     }
 
-    private void createSimpleCube(GLContext gvrContext, boolean facingOut,
+    private void createSimpleCube(VrContext gvrContext, boolean facingOut,
             Material material) {
 
         Mesh mesh = new Mesh(gvrContext);
@@ -388,7 +388,7 @@ public class CubeSceneObject extends SceneObject {
     private static final char[] SIMPLE_INWARD_BOTTOM_INDICES = { 20, 22, 21, // bottom
             21, 22, 23 };
 
-    private void createSimpleCubeSixMeshes(GLContext gvrContext,
+    private void createSimpleCubeSixMeshes(VrContext gvrContext,
             boolean facingOut, ArrayList<Future<Texture>> futureTextureList) {
 
         SceneObject[] children = new SceneObject[6];
@@ -441,7 +441,7 @@ public class CubeSceneObject extends SceneObject {
     private float[] texCoords;
     private char[] indices;
 
-    private void createComplexCube(GLContext gvrContext,
+    private void createComplexCube(VrContext gvrContext,
             boolean facingOut, ArrayList<Future<Texture>> futureTextureList, int segmentNumber) {
 
         SceneObject[] children = new SceneObject[6];

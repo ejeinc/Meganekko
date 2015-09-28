@@ -15,7 +15,7 @@
 
 package com.eje_c.meganekko.scene_objects;
 
-import com.eje_c.meganekko.GLContext;
+import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.utility.Log;
 
@@ -38,9 +38,9 @@ public class ConeSceneObject extends CylinderSceneObject {
      * be applied to bottom, and side of the cone.
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      */
-    public ConeSceneObject(GLContext gvrContext) {
+    public ConeSceneObject(VrContext gvrContext) {
         super(gvrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT, STACK_NUMBER,
                 SLICE_NUMBER, true);
     }
@@ -53,13 +53,13 @@ public class ConeSceneObject extends CylinderSceneObject {
      * texture will be applied to bottom, and side of the cone.
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      * 
      * @param facingOut
      *            whether the triangles and normals should be facing in or
      *            facing out.
      */
-    public ConeSceneObject(GLContext gvrContext, boolean facingOut) {
+    public ConeSceneObject(VrContext gvrContext, boolean facingOut) {
         super(gvrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT, STACK_NUMBER,
                 SLICE_NUMBER, facingOut);
     }
@@ -72,7 +72,7 @@ public class ConeSceneObject extends CylinderSceneObject {
      * material will be applied to bottom, and side of the cone.
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      * 
      * @param facingOut
      *            whether the triangles and normals should be facing in or
@@ -81,7 +81,7 @@ public class ConeSceneObject extends CylinderSceneObject {
      * @param material
      *            the material for the cone.
      */
-    public ConeSceneObject(GLContext gvrContext, boolean facingOut,
+    public ConeSceneObject(VrContext gvrContext, boolean facingOut,
             Material material) {
         super(gvrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT, STACK_NUMBER,
                 SLICE_NUMBER, facingOut, material);

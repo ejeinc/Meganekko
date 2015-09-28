@@ -18,7 +18,7 @@ package com.eje_c.meganekko.scene_objects;
 import java.io.IOException;
 
 import com.eje_c.meganekko.FrameListener;
-import com.eje_c.meganekko.GLContext;
+import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.ExternalTexture;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Mesh;
@@ -43,18 +43,18 @@ public class CameraSceneObject extends SceneObject implements
      * complex geometry) that shows live video from one of the device's cameras
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      * @param mesh
      *            an arbitrarily complex {@link Mesh} object - see
-     *            {@link GLContext#loadMesh(com.eje_c.meganekko.GVRAndroidResource)}
-     *            and {@link GLContext#createQuad(float, float)}
+     *            {@link VrContext#loadMesh(com.eje_c.meganekko.GVRAndroidResource)}
+     *            and {@link VrContext#createQuad(float, float)}
      * @param camera
      *            an Android {@link Camera}. <em>Note</em>: this constructor
      *            calls {@link Camera#setPreviewTexture(SurfaceTexture)} so you
      *            should be sure to call it before you call
      *            {@link Camera#startPreview()}.
      */
-    public CameraSceneObject(GLContext gvrContext, Mesh mesh,
+    public CameraSceneObject(VrContext gvrContext, Mesh mesh,
             Camera camera) {
         super(gvrContext, mesh);
         gvrContext.registerFrameListener(this);
@@ -76,7 +76,7 @@ public class CameraSceneObject extends SceneObject implements
      * shows live video from one of the device's cameras
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      * @param width
      *            the scene rectangle's width
      * @param height
@@ -87,7 +87,7 @@ public class CameraSceneObject extends SceneObject implements
      *            should be sure to call it before you call
      *            {@link Camera#startPreview()}.
      */
-    public CameraSceneObject(GLContext gvrContext, float width,
+    public CameraSceneObject(VrContext gvrContext, float width,
             float height, Camera camera) {
         this(gvrContext, gvrContext.createQuad(width, height), camera);
     }

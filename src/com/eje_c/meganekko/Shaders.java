@@ -83,7 +83,7 @@ public interface Shaders<ID> {
      * 
      * @param texture
      *            A future texture, from one of the the
-     *            {@link GLContext#loadFutureTexture(GVRAndroidResource)}
+     *            {@link VrContext#loadFutureTexture(GVRAndroidResource)}
      *            methods
      */
     public void setMainTexture(Future<Texture> texture);

@@ -25,11 +25,11 @@ public class ExternalTexture extends Texture {
      * @param gvrContext
      *            Current gvrContext
      */
-    public ExternalTexture(GLContext gvrContext) {
+    public ExternalTexture(VrContext gvrContext) {
         super(gvrContext, NativeExternalTexture.ctor());
     }
 
-    ExternalTexture(GLContext gvrContext, long ptr) {
+    ExternalTexture(VrContext gvrContext, long ptr) {
         super(gvrContext, ptr);
     }
 }

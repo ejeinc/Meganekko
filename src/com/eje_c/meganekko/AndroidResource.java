@@ -99,7 +99,7 @@ public class AndroidResource {
      * @param resourceId
      *            A {@code R.raw} or {@code R.drawable} id
      */
-    public AndroidResource(GLContext gvrContext, int resourceId) {
+    public AndroidResource(VrContext gvrContext, int resourceId) {
         this(gvrContext.getContext(), resourceId);
     }
 
@@ -137,7 +137,7 @@ public class AndroidResource {
      * @throws IOException
      *             File does not exist or cannot be read
      */
-    public AndroidResource(GLContext gvrContext,
+    public AndroidResource(VrContext gvrContext,
             String assetRelativeFilename) throws IOException {
         this(gvrContext.getContext(), assetRelativeFilename);
     }
@@ -419,7 +419,7 @@ public class AndroidResource {
      * Callback for asynchronous texture loads.
      * 
      * Both compressed and bitmapped textures, using the
-     * {@link GLContext#loadTexture(AndroidResource.TextureCallback, AndroidResource)}
+     * {@link VrContext#loadTexture(AndroidResource.TextureCallback, AndroidResource)}
      * APIs.
      */
     public interface TextureCallback extends CancelableCallback<Texture> {

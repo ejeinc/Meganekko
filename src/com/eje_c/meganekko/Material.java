@@ -45,7 +45,7 @@ import android.graphics.Color;
  * Each {@link Material} contains two main things:
  * <ul>
  * <li>The id of a (stock or custom) shader, which is used to draw the mesh. See
- * {@link GVRShaderType} and {@link GLContext#getMaterialShaderManager()}.
+ * {@link GVRShaderType} and {@link VrContext#getMaterialShaderManager()}.
  * 
  * <li>Data to pass to the shader. This usually - but not always - means a
  * {@link Texture} and can include other named values to pass to the shader.
@@ -53,7 +53,7 @@ import android.graphics.Color;
  * 
  * <p>
  * The simplest way to create a {@link Material} is to call the
- * {@linkplain Material#GVRMaterial(GLContext) constructor that takes only a
+ * {@linkplain Material#GVRMaterial(VrContext) constructor that takes only a
  * GVRContext.} Then you just {@link Material#setMainTexture(Texture)
  * setMainTexture()} and you're ready to draw with the default shader, which is
  * called 'unlit' because it simply drapes the texture over the mesh, without
@@ -154,12 +154,12 @@ public class Material extends HybridObject implements
      * A new holder for a shader's uniforms.
      * 
      * @param gvrContext
-     *            Current {@link GLContext}
+     *            Current {@link VrContext}
      * @param shaderId
      *            Id of a {@linkplain GVRShaderType stock} or
      *            {@linkplain MaterialShaderManager custom} shader.
      */
-    public Material(GLContext gvrContext, MaterialShaderId shaderId) {
+    public Material(VrContext gvrContext, MaterialShaderId shaderId) {
         super(gvrContext, NativeMaterial.ctor(shaderId.ID));
         this.shaderId = shaderId;
         // if texture shader is used, set lighting coefficients to OpenGL default
@@ -178,13 +178,13 @@ public class Material extends HybridObject implements
      * common stock shader, the {@linkplain GVRShaderType.Texture 'texture'} shader.
      * 
      * @param gvrContext
-     *            Current {@link GLContext}
+     *            Current {@link VrContext}
      */
-    public Material(GLContext gvrContext) {
+    public Material(VrContext gvrContext) {
         this(gvrContext, GVRShaderType.Texture.ID);
     }
 
-    Material(GLContext gvrContext, long ptr) {
+    Material(VrContext gvrContext, long ptr) {
         super(gvrContext, ptr);
     }
 

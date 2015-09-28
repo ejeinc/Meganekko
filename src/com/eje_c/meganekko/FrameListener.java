@@ -33,7 +33,7 @@ public interface FrameListener {
     /**
      * Called each time a frame is drawn. Callbacks are called (from
      * {@link MeganekkoActivity#frame(long)}) in subscription-order, after any
-     * {@linkplain GLContext#runOnGlThread(Runnable) 'one shot' callbacks} and
+     * {@linkplain VrContext#runOnGlThread(Runnable) 'one shot' callbacks} and
      * before {@link MeganekkoActivity#frame()}.
      */
     public void frame();

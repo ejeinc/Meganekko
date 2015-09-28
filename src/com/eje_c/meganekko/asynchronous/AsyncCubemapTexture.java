@@ -21,7 +21,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import com.eje_c.meganekko.AndroidResource;
-import com.eje_c.meganekko.GLContext;
+import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.CubemapTexture;
 import com.eje_c.meganekko.HybridObject;
 import com.eje_c.meganekko.Texture;
@@ -45,7 +45,7 @@ abstract class AsyncCubemapTexture {
      * The API
      */
 
-    static void loadTexture(GLContext gvrContext,
+    static void loadTexture(VrContext gvrContext,
             CancelableCallback<Texture> callback,
             AndroidResource resource, int priority, Map<String, Integer> map) {
         faceIndexMap = map;
@@ -71,13 +71,13 @@ abstract class AsyncCubemapTexture {
         private static final GlConverter<CubemapTexture, Bitmap[]> sConverter = new GlConverter<CubemapTexture, Bitmap[]>() {
 
             @Override
-            public CubemapTexture convert(GLContext gvrContext,
+            public CubemapTexture convert(VrContext gvrContext,
                     Bitmap[] bitmapArray) {
                 return new CubemapTexture(gvrContext, bitmapArray);
             }
         };
 
-        protected AsyncLoadCubemapTextureResource(GLContext gvrContext,
+        protected AsyncLoadCubemapTextureResource(VrContext gvrContext,
                 AndroidResource request,
                 CancelableCallback<HybridObject> callback, int priority) {
             super(gvrContext, sConverter, request, callback);
@@ -121,7 +121,7 @@ abstract class AsyncCubemapTexture {
 
                     @Override
                     AsyncLoadCubemapTextureResource threadProc(
-                            GLContext gvrContext, AndroidResource request,
+                            VrContext gvrContext, AndroidResource request,
                             CancelableCallback<HybridObject> callback,
                             int priority) {
                         return new AsyncLoadCubemapTextureResource(gvrContext,

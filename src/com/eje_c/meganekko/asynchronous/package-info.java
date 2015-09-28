@@ -23,7 +23,7 @@
  * useful for debugging. 
  * 
  * {@link com.eje_c.meganekko.asynchronous.AsynchronousResourceLoader} 
- * is public only so that {@link com.eje_c.meganekko.GLContext} can make cross-package
+ * is public only so that {@link com.eje_c.meganekko.VrContext} can make cross-package
  * calls: It <em>is</em> an official part of the API, but we suggest you avoid 
  * using it directly.
  */

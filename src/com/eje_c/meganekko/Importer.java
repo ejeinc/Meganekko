@@ -46,7 +46,7 @@ class Importer {
      * @return An instance of {@link AssimpImporter} or {@code null} if the
      *         file does not exist (or cannot be read)
      */
-    static AssimpImporter readFileFromAssets(GLContext gvrContext,
+    static AssimpImporter readFileFromAssets(VrContext gvrContext,
             String filename, EnumSet<ImportSettings> settings) { 
         long nativeValue = NativeImporter.readFileFromAssets(gvrContext
                 .getContext().getAssets(), filename, ImportSettings.getAssimpImportFlags(settings));
@@ -54,13 +54,13 @@ class Importer {
                 nativeValue);
     }
 
-    static AssimpImporter readFileFromResources(GLContext gvrContext,
+    static AssimpImporter readFileFromResources(VrContext gvrContext,
             int resourceId, EnumSet<ImportSettings> settings) {
         return readFileFromResources(gvrContext, new AndroidResource(
                 gvrContext, resourceId), settings);
     }
 
-    static AssimpImporter readFileFromResources(GLContext gvrContext,
+    static AssimpImporter readFileFromResources(VrContext gvrContext,
             AndroidResource resource, EnumSet<ImportSettings> settings) {
         try {
             byte[] bytes;
@@ -97,7 +97,7 @@ class Importer {
      *            Name of the file to import.
      * @return An instance of {@link AssimpImporter}.
      */
-    static AssimpImporter readFileFromSDCard(GLContext gvrContext,
+    static AssimpImporter readFileFromSDCard(VrContext gvrContext,
             String filename, EnumSet<ImportSettings> settings) {
         long nativeValue = NativeImporter.readFileFromSDCard(filename, ImportSettings.getAssimpImportFlags(settings));
         return new AssimpImporter(gvrContext, nativeValue);

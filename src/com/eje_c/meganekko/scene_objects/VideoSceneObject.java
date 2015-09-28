@@ -18,7 +18,7 @@ package com.eje_c.meganekko.scene_objects;
 import java.io.IOException;
 
 import com.eje_c.meganekko.FrameListener;
-import com.eje_c.meganekko.GLContext;
+import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.ExternalTexture;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.MaterialShaderId;
@@ -49,11 +49,11 @@ public class VideoSceneObject extends SceneObject {
      * arbitrarily complex geometry, using the Android {@link MediaPlayer}
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      * @param mesh
      *            a {@link Mesh} - see
-     *            {@link GLContext#loadMesh(com.eje_c.meganekko.GVRAndroidResource)}
-     *            and {@link GLContext#createQuad(float, float)}
+     *            {@link VrContext#loadMesh(com.eje_c.meganekko.GVRAndroidResource)}
+     *            and {@link VrContext#createQuad(float, float)}
      * @param mediaPlayer
      *            an Android {@link MediaPlayer}
      * @param videoType
@@ -61,7 +61,7 @@ public class VideoSceneObject extends SceneObject {
      * @throws IllegalArgumentException
      *             on an invalid {@code videoType} parameter
      */
-    public VideoSceneObject(GLContext gvrContext, Mesh mesh,
+    public VideoSceneObject(VrContext gvrContext, Mesh mesh,
             MediaPlayer mediaPlayer, int videoType) {
         super(gvrContext, mesh);
         ExternalTexture texture = new ExternalTexture(gvrContext);
@@ -98,7 +98,7 @@ public class VideoSceneObject extends SceneObject {
      * object,} using the Android {@link MediaPlayer}
      * 
      * @param gvrContext
-     *            current {@link GLContext}
+     *            current {@link VrContext}
      * @param width
      *            the rectangle's width
      * @param height
@@ -110,7 +110,7 @@ public class VideoSceneObject extends SceneObject {
      * @throws IllegalArgumentException
      *             on an invalid {@code videoType} parameter
      */
-    public VideoSceneObject(GLContext gvrContext, float width,
+    public VideoSceneObject(VrContext gvrContext, float width,
             float height, MediaPlayer mediaPlayer, int videoType) {
         this(gvrContext, gvrContext.createQuad(width, height), mediaPlayer,
                 videoType);

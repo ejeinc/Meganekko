@@ -27,7 +27,7 @@ public abstract class MaterialShaderId {
     private final static SparseArray<MaterialShaderId> sIds = new SparseArray<MaterialShaderId>();
 
     static {
-        GLContext.addResetOnRestartHandler(new Runnable() {
+        VrContext.addResetOnRestartHandler(new Runnable() {
 
             @Override
             public void run() {

@@ -21,7 +21,7 @@ import com.eje_c.meganekko.Material.GVRShaderType;
 
 public class Light extends HybridObject {
 
-    public Light(GLContext gvrContext) {
+    public Light(VrContext gvrContext) {
         super(gvrContext, NativeLight.ctor());
         // set light parameters to OpenGL default values
         setPosition(0.0f, 0.0f, 1.0f);

@@ -28,7 +28,7 @@ import android.content.res.Resources;
 public abstract class BaseShaderManager<MAP, ID> extends HybridObject
         implements ShaderManagers<MAP, ID> {
 
-    protected BaseShaderManager(GLContext gvrContext, long pointer) {
+    protected BaseShaderManager(VrContext gvrContext, long pointer) {
         super(gvrContext, pointer);
     }
 
@@ -65,7 +65,7 @@ public abstract class BaseShaderManager<MAP, ID> extends HybridObject
     }
 
     protected Resources getResources() {
-        return getGVRContext().getContext().getResources();
+        return getVrContext().getContext().getResources();
     }
 
     protected static InputStream open(Resources resources, String pathPrefix,

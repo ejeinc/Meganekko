@@ -111,7 +111,7 @@ public class Picker {
             long[] ptrs = NativePicker.pickScene(scene.getNative(), ox, oy, oz,
                     dx, dy, dz);
             EyePointeeHolder[] eyePointeeHolders = new EyePointeeHolder[ptrs.length];
-            GLContext gvrContext = scene.getGVRContext();
+            VrContext gvrContext = scene.getVrContext();
             for (int i = 0, length = ptrs.length; i < length; ++i) {
                 Log.d(TAG, "pickScene(): ptrs[%d] = %x", i, ptrs[i]);
                 eyePointeeHolders[i] = EyePointeeHolder.lookup(gvrContext,
@@ -241,7 +241,7 @@ public class Picker {
             float ox, float oy, float oz, float dx, float dy, float dz) {
         sFindObjectsLock.lock();
         try {
-            GLContext gvrContext = scene.getGVRContext();
+            VrContext gvrContext = scene.getVrContext();
 
             long[] pointers = NativePicker.pickScene(scene.getNative(), ox, oy,
                     oz, dx, dy, dz);

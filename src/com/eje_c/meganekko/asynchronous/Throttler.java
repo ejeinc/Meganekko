@@ -25,7 +25,7 @@ import java.util.PriorityQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.eje_c.meganekko.AndroidResource;
-import com.eje_c.meganekko.GLContext;
+import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.HybridObject;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.AndroidResource.Callback;
@@ -56,7 +56,7 @@ abstract class Throttler {
         requests.registerDatatype(targetClass, factory);
     }
 
-    static void registerCallback(GLContext gvrContext,
+    static void registerCallback(VrContext gvrContext,
             Class<? extends HybridObject> outClass,
             CancelableCallback<? extends HybridObject> callback,
             AndroidResource request, int priority) {
@@ -118,7 +118,7 @@ abstract class Throttler {
      *            thread
      */
     interface GlConverter<OUTPUT extends HybridObject, INTERMEDIATE> {
-        OUTPUT convert(GLContext gvrContext, INTERMEDIATE input);
+        OUTPUT convert(VrContext gvrContext, INTERMEDIATE input);
     }
 
     /**
@@ -151,12 +151,12 @@ abstract class Throttler {
     static abstract class AsyncLoader<OUTPUT extends HybridObject, INTERMEDIATE>
             implements Cancelable {
 
-        protected final GLContext gvrContext;
+        protected final VrContext gvrContext;
         protected final AndroidResource resource;
         protected final GlConverter<OUTPUT, INTERMEDIATE> converter;
         protected final CancelableCallback<HybridObject> callback;
 
-        protected AsyncLoader(GLContext gvrContext,
+        protected AsyncLoader(VrContext gvrContext,
                 GlConverter<OUTPUT, INTERMEDIATE> converter,
                 AndroidResource request,
                 CancelableCallback<HybridObject> callback) {
@@ -219,7 +219,7 @@ abstract class Throttler {
      * {@link Throttler#registerDatatype(Class, AsyncLoaderFactory)} to
      * associate an {@link AsyncLoaderFactory} with a target {@code .class}
      * constant.
-     * {@link Throttler#registerCallback(GLContext, Class, CancelableCallback, AndroidResource, int)}
+     * {@link Throttler#registerCallback(VrContext, Class, CancelableCallback, AndroidResource, int)}
      * uses the {@code .class} constant to find the right
      * {@link AsyncLoaderFactory} when it's time to actually run a request; it
      * creates an {@link AsyncLoaderFactory} and runs it on a
@@ -236,7 +236,7 @@ abstract class Throttler {
     static abstract class AsyncLoaderFactory<OUTPUT extends HybridObject, INTERMEDIATE> {
         /** Create an AsyncLoader of the right type */
         abstract AsyncLoader<OUTPUT, INTERMEDIATE> threadProc(
-                GLContext gvrContext, AndroidResource request,
+                VrContext gvrContext, AndroidResource request,
                 CancelableCallback<HybridObject> callback, int priority);
     }
 
@@ -288,7 +288,7 @@ abstract class Throttler {
             threadFactories.put(targetClass, factory);
         }
 
-        void registerCallback(GLContext gvrContext,
+        void registerCallback(VrContext gvrContext,
                 Class<? extends HybridObject> outClass,
                 CancelableCallback<? extends HybridObject> callback,
                 AndroidResource request, int priority) {
@@ -352,7 +352,7 @@ abstract class Throttler {
 
             private final String TAG = Log.tag(PendingRequest.class);
 
-            private final int EMPTY_LIST = GLContext.LOWEST_PRIORITY - 1;
+            private final int EMPTY_LIST = VrContext.LOWEST_PRIORITY - 1;
 
             private final AndroidResource request;
             private final List<CancelableCallback<? extends HybridObject>> callbacks = new ArrayList<CancelableCallback<? extends HybridObject>>(
@@ -361,7 +361,7 @@ abstract class Throttler {
             private int priority = EMPTY_LIST;
             private int highestPriority = priority;
 
-            public PendingRequest(GLContext gvrContext,
+            public PendingRequest(VrContext gvrContext,
                     AndroidResource request,
                     CancelableCallback<? extends HybridObject> callback,
                     int priority, Class<? extends HybridObject> outClass) {

@@ -38,9 +38,9 @@ public class Scene extends HybridObject {
      * Constructs a scene with a camera rig holding left & right cameras in it.
      * 
      * @param gvrContext
-     *            {@link GLContext} the app is using.
+     *            {@link VrContext} the app is using.
      */
-    public Scene(GLContext gvrContext) {
+    public Scene(VrContext gvrContext) {
         super(gvrContext, NativeScene.ctor());
 
         Camera camera = new Camera(gvrContext);
@@ -48,7 +48,7 @@ public class Scene extends HybridObject {
         setMainCamera(camera);
     }
 
-    private Scene(GLContext gvrContext, long ptr) {
+    private Scene(VrContext gvrContext, long ptr) {
         super(gvrContext, ptr);
     }
 

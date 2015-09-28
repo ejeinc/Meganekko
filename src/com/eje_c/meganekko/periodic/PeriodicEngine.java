@@ -18,7 +18,7 @@ package com.eje_c.meganekko.periodic;
 import java.util.PriorityQueue;
 
 import com.eje_c.meganekko.FrameListener;
-import com.eje_c.meganekko.GLContext;
+import com.eje_c.meganekko.VrContext;
 
 /**
  * Schedule {@linkplain Runnable runnables} to run on the GL thread at a future
@@ -33,7 +33,7 @@ import com.eje_c.meganekko.GLContext;
  * 
  * <p>
  * The periodic engine is an optional component of GVRF: You need to
- * {@linkplain GLContext#getPeriodicEngine() get the singleton} in order to use
+ * {@linkplain VrContext#getPeriodicEngine() get the singleton} in order to use
  * it. For example,
  * 
  * <pre>
@@ -56,7 +56,7 @@ import com.eje_c.meganekko.GLContext;
  * <p>
  * The engine maintains a priority queue of events, which it checks in a
  * {@linkplain FrameListener frame listener}; events run as
- * {@linkplain GLContext#runOnGlThread(Runnable) run-once events.} Every frame,
+ * {@linkplain VrContext#runOnGlThread(Runnable) run-once events.} Every frame,
  * GVRF runs any run-once events; then any frame listeners (including
  * animations); then your {@linkplain GVRScript#onStep() onStep() method;} and
  * then it renders the scene. This means that any periodic events that run on a
@@ -74,7 +74,7 @@ public class PeriodicEngine {
     private static PeriodicEngine sInstance = null;
 
     static {
-        GLContext.addResetOnRestartHandler(new Runnable() {
+        VrContext.addResetOnRestartHandler(new Runnable() {
 
             @Override
             public void run() {
@@ -83,11 +83,11 @@ public class PeriodicEngine {
         });
     }
 
-    private final GLContext mContext;
+    private final VrContext mContext;
     private final DrawFrameListener mDrawFrameListener = new DrawFrameListener();
     private final PriorityQueue<EventImplementation> mQueue = new PriorityQueue<EventImplementation>();
 
-    protected PeriodicEngine(GLContext context) {
+    protected PeriodicEngine(VrContext context) {
         mContext = context;
         context.registerFrameListener(mDrawFrameListener);
     }
@@ -100,7 +100,7 @@ public class PeriodicEngine {
      * 
      * @return Periodic engine singleton.
      */
-    public static synchronized PeriodicEngine getInstance(GLContext context) {
+    public static synchronized PeriodicEngine getInstance(VrContext context) {
         if (sInstance == null) {
             sInstance = new PeriodicEngine(context);
         }

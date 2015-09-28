@@ -24,9 +24,9 @@
 #include "OVR_Locale.h"
 #include "SoundEffectContext.h"
 #include "Input.h"
-#include "context.h"
 #include "Android/JniUtils.h"
 #include "SoundEffectContext.h"
+#include "vr_context.h"
 
 using namespace OVR;
 

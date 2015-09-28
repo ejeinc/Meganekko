@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#include "context.h"
 #include "../engine/renderer/renderer.h"
+#include "vr_context.h"
 
 namespace mgn
 {

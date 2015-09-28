@@ -49,7 +49,7 @@ public class MeganekkoActivity extends VrActivity {
     private final Queue<Runnable> mRunnables = new LinkedBlockingQueue<Runnable>();
     private final Set<FrameListener> mFrameListeners = new CopyOnWriteArraySet<>();
     private InternalSensorManager mInternalSensorManager;
-    private GLContext mGVRContext = null;
+    private VrContext mGVRContext = null;
     private boolean mDocked;
     private VrFrame vrFrame;
 
@@ -103,7 +103,7 @@ public class MeganekkoActivity extends VrActivity {
         mDockEventReceiver = new DockEventReceiver(this, mRunOnDock, mRunOnUndock);
         mInternalSensorManager = new InternalSensorManager(this, getAppPtr());
 
-        mGVRContext = new GLContext(this);
+        mGVRContext = new VrContext(this);
         nativeSetContext(getAppPtr(), mGVRContext.getNativePtr());
     }
 
@@ -137,7 +137,7 @@ public class MeganekkoActivity extends VrActivity {
      * 
      * @param context
      */
-    protected void oneTimeInit(GLContext context) {
+    protected void oneTimeInit(VrContext context) {
     }
 
     /**
@@ -191,7 +191,7 @@ public class MeganekkoActivity extends VrActivity {
      * 
      * @param context
      */
-    protected void oneTimeShutDown(GLContext context) {
+    protected void oneTimeShutDown(VrContext context) {
     }
 
     public void hideGazeCursor() {
@@ -399,7 +399,7 @@ public class MeganekkoActivity extends VrActivity {
      * 
      * @return {@code GVRContext}
      */
-    public GLContext getGVRContext() {
+    public VrContext getGVRContext() {
         return mGVRContext;
     }
 

@@ -16,7 +16,7 @@
 package com.eje_c.meganekko.asynchronous;
 
 import com.eje_c.meganekko.AndroidResource;
-import com.eje_c.meganekko.GLContext;
+import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.HybridObject;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.AndroidResource.CancelableCallback;
@@ -37,7 +37,7 @@ abstract class AsyncMesh {
      * The API
      */
 
-    static void loadMesh(GLContext gvrContext,
+    static void loadMesh(VrContext gvrContext,
             CancelableCallback<Mesh> callback, AndroidResource resource,
             int priority) {
         Throttler.registerCallback(gvrContext, MESH_CLASS, callback, resource,
@@ -52,12 +52,12 @@ abstract class AsyncMesh {
         static final GlConverter<Mesh, Mesh> sConverter = new GlConverter<Mesh, Mesh>() {
 
             @Override
-            public Mesh convert(GLContext gvrContext, Mesh mesh) {
+            public Mesh convert(VrContext gvrContext, Mesh mesh) {
                 return mesh;
             }
         };
 
-        AsyncLoadMesh(GLContext gvrContext, AndroidResource request,
+        AsyncLoadMesh(VrContext gvrContext, AndroidResource request,
                 CancelableCallback<HybridObject> callback, int priority) {
             super(gvrContext, sConverter, request, callback);
         }
@@ -76,7 +76,7 @@ abstract class AsyncMesh {
 
                     @Override
                     AsyncLoader<Mesh, Mesh> threadProc(
-                            GLContext gvrContext, AndroidResource request,
+                            VrContext gvrContext, AndroidResource request,
                             CancelableCallback<HybridObject> callback,
                             int priority) {
                         return new AsyncLoadMesh(gvrContext, request, callback,

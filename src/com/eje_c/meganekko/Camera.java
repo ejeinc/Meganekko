@@ -19,11 +19,11 @@ package com.eje_c.meganekko;
 public class Camera extends SceneObject {
 
     /** Constructs a camera rig without cameras attached. */
-    public Camera(GLContext gvrContext) {
+    public Camera(VrContext gvrContext) {
         super(gvrContext, NativeCamera.ctor());
     }
 
-    private Camera(GLContext gvrContext, long ptr) {
+    private Camera(VrContext gvrContext, long ptr) {
         super(gvrContext, ptr);
     }
 

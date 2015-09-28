@@ -24,7 +24,7 @@ import com.eje_c.meganekko.Transform;
 import android.graphics.Color;
 
 /**
- * The root of the GVRF animation tree.
+ * The root of the animation tree.
  * 
  * This class (and the {@linkplain AnimationEngine engine}) supply the common
  * functionality: descendants are tiny classes that contain compiled (ie, no
@@ -69,7 +69,7 @@ import android.graphics.Color;
  * 
  * <p>
  * Animations run in a {@link FrameListener}, so they happen before your
- * {@link GVRScript#onStep() onStep()} handler, which happens before GVRF
+ * {@link GVRScript#onStep() onStep()} handler, which happens before 
  * renders the scene graph. This has two consequences:
  * <ul>
  * <li>When you start an animation in an {@link GVRScript#onStep()} handler, it

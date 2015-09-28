@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.eje_c.meganekko.FrameListener;
-import com.eje_c.meganekko.GLContext;
 import com.eje_c.meganekko.SceneObject;
+import com.eje_c.meganekko.VrContext;
 
 /**
  * This class runs {@linkplain Animation animations}.
@@ -30,7 +30,7 @@ import com.eje_c.meganekko.SceneObject;
  * 
  * <p>
  * The animation engine is an optional part of GVRF: to use it, you must call
- * {@link #getInstance(GLContext)} to lazy-create the singleton.
+ * {@link #getInstance(VrContext)} to lazy-create the singleton.
  * 
  * <p>
  * You can {@link #stop(Animation)} a running animation at any time, but
@@ -50,7 +50,7 @@ public class AnimationEngine {
     private static AnimationEngine sInstance = null;
 
     static {
-        GLContext.addResetOnRestartHandler(new Runnable() {
+        VrContext.addResetOnRestartHandler(new Runnable() {
 
             @Override
             public void run() {
@@ -61,9 +61,9 @@ public class AnimationEngine {
 
     private final List<Animation> mAnimations = new ArrayList<Animation>();
     private final FrameListener mOnDrawFrame = new DrawFrame();
-    private final GLContext gvrContext;
+    private final VrContext gvrContext;
 
-    protected AnimationEngine(GLContext gvrContext) {
+    protected AnimationEngine(VrContext gvrContext) {
         gvrContext.registerFrameListener(mOnDrawFrame);
         this.gvrContext = gvrContext;
     }
@@ -76,7 +76,7 @@ public class AnimationEngine {
      *            current GVR context
      */
     public static synchronized AnimationEngine getInstance(
-            GLContext gvrContext) {
+            VrContext gvrContext) {
         if (sInstance == null) {
             sInstance = new AnimationEngine(gvrContext);
         }

@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Manages custom shaders, for rendering scene objects.
  * 
- * Get the singleton from {@link GLContext#getMaterialShaderManager()}.
+ * Get the singleton from {@link VrContext#getMaterialShaderManager()}.
  */
 public class MaterialShaderManager extends
         BaseShaderManager<MaterialMap, CustomMaterialShaderId>
@@ -29,7 +29,7 @@ public class MaterialShaderManager extends
 
     private final Map<CustomMaterialShaderId, MaterialMap> materialMaps = new HashMap<CustomMaterialShaderId, MaterialMap>();
 
-    MaterialShaderManager(GLContext gvrContext) {
+    MaterialShaderManager(VrContext gvrContext) {
         super(gvrContext, NativeShaderManager.ctor());
     }
 
@@ -52,7 +52,7 @@ public class MaterialShaderManager extends
     @SuppressWarnings("resource")
     private MaterialMap retrieveShaderMap(CustomMaterialShaderId id) {
         long ptr = NativeShaderManager.getCustomShader(getNative(), id.ID);
-        return ptr == 0 ? null : new MaterialMap(getGVRContext(), ptr);
+        return ptr == 0 ? null : new MaterialMap(getVrContext(), ptr);
     }
 }
 

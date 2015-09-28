@@ -32,16 +32,16 @@ public class TextureParameters {
 
     private int anisotropicValue;
 
-    GLContext mGVRContext = null;
+    VrContext mGVRContext = null;
 
     /**
      * Constructs a texture parameter object with default values for filter and
      * warp.
      * 
      * @param gvrContext
-     *            Current {@link GLContext}
+     *            Current {@link VrContext}
      */
-    public TextureParameters(GLContext gvrContext) {
+    public TextureParameters(VrContext gvrContext) {
         mGVRContext = gvrContext;
         minFilterType = TextureFilterType.GL_LINEAR;
         magFilterType = TextureFilterType.GL_LINEAR;

@@ -39,11 +39,11 @@ import android.graphics.Bitmap;
  * Internal API for asynchronous resource loading.
  * 
  * You will normally call into this class through
- * {@link GLContext#loadCompressedTexture(AndroidResource.CompressedTextureCallback, AndroidResource)}
+ * {@link VrContext#loadCompressedTexture(AndroidResource.CompressedTextureCallback, AndroidResource)}
  * or
- * {@link GLContext#loadBitmapTexture(AndroidResource.BitmapTextureCallback, AndroidResource)}
+ * {@link VrContext#loadBitmapTexture(AndroidResource.BitmapTextureCallback, AndroidResource)}
  * or
- * {@link GLContext#loadMesh(AndroidResource.MeshCallback, AndroidResource)}
+ * {@link VrContext#loadMesh(AndroidResource.MeshCallback, AndroidResource)}
  * .
  */
 public class AsynchronousResourceLoader {
@@ -55,7 +55,7 @@ public class AsynchronousResourceLoader {
      * package boundaries. Calling it from user code is both harmless and
      * pointless.
      */
-    public static void setup(GLContext gvrContext) {
+    public static void setup(VrContext gvrContext) {
         AsyncBitmapTexture.setup(gvrContext);
     }
 
@@ -63,7 +63,7 @@ public class AsynchronousResourceLoader {
      * Load a compressed texture asynchronously.
      * 
      * This is the implementation of
-     * {@link GLContext#loadCompressedTexture(AndroidResource.CompressedTextureCallback, AndroidResource)}
+     * {@link VrContext#loadCompressedTexture(AndroidResource.CompressedTextureCallback, AndroidResource)}
      * : it will usually be more convenient (and more efficient) to call that
      * directly.
      * 
@@ -79,7 +79,7 @@ public class AsynchronousResourceLoader {
      *             If {@code gvrContext} or {@code callback} parameters are
      *             {@code null}
      */
-    public static void loadCompressedTexture(final GLContext gvrContext,
+    public static void loadCompressedTexture(final VrContext gvrContext,
             ResourceCache<Texture> textureCache,
             final CompressedTextureCallback callback,
             final AndroidResource resource) throws IllegalArgumentException {
@@ -91,7 +91,7 @@ public class AsynchronousResourceLoader {
      * Load a compressed texture asynchronously.
      * 
      * This is the implementation of
-     * {@link GLContext#loadCompressedTexture(AndroidResource.CompressedTextureCallback, AndroidResource)}
+     * {@link VrContext#loadCompressedTexture(AndroidResource.CompressedTextureCallback, AndroidResource)}
      * : it will usually be more convenient (and more efficient) to call that
      * directly.
      * 
@@ -114,7 +114,7 @@ public class AsynchronousResourceLoader {
      *             If {@code gvrContext} or {@code callback} parameters are
      *             {@code null}
      */
-    public static void loadCompressedTexture(final GLContext gvrContext,
+    public static void loadCompressedTexture(final VrContext gvrContext,
             final ResourceCache<Texture> textureCache,
             final CompressedTextureCallback callback,
             final AndroidResource resource, final int quality)
@@ -166,7 +166,7 @@ public class AsynchronousResourceLoader {
      * Load a bitmap texture asynchronously.
      * 
      * This is the implementation of
-     * {@link GLContext#loadBitmapTexture(AndroidResource.BitmapTextureCallback, AndroidResource, int)}
+     * {@link VrContext#loadBitmapTexture(AndroidResource.BitmapTextureCallback, AndroidResource, int)}
      * - it will usually be more convenient (and more efficient) to call that
      * directly.
      * 
@@ -180,15 +180,15 @@ public class AsynchronousResourceLoader {
      *            Basically, a stream containing a compressed texture. Taking a
      *            {@link AndroidResource} parameter eliminates six overloads.
      * @param priority
-     *            A value {@literal >=} {@link GLContext#LOWEST_PRIORITY} and
-     *            {@literal <=} {@link GLContext#HIGHEST_PRIORITY}
+     *            A value {@literal >=} {@link VrContext#LOWEST_PRIORITY} and
+     *            {@literal <=} {@link VrContext#HIGHEST_PRIORITY}
      * @throws IllegalArgumentException
      *             If {@code priority} {@literal <}
-     *             {@link GLContext#LOWEST_PRIORITY} or {@literal >}
-     *             {@link GLContext#HIGHEST_PRIORITY}, or any of the other
+     *             {@link VrContext#LOWEST_PRIORITY} or {@literal >}
+     *             {@link VrContext#HIGHEST_PRIORITY}, or any of the other
      *             parameters are {@code null}.
      */
-    public static void loadBitmapTexture(GLContext gvrContext,
+    public static void loadBitmapTexture(VrContext gvrContext,
             ResourceCache<Texture> textureCache,
             final BitmapTextureCallback callback,
             final AndroidResource resource, int priority)
@@ -218,7 +218,7 @@ public class AsynchronousResourceLoader {
      * Load a (compressed or bitmapped) texture asynchronously.
      * 
      * This is the implementation of
-     * {@link GLContext#loadTexture(com.eje_c.meganekko.AndroidResource.TextureCallback, AndroidResource, int, int)}
+     * {@link VrContext#loadTexture(com.eje_c.meganekko.AndroidResource.TextureCallback, AndroidResource, int, int)}
      * - it will usually be more convenient (and more efficient) to call that
      * directly.
      * 
@@ -232,15 +232,15 @@ public class AsynchronousResourceLoader {
      *            Basically, a stream containing a compressed texture. Taking a
      *            {@link AndroidResource} parameter eliminates six overloads.
      * @param priority
-     *            A value {@literal >=} {@link GLContext#LOWEST_PRIORITY} and
-     *            {@literal <=} {@link GLContext#HIGHEST_PRIORITY}
+     *            A value {@literal >=} {@link VrContext#LOWEST_PRIORITY} and
+     *            {@literal <=} {@link VrContext#HIGHEST_PRIORITY}
      * @throws IllegalArgumentException
      *             If {@code priority} {@literal <}
-     *             {@link GLContext#LOWEST_PRIORITY} or {@literal >}
-     *             {@link GLContext#HIGHEST_PRIORITY}, or any of the other
+     *             {@link VrContext#LOWEST_PRIORITY} or {@literal >}
+     *             {@link VrContext#HIGHEST_PRIORITY}, or any of the other
      *             parameters are {@code null}.
      */
-    public static void loadTexture(final GLContext gvrContext,
+    public static void loadTexture(final VrContext gvrContext,
             final ResourceCache<Texture> textureCache,
             final CancelableCallback<Texture> callback,
             final AndroidResource resource, final int priority,
@@ -313,7 +313,7 @@ public class AsynchronousResourceLoader {
      * Load a (compressed or bitmapped) texture asynchronously.
      * 
      * This is the implementation of
-     * {@link GLContext#loadFutureTexture(AndroidResource, int, int)} - it
+     * {@link VrContext#loadFutureTexture(AndroidResource, int, int)} - it
      * will usually be more convenient (and more efficient) to call that
      * directly.
      * 
@@ -347,7 +347,7 @@ public class AsynchronousResourceLoader {
      * @return A {@link Future} that you can pass to methods like
      *         {@link Shaders#setMainTexture(Future)}
      */
-    public static Future<Texture> loadFutureTexture(GLContext gvrContext,
+    public static Future<Texture> loadFutureTexture(VrContext gvrContext,
             ResourceCache<Texture> textureCache,
             AndroidResource resource, int priority, int quality) {
         Texture cached = textureCache == null ? null : textureCache
@@ -368,7 +368,7 @@ public class AsynchronousResourceLoader {
      * Load a cube map texture asynchronously.
      * 
      * This is the implementation of
-     * {@link GLContext#loadFutureCubemapTexture(AndroidResource)} - it will
+     * {@link VrContext#loadFutureCubemapTexture(AndroidResource)} - it will
      * usually be more convenient (and more efficient) to call that directly.
      * 
      * @param gvrContext
@@ -390,7 +390,7 @@ public class AsynchronousResourceLoader {
      *         {@link Shaders#setMainTexture(Future)}
      */
     public static Future<Texture> loadFutureCubemapTexture(
-            GLContext gvrContext, ResourceCache<Texture> textureCache,
+            VrContext gvrContext, ResourceCache<Texture> textureCache,
             AndroidResource resource, int priority,
             Map<String, Integer> faceIndexMap) {
         Texture cached = textureCache.get(resource);
@@ -411,7 +411,7 @@ public class AsynchronousResourceLoader {
      * Load a GL mesh asynchronously.
      * 
      * This is the implementation of
-     * {@link GLContext#loadMesh(AndroidResource.MeshCallback, AndroidResource, int)}
+     * {@link VrContext#loadMesh(AndroidResource.MeshCallback, AndroidResource, int)}
      * - it will usually be more convenient to call that directly.
      * 
      * @param gvrContext
@@ -422,17 +422,17 @@ public class AsynchronousResourceLoader {
      *            Basically, a stream containing a 3D model. Taking a
      *            {@link AndroidResource} parameter eliminates six overloads.
      * @param priority
-     *            A value {@literal >=} {@link GLContext#LOWEST_PRIORITY} and
-     *            {@literal <=} {@link GLContext#HIGHEST_PRIORITY}
+     *            A value {@literal >=} {@link VrContext#LOWEST_PRIORITY} and
+     *            {@literal <=} {@link VrContext#HIGHEST_PRIORITY}
      * @throws IllegalArgumentException
      *             If {@code priority} {@literal <}
-     *             {@link GLContext#LOWEST_PRIORITY} or {@literal >}
-     *             {@link GLContext#HIGHEST_PRIORITY}, or any of the other
+     *             {@link VrContext#LOWEST_PRIORITY} or {@literal >}
+     *             {@link VrContext#HIGHEST_PRIORITY}, or any of the other
      *             parameters are {@code null}.
      */
     // This method does not take a ResourceCache<GVRMeh> parameter because it
     // (indirectly) calls GVRContext.loadMesh() which 'knows about' the cache
-    public static void loadMesh(GLContext gvrContext,
+    public static void loadMesh(VrContext gvrContext,
             CancelableCallback<Mesh> callback, AndroidResource resource,
             int priority) {
         validatePriorityCallbackParameters(gvrContext, callback, resource,
@@ -445,7 +445,7 @@ public class AsynchronousResourceLoader {
      * Load a GL mesh asynchronously.
      * 
      * This is the implementation of
-     * {@link GLContext#loadFutureMesh(AndroidResource, int)} - it will
+     * {@link VrContext#loadFutureMesh(AndroidResource, int)} - it will
      * usually be more convenient to call that directly.
      * 
      * @param gvrContext
@@ -462,7 +462,7 @@ public class AsynchronousResourceLoader {
      * @return A {@link Future} that you can pass to
      *         {@link RenderData#setMesh(Future)}
      */
-    public static Future<Mesh> loadFutureMesh(GLContext gvrContext,
+    public static Future<Mesh> loadFutureMesh(VrContext gvrContext,
             AndroidResource resource, int priority) {
         FutureResource<Mesh> result = new FutureResource<Mesh>();
 
@@ -557,7 +557,7 @@ public class AsynchronousResourceLoader {
     }
 
     private static <T extends HybridObject> void validateCallbackParameters(
-            GLContext gvrContext, AndroidResource.Callback<T> callback,
+            VrContext gvrContext, AndroidResource.Callback<T> callback,
             AndroidResource resource) {
         if (gvrContext == null) {
             throw new IllegalArgumentException("gvrContext == null");
@@ -571,11 +571,11 @@ public class AsynchronousResourceLoader {
     }
 
     private static <T extends HybridObject> void validatePriorityCallbackParameters(
-            GLContext gvrContext, AndroidResource.Callback<T> callback,
+            VrContext gvrContext, AndroidResource.Callback<T> callback,
             AndroidResource resource, int priority) {
         validateCallbackParameters(gvrContext, callback, resource);
-        if (priority < GLContext.LOWEST_PRIORITY
-                || priority > GLContext.HIGHEST_PRIORITY) {
+        if (priority < VrContext.LOWEST_PRIORITY
+                || priority > VrContext.HIGHEST_PRIORITY) {
             throw new IllegalArgumentException(
                     "Priority < GVRContext.LOWEST_PRIORITY or > GVRContext.HIGHEST_PRIORITY");
         }
