@@ -26,7 +26,6 @@
 #include <string>
 
 #include "GLES3/gl3.h"
-#include "gl/gl_buffer.h"
 
 #include "objects/hybrid_object.h"
 #include "objects/material.h"
