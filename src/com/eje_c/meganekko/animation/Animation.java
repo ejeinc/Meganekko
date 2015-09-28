@@ -22,6 +22,7 @@ import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.Transform;
 
 import android.graphics.Color;
+import android.view.animation.Interpolator;
 
 /**
  * The root of the animation tree.
@@ -376,7 +377,7 @@ public abstract class Animation {
 
     private float interpolate(float cycleTime, float duration) {
         float ratio = cycleTime / duration;
-        return mInterpolator == null ? ratio : mInterpolator.mapRatio(ratio);
+        return mInterpolator == null ? ratio : mInterpolator.getInterpolation(ratio);
     }
 
     /**
