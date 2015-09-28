@@ -21,7 +21,10 @@ android {
                 "${System.env.OVR_MOBILE_SDK}/VrAppSupport/VrLocale/Projects/Android/src",
                 "${System.env.OVR_MOBILE_SDK}/VrAppSupport/VrSound/Projects/Android/src"]
             jniLibs.srcDirs = ['libs']
-            res.srcDirs = ['res']
+            res.srcDirs = [
+                'res',
+                "${System.env.OVR_MOBILE_SDK}/VrAppFramework/res"
+            ]
         }
     }
 
