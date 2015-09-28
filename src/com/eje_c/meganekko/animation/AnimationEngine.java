@@ -29,7 +29,7 @@ import com.eje_c.meganekko.VrContext;
  * {@linkplain SceneObject scene object}.
  * 
  * <p>
- * The animation engine is an optional part of GVRF: to use it, you must call
+ * The animation engine is an optional part of Meganekko: to use it, you must call
  * {@link #getInstance(VrContext)} to lazy-create the singleton.
  * 
  * <p>
@@ -61,24 +61,24 @@ public class AnimationEngine {
 
     private final List<Animation> mAnimations = new ArrayList<Animation>();
     private final FrameListener mOnDrawFrame = new DrawFrame();
-    private final VrContext gvrContext;
+    private final VrContext vrContext;
 
-    protected AnimationEngine(VrContext gvrContext) {
-        gvrContext.registerFrameListener(mOnDrawFrame);
-        this.gvrContext = gvrContext;
+    protected AnimationEngine(VrContext vrContext) {
+        vrContext.registerFrameListener(mOnDrawFrame);
+        this.vrContext = vrContext;
     }
 
     /**
-     * The animation engine is an optional part of GVRF: You do have to call
+     * The animation engine is an optional part of Meganekko: You do have to call
      * {@code getInstance()} to lazy-create the singleton.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current GVR context
      */
     public static synchronized AnimationEngine getInstance(
-            VrContext gvrContext) {
+            VrContext vrContext) {
         if (sInstance == null) {
-            sInstance = new AnimationEngine(gvrContext);
+            sInstance = new AnimationEngine(vrContext);
         }
         return sInstance;
     }
@@ -154,7 +154,7 @@ public class AnimationEngine {
                 List<Animation> animations = new ArrayList<Animation>(
                         mAnimations);
                 for (Animation animation : animations) {
-                    if (animation.onDrawFrame(gvrContext.getActivity().getVrFrame().getDeltaSeconds()) == false) {
+                    if (animation.onDrawFrame(vrContext.getActivity().getVrFrame().getDeltaSeconds()) == false) {
                         mAnimations.remove(animation);
                     }
                 }

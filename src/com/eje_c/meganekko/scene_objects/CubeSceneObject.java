@@ -191,13 +191,13 @@ public class CubeSceneObject extends SceneObject {
      * The cube's triangles and normals are facing out and the same texture will
      * be applied to each side of the cube.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      */
-    public CubeSceneObject(VrContext gvrContext) {
-        super(gvrContext);
+    public CubeSceneObject(VrContext vrContext) {
+        super(vrContext);
 
-        createSimpleCube(gvrContext, true, new Material(gvrContext));
+        createSimpleCube(vrContext, true, new Material(vrContext));
     }
 
     /**
@@ -206,17 +206,17 @@ public class CubeSceneObject extends SceneObject {
      * The cube's triangles and normals are facing either in or out and the same
      * texture will be applied to each side of the cube.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      * 
      * @param facingOut
      *            whether the triangles and normals should be facing in or
      *            facing out.
      */
-    public CubeSceneObject(VrContext gvrContext, boolean facingOut) {
-        super(gvrContext);
+    public CubeSceneObject(VrContext vrContext, boolean facingOut) {
+        super(vrContext);
 
-        createSimpleCube(gvrContext, facingOut, new Material(gvrContext));
+        createSimpleCube(vrContext, facingOut, new Material(vrContext));
     }
 
     /**
@@ -226,7 +226,7 @@ public class CubeSceneObject extends SceneObject {
      * texture will be applied to each side of the cube. All six faces share the
      * same texture.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      * 
      * @param facingOut
@@ -237,13 +237,13 @@ public class CubeSceneObject extends SceneObject {
      *            the texture for six faces. {@code Future<GVRTexture>}
      *            is used here for asynchronously loading the texture.
      */
-    public CubeSceneObject(VrContext gvrContext, boolean facingOut,
+    public CubeSceneObject(VrContext vrContext, boolean facingOut,
             Future<Texture> futureTexture) {
-        super(gvrContext);
+        super(vrContext);
 
-        Material material = new Material(gvrContext);
+        Material material = new Material(vrContext);
         material.setMainTexture(futureTexture);
-        createSimpleCube(gvrContext, facingOut, material);
+        createSimpleCube(vrContext, facingOut, material);
     }
 
     /**
@@ -253,7 +253,7 @@ public class CubeSceneObject extends SceneObject {
      * texture will be applied to each side of the cube. All six faces share the
      * same material (i.e. same texture and same shader).
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      * 
      * @param facingOut
@@ -263,11 +263,11 @@ public class CubeSceneObject extends SceneObject {
      * @param material
      *            the material for six faces.
      */
-    public CubeSceneObject(VrContext gvrContext, boolean facingOut,
+    public CubeSceneObject(VrContext vrContext, boolean facingOut,
             Material material) {
-        super(gvrContext);
+        super(vrContext);
 
-        createSimpleCube(gvrContext, facingOut, material);
+        createSimpleCube(vrContext, facingOut, material);
     }
 
     /**
@@ -276,7 +276,7 @@ public class CubeSceneObject extends SceneObject {
      * The cube's triangles and normals are facing either in or out. Each face
      * has its own texture.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      * 
      * @param facingOut
@@ -289,9 +289,9 @@ public class CubeSceneObject extends SceneObject {
      *            loading the texture. The six textures are for front, right,
      *            back, left, top, and bottom faces respectively.
      */
-    public CubeSceneObject(VrContext gvrContext, boolean facingOut,
+    public CubeSceneObject(VrContext vrContext, boolean facingOut,
             ArrayList<Future<Texture>> futureTextureList) {
-        super(gvrContext);
+        super(vrContext);
 
         // assert length of futureTextureList is 6
         if (futureTextureList.size() != 6) {
@@ -299,7 +299,7 @@ public class CubeSceneObject extends SceneObject {
                     "The length of futureTextureList is not 6.");
         }
 
-        createSimpleCubeSixMeshes(gvrContext, facingOut, futureTextureList);
+        createSimpleCubeSixMeshes(vrContext, facingOut, futureTextureList);
     }
 
     /**
@@ -310,7 +310,7 @@ public class CubeSceneObject extends SceneObject {
      * The cube's triangles and normals are facing either in or out. Each face has its own
      * texture.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      * 
      * @param facingOut
@@ -326,9 +326,9 @@ public class CubeSceneObject extends SceneObject {
      *            the segment number along each axis. 
      *            
      */
-    public CubeSceneObject(VrContext gvrContext, boolean facingOut,
+    public CubeSceneObject(VrContext vrContext, boolean facingOut,
             ArrayList<Future<Texture>> futureTextureList, int segmentNumber) {
-        super(gvrContext);
+        super(vrContext);
 
         // assert length of futureTextureList is 6
         if (futureTextureList.size() != 6) {
@@ -336,13 +336,13 @@ public class CubeSceneObject extends SceneObject {
                     "The length of futureTextureList is not 6.");
         }
 
-        createComplexCube(gvrContext, facingOut, futureTextureList, segmentNumber);
+        createComplexCube(vrContext, facingOut, futureTextureList, segmentNumber);
     }
 
-    private void createSimpleCube(VrContext gvrContext, boolean facingOut,
+    private void createSimpleCube(VrContext vrContext, boolean facingOut,
             Material material) {
 
-        Mesh mesh = new Mesh(gvrContext);
+        Mesh mesh = new Mesh(vrContext);
 
         if (facingOut) {
             mesh.setVertices(SIMPLE_VERTICES);
@@ -356,7 +356,7 @@ public class CubeSceneObject extends SceneObject {
             mesh.setTriangles(SIMPLE_INWARD_INDICES);
         }
 
-        RenderData renderData = new RenderData(gvrContext);
+        RenderData renderData = new RenderData(vrContext);
         renderData.setMaterial(material);
         attachRenderData(renderData);
         renderData.setMesh(mesh);
@@ -388,13 +388,13 @@ public class CubeSceneObject extends SceneObject {
     private static final char[] SIMPLE_INWARD_BOTTOM_INDICES = { 20, 22, 21, // bottom
             21, 22, 23 };
 
-    private void createSimpleCubeSixMeshes(VrContext gvrContext,
+    private void createSimpleCubeSixMeshes(VrContext vrContext,
             boolean facingOut, ArrayList<Future<Texture>> futureTextureList) {
 
         SceneObject[] children = new SceneObject[6];
         Mesh[] meshes = new Mesh[6];
         for (int i = 0; i < 6; i++) {
-            meshes[i] = new Mesh(gvrContext);
+            meshes[i] = new Mesh(vrContext);
         }
 
         if (facingOut) {
@@ -408,7 +408,7 @@ public class CubeSceneObject extends SceneObject {
                 meshes[i].setVertices(SIMPLE_VERTICES);
                 meshes[i].setNormals(SIMPLE_OUTWARD_NORMALS);
                 meshes[i].setTexCoords(SIMPLE_OUTWARD_TEXCOORDS);
-                children[i] = new SceneObject(gvrContext,
+                children[i] = new SceneObject(vrContext,
                         new FutureWrapper<Mesh>(meshes[i]),
                         futureTextureList.get(i));
                 addChildObject(children[i]);
@@ -424,7 +424,7 @@ public class CubeSceneObject extends SceneObject {
                 meshes[i].setVertices(SIMPLE_VERTICES);
                 meshes[i].setNormals(SIMPLE_INWARD_NORMALS);
                 meshes[i].setTexCoords(SIMPLE_INWARD_TEXCOORDS);
-                children[i] = new SceneObject(gvrContext,
+                children[i] = new SceneObject(vrContext,
                         new FutureWrapper<Mesh>(meshes[i]),
                         futureTextureList.get(i));
                 addChildObject(children[i]);
@@ -432,7 +432,7 @@ public class CubeSceneObject extends SceneObject {
         }
         
         // attached an empty renderData for parent object, so that we can set some common properties
-        RenderData renderData = new RenderData(gvrContext);
+        RenderData renderData = new RenderData(vrContext);
         attachRenderData(renderData);
     }
 
@@ -441,12 +441,12 @@ public class CubeSceneObject extends SceneObject {
     private float[] texCoords;
     private char[] indices;
 
-    private void createComplexCube(VrContext gvrContext,
+    private void createComplexCube(VrContext vrContext,
             boolean facingOut, ArrayList<Future<Texture>> futureTextureList, int segmentNumber) {
 
         SceneObject[] children = new SceneObject[6];
         for (int i = 0; i < 6; i++) {
-            children[i] = new SceneObject(gvrContext);
+            children[i] = new SceneObject(vrContext);
             addChildObject(children[i]);
         }
         
@@ -531,12 +531,12 @@ public class CubeSceneObject extends SceneObject {
                 texCoords[6] = s1; 
                 texCoords[7] = t0;
                 
-                subMeshes[index] = new Mesh(gvrContext);
+                subMeshes[index] = new Mesh(vrContext);
                 subMeshes[index].setVertices(vertices);
                 subMeshes[index].setNormals(normals);
                 subMeshes[index].setTexCoords(texCoords);
                 subMeshes[index].setTriangles(indices);
-                grandchildren[index] = new SceneObject(gvrContext,
+                grandchildren[index] = new SceneObject(vrContext,
                         new FutureWrapper<Mesh>(subMeshes[index]),
                         futureTextureList.get(0));
                 children[0].addChildObject(grandchildren[index]);
@@ -593,12 +593,12 @@ public class CubeSceneObject extends SceneObject {
                 texCoords[6] = s1; 
                 texCoords[7] = t0;
                 
-                subMeshes[index] = new Mesh(gvrContext);
+                subMeshes[index] = new Mesh(vrContext);
                 subMeshes[index].setVertices(vertices);
                 subMeshes[index].setNormals(normals);
                 subMeshes[index].setTexCoords(texCoords);
                 subMeshes[index].setTriangles(indices);
-                grandchildren[index] = new SceneObject(gvrContext,
+                grandchildren[index] = new SceneObject(vrContext,
                         new FutureWrapper<Mesh>(subMeshes[index]),
                         futureTextureList.get(1));
                 children[1].addChildObject(grandchildren[index]);
@@ -655,12 +655,12 @@ public class CubeSceneObject extends SceneObject {
                 texCoords[6] = s1; 
                 texCoords[7] = t0;
                 
-                subMeshes[index] = new Mesh(gvrContext);
+                subMeshes[index] = new Mesh(vrContext);
                 subMeshes[index].setVertices(vertices);
                 subMeshes[index].setNormals(normals);
                 subMeshes[index].setTexCoords(texCoords);
                 subMeshes[index].setTriangles(indices);
-                grandchildren[index] = new SceneObject(gvrContext,
+                grandchildren[index] = new SceneObject(vrContext,
                         new FutureWrapper<Mesh>(subMeshes[index]),
                         futureTextureList.get(2));
                 children[2].addChildObject(grandchildren[index]);
@@ -717,12 +717,12 @@ public class CubeSceneObject extends SceneObject {
                 texCoords[6] = s1; 
                 texCoords[7] = t0;
                 
-                subMeshes[index] = new Mesh(gvrContext);
+                subMeshes[index] = new Mesh(vrContext);
                 subMeshes[index].setVertices(vertices);
                 subMeshes[index].setNormals(normals);
                 subMeshes[index].setTexCoords(texCoords);
                 subMeshes[index].setTriangles(indices);
-                grandchildren[index] = new SceneObject(gvrContext,
+                grandchildren[index] = new SceneObject(vrContext,
                         new FutureWrapper<Mesh>(subMeshes[index]),
                         futureTextureList.get(3));
                 children[3].addChildObject(grandchildren[index]);
@@ -774,12 +774,12 @@ public class CubeSceneObject extends SceneObject {
                 texCoords[6] = s1; 
                 texCoords[7] = t0;
                 
-                subMeshes[index] = new Mesh(gvrContext);
+                subMeshes[index] = new Mesh(vrContext);
                 subMeshes[index].setVertices(vertices);
                 subMeshes[index].setNormals(normals);
                 subMeshes[index].setTexCoords(texCoords);
                 subMeshes[index].setTriangles(indices);
-                grandchildren[index] = new SceneObject(gvrContext,
+                grandchildren[index] = new SceneObject(vrContext,
                         new FutureWrapper<Mesh>(subMeshes[index]),
                         futureTextureList.get(4));
                 children[4].addChildObject(grandchildren[index]);
@@ -831,12 +831,12 @@ public class CubeSceneObject extends SceneObject {
                 texCoords[6] = s1; 
                 texCoords[7] = t0;
                 
-                subMeshes[index] = new Mesh(gvrContext);
+                subMeshes[index] = new Mesh(vrContext);
                 subMeshes[index].setVertices(vertices);
                 subMeshes[index].setNormals(normals);
                 subMeshes[index].setTexCoords(texCoords);
                 subMeshes[index].setTriangles(indices);
-                grandchildren[index] = new SceneObject(gvrContext,
+                grandchildren[index] = new SceneObject(vrContext,
                         new FutureWrapper<Mesh>(subMeshes[index]),
                         futureTextureList.get(5));
                 children[5].addChildObject(grandchildren[index]);
@@ -844,7 +844,7 @@ public class CubeSceneObject extends SceneObject {
         }
 
         // attached an empty renderData for parent object, so that we can set some common properties
-        RenderData renderData = new RenderData(gvrContext);
+        RenderData renderData = new RenderData(vrContext);
         attachRenderData(renderData);
     }
 }

@@ -89,15 +89,15 @@ class CompressedTexture {
         this.data = data;
     }
 
-    GVRCompressedTexture toTexture(VrContext gvrContext, int quality) {
-        return new GVRCompressedTexture(gvrContext, internalformat, width,
+    GVRCompressedTexture toTexture(VrContext vrContext, int quality) {
+        return new GVRCompressedTexture(vrContext, internalformat, width,
                 height, imageSize, data.array(), levels, quality);
     }
 
     // Texture parameters
-    GVRCompressedTexture toTexture(VrContext gvrContext, int quality,
+    GVRCompressedTexture toTexture(VrContext vrContext, int quality,
             TextureParameters textureParameters) {
-        return new GVRCompressedTexture(gvrContext, internalformat, width,
+        return new GVRCompressedTexture(vrContext, internalformat, width,
                 height, imageSize, data.array(), levels, quality, textureParameters);
     }
 

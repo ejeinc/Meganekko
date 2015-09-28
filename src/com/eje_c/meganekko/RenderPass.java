@@ -75,12 +75,12 @@ public class RenderPass extends HybridObject {
     /**
      * Constructor.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            Current {@link VrContext}
      */
-    public RenderPass(VrContext gvrContext) {
-        super(gvrContext, NativeRenderPass.ctor());
-        mMaterial = new Material(gvrContext);
+    public RenderPass(VrContext vrContext) {
+        super(vrContext, NativeRenderPass.ctor());
+        mMaterial = new Material(vrContext);
         mCullFace = GVRCullFaceEnum.Back;
     }
 

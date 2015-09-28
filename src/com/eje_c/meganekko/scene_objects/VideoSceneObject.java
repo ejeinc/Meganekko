@@ -48,7 +48,7 @@ public class VideoSceneObject extends SceneObject {
      * Play a video on a {@linkplain SceneObject scene object} with an
      * arbitrarily complex geometry, using the Android {@link MediaPlayer}
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      * @param mesh
      *            a {@link Mesh} - see
@@ -61,10 +61,10 @@ public class VideoSceneObject extends SceneObject {
      * @throws IllegalArgumentException
      *             on an invalid {@code videoType} parameter
      */
-    public VideoSceneObject(VrContext gvrContext, Mesh mesh,
+    public VideoSceneObject(VrContext vrContext, Mesh mesh,
             MediaPlayer mediaPlayer, int videoType) {
-        super(gvrContext, mesh);
-        ExternalTexture texture = new ExternalTexture(gvrContext);
+        super(vrContext, mesh);
+        ExternalTexture texture = new ExternalTexture(vrContext);
 
         MaterialShaderId materialType;
         switch (videoType) {
@@ -85,19 +85,19 @@ public class VideoSceneObject extends SceneObject {
             }
             throw new IllegalArgumentException();
         }
-        Material material = new Material(gvrContext, materialType);
+        Material material = new Material(vrContext, materialType);
         material.setMainTexture(texture);
         getRenderData().setMaterial(material);
 
         mVideo = new GVRVideo(mediaPlayer, texture);
-        gvrContext.registerFrameListener(mVideo);
+        vrContext.registerFrameListener(mVideo);
     }
 
     /**
      * Play a video on a 2D, rectangular {@linkplain SceneObject scene
      * object,} using the Android {@link MediaPlayer}
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      * @param width
      *            the rectangle's width
@@ -110,9 +110,9 @@ public class VideoSceneObject extends SceneObject {
      * @throws IllegalArgumentException
      *             on an invalid {@code videoType} parameter
      */
-    public VideoSceneObject(VrContext gvrContext, float width,
+    public VideoSceneObject(VrContext vrContext, float width,
             float height, MediaPlayer mediaPlayer, int videoType) {
-        this(gvrContext, gvrContext.createQuad(width, height), mediaPlayer,
+        this(vrContext, vrContext.createQuad(width, height), mediaPlayer,
                 videoType);
     }
 

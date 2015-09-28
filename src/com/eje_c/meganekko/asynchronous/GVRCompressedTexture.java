@@ -58,17 +58,17 @@ public class GVRCompressedTexture extends Texture {
      */
     public final int mQuality;
 
-    GVRCompressedTexture(VrContext gvrContext, int internalFormat, int width,
+    GVRCompressedTexture(VrContext vrContext, int internalFormat, int width,
             int height, int imageSize, byte[] data, int levels, int quality) {
-        this(gvrContext, internalFormat, width, height, imageSize, data,
-                levels, quality, gvrContext.DEFAULT_TEXTURE_PARAMETERS);
+        this(vrContext, internalFormat, width, height, imageSize, data,
+                levels, quality, vrContext.DEFAULT_TEXTURE_PARAMETERS);
     }
 
     // Texture parameters
-    GVRCompressedTexture(VrContext gvrContext, int internalFormat, int width,
+    GVRCompressedTexture(VrContext vrContext, int internalFormat, int width,
             int height, int imageSize, byte[] data, int levels, int quality,
             TextureParameters textureParameters) {
-        super(gvrContext, NativeCompressedTexture.normalConstructor(GL_TARGET,
+        super(vrContext, NativeCompressedTexture.normalConstructor(GL_TARGET,
                 internalFormat, width, height, imageSize, data,
                 textureParameters.getCurrentValuesArray()));
         mLevels = levels;
@@ -77,9 +77,9 @@ public class GVRCompressedTexture extends Texture {
         updateMinification();
     }
 
-    GVRCompressedTexture(VrContext gvrContext, int target, int levels,
+    GVRCompressedTexture(VrContext vrContext, int target, int levels,
             int quality) {
-        super(gvrContext, NativeCompressedTexture.mipmappedConstructor(target));
+        super(vrContext, NativeCompressedTexture.mipmappedConstructor(target));
         mLevels = levels;
         mQuality = GVRCompressedTexture.clamp(quality);
 

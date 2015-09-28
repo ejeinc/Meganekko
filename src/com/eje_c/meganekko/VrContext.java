@@ -82,7 +82,7 @@ public class VrContext {
     // Priorities constants, for asynchronous loading
 
     /**
-     * GVRF can't use every {@code int} as a priority - it needs some sentinel
+     * Meganekko can't use every {@code int} as a priority - it needs some sentinel
      * values. It will probably never need anywhere near this many, but raising
      * the number of reserved values narrows the 'dynamic range' available to
      * apps mapping some internal score to the {@link #LOWEST_PRIORITY} to
@@ -92,7 +92,7 @@ public class VrContext {
     public static final int RESERVED_PRIORITIES = 1024;
 
     /**
-     * GVRF can't use every {@code int} as a priority - it needs some sentinel
+     * Meganekko can't use every {@code int} as a priority - it needs some sentinel
      * values. A simple approach to generating priorities is to score resources
      * from 0 to 1, and then map that to the range {@link #LOWEST_PRIORITY} to
      * {@link #HIGHEST_PRIORITY}.
@@ -101,7 +101,7 @@ public class VrContext {
             + RESERVED_PRIORITIES;
 
     /**
-     * GVRF can't use every {@code int} as a priority - it needs some sentinel
+     * Meganekko can't use every {@code int} as a priority - it needs some sentinel
      * values. A simple approach to generating priorities is to score resources
      * from 0 to 1, and then map that to the range {@link #LOWEST_PRIORITY} to
      * {@link #HIGHEST_PRIORITY}.
@@ -165,19 +165,19 @@ public class VrContext {
     }
 
     /**
-     * Get the Android {@link Activity} which launched your GVRF app.
+     * Get the Android {@link Activity} which launched your Meganekko app.
      * 
      * An {@code Activity} is-a {@link Context} and so provides access to system
      * services and to your application's resources; the {@code Activity} class
      * also provides additional services, including
      * {@link Activity#runOnUiThread(Runnable)}.
      * 
-     * @return The {@link MeganekkoActivity} which launched your GVRF app. The
+     * @return The {@link MeganekkoActivity} which launched your Meganekko app. The
      *         {@link MeganekkoActivity} class doesn't actually add much useful
      *         functionality besides
      *         {@link MeganekkoActivity#setScript(GVRScript, String)}, but returning
      *         the most-derived class here may prevent someone from having to
-     *         write {@code (GVRActivity) gvrContext.getActivity();}.
+     *         write {@code (GVRActivity) vrContext.getActivity();}.
      */
     public MeganekkoActivity getActivity() {
         return mContext;
@@ -261,7 +261,7 @@ public class VrContext {
      * @param callback
      *            App supplied callback, with three different methods.
      *            <ul>
-     *            <li>Before loading, GVRF may call
+     *            <li>Before loading, Meganekko may call
      *            {@link AndroidResource.MeshCallback#stillWanted(AndroidResource)
      *            stillWanted()} (on a background thread) to give you a chance
      *            to abort a 'stale' load.
@@ -327,7 +327,7 @@ public class VrContext {
      * @param callback
      *            App supplied callback, with three different methods.
      *            <ul>
-     *            <li>Before loading, GVRF may call
+     *            <li>Before loading, Meganekko may call
      *            {@link AndroidResource.MeshCallback#stillWanted(AndroidResource)
      *            stillWanted()} (on a background thread) to give you a chance
      *            to abort a 'stale' load.
@@ -1165,14 +1165,14 @@ public class VrContext {
      * <p>
      * This API will 'consolidate' requests: If you request a texture like
      * {@code R.raw.wood_grain} and then - before it has loaded - issue another
-     * request for {@code R.raw.wood_grain}, GVRF will only read the bitmap file
+     * request for {@code R.raw.wood_grain}, Meganekko will only read the bitmap file
      * once; only create a single {@link Texture}; and then call both
      * callbacks, passing each the same texture.
      * 
      * <p>
      * Please be aware that {@link BitmapFactory#decodeStream(InputStream)} is a
      * comparatively expensive operation: it can take hundreds of milliseconds
-     * and use several megabytes of temporary RAM. GVRF includes a throttler to
+     * and use several megabytes of temporary RAM. Meganekko includes a throttler to
      * keep the total load manageable - but
      * {@link #loadCompressedTexture(AndroidResource.CompressedTextureCallback, AndroidResource)}
      * is <em>much</em> faster and lighter-weight: that API simply loads the
@@ -1185,7 +1185,7 @@ public class VrContext {
      * TODO Take a boolean parameter that controls mipmap generation?
      * 
      * @param callback
-     *            Before loading, GVRF may call
+     *            Before loading, Meganekko may call
      *            {@link AndroidResource.BitmapTextureCallback#stillWanted(AndroidResource)
      *            stillWanted()} several times (on a background thread) to give
      *            you a chance to abort a 'stale' load.
@@ -1249,14 +1249,14 @@ public class VrContext {
      * <p>
      * This API will 'consolidate' requests: If you request a texture like
      * {@code R.raw.wood_grain} and then - before it has loaded - issue another
-     * request for {@code R.raw.wood_grain}, GVRF will only read the bitmap file
+     * request for {@code R.raw.wood_grain}, Meganekko will only read the bitmap file
      * once; only create a single {@link Texture}; and then call both
      * callbacks, passing each the same texture.
      * 
      * <p>
      * Please be aware that {@link BitmapFactory#decodeStream(InputStream)} is a
      * comparatively expensive operation: it can take hundreds of milliseconds
-     * and use several megabytes of temporary RAM. GVRF includes a throttler to
+     * and use several megabytes of temporary RAM. Meganekko includes a throttler to
      * keep the total load manageable - but
      * {@link #loadCompressedTexture(AndroidResource.CompressedTextureCallback, AndroidResource)}
      * is <em>much</em> faster and lighter-weight: that API simply loads the
@@ -1266,7 +1266,7 @@ public class VrContext {
      * faster than Android's {@link BitmapFactory}!
      * 
      * @param callback
-     *            Before loading, GVRF may call
+     *            Before loading, Meganekko may call
      *            {@link AndroidResource.BitmapTextureCallback#stillWanted(AndroidResource)
      *            stillWanted()} several times (on a background thread) to give
      *            you a chance to abort a 'stale' load.
@@ -1328,7 +1328,7 @@ public class VrContext {
     /**
      * Load a compressed texture, asynchronously.
      * 
-     * GVRF currently supports ASTC, ETC2, and KTX formats: applications can add
+     * Meganekko currently supports ASTC, ETC2, and KTX formats: applications can add
      * new formats by implementing {@link CompressedTextureLoader}.
      * 
      * <p>
@@ -1376,7 +1376,7 @@ public class VrContext {
     /**
      * Load a compressed texture, asynchronously.
      * 
-     * GVRF currently supports ASTC, ETC2, and KTX formats: applications can add
+     * Meganekko currently supports ASTC, ETC2, and KTX formats: applications can add
      * new formats by implementing {@link CompressedTextureLoader}.
      * 
      * @param callback
@@ -1430,7 +1430,7 @@ public class VrContext {
      * loadCompressedTexture()}.
      * 
      * This method can detect whether the resource file holds a compressed
-     * texture (GVRF currently supports ASTC, ETC2, and KTX formats:
+     * texture (Meganekko currently supports ASTC, ETC2, and KTX formats:
      * applications can add new formats by implementing
      * {@link CompressedTextureLoader}): if the file is not a compressed
      * texture, it is loaded as a normal, bitmapped texture. This format
@@ -1452,7 +1452,7 @@ public class VrContext {
      * haven't yet decided whether to deprecate them or not.
      * 
      * @param callback
-     *            Before loading, GVRF may call
+     *            Before loading, Meganekko may call
      *            {@link AndroidResource.TextureCallback#stillWanted(AndroidResource)
      *            stillWanted()} several times (on a background thread) to give
      *            you a chance to abort a 'stale' load.
@@ -1515,7 +1515,7 @@ public class VrContext {
      * loadCompressedTexture()}.
      * 
      * This method can detect whether the resource file holds a compressed
-     * texture (GVRF currently supports ASTC, ETC2, and KTX formats:
+     * texture (Meganekko currently supports ASTC, ETC2, and KTX formats:
      * applications can add new formats by implementing
      * {@link CompressedTextureLoader}): if the file is not a compressed
      * texture, it is loaded as a normal, bitmapped texture. This format
@@ -1535,7 +1535,7 @@ public class VrContext {
      * haven't yet decided whether to deprecate them or not.
      * 
      * @param callback
-     *            Before loading, GVRF may call
+     *            Before loading, Meganekko may call
      *            {@link AndroidResource.TextureCallback#stillWanted(AndroidResource)
      *            stillWanted()} several times (on a background thread) to give
      *            you a chance to abort a 'stale' load.
@@ -1606,7 +1606,7 @@ public class VrContext {
      * loadCompressedTexture()}.
      * 
      * This method can detect whether the resource file holds a compressed
-     * texture (GVRF currently supports ASTC, ETC2, and KTX formats:
+     * texture (Meganekko currently supports ASTC, ETC2, and KTX formats:
      * applications can add new formats by implementing
      * {@link CompressedTextureLoader}): if the file is not a compressed
      * texture, it is loaded as a normal, bitmapped texture. This format
@@ -1621,7 +1621,7 @@ public class VrContext {
      * haven't yet decided whether to deprecate them or not.
      * 
      * @param callback
-     *            Before loading, GVRF may call
+     *            Before loading, Meganekko may call
      *            {@link AndroidResource.TextureCallback#stillWanted(AndroidResource)
      *            stillWanted()} several times (on a background thread) to give
      *            you a chance to abort a 'stale' load.
@@ -2042,7 +2042,7 @@ public class VrContext {
     }
 
     /**
-     * Register a method that is called every time GVRF creates a new
+     * Register a method that is called every time Meganekko creates a new
      * {@link VrContext}.
      * 
      * Android apps aren't mapped 1:1 to Linux processes; the system may keep a
@@ -2073,7 +2073,7 @@ public class VrContext {
      * </pre>
      * 
      * <p>
-     * GVRF will force an Android garbage collection after running any handlers,
+     * Meganekko will force an Android garbage collection after running any handlers,
      * which will free any remaining native objects from the previous run.
      * 
      * @param handler
@@ -2089,7 +2089,7 @@ public class VrContext {
             handler.run();
         }
 
-        // We've probably just nulled-out a bunch of references, but many GVRF
+        // We've probably just nulled-out a bunch of references, but many Meganekko
         // apps do relatively little Java memory allocation, so it may actually
         // be a longish while before the recyclable references go stale.
         System.gc();

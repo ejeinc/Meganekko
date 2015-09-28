@@ -29,21 +29,21 @@ class Component extends HybridObject {
     /**
      * Normal constructor
      * 
-     * @param gvrContext
-     *            The current GVRF context
+     * @param vrContext
+     *            The current Meganekko context
      * @param nativePointer
      *            The native pointer, returned by the native constructor
      */
-    protected Component(VrContext gvrContext, long ptr) {
-        super(gvrContext, ptr);
+    protected Component(VrContext vrContext, long ptr) {
+        super(vrContext, ptr);
     }
 
     /**
      * Special constructor, for descendants like {#link GVRMeshEyePointee} that
      * need to 'unregister' instances.
      * 
-     * @param gvrContext
-     *            The current GVRF context
+     * @param vrContext
+     *            The current Meganekko context
      * @param nativePointer
      *            The native pointer, returned by the native constructor
      * @param cleanupHandlers
@@ -60,9 +60,9 @@ class Component extends HybridObject {
      *            concatenated lists - see {@link EyePointeeHolder} for an
      *            example.
      */
-    protected Component(VrContext gvrContext, long nativePointer,
+    protected Component(VrContext vrContext, long nativePointer,
             List<NativeCleanupHandler> cleanupHandlers) {
-        super(gvrContext, nativePointer, cleanupHandlers);
+        super(vrContext, nativePointer, cleanupHandlers);
     }
 
     protected SceneObject owner;

@@ -107,7 +107,7 @@ public class RotationByAxisWithPivotAnimation extends TransformAnimation {
 
     @Override
     protected void animate(HybridObject target, float ratio) {
-        // Reset rotation and position (this is pretty cheap - GVRF uses a 'lazy
+        // Reset rotation and position (this is pretty cheap - Meganekko uses a 'lazy
         // update' policy on the matrix, so three changes don't cost all that
         // much more than one)
         mOrientation.setOrientation();

@@ -49,7 +49,7 @@ public class MeganekkoActivity extends VrActivity {
     private final Queue<Runnable> mRunnables = new LinkedBlockingQueue<Runnable>();
     private final Set<FrameListener> mFrameListeners = new CopyOnWriteArraySet<>();
     private InternalSensorManager mInternalSensorManager;
-    private VrContext mGVRContext = null;
+    private VrContext mVrContext = null;
     private boolean mDocked;
     private VrFrame vrFrame;
 
@@ -103,8 +103,8 @@ public class MeganekkoActivity extends VrActivity {
         mDockEventReceiver = new DockEventReceiver(this, mRunOnDock, mRunOnUndock);
         mInternalSensorManager = new InternalSensorManager(this, getAppPtr());
 
-        mGVRContext = new VrContext(this);
-        nativeSetContext(getAppPtr(), mGVRContext.getNativePtr());
+        mVrContext = new VrContext(this);
+        nativeSetContext(getAppPtr(), mVrContext.getNativePtr());
     }
 
     @Override
@@ -123,13 +123,13 @@ public class MeganekkoActivity extends VrActivity {
      * Called from native AppInterface::oneTimeInit().
      */
     private void oneTimeInit() {
-        mGVRContext.onSurfaceCreated();
+        mVrContext.onSurfaceCreated();
 
         if (!mDocked) {
             mInternalSensorManager.start();
         }
 
-        oneTimeInit(mGVRContext);
+        oneTimeInit(mVrContext);
     }
 
     /**
@@ -163,7 +163,7 @@ public class MeganekkoActivity extends VrActivity {
             frameListener.frame();
         }
 
-        mGVRContext.getMainScene().onFrame(vrFrame);
+        mVrContext.getMainScene().onFrame(vrFrame);
 
         frame();
     }
@@ -183,7 +183,7 @@ public class MeganekkoActivity extends VrActivity {
             mInternalSensorManager.stop();
         }
 
-        oneTimeShutDown(mGVRContext);
+        oneTimeShutDown(mVrContext);
     }
 
     /**
@@ -395,12 +395,12 @@ public class MeganekkoActivity extends VrActivity {
     }
 
     /**
-     * Get {@code GVRContext}.
+     * Get {@code VrContext}.
      * 
-     * @return {@code GVRContext}
+     * @return {@code VrContext}
      */
-    public VrContext getGVRContext() {
-        return mGVRContext;
+    public VrContext getVrContext() {
+        return mVrContext;
     }
 
     /**

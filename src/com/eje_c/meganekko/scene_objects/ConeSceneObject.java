@@ -37,11 +37,11 @@ public class ConeSceneObject extends CylinderSceneObject {
      * The cone's triangles and normals are facing out and the same texture will
      * be applied to bottom, and side of the cone.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      */
-    public ConeSceneObject(VrContext gvrContext) {
-        super(gvrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT, STACK_NUMBER,
+    public ConeSceneObject(VrContext vrContext) {
+        super(vrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT, STACK_NUMBER,
                 SLICE_NUMBER, true);
     }
 
@@ -52,15 +52,15 @@ public class ConeSceneObject extends CylinderSceneObject {
      * The cone's triangles and normals are facing either in or out and the same
      * texture will be applied to bottom, and side of the cone.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      * 
      * @param facingOut
      *            whether the triangles and normals should be facing in or
      *            facing out.
      */
-    public ConeSceneObject(VrContext gvrContext, boolean facingOut) {
-        super(gvrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT, STACK_NUMBER,
+    public ConeSceneObject(VrContext vrContext, boolean facingOut) {
+        super(vrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT, STACK_NUMBER,
                 SLICE_NUMBER, facingOut);
     }
 
@@ -71,7 +71,7 @@ public class ConeSceneObject extends CylinderSceneObject {
      * The cone's triangles and normals are facing either in or out and the same
      * material will be applied to bottom, and side of the cone.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      * 
      * @param facingOut
@@ -81,9 +81,9 @@ public class ConeSceneObject extends CylinderSceneObject {
      * @param material
      *            the material for the cone.
      */
-    public ConeSceneObject(VrContext gvrContext, boolean facingOut,
+    public ConeSceneObject(VrContext vrContext, boolean facingOut,
             Material material) {
-        super(gvrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT, STACK_NUMBER,
+        super(vrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT, STACK_NUMBER,
                 SLICE_NUMBER, facingOut, material);
     }
 }

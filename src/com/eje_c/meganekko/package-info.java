@@ -15,7 +15,7 @@
 
 
 /**
- * You need to understand key points of this package to create a GVRF application.
+ * You need to understand key points of this package to create a Meganekko application.
  * 
  * The {@link Activity} that your {@code AndroidManifest.xml} file declares 
  * handles the {@code "android.intent.action.MAIN"} ({@link 
@@ -91,7 +91,7 @@
  * are not operations that you want to do on the GL thread!
  * 
  * <p>
- * GVRF includes an asynchronous loading facility, which improves throughput in 
+ * Meganekko includes an asynchronous loading facility, which improves throughput in 
  * three ways. First, by doing all the work on a background thread, then 
  * delivering the loaded resource to the GL thread on a {@link 
  * com.eje_c.meganekko.VrContext#runOnGlThread(Runnable)

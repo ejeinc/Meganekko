@@ -30,7 +30,7 @@ package com.eje_c.meganekko;
  */
 
 public class EyePointee extends HybridObject {
-    EyePointee(VrContext gvrContext, long ptr) {
-        super(gvrContext, ptr);
+    EyePointee(VrContext vrContext, long ptr) {
+        super(vrContext, ptr);
     }
 }

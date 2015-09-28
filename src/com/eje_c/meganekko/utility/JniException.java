@@ -14,7 +14,7 @@
  */
 
 /***************************************************************************
- * Printing Java stacktrace when native crash happens. Using tag gvrf
+ * Printing Java stacktrace when native crash happens. Using tag Meganekko
  ***************************************************************************/
 
 package com.eje_c.meganekko.utility;
@@ -25,7 +25,7 @@ class JniException extends Exception {
      * 
      */
     private static final long serialVersionUID = 1L;
-    private static final String TAG = "gvrf";
+    private static final String TAG = "Meganekko";
 
     private JniException(String message) {
         super(message);

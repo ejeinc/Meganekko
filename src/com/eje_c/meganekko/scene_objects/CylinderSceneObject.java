@@ -54,14 +54,14 @@ public class CylinderSceneObject extends SceneObject {
      * The cylinder's triangles and normals are facing out and the same texture
      * will be applied to top, bottom, and side of the cylinder.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      */
-    public CylinderSceneObject(VrContext gvrContext) {
-        super(gvrContext);
+    public CylinderSceneObject(VrContext vrContext) {
+        super(vrContext);
 
-        generateCylinderObject(gvrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT,
-                STACK_NUMBER, SLICE_NUMBER, true, new Material(gvrContext));
+        generateCylinderObject(vrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT,
+                STACK_NUMBER, SLICE_NUMBER, true, new Material(vrContext));
     }
 
     /**
@@ -71,18 +71,18 @@ public class CylinderSceneObject extends SceneObject {
      * The cylinder's triangles and normals are facing either in or out and the
      * same texture will be applied to top, bottom, and side of the cylinder.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      * 
      * @param facingOut
      *            whether the triangles and normals should be facing in or
      *            facing out.
      */
-    public CylinderSceneObject(VrContext gvrContext, boolean facingOut) {
-        super(gvrContext);
+    public CylinderSceneObject(VrContext vrContext, boolean facingOut) {
+        super(vrContext);
 
-        generateCylinderObject(gvrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT,
-                STACK_NUMBER, SLICE_NUMBER, facingOut, new Material(gvrContext));
+        generateCylinderObject(vrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT,
+                STACK_NUMBER, SLICE_NUMBER, facingOut, new Material(vrContext));
     }
 
     /**
@@ -92,7 +92,7 @@ public class CylinderSceneObject extends SceneObject {
      * The cylinder's triangles and normals are facing either in or out and the
      * same texture will be applied to top, bottom, and side of the cylinder.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      * 
      * @param facingOut
@@ -103,13 +103,13 @@ public class CylinderSceneObject extends SceneObject {
      *            the texture for the cylinder. {@code Future<GVRTexture>} is
      *            used here for asynchronously loading the texture.
      */
-    public CylinderSceneObject(VrContext gvrContext, boolean facingOut,
+    public CylinderSceneObject(VrContext vrContext, boolean facingOut,
             Future<Texture> futureTexture) {
-        super(gvrContext);
+        super(vrContext);
 
-        Material material = new Material(gvrContext);
+        Material material = new Material(vrContext);
         material.setMainTexture(futureTexture);
-        generateCylinderObject(gvrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT,
+        generateCylinderObject(vrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT,
                 STACK_NUMBER, SLICE_NUMBER, facingOut, material);
     }
 
@@ -120,7 +120,7 @@ public class CylinderSceneObject extends SceneObject {
      * The cylinder's triangles and normals are facing either in or out and the
      * same material will be applied to top, bottom, and side of the cylinder.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      * 
      * @param facingOut
@@ -130,11 +130,11 @@ public class CylinderSceneObject extends SceneObject {
      * @param material
      *            the material for the cylinder.
      */
-    public CylinderSceneObject(VrContext gvrContext, boolean facingOut,
+    public CylinderSceneObject(VrContext vrContext, boolean facingOut,
             Material material) {
-        super(gvrContext);
+        super(vrContext);
 
-        generateCylinderObject(gvrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT,
+        generateCylinderObject(vrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT,
                 STACK_NUMBER, SLICE_NUMBER, facingOut, material);
     }
 
@@ -144,7 +144,7 @@ public class CylinderSceneObject extends SceneObject {
      * 
      * The cylinder's triangles and normals are facing either in or out. The top, bottom, and side of the cylinder each has its own texture.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      * 
      * @param facingOut
@@ -155,9 +155,9 @@ public class CylinderSceneObject extends SceneObject {
      *            the list of three textures for the cylinder. {@code Future<GVRTexture>} is used here for asynchronously loading
      *            the texture. The six textures are for top, side, and bottom faces respectively.
      */
-    public CylinderSceneObject(VrContext gvrContext, boolean facingOut,
+    public CylinderSceneObject(VrContext vrContext, boolean facingOut,
             ArrayList<Future<Texture>> futureTextureList) {
-        super(gvrContext);
+        super(vrContext);
         
         // assert length of futureTextureList is 3
         if (futureTextureList.size() != 3) {
@@ -165,7 +165,7 @@ public class CylinderSceneObject extends SceneObject {
                     "The length of futureTextureList is not 3.");
         }
 
-        generateCylinderObjectThreeMeshes(gvrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT,
+        generateCylinderObjectThreeMeshes(vrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT,
                 STACK_NUMBER, SLICE_NUMBER, facingOut, futureTextureList);
     }
 
@@ -176,7 +176,7 @@ public class CylinderSceneObject extends SceneObject {
      * The cylinder's triangles and normals are facing either in or out and the
      * same material will be applied to top, bottom, and side of the cylinder.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      *            
      * @param bottomRadius
@@ -194,10 +194,10 @@ public class CylinderSceneObject extends SceneObject {
      * @param sliceNumber
      *            number of quads around to make the cylinder.
      */
-    public CylinderSceneObject(VrContext gvrContext, float bottomRadius,
+    public CylinderSceneObject(VrContext vrContext, float bottomRadius,
             float topRadius, float height, int stackNumber, int sliceNumber,
             boolean facingOut) {
-        super(gvrContext);
+        super(vrContext);
         // assert height, numStacks, numSlices > 0
         if (height <= 0 || stackNumber <= 0 || sliceNumber <= 0) {
             throw new IllegalArgumentException(
@@ -213,8 +213,8 @@ public class CylinderSceneObject extends SceneObject {
                             + bottomRadius + ", topRadius=" + topRadius);
         }
 
-        generateCylinderObject(gvrContext, bottomRadius, topRadius, height,
-                stackNumber, sliceNumber, facingOut, new Material(gvrContext));
+        generateCylinderObject(vrContext, bottomRadius, topRadius, height,
+                stackNumber, sliceNumber, facingOut, new Material(vrContext));
     }
 
     /**
@@ -224,7 +224,7 @@ public class CylinderSceneObject extends SceneObject {
      * The cylinder's triangles and normals are facing either in or out and the
      * same material will be applied to top, bottom, and side of the cylinder.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      *            
      * @param bottomRadius
@@ -245,10 +245,10 @@ public class CylinderSceneObject extends SceneObject {
      * @param material
      *            the material for the cylinder.
      */
-    public CylinderSceneObject(VrContext gvrContext, float bottomRadius,
+    public CylinderSceneObject(VrContext vrContext, float bottomRadius,
             float topRadius, float height, int stackNumber, int sliceNumber,
             boolean facingOut, Material material) {
-        super(gvrContext);
+        super(vrContext);
         // assert height, numStacks, numSlices > 0
         if (height <= 0 || stackNumber <= 0 || sliceNumber <= 0) {
             throw new IllegalArgumentException(
@@ -264,7 +264,7 @@ public class CylinderSceneObject extends SceneObject {
                             + bottomRadius + ", topRadius=" + topRadius);
         }
 
-        generateCylinderObject(gvrContext, bottomRadius, topRadius, height,
+        generateCylinderObject(vrContext, bottomRadius, topRadius, height,
                 stackNumber, sliceNumber, facingOut, material);
     }
 
@@ -274,7 +274,7 @@ public class CylinderSceneObject extends SceneObject {
      * 
      * The cylinder's triangles and normals are facing either in or out. The top, bottom, and side of the cylinder each has its own texture.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      *            
      * @param bottomRadius
@@ -296,10 +296,10 @@ public class CylinderSceneObject extends SceneObject {
      *            the list of three textures for the cylinder. {@code Future<GVRTexture>} is used here for asynchronously loading
      *            the texture. The six textures are for top, side, and bottom faces respectively.
      */
-    public CylinderSceneObject(VrContext gvrContext, float bottomRadius,
+    public CylinderSceneObject(VrContext vrContext, float bottomRadius,
             float topRadius, float height, int stackNumber, int sliceNumber,
             boolean facingOut, ArrayList<Future<Texture>> futureTextureList) {
-        super(gvrContext);
+        super(vrContext);
         // assert height, numStacks, numSlices > 0
         if (height <= 0 || stackNumber <= 0 || sliceNumber <= 0) {
             throw new IllegalArgumentException(
@@ -321,7 +321,7 @@ public class CylinderSceneObject extends SceneObject {
                     "The length of futureTextureList is not 3.");
         }
 
-        generateCylinderObjectThreeMeshes(gvrContext, bottomRadius, topRadius, height,
+        generateCylinderObjectThreeMeshes(vrContext, bottomRadius, topRadius, height,
                 stackNumber, sliceNumber, facingOut, futureTextureList);
     }
 
@@ -331,7 +331,7 @@ public class CylinderSceneObject extends SceneObject {
      * 
      * The cylinder's triangles and normals are facing either in or out. The top, bottom, and side of the cylinder each has its own texture.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      *            
      * @param bottomRadius
@@ -365,10 +365,10 @@ public class CylinderSceneObject extends SceneObject {
      *            Number of slices (i.e. sliceNumber) should be divisible by
      *            sliceSegmentNumber.
     */
-    public CylinderSceneObject(VrContext gvrContext, float bottomRadius,
+    public CylinderSceneObject(VrContext vrContext, float bottomRadius,
             float topRadius, float height, int stackNumber, int sliceNumber,
             boolean facingOut, ArrayList<Future<Texture>> futureTextureList, int stackSegmentNumber, int sliceSegmentNumber) {
-        super(gvrContext);
+        super(vrContext);
         // assert height, numStacks, numSlices > 0
         if (height <= 0 || stackNumber <= 0 || sliceNumber <= 0) {
             throw new IllegalArgumentException(
@@ -403,7 +403,7 @@ public class CylinderSceneObject extends SceneObject {
                     "sliceNumber should be divisible by sliceSegmentNumber.");
         }
         
-        generateComplexCylinderObject(gvrContext, bottomRadius, topRadius, height,
+        generateComplexCylinderObject(vrContext, bottomRadius, topRadius, height,
                 stackNumber, sliceNumber, facingOut, futureTextureList, stackSegmentNumber, sliceSegmentNumber);
     }
 
@@ -414,7 +414,7 @@ public class CylinderSceneObject extends SceneObject {
      * The cylinder's triangles and normals are facing either in or out and the
      * same material will be applied to top, bottom, and side of the cylinder.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      *            
      * @param bottomRadius
@@ -446,10 +446,10 @@ public class CylinderSceneObject extends SceneObject {
      *            Number of slices (i.e. sliceNumber) should be divisible by
      *            sliceSegmentNumber.
     */
-    public CylinderSceneObject(VrContext gvrContext, float bottomRadius,
+    public CylinderSceneObject(VrContext vrContext, float bottomRadius,
             float topRadius, float height, int stackNumber, int sliceNumber,
             boolean facingOut, Material material, int stackSegmentNumber, int sliceSegmentNumber) {
-        super(gvrContext);
+        super(vrContext);
         // assert height, numStacks, numSlices > 0
         if (height <= 0 || stackNumber <= 0 || sliceNumber <= 0) {
             throw new IllegalArgumentException(
@@ -477,51 +477,51 @@ public class CylinderSceneObject extends SceneObject {
                     "sliceNumber should be divisible by sliceSegmentNumber.");
         }
         
-        generateComplexCylinderObject(gvrContext, bottomRadius, topRadius, height,
+        generateComplexCylinderObject(vrContext, bottomRadius, topRadius, height,
                 stackNumber, sliceNumber, facingOut, material, stackSegmentNumber, sliceSegmentNumber);
     }
 
-    private void generateCylinderObject(VrContext gvrContext,
+    private void generateCylinderObject(VrContext vrContext,
             float bottomRadius, float topRadius, float height, int stackNumber,
             int sliceNumber, boolean facingOut, Material material) {
         generateCylinder(bottomRadius, topRadius, height, stackNumber,
                 sliceNumber, facingOut);
 
-        Mesh mesh = new Mesh(gvrContext);
+        Mesh mesh = new Mesh(vrContext);
         mesh.setVertices(vertices);
         mesh.setNormals(normals);
         mesh.setTexCoords(texCoords);
         mesh.setTriangles(indices);
 
-        RenderData renderData = new RenderData(gvrContext);
+        RenderData renderData = new RenderData(vrContext);
         attachRenderData(renderData);
         renderData.setMesh(mesh);
         renderData.setMaterial(material);
     }
 
-    private void generateCylinderObjectThreeMeshes(VrContext gvrContext,
+    private void generateCylinderObjectThreeMeshes(VrContext vrContext,
             float bottomRadius, float topRadius, float height, int stackNumber,
             int sliceNumber, boolean facingOut, ArrayList<Future<Texture>> futureTextureList) {
         float halfHeight = height / 2.0f;
 
         // top cap
         if (topRadius > 0) {
-            createCapMesh(gvrContext, topRadius, halfHeight, sliceNumber,
+            createCapMesh(vrContext, topRadius, halfHeight, sliceNumber,
                     1.0f, facingOut, futureTextureList.get(0));       
         }
         
         // cylinder body
-        createBodyMesh(gvrContext, bottomRadius, topRadius, height, stackNumber, sliceNumber,
+        createBodyMesh(vrContext, bottomRadius, topRadius, height, stackNumber, sliceNumber,
                 facingOut, futureTextureList.get(1));
         
         // bottom cap
         if (bottomRadius > 0) {
-            createCapMesh(gvrContext, bottomRadius, -halfHeight, sliceNumber,
+            createCapMesh(vrContext, bottomRadius, -halfHeight, sliceNumber,
                     -1.0f, facingOut, futureTextureList.get(2));       
         }
 
         // attached an empty renderData for parent object, so that we can set some common properties
-        RenderData renderData = new RenderData(gvrContext);
+        RenderData renderData = new RenderData(vrContext);
         attachRenderData(renderData);
     }
 
@@ -779,7 +779,7 @@ public class CylinderSceneObject extends SceneObject {
         }
     }
 
-    private void createCapMesh(VrContext gvrContext, float radius, float height, int sliceNumber,
+    private void createCapMesh(VrContext vrContext, float radius, float height, int sliceNumber,
             float normalDirection, boolean facingOut, Future<Texture> futureTexture) {      
         int capVertexNumber = 3 * sliceNumber;
         vertices = new float[3 * capVertexNumber];
@@ -794,19 +794,19 @@ public class CylinderSceneObject extends SceneObject {
 
         createCap(radius, height, sliceNumber, normalDirection, facingOut);
 
-        Mesh mesh = new Mesh(gvrContext);
+        Mesh mesh = new Mesh(vrContext);
         mesh.setVertices(vertices);
         mesh.setNormals(normals);
         mesh.setTexCoords(texCoords);
         mesh.setTriangles(indices);
 
-        SceneObject child = new SceneObject(gvrContext,
+        SceneObject child = new SceneObject(vrContext,
                 new FutureWrapper<Mesh>(mesh),
                 futureTexture);
         addChildObject(child);        
    }
 
-    private void createBodyMesh(VrContext gvrContext, float bottomRadius, float topRadius, float height,
+    private void createBodyMesh(VrContext vrContext, float bottomRadius, float topRadius, float height,
             int stackNumber, int sliceNumber, boolean facingOut, Future<Texture> futureTexture) {
         int bodyVertexNumber = 4 * sliceNumber * stackNumber;
         int triangleNumber = 6 * sliceNumber * stackNumber;
@@ -824,19 +824,19 @@ public class CylinderSceneObject extends SceneObject {
         createBody(bottomRadius, topRadius, height, stackNumber, sliceNumber,
                 facingOut);
 
-        Mesh mesh = new Mesh(gvrContext);
+        Mesh mesh = new Mesh(vrContext);
         mesh.setVertices(vertices);
         mesh.setNormals(normals);
         mesh.setTexCoords(texCoords);
         mesh.setTriangles(indices);
 
-        SceneObject child = new SceneObject(gvrContext,
+        SceneObject child = new SceneObject(vrContext,
                 new FutureWrapper<Mesh>(mesh),
                 futureTexture);
         addChildObject(child);        
     }
 
-    private void generateComplexCylinderObject(VrContext gvrContext,
+    private void generateComplexCylinderObject(VrContext vrContext,
             float bottomRadius, float topRadius, float height, int stackNumber,
             int sliceNumber, boolean facingOut, ArrayList<Future<Texture>> futureTextureList, int stackSegmentNumber, int sliceSegmentNumber) {
         float halfHeight = height / 2.0f;
@@ -844,58 +844,58 @@ public class CylinderSceneObject extends SceneObject {
         Material material;
         // top cap
         if (topRadius > 0) {
-            material = new Material(gvrContext);
+            material = new Material(vrContext);
             material.setMainTexture(futureTextureList.get(0));
-            createComplexCap(gvrContext, topRadius, halfHeight, sliceNumber,
+            createComplexCap(vrContext, topRadius, halfHeight, sliceNumber,
                     1.0f, facingOut, material, sliceNumber);       
         }
         
         // cylinder body
-        material = new Material(gvrContext);
+        material = new Material(vrContext);
         material.setMainTexture(futureTextureList.get(1));
-        createComplexBody(gvrContext, bottomRadius, topRadius, height, stackNumber, sliceNumber,
+        createComplexBody(vrContext, bottomRadius, topRadius, height, stackNumber, sliceNumber,
                 facingOut, material, stackSegmentNumber, sliceSegmentNumber);
         
         // bottom cap
         if (bottomRadius > 0) {
-            material = new Material(gvrContext);
+            material = new Material(vrContext);
             material.setMainTexture(futureTextureList.get(2));
-            createComplexCap(gvrContext, bottomRadius, -halfHeight, sliceNumber,
+            createComplexCap(vrContext, bottomRadius, -halfHeight, sliceNumber,
                     -1.0f, facingOut, material, sliceNumber);       
         }
 
         // attached an empty renderData for parent object, so that we can set some common properties
-        RenderData renderData = new RenderData(gvrContext);
+        RenderData renderData = new RenderData(vrContext);
         attachRenderData(renderData);
     }
 
-    private void generateComplexCylinderObject(VrContext gvrContext,
+    private void generateComplexCylinderObject(VrContext vrContext,
             float bottomRadius, float topRadius, float height, int stackNumber,
             int sliceNumber, boolean facingOut, Material material, int stackSegmentNumber, int sliceSegmentNumber) {
         float halfHeight = height / 2.0f;
 
         // top cap
         if (topRadius > 0) {
-            createComplexCap(gvrContext, topRadius, halfHeight, sliceNumber,
+            createComplexCap(vrContext, topRadius, halfHeight, sliceNumber,
                     1.0f, facingOut, material, sliceNumber);       
         }
         
         // cylinder body
-        createComplexBody(gvrContext, bottomRadius, topRadius, height, stackNumber, sliceNumber,
+        createComplexBody(vrContext, bottomRadius, topRadius, height, stackNumber, sliceNumber,
                 facingOut, material, stackSegmentNumber, sliceSegmentNumber);
         
         // bottom cap
         if (bottomRadius > 0) {
-            createComplexCap(gvrContext, bottomRadius, -halfHeight, sliceNumber,
+            createComplexCap(vrContext, bottomRadius, -halfHeight, sliceNumber,
                     -1.0f, facingOut, material, sliceNumber);       
         }
 
         // attached an empty renderData for parent object, so that we can set some common properties
-        RenderData renderData = new RenderData(gvrContext);
+        RenderData renderData = new RenderData(vrContext);
         attachRenderData(renderData);
     }
 
-    private void createComplexCap(VrContext gvrContext, float radius, float height, int sliceNumber,
+    private void createComplexCap(VrContext vrContext, float radius, float height, int sliceNumber,
             float normalDirection, boolean facingOut, Material material, int sliceSegmentNumber) {
         if (!facingOut) {
             normalDirection = -normalDirection;
@@ -977,12 +977,12 @@ public class CylinderSceneObject extends SceneObject {
 
             sliceCounter++;
             if (sliceCounter == slicePerSegment) {
-                Mesh mesh = new Mesh(gvrContext);
+                Mesh mesh = new Mesh(vrContext);
                 mesh.setVertices(vertices);
                 mesh.setNormals(normals);
                 mesh.setTexCoords(texCoords);
                 mesh.setTriangles(indices);
-                SceneObject childObject = new SceneObject(gvrContext,
+                SceneObject childObject = new SceneObject(vrContext,
                         mesh);
                 childObject.getRenderData().setMaterial(material);
                 addChildObject(childObject);
@@ -1002,7 +1002,7 @@ public class CylinderSceneObject extends SceneObject {
         }
     }
 
-    private void createComplexBody(VrContext gvrContext, float bottomRadius, float topRadius, float height,
+    private void createComplexBody(VrContext vrContext, float bottomRadius, float topRadius, float height,
             int stackNumber, int sliceNumber, boolean facingOut, Material material, int stackSegmentNumber, int sliceSegmentNumber) {
         float difference = bottomRadius - topRadius;
         float length = (float) Math.sqrt(difference*difference + height*height);
@@ -1157,12 +1157,12 @@ public class CylinderSceneObject extends SceneObject {
                     }
                 }
 
-                Mesh mesh = new Mesh(gvrContext);
+                Mesh mesh = new Mesh(vrContext);
                 mesh.setVertices(vertices);
                 mesh.setNormals(normals);
                 mesh.setTexCoords(texCoords);
                 mesh.setTriangles(indices);
-                SceneObject childObject = new SceneObject(gvrContext,
+                SceneObject childObject = new SceneObject(vrContext,
                         mesh);
                 childObject.getRenderData().setMaterial(material);
                 addChildObject(childObject);

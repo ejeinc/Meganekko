@@ -18,7 +18,7 @@
  * 
  * Most classes are hidden, implementation details. You need to implement 
  * {@link com.eje_c.meganekko.asynchronous.CompressedTextureLoader}
- * to use compressed texture formats that GVRF does not support; you may find 
+ * to use compressed texture formats that Meganekko does not support; you may find 
  * {@link com.eje_c.meganekko.asynchronous.GVRCompressedTexture}
  * useful for debugging. 
  * 

@@ -94,13 +94,13 @@ public class AndroidResource {
     /**
      * Open a {@code res/raw} or {@code res/drawable} bitmap file.
      * 
-     * @param gvrContext
-     *            The GVR Context
+     * @param vrContext
+     *            The VR Context
      * @param resourceId
      *            A {@code R.raw} or {@code R.drawable} id
      */
-    public AndroidResource(VrContext gvrContext, int resourceId) {
-        this(gvrContext.getContext(), resourceId);
+    public AndroidResource(VrContext vrContext, int resourceId) {
+        this(vrContext.getContext(), resourceId);
     }
 
     /**
@@ -127,8 +127,8 @@ public class AndroidResource {
     /**
      * Open an {@code assets} file
      * 
-     * @param gvrContext
-     *            The GVR Context
+     * @param vrContext
+     *            The VR Context
      * @param assetRelativeFilename
      *            A filename, relative to the {@code assets} directory. The file
      *            can be in a sub-directory of the {@code assets} directory:
@@ -137,9 +137,9 @@ public class AndroidResource {
      * @throws IOException
      *             File does not exist or cannot be read
      */
-    public AndroidResource(VrContext gvrContext,
+    public AndroidResource(VrContext vrContext,
             String assetRelativeFilename) throws IOException {
-        this(gvrContext.getContext(), assetRelativeFilename);
+        this(vrContext.getContext(), assetRelativeFilename);
     }
 
     /**
@@ -345,7 +345,7 @@ public class AndroidResource {
          * Resource load succeeded.
          * 
          * @param resource
-         *            A new GVRF resource
+         *            A new Meganekko resource
          * @param androidResource
          *            The description of the resource that was loaded
          *            successfully
@@ -368,7 +368,7 @@ public class AndroidResource {
      * 
      * Loading uncompressed textures (Android {@linkplain Bitmap bitmaps}) can
      * take hundreds of milliseconds and megabytes of memory; loading even
-     * moderately complex meshes can be even slower. GVRF uses a throttling
+     * moderately complex meshes can be even slower. Meganekko uses a throttling
      * system to manage system load, and an priority system to give you some
      * control over the throttling. This means that slow resource loads can take
      * enough time that you don't actually need the resource by the time the

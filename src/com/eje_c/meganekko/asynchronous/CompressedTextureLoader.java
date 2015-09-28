@@ -24,7 +24,7 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 
 /**
- * Implement this class to use compressed texture formats that GVRF does not
+ * Implement this class to use compressed texture formats that Meganekko does not
  * support.
  * 
  * A {@link CompressedTextureLoader} contains the logic to detect a

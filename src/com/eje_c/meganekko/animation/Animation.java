@@ -31,10 +31,10 @@ import android.view.animation.Interpolator;
  * functionality: descendants are tiny classes that contain compiled (ie, no
  * runtime reflection is used) code to change individual properties. Most
  * animations involve a {@linkplain Transform scene object's position,}
- * {@linkplain Material a scene object's surface appearance,} or an optional
- * {@linkplain GVRPostEffect "post effect":} accordingly, most actual animations
- * descend from {@link TransformAnimation}, {@link MaterialAnimation}, or
- * {@link GVRPostEffectAnimation} and not directly from {@link Animation}.
+ * {@linkplain Material a scene object's surface appearance,} <s>or an optional
+ * {@linkplain GVRPostEffect "post effect":}</s> accordingly, most actual animations
+ * descend from {@link TransformAnimation}, {@link MaterialAnimation},<s> or
+ * {@link GVRPostEffectAnimation} </s>and not directly from {@link Animation}.
  * 
  * <p>
  * All animations have at least three or more required parameters: the object to
@@ -60,7 +60,7 @@ import android.view.animation.Interpolator;
  * 
  * <pre>
  * 
- * new GVRScaleAnimation(sceneObject, 1.5f, 2f) //
+ * new ScaleAnimation(sceneObject, 1.5f, 2f) //
  *         .setRepeatMode(GVRRepetitionType.PINGPONG) //
  *         .start({@linkplain AnimationEngine animationEngine});
  * </pre>
@@ -422,7 +422,7 @@ public abstract class Animation {
     }
 
     /**
-     * The duration passed to {@linkplain #GVRAnimation(HybridObject, float)
+     * The duration passed to {@linkplain #Animation(HybridObject, float)
      * the constructor.}
      * 
      * This may be useful if you have to, say, 'undo' a running animation.
@@ -448,11 +448,11 @@ public abstract class Animation {
 
     /**
      * Override this to create a new animation. Generally, you do this by
-     * changing some property of the {@code mTarget}, and letting GVRF handle
+     * changing some property of the {@code mTarget}, and letting Meganekko handle
      * screen updates automatically.
      * 
      * @param target
-     *            The GVRF object to animate
+     *            The Meganekko object to animate
      * @param ratio
      *            The start state is 0; the stop state is 1.
      */

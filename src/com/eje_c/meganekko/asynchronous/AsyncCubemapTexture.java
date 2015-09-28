@@ -45,11 +45,11 @@ abstract class AsyncCubemapTexture {
      * The API
      */
 
-    static void loadTexture(VrContext gvrContext,
+    static void loadTexture(VrContext vrContext,
             CancelableCallback<Texture> callback,
             AndroidResource resource, int priority, Map<String, Integer> map) {
         faceIndexMap = map;
-        Throttler.registerCallback(gvrContext, TEXTURE_CLASS, callback,
+        Throttler.registerCallback(vrContext, TEXTURE_CLASS, callback,
                 resource, priority);
     }
 
@@ -71,16 +71,16 @@ abstract class AsyncCubemapTexture {
         private static final GlConverter<CubemapTexture, Bitmap[]> sConverter = new GlConverter<CubemapTexture, Bitmap[]>() {
 
             @Override
-            public CubemapTexture convert(VrContext gvrContext,
+            public CubemapTexture convert(VrContext vrContext,
                     Bitmap[] bitmapArray) {
-                return new CubemapTexture(gvrContext, bitmapArray);
+                return new CubemapTexture(vrContext, bitmapArray);
             }
         };
 
-        protected AsyncLoadCubemapTextureResource(VrContext gvrContext,
+        protected AsyncLoadCubemapTextureResource(VrContext vrContext,
                 AndroidResource request,
                 CancelableCallback<HybridObject> callback, int priority) {
-            super(gvrContext, sConverter, request, callback);
+            super(vrContext, sConverter, request, callback);
         }
 
         @Override
@@ -121,10 +121,10 @@ abstract class AsyncCubemapTexture {
 
                     @Override
                     AsyncLoadCubemapTextureResource threadProc(
-                            VrContext gvrContext, AndroidResource request,
+                            VrContext vrContext, AndroidResource request,
                             CancelableCallback<HybridObject> callback,
                             int priority) {
-                        return new AsyncLoadCubemapTextureResource(gvrContext,
+                        return new AsyncLoadCubemapTextureResource(vrContext,
                                 request, callback, priority);
                     }
                 });

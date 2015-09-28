@@ -42,7 +42,7 @@ public class CameraSceneObject extends SceneObject implements
      * Create a {@linkplain SceneObject scene object} (with arbitrarily
      * complex geometry) that shows live video from one of the device's cameras
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      * @param mesh
      *            an arbitrarily complex {@link Mesh} object - see
@@ -54,12 +54,12 @@ public class CameraSceneObject extends SceneObject implements
      *            should be sure to call it before you call
      *            {@link Camera#startPreview()}.
      */
-    public CameraSceneObject(VrContext gvrContext, Mesh mesh,
+    public CameraSceneObject(VrContext vrContext, Mesh mesh,
             Camera camera) {
-        super(gvrContext, mesh);
-        gvrContext.registerFrameListener(this);
-        Texture texture = new ExternalTexture(gvrContext);
-        Material material = new Material(gvrContext, GVRShaderType.OES.ID);
+        super(vrContext, mesh);
+        vrContext.registerFrameListener(this);
+        Texture texture = new ExternalTexture(vrContext);
+        Material material = new Material(vrContext, GVRShaderType.OES.ID);
         material.setMainTexture(texture);
         getRenderData().setMaterial(material);
 
@@ -75,7 +75,7 @@ public class CameraSceneObject extends SceneObject implements
      * Create a 2D, rectangular {@linkplain SceneObject scene object} that
      * shows live video from one of the device's cameras
      * 
-     * @param gvrContext
+     * @param vrContext
      *            current {@link VrContext}
      * @param width
      *            the scene rectangle's width
@@ -87,9 +87,9 @@ public class CameraSceneObject extends SceneObject implements
      *            should be sure to call it before you call
      *            {@link Camera#startPreview()}.
      */
-    public CameraSceneObject(VrContext gvrContext, float width,
+    public CameraSceneObject(VrContext vrContext, float width,
             float height, Camera camera) {
-        this(gvrContext, gvrContext.createQuad(width, height), camera);
+        this(vrContext, vrContext.createQuad(width, height), camera);
     }
 
     /**
@@ -97,7 +97,7 @@ public class CameraSceneObject extends SceneObject implements
      * 
      * <p>
      * Note: {@link #pause()} and {@code resume()} only affect the polling that
-     * links the Android {@link Camera} to this {@linkplain SceneObject GVRF
+     * links the Android {@link Camera} to this {@linkplain SceneObject Meganekko
      * scene object:} they have <em>no affect</em> on the underlying
      * {@link Camera} object.
      */
@@ -110,7 +110,7 @@ public class CameraSceneObject extends SceneObject implements
      * 
      * <p>
      * Note: {@code pause()} and {@link #resume()} only affect the polling that
-     * links the Android {@link Camera} to this {@linkplain SceneObject GVRF
+     * links the Android {@link Camera} to this {@linkplain SceneObject Meganekko
      * scene object:} they have <em>no affect</em> on the underlying
      * {@link Camera} object.
      */

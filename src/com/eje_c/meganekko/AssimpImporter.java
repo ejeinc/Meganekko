@@ -24,8 +24,8 @@ import com.eje_c.meganekko.jassimp.AiScene;
  */
 class AssimpImporter extends HybridObject {
 
-    AssimpImporter(VrContext gvrContext, long ptr) {
-        super(gvrContext, ptr);
+    AssimpImporter(VrContext vrContext, long ptr) {
+        super(vrContext, ptr);
     }
 
     /**

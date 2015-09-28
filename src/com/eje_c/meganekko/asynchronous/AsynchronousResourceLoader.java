@@ -55,8 +55,8 @@ public class AsynchronousResourceLoader {
      * package boundaries. Calling it from user code is both harmless and
      * pointless.
      */
-    public static void setup(VrContext gvrContext) {
-        AsyncBitmapTexture.setup(gvrContext);
+    public static void setup(VrContext vrContext) {
+        AsyncBitmapTexture.setup(vrContext);
     }
 
     /**
@@ -67,8 +67,8 @@ public class AsynchronousResourceLoader {
      * : it will usually be more convenient (and more efficient) to call that
      * directly.
      * 
-     * @param gvrContext
-     *            The GVRF context
+     * @param vrContext
+     *            The Meganekko context
      * @param textureCache
      *            Texture cache - may be {@code null}
      * @param callback
@@ -76,14 +76,14 @@ public class AsynchronousResourceLoader {
      * @param resource
      *            Stream containing a compressed texture
      * @throws IllegalArgumentException
-     *             If {@code gvrContext} or {@code callback} parameters are
+     *             If {@code vrContext} or {@code callback} parameters are
      *             {@code null}
      */
-    public static void loadCompressedTexture(final VrContext gvrContext,
+    public static void loadCompressedTexture(final VrContext vrContext,
             ResourceCache<Texture> textureCache,
             final CompressedTextureCallback callback,
             final AndroidResource resource) throws IllegalArgumentException {
-        loadCompressedTexture(gvrContext, textureCache, callback, resource,
+        loadCompressedTexture(vrContext, textureCache, callback, resource,
                 GVRCompressedTexture.DEFAULT_QUALITY);
     }
 
@@ -95,8 +95,8 @@ public class AsynchronousResourceLoader {
      * : it will usually be more convenient (and more efficient) to call that
      * directly.
      * 
-     * @param gvrContext
-     *            The GVRF context
+     * @param vrContext
+     *            The Meganekko context
      * @param textureCache
      *            Texture cache - may be {@code null}
      * @param callback
@@ -111,20 +111,20 @@ public class AsynchronousResourceLoader {
      *            {@link GVRCompressedTexture#QUALITY}, but other values are
      *            'clamped' to one of the recognized values.
      * @throws IllegalArgumentException
-     *             If {@code gvrContext} or {@code callback} parameters are
+     *             If {@code vrContext} or {@code callback} parameters are
      *             {@code null}
      */
-    public static void loadCompressedTexture(final VrContext gvrContext,
+    public static void loadCompressedTexture(final VrContext vrContext,
             final ResourceCache<Texture> textureCache,
             final CompressedTextureCallback callback,
             final AndroidResource resource, final int quality)
             throws IllegalArgumentException {
-        validateCallbackParameters(gvrContext, callback, resource);
+        validateCallbackParameters(vrContext, callback, resource);
 
         final Texture cached = textureCache == null ? null : textureCache
                 .get(resource);
         if (cached != null) {
-            gvrContext.runOnGlThread(new Runnable() {
+            vrContext.runOnGlThread(new Runnable() {
 
                 @Override
                 public void run() {
@@ -142,12 +142,12 @@ public class AsynchronousResourceLoader {
                                 .load(resource.getStream(), false);
                         resource.closeStream();
                         // Create texture on GL thread
-                        gvrContext.runOnGlThread(new Runnable() {
+                        vrContext.runOnGlThread(new Runnable() {
 
                             @Override
                             public void run() {
                                 Texture texture = compressedTexture
-                                        .toTexture(gvrContext, quality);
+                                        .toTexture(vrContext, quality);
                                 if (textureCache != null) {
                                     textureCache.put(resource, texture);
                                 }
@@ -170,8 +170,8 @@ public class AsynchronousResourceLoader {
      * - it will usually be more convenient (and more efficient) to call that
      * directly.
      * 
-     * @param gvrContext
-     *            The GVRF context
+     * @param vrContext
+     *            The Meganekko context
      * @param textureCache
      *            Texture cache - may be {@code null}
      * @param callback
@@ -188,18 +188,18 @@ public class AsynchronousResourceLoader {
      *             {@link VrContext#HIGHEST_PRIORITY}, or any of the other
      *             parameters are {@code null}.
      */
-    public static void loadBitmapTexture(VrContext gvrContext,
+    public static void loadBitmapTexture(VrContext vrContext,
             ResourceCache<Texture> textureCache,
             final BitmapTextureCallback callback,
             final AndroidResource resource, int priority)
             throws IllegalArgumentException {
-        validatePriorityCallbackParameters(gvrContext, callback, resource,
+        validatePriorityCallbackParameters(vrContext, callback, resource,
                 priority);
 
         final Texture cached = textureCache == null ? null : textureCache
                 .get(resource);
         if (cached != null) {
-            gvrContext.runOnGlThread(new Runnable() {
+            vrContext.runOnGlThread(new Runnable() {
 
                 @Override
                 public void run() {
@@ -209,7 +209,7 @@ public class AsynchronousResourceLoader {
         } else {
             BitmapTextureCallback actualCallback = textureCache == null ? callback
                     : ResourceCache.wrapCallback(textureCache, callback);
-            AsyncBitmapTexture.loadTexture(gvrContext, actualCallback,
+            AsyncBitmapTexture.loadTexture(vrContext, actualCallback,
                     resource, priority);
         }
     }
@@ -222,8 +222,8 @@ public class AsynchronousResourceLoader {
      * - it will usually be more convenient (and more efficient) to call that
      * directly.
      * 
-     * @param gvrContext
-     *            The GVRF context
+     * @param vrContext
+     *            The Meganekko context
      * @param textureCache
      *            Texture cache - may be {@code null}
      * @param callback
@@ -240,17 +240,17 @@ public class AsynchronousResourceLoader {
      *             {@link VrContext#HIGHEST_PRIORITY}, or any of the other
      *             parameters are {@code null}.
      */
-    public static void loadTexture(final VrContext gvrContext,
+    public static void loadTexture(final VrContext vrContext,
             final ResourceCache<Texture> textureCache,
             final CancelableCallback<Texture> callback,
             final AndroidResource resource, final int priority,
             final int quality) {
-        validateCallbackParameters(gvrContext, callback, resource);
+        validateCallbackParameters(vrContext, callback, resource);
 
         final Texture cached = textureCache == null ? null : textureCache
                 .get(resource);
         if (cached != null) {
-            gvrContext.runOnGlThread(new Runnable() {
+            vrContext.runOnGlThread(new Runnable() {
 
                 @Override
                 public void run() {
@@ -283,12 +283,12 @@ public class AsynchronousResourceLoader {
                             resource.closeStream();
 
                             // Create texture on GL thread
-                            gvrContext.runOnGlThread(new Runnable() {
+                            vrContext.runOnGlThread(new Runnable() {
 
                                 @Override
                                 public void run() {
                                     Texture texture = compressedTexture
-                                            .toTexture(gvrContext, quality);
+                                            .toTexture(vrContext, quality);
                                     textureCache.put(resource, texture);
                                     callback.loaded(texture, resource);
                                 }
@@ -298,7 +298,7 @@ public class AsynchronousResourceLoader {
                             // AsyncBitmapTexture code
                             CancelableCallback<Texture> actualCallback = textureCache == null ? callback
                                     : textureCache.wrapCallback(callback);
-                            AsyncBitmapTexture.loadTexture(gvrContext,
+                            AsyncBitmapTexture.loadTexture(vrContext,
                                     actualCallback, resource, priority);
                         }
                     } catch (Exception e) {
@@ -317,8 +317,8 @@ public class AsynchronousResourceLoader {
      * will usually be more convenient (and more efficient) to call that
      * directly.
      * 
-     * @param gvrContext
-     *            The GVRF context
+     * @param vrContext
+     *            The Meganekko context
      * @param textureCache
      *            Texture cache - may be {@code null}
      * @param resource
@@ -347,7 +347,7 @@ public class AsynchronousResourceLoader {
      * @return A {@link Future} that you can pass to methods like
      *         {@link Shaders#setMainTexture(Future)}
      */
-    public static Future<Texture> loadFutureTexture(VrContext gvrContext,
+    public static Future<Texture> loadFutureTexture(VrContext vrContext,
             ResourceCache<Texture> textureCache,
             AndroidResource resource, int priority, int quality) {
         Texture cached = textureCache == null ? null : textureCache
@@ -357,7 +357,7 @@ public class AsynchronousResourceLoader {
         } else {
             FutureResource<Texture> result = new FutureResource<Texture>();
 
-            loadTexture(gvrContext, textureCache, result.callback, resource,
+            loadTexture(vrContext, textureCache, result.callback, resource,
                     priority, quality);
 
             return result;
@@ -371,8 +371,8 @@ public class AsynchronousResourceLoader {
      * {@link VrContext#loadFutureCubemapTexture(AndroidResource)} - it will
      * usually be more convenient (and more efficient) to call that directly.
      * 
-     * @param gvrContext
-     *            The GVRF context
+     * @param vrContext
+     *            The Meganekko context
      * @param textureCache
      *            Texture cache - may be {@code null}
      * @param resource
@@ -390,7 +390,7 @@ public class AsynchronousResourceLoader {
      *         {@link Shaders#setMainTexture(Future)}
      */
     public static Future<Texture> loadFutureCubemapTexture(
-            VrContext gvrContext, ResourceCache<Texture> textureCache,
+            VrContext vrContext, ResourceCache<Texture> textureCache,
             AndroidResource resource, int priority,
             Map<String, Integer> faceIndexMap) {
         Texture cached = textureCache.get(resource);
@@ -399,7 +399,7 @@ public class AsynchronousResourceLoader {
         } else {
             FutureResource<Texture> result = new FutureResource<Texture>();
 
-            AsyncCubemapTexture.loadTexture(gvrContext, result.callback,
+            AsyncCubemapTexture.loadTexture(vrContext, result.callback,
                     resource, priority, faceIndexMap);
 
             return result;
@@ -414,8 +414,8 @@ public class AsynchronousResourceLoader {
      * {@link VrContext#loadMesh(AndroidResource.MeshCallback, AndroidResource, int)}
      * - it will usually be more convenient to call that directly.
      * 
-     * @param gvrContext
-     *            The GVRF context
+     * @param vrContext
+     *            The Meganekko context
      * @param callback
      *            Asynchronous notifications
      * @param resource
@@ -432,13 +432,13 @@ public class AsynchronousResourceLoader {
      */
     // This method does not take a ResourceCache<GVRMeh> parameter because it
     // (indirectly) calls GVRContext.loadMesh() which 'knows about' the cache
-    public static void loadMesh(VrContext gvrContext,
+    public static void loadMesh(VrContext vrContext,
             CancelableCallback<Mesh> callback, AndroidResource resource,
             int priority) {
-        validatePriorityCallbackParameters(gvrContext, callback, resource,
+        validatePriorityCallbackParameters(vrContext, callback, resource,
                 priority);
 
-        AsyncMesh.loadMesh(gvrContext, callback, resource, priority);
+        AsyncMesh.loadMesh(vrContext, callback, resource, priority);
     }
 
     /**
@@ -448,8 +448,8 @@ public class AsynchronousResourceLoader {
      * {@link VrContext#loadFutureMesh(AndroidResource, int)} - it will
      * usually be more convenient to call that directly.
      * 
-     * @param gvrContext
-     *            The GVRF context
+     * @param vrContext
+     *            The Meganekko context
      * @param resource
      *            Basically, a stream containing a 3D model. The
      *            {@link AndroidResource} class has six constructors to
@@ -462,11 +462,11 @@ public class AsynchronousResourceLoader {
      * @return A {@link Future} that you can pass to
      *         {@link RenderData#setMesh(Future)}
      */
-    public static Future<Mesh> loadFutureMesh(VrContext gvrContext,
+    public static Future<Mesh> loadFutureMesh(VrContext vrContext,
             AndroidResource resource, int priority) {
         FutureResource<Mesh> result = new FutureResource<Mesh>();
 
-        loadMesh(gvrContext, result.callback, resource, priority);
+        loadMesh(vrContext, result.callback, resource, priority);
 
         return result;
     }
@@ -557,10 +557,10 @@ public class AsynchronousResourceLoader {
     }
 
     private static <T extends HybridObject> void validateCallbackParameters(
-            VrContext gvrContext, AndroidResource.Callback<T> callback,
+            VrContext vrContext, AndroidResource.Callback<T> callback,
             AndroidResource resource) {
-        if (gvrContext == null) {
-            throw new IllegalArgumentException("gvrContext == null");
+        if (vrContext == null) {
+            throw new IllegalArgumentException("vrContext == null");
         }
         if (callback == null) {
             throw new IllegalArgumentException("callback == null");
@@ -571,9 +571,9 @@ public class AsynchronousResourceLoader {
     }
 
     private static <T extends HybridObject> void validatePriorityCallbackParameters(
-            VrContext gvrContext, AndroidResource.Callback<T> callback,
+            VrContext vrContext, AndroidResource.Callback<T> callback,
             AndroidResource resource, int priority) {
-        validateCallbackParameters(gvrContext, callback, resource);
+        validateCallbackParameters(vrContext, callback, resource);
         if (priority < VrContext.LOWEST_PRIORITY
                 || priority > VrContext.HIGHEST_PRIORITY) {
             throw new IllegalArgumentException(

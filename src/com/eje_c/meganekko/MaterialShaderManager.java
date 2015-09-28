@@ -29,8 +29,8 @@ public class MaterialShaderManager extends
 
     private final Map<CustomMaterialShaderId, MaterialMap> materialMaps = new HashMap<CustomMaterialShaderId, MaterialMap>();
 
-    MaterialShaderManager(VrContext gvrContext) {
-        super(gvrContext, NativeShaderManager.ctor());
+    MaterialShaderManager(VrContext vrContext) {
+        super(vrContext, NativeShaderManager.ctor());
     }
 
     @Override

@@ -29,7 +29,7 @@ import android.util.LongSparseArray;
  * things the eye is pointing at.
  * 
  * Ray casting is computationally expensive. Rather than probing the entire
- * scene graph, GVRF requires you to mark parts of the scene as "pickable" by
+ * scene graph, Meganekko requires you to mark parts of the scene as "pickable" by
  * adding their meshes (or, more cheaply if less precisely, their
  * {@linkplain Mesh#getBoundingBox() bounding box}) to a
  * {@link EyePointeeHolder};
@@ -51,7 +51,7 @@ public class EyePointeeHolder extends Component {
 
     private final List<EyePointee> pointees = new ArrayList<EyePointee>();
 
-    static EyePointeeHolder lookup(VrContext gvrContext, long nativePointer) {
+    static EyePointeeHolder lookup(VrContext vrContext, long nativePointer) {
         WeakReference<EyePointeeHolder> weakReference = sEyePointeeHolders
                 .get(nativePointer);
         return weakReference == null ? null : weakReference.get();
@@ -60,23 +60,23 @@ public class EyePointeeHolder extends Component {
     /**
      * Constructor
      * 
-     * @param gvrContext
+     * @param vrContext
      *            Current {@link VrContext}
      */
-    public EyePointeeHolder(VrContext gvrContext) {
-        this(gvrContext, NativeEyePointeeHolder.ctor());
+    public EyePointeeHolder(VrContext vrContext) {
+        this(vrContext, NativeEyePointeeHolder.ctor());
     }
 
-    private EyePointeeHolder(VrContext gvrContext, long nativePointer) {
-        super(gvrContext, nativePointer, sCleanup);
+    private EyePointeeHolder(VrContext vrContext, long nativePointer) {
+        super(vrContext, nativePointer, sCleanup);
         registerNativePointer(nativePointer);
     }
 
     /**
      * Special constructor, for descendants that need to 'unregister' instances.
      * 
-     * @param gvrContext
-     *            The current GVRF context
+     * @param vrContext
+     *            The current Meganekko context
      * @param nativePointer
      *            The native pointer, returned by the native constructor
      * @param cleanupHandlers
@@ -92,9 +92,9 @@ public class EyePointeeHolder extends Component {
      *            should use a {@link CleanupHandlerListManager} of their own,
      *            in the same way that this class does.
      */
-    protected EyePointeeHolder(VrContext gvrContext, long nativePointer,
+    protected EyePointeeHolder(VrContext vrContext, long nativePointer,
             List<NativeCleanupHandler> descendantsCleanupHandlerList) {
-        super(gvrContext, nativePointer, sConcatenations
+        super(vrContext, nativePointer, sConcatenations
                 .getUniqueConcatenation(descendantsCleanupHandlerList));
         registerNativePointer(nativePointer);
     }

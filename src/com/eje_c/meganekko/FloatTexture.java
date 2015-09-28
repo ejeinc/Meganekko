@@ -26,7 +26,7 @@ public class FloatTexture extends Texture {
     /**
      * Create a float-point texture.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            Current {@link VrContext}
      * @param width
      *            Texture width, in pixels
@@ -39,9 +39,9 @@ public class FloatTexture extends Texture {
      *             {@code data} is {@code null}, or if
      *             {@code data.length < height * width * 2}
      */
-    public FloatTexture(VrContext gvrContext, int width, int height,
+    public FloatTexture(VrContext vrContext, int width, int height,
             float[] data) throws IllegalArgumentException {
-        super(gvrContext, NativeFloatTexture.ctor());
+        super(vrContext, NativeFloatTexture.ctor());
         update(width, height, data);
     }
 

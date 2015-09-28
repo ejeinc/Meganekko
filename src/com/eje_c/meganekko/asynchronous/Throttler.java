@@ -56,11 +56,11 @@ abstract class Throttler {
         requests.registerDatatype(targetClass, factory);
     }
 
-    static void registerCallback(VrContext gvrContext,
+    static void registerCallback(VrContext vrContext,
             Class<? extends HybridObject> outClass,
             CancelableCallback<? extends HybridObject> callback,
             AndroidResource request, int priority) {
-        requests.registerCallback(gvrContext, outClass, callback, request,
+        requests.registerCallback(vrContext, outClass, callback, request,
                 priority);
     }
 
@@ -100,10 +100,10 @@ abstract class Throttler {
      * Two main things happen once an async resource load has started running.
      * The expensive part happens on a CPU background thread (<i>i.e.</i> not
      * the GUI thread and not the GL thread): we convert the stream to a Java
-     * object. This may or may not be the GVRF type that we want: image loading
+     * object. This may or may not be the Meganekko type that we want: image loading
      * generates a {@link Bitmap} while mesh loading goes straight to a
      * {@link Mesh}. When we have an intermediate data type, we need to do a
-     * (cheap) conversion on the GL thread before we can pass the GVRF type to
+     * (cheap) conversion on the GL thread before we can pass the Meganekko type to
      * the app's callback.
      * 
      * <p>
@@ -112,13 +112,13 @@ abstract class Throttler {
      * {@code input} parameter.)
      * 
      * @param <OUTPUT>
-     *            The GVRF type that we will pass to the app's callback
+     *            The Meganekko type that we will pass to the app's callback
      * @param <INTERMEDIATE>
      *            The possibly different type that we got from the background
      *            thread
      */
     interface GlConverter<OUTPUT extends HybridObject, INTERMEDIATE> {
-        OUTPUT convert(VrContext gvrContext, INTERMEDIATE input);
+        OUTPUT convert(VrContext vrContext, INTERMEDIATE input);
     }
 
     /**
@@ -141,7 +141,7 @@ abstract class Throttler {
      * Descendants must implement {@link #loadResource()}.
      * 
      * @param <OUTPUT>
-     *            The GVRF type, delivered to the app's
+     *            The Meganekko type, delivered to the app's
      *            {@link Callback#loaded(HybridObject, AndroidResource)
      *            loaded()} callback
      * @param <INTERMEDIATE>
@@ -151,16 +151,16 @@ abstract class Throttler {
     static abstract class AsyncLoader<OUTPUT extends HybridObject, INTERMEDIATE>
             implements Cancelable {
 
-        protected final VrContext gvrContext;
+        protected final VrContext vrContext;
         protected final AndroidResource resource;
         protected final GlConverter<OUTPUT, INTERMEDIATE> converter;
         protected final CancelableCallback<HybridObject> callback;
 
-        protected AsyncLoader(VrContext gvrContext,
+        protected AsyncLoader(VrContext vrContext,
                 GlConverter<OUTPUT, INTERMEDIATE> converter,
                 AndroidResource request,
                 CancelableCallback<HybridObject> callback) {
-            this.gvrContext = gvrContext;
+            this.vrContext = vrContext;
             this.converter = converter;
             this.resource = request;
             this.callback = callback;
@@ -178,13 +178,13 @@ abstract class Throttler {
             } finally {
                 if (async != null) {
                     final INTERMEDIATE loadedResource = async;
-                    gvrContext.runOnGlThread(new Runnable() {
+                    vrContext.runOnGlThread(new Runnable() {
 
                         @Override
                         public void run() {
-                            OUTPUT gvrfResource = converter.convert(gvrContext,
+                            OUTPUT MeganekkoResource = converter.convert(vrContext,
                                     loadedResource);
-                            callback.loaded(gvrfResource, resource);
+                            callback.loaded(MeganekkoResource, resource);
                         }
                     });
                 } else {
@@ -205,7 +205,7 @@ abstract class Throttler {
          * {@link Callback#loaded(HybridObject, AndroidResource) loaded()}
          * callback
          * 
-         * @return An Android or GVRF resource type
+         * @return An Android or Meganekko resource type
          * @throws InterruptedException
          */
         protected abstract INTERMEDIATE loadResource()
@@ -226,7 +226,7 @@ abstract class Throttler {
      * {@link Threads#spawn(Runnable) background thread.}
      * 
      * @param <OUTPUT>
-     *            The GVRF type, delivered to the app's
+     *            The Meganekko type, delivered to the app's
      *            {@link Callback#loaded(HybridObject, AndroidResource)
      *            loaded()} callback
      * @param <INTERMEDIATE>
@@ -236,7 +236,7 @@ abstract class Throttler {
     static abstract class AsyncLoaderFactory<OUTPUT extends HybridObject, INTERMEDIATE> {
         /** Create an AsyncLoader of the right type */
         abstract AsyncLoader<OUTPUT, INTERMEDIATE> threadProc(
-                VrContext gvrContext, AndroidResource request,
+                VrContext vrContext, AndroidResource request,
                 CancelableCallback<HybridObject> callback, int priority);
     }
 
@@ -288,7 +288,7 @@ abstract class Throttler {
             threadFactories.put(targetClass, factory);
         }
 
-        void registerCallback(VrContext gvrContext,
+        void registerCallback(VrContext vrContext,
                 Class<? extends HybridObject> outClass,
                 CancelableCallback<? extends HybridObject> callback,
                 AndroidResource request, int priority) {
@@ -333,7 +333,7 @@ abstract class Throttler {
                     // There is no current request for this resource. Create a
                     // new PendingRequest, using a threadFactory to create the
                     // appropriate AsyncLoader.
-                    pending = new PendingRequest(gvrContext, request, callback,
+                    pending = new PendingRequest(vrContext, request, callback,
                             priority, outClass);
 
                     pendingRequests.put(request, pending);
@@ -361,7 +361,7 @@ abstract class Throttler {
             private int priority = EMPTY_LIST;
             private int highestPriority = priority;
 
-            public PendingRequest(VrContext gvrContext,
+            public PendingRequest(VrContext vrContext,
                     AndroidResource request,
                     CancelableCallback<? extends HybridObject> callback,
                     int priority, Class<? extends HybridObject> outClass) {
@@ -370,7 +370,7 @@ abstract class Throttler {
                 updatePriority();
 
                 cancelable = threadFactories.get(outClass).threadProc(
-                        gvrContext, request, this, priority);
+                        vrContext, request, this, priority);
             }
 
             public void addCallback(

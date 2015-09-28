@@ -14,10 +14,10 @@
  */
 
 
-/** GVRF animations, version 2.0.
+/** Meganekko animations, version 2.0.
  * 
  * <p>
- * You can animate any GVRF object's properties. By default, when you start an 
+ * You can animate any Meganekko object's properties. By default, when you start an 
  * animation it runs once and terminates, without any need for further action
  * on your part. You can, however, specify an {@linkplain 
  * com.eje_c.meganekko.animation.Animation#setOnFinish(GVROnFinish)
@@ -30,7 +30,7 @@
  * that lets you run an animation until your app reaches a desired state.
  * 
  * <p>
- * The animation engine is an optional part of GVRF; you need to create an instance
+ * The animation engine is an optional part of Meganekko; you need to create an instance
  * of the {@linkplain com.eje_c.meganekko.animation.AnimationEngine animation 
  * engine.} See {@link 
  * com.eje_c.meganekko.animation.Animation GVRAnimation} for the details, but

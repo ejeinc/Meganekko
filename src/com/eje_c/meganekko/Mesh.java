@@ -20,17 +20,17 @@ import static com.eje_c.meganekko.utility.Assert.*;
 import com.eje_c.meganekko.utility.Exceptions;
 
 /**
- * This is one of the key GVRF classes: It holds GL meshes.
+ * This is one of the key Meganekko classes: It holds GL meshes.
  * 
  * A GL mesh is a net of triangles that define an object's surface geometry.
  */
 public class Mesh extends HybridObject {
-    public Mesh(VrContext gvrContext) {
-        super(gvrContext, NativeMesh.ctor());
+    public Mesh(VrContext vrContext) {
+        super(vrContext, NativeMesh.ctor());
     }
 
-    Mesh(VrContext gvrContext, long ptr) {
-        super(gvrContext, ptr);
+    Mesh(VrContext vrContext, long ptr) {
+        super(vrContext, ptr);
     }
 
     /**

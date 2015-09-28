@@ -27,7 +27,7 @@ import com.eje_c.meganekko.utility.Threads;
 import android.graphics.Color;
 
 /**
- * This is one of the key GVRF classes: it holds shaders with textures.
+ * This is one of the key Meganekko classes: it holds shaders with textures.
  * 
  * You can have invisible {@linkplain SceneObject scene objects:} these have
  * a location and a set of child objects. This can be useful, to move a set of
@@ -61,7 +61,7 @@ import android.graphics.Color;
  * 
  * <pre>
  * // for example
- * GVRMaterial material = new GVRMaterial(gvrContext);
+ * GVRMaterial material = new GVRMaterial(vrContext);
  * material.setMainTexture(texture);
  * </pre>
  */
@@ -153,14 +153,14 @@ public class Material extends HybridObject implements
     /**
      * A new holder for a shader's uniforms.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            Current {@link VrContext}
      * @param shaderId
      *            Id of a {@linkplain GVRShaderType stock} or
      *            {@linkplain MaterialShaderManager custom} shader.
      */
-    public Material(VrContext gvrContext, MaterialShaderId shaderId) {
-        super(gvrContext, NativeMaterial.ctor(shaderId.ID));
+    public Material(VrContext vrContext, MaterialShaderId shaderId) {
+        super(vrContext, NativeMaterial.ctor(shaderId.ID));
         this.shaderId = shaderId;
         // if texture shader is used, set lighting coefficients to OpenGL default
         // values
@@ -177,15 +177,15 @@ public class Material extends HybridObject implements
      * A convenience overload: builds a {@link Material} that uses the most
      * common stock shader, the {@linkplain GVRShaderType.Texture 'texture'} shader.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            Current {@link VrContext}
      */
-    public Material(VrContext gvrContext) {
-        this(gvrContext, GVRShaderType.Texture.ID);
+    public Material(VrContext vrContext) {
+        this(vrContext, GVRShaderType.Texture.ID);
     }
 
-    Material(VrContext gvrContext, long ptr) {
-        super(gvrContext, ptr);
+    Material(VrContext vrContext, long ptr) {
+        super(vrContext, ptr);
     }
 
     public MaterialShaderId getShaderType() {
@@ -218,7 +218,7 @@ public class Material extends HybridObject implements
     /**
      * Get the {@code color} uniform.
      * 
-     * By convention, GVRF shaders can use a {@code vec3} uniform named
+     * By convention, Meganekko shaders can use a {@code vec3} uniform named
      * {@code color}. With the default {@linkplain GVRShaderType.Unlit 'unlit'
      * shader,} this allows you to add an overlay color on top of the texture.
      * 
@@ -241,7 +241,7 @@ public class Material extends HybridObject implements
     /**
      * Set the {@code color} uniform.
      * 
-     * By convention, GVRF shaders can use a {@code vec3} uniform named
+     * By convention, Meganekko shaders can use a {@code vec3} uniform named
      * {@code color}. With the default {@linkplain GVRShaderType.Unlit 'unlit'
      * shader,} this allows you to add an overlay color on top of the texture.
      * Values are between {@code 0.0f} and {@code 1.0f}, inclusive.
@@ -273,7 +273,7 @@ public class Material extends HybridObject implements
     /**
      * Get the {@code materialAmbientColor} uniform.
      * 
-     * By convention, GVRF shaders can use a {@code vec4} uniform named
+     * By convention, Meganekko shaders can use a {@code vec4} uniform named
      * {@code materialAmbientColor}. With the {@linkplain GVRShaderType.Lit 
      * 'lit' shader,} this allows you to add an overlay color on top of the
      * texture.
@@ -288,7 +288,7 @@ public class Material extends HybridObject implements
     /**
      * Set the {@code materialAmbientColor} uniform for lighting.
      * 
-     * By convention, GVRF shaders can use a {@code vec4} uniform named
+     * By convention, Meganekko shaders can use a {@code vec4} uniform named
      * {@code materialAmbientColor}. With the {@linkplain GVRShaderType.Lit 
      * 'lit' shader,} this allows you to add an overlay ambient light color on
      * top of the texture. Values are between {@code 0.0f} and {@code 1.0f},
@@ -310,7 +310,7 @@ public class Material extends HybridObject implements
     /**
      * Get the {@code materialDiffuseColor} uniform.
      * 
-     * By convention, GVRF shaders can use a {@code vec4} uniform named
+     * By convention, Meganekko shaders can use a {@code vec4} uniform named
      * {@code materialDiffuseColor}. With the {@linkplain GVRShaderType.Lit 
      * 'lit' shader,} this allows you to add an overlay color on top of the
      * texture.
@@ -325,7 +325,7 @@ public class Material extends HybridObject implements
     /**
      * Set the {@code materialDiffuseColor} uniform for lighting.
      * 
-     * By convention, GVRF shaders can use a {@code vec4} uniform named
+     * By convention, Meganekko shaders can use a {@code vec4} uniform named
      * {@code materialDiffuseColor}. With the {@linkplain GVRShaderType.Lit 
      * 'lit' shader,} this allows you to add an overlay diffuse light color on
      * top of the texture. Values are between {@code 0.0f} and {@code 1.0f},
@@ -347,7 +347,7 @@ public class Material extends HybridObject implements
     /**
      * Get the {@code materialSpecularColor} uniform.
      * 
-     * By convention, GVRF shaders can use a {@code vec4} uniform named
+     * By convention, Meganekko shaders can use a {@code vec4} uniform named
      * {@code materialSpecularColor}. With the {@linkplain GVRShaderType.Lit 
      * 'lit' shader,} this allows you to add an overlay color on top of the
      * texture.
@@ -362,7 +362,7 @@ public class Material extends HybridObject implements
     /**
      * Set the {@code materialSpecularColor} uniform for lighting.
      * 
-     * By convention, GVRF shaders can use a {@code vec4} uniform named
+     * By convention, Meganekko shaders can use a {@code vec4} uniform named
      * {@code materialSpecularColor}. With the {@linkplain GVRShaderType.Lit 
      * 'lit' shader,} this allows you to add an overlay specular light color on
      * top of the texture. Values are between {@code 0.0f} and {@code 1.0f},
@@ -384,7 +384,7 @@ public class Material extends HybridObject implements
     /**
      * Get the {@code materialSpecularExponent} uniform.
      * 
-     * By convention, GVRF shaders can use a {@code float} uniform named
+     * By convention, Meganekko shaders can use a {@code float} uniform named
      * {@code materialSpecularExponent}. With the {@linkplain GVRShaderType.Lit
      * 'lit' shader,} this allows you to add an overlay color on top of the
      * texture.
@@ -399,7 +399,7 @@ public class Material extends HybridObject implements
     /**
      * Set the {@code materialSpecularExponent} uniform for lighting.
      * 
-     * By convention, GVRF shaders can use a {@code float} uniform named
+     * By convention, Meganekko shaders can use a {@code float} uniform named
      * {@code materialSpecularExponent}. With the {@linkplain GVRShaderType.Lit
      * 'lit' shader,} this allows you to add an overlay specular light color on
      * top of the texture. Values are between {@code 0.0f} and {@code 128.0f},
@@ -433,14 +433,14 @@ public class Material extends HybridObject implements
      * opacity is implemented.
      * 
      * <p>
-     * First, GVRF does not sort by distance every object it can see, then draw
+     * First, Meganekko does not sort by distance every object it can see, then draw
      * from back to front. Rather, it sorts every object by
      * {@linkplain RenderData#getRenderingOrder() render order,} then draws
      * the {@linkplain Scene scene graph} in traversal order. So, if you want
      * to see a scene object through another scene object, you have to
      * explicitly {@linkplain RenderData#setRenderingOrder(int) set the
      * rendering order} so that the translucent object draws after the opaque
-     * object. You can use any integer values you like, but GVRF supplies
+     * object. You can use any integer values you like, but Meganekko supplies
      * {@linkplain RenderData.GVRRenderingOrder four standard values;} the
      * {@linkplain RenderData#getRenderingOrder() default value} is
      * {@linkplain RenderData.GVRRenderingOrder#GEOMETRY GEOMETRY.}

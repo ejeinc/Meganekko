@@ -32,7 +32,7 @@ import com.eje_c.meganekko.VrContext;
  * your callback tells them to stop.}
  * 
  * <p>
- * The periodic engine is an optional component of GVRF: You need to
+ * The periodic engine is an optional component of Meganekko: You need to
  * {@linkplain VrContext#getPeriodicEngine() get the singleton} in order to use
  * it. For example,
  * 
@@ -41,12 +41,12 @@ import com.eje_c.meganekko.VrContext;
  * Runnable pulse = new Runnable() {
  * 
  *     public void run() {
- *         new GVRScaleAnimation(uiObject, 0.5f, 2f) //
+ *         new ScaleAnimation(uiObject, 0.5f, 2f) //
  *                 .setRepeatMode(GVRRepeatMode.PINGPONG) //
  *                 .start(mAnimationEngine);
  *     }
  * };
- * gvrContext.getPeriodicEngine().runEvery(pulse, 1f, 2f, 10);
+ * vrContext.getPeriodicEngine().runEvery(pulse, 1f, 2f, 10);
  * </pre>
  * 
  * will grow and shrink the {@code uiObject} ten times, every other second,
@@ -57,7 +57,7 @@ import com.eje_c.meganekko.VrContext;
  * The engine maintains a priority queue of events, which it checks in a
  * {@linkplain FrameListener frame listener}; events run as
  * {@linkplain VrContext#runOnGlThread(Runnable) run-once events.} Every frame,
- * GVRF runs any run-once events; then any frame listeners (including
+ * Meganekko runs any run-once events; then any frame listeners (including
  * animations); then your {@linkplain GVRScript#onStep() onStep() method;} and
  * then it renders the scene. This means that any periodic events that run on a
  * given frame will run before any animations. It also means that there is

@@ -28,8 +28,8 @@ import android.content.res.Resources;
 public abstract class BaseShaderManager<MAP, ID> extends HybridObject
         implements ShaderManagers<MAP, ID> {
 
-    protected BaseShaderManager(VrContext gvrContext, long pointer) {
-        super(gvrContext, pointer);
+    protected BaseShaderManager(VrContext vrContext, long pointer) {
+        super(vrContext, pointer);
     }
 
     @Override

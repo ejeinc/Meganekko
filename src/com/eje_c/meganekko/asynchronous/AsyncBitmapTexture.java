@@ -62,17 +62,17 @@ abstract class AsyncBitmapTexture {
      * The API
      */
 
-    static void loadTexture(VrContext gvrContext,
+    static void loadTexture(VrContext vrContext,
             BitmapTextureCallback callback, AndroidResource resource,
             int priority) {
-        Throttler.registerCallback(gvrContext, TEXTURE_CLASS, callback,
+        Throttler.registerCallback(vrContext, TEXTURE_CLASS, callback,
                 resource, priority);
     }
 
-    static void loadTexture(VrContext gvrContext,
+    static void loadTexture(VrContext vrContext,
             CancelableCallback<Texture> callback,
             AndroidResource resource, int priority) {
-        Throttler.registerCallback(gvrContext, TEXTURE_CLASS, callback,
+        Throttler.registerCallback(vrContext, TEXTURE_CLASS, callback,
                 resource, priority);
     }
 
@@ -144,8 +144,8 @@ abstract class AsyncBitmapTexture {
      * first use; the default settings are very conservative, and will usually
      * give much smaller textures than necessary.
      */
-    static Context setup(VrContext gvrContext, ImageSizePolicy sizePolicy) {
-        Context androidContext = gvrContext.getContext();
+    static Context setup(VrContext vrContext, ImageSizePolicy sizePolicy) {
+        Context androidContext = vrContext.getContext();
         Memory.setup(androidContext);
 
         if (sizePolicy == null) {
@@ -163,7 +163,7 @@ abstract class AsyncBitmapTexture {
         maxImageSize = (int) (heapSize * sizePolicy.getMaximumImageFactor());
         Log.d(TAG, "Set maxImageSize == %, d", maxImageSize);
 
-        gvrContext.runOnGlThread(new Runnable() {
+        vrContext.runOnGlThread(new Runnable() {
 
             @Override
             public void run() {
@@ -294,15 +294,15 @@ abstract class AsyncBitmapTexture {
         private static final GlConverter<Texture, Bitmap> sConverter = new GlConverter<Texture, Bitmap>() {
 
             @Override
-            public Texture convert(VrContext gvrContext, Bitmap bitmap) {
-                return new BitmapTexture(gvrContext, bitmap);
+            public Texture convert(VrContext vrContext, Bitmap bitmap) {
+                return new BitmapTexture(vrContext, bitmap);
             }
         };
 
-        protected AsyncLoadTextureResource(VrContext gvrContext,
+        protected AsyncLoadTextureResource(VrContext vrContext,
                 AndroidResource request,
                 CancelableCallback<HybridObject> callback, int priority) {
-            super(gvrContext, sConverter, request, callback);
+            super(vrContext, sConverter, request, callback);
         }
 
         @Override
@@ -319,11 +319,11 @@ abstract class AsyncBitmapTexture {
                 new AsyncLoaderFactory<Texture, Bitmap>() {
 
                     @Override
-                    AsyncLoadTextureResource threadProc(VrContext gvrContext,
+                    AsyncLoadTextureResource threadProc(VrContext vrContext,
                             AndroidResource request,
                             CancelableCallback<HybridObject> callback,
                             int priority) {
-                        return new AsyncLoadTextureResource(gvrContext,
+                        return new AsyncLoadTextureResource(vrContext,
                                 request, callback, priority);
                     }
                 });

@@ -273,7 +273,7 @@ public abstract class HybridObject implements Closeable {
 
     private static class FinalizeThread extends Thread {
 
-        // private static final String TAG = Log.tag(GVRFinalizeThread.class);
+        // private static final String TAG = Log.tag(MeganekkoinalizeThread.class);
 
         private FinalizeThread() {
             setName("Finalize Thread");
@@ -301,7 +301,7 @@ public abstract class HybridObject implements Closeable {
      * Most objects will be automatically closed when Java's garbage collector
      * detects that they are no longer being used: Explicitly closing an object
      * that's still linked into the scene graph will almost certainly crash your
-     * GVRF app. You should only {@code close()} transient objects (especially
+     * Meganekko app. You should only {@code close()} transient objects (especially
      * those that use lots of memory, like large textures) that you
      * <em>know</em> are no longer being used.
      */

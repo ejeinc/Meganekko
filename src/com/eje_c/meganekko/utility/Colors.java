@@ -22,11 +22,11 @@ import android.graphics.Color;
  * 
  * <p>
  * Please note that the {@code org.gearvrf.utility} package contains low-level
- * utility code used in multiple GVRF packages. We can't keep you from using
- * this code in a GVRF application, but we <em>can</em> urge you not to:
+ * utility code used in multiple Meganekko packages. We can't keep you from using
+ * this code in a Meganekko application, but we <em>can</em> urge you not to:
  * everything in this package is minimally documented, internal code. We are not
  * making any promises about the behavior or performance of any code in this
- * package; this package is not part of the GVRF API, and future releases may
+ * package; this package is not part of the Meganekko API, and future releases may
  * change or remove classes or methods without providing for backward
  * compatibility.
  */

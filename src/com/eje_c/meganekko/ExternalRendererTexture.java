@@ -7,10 +7,10 @@ package com.eje_c.meganekko;
  */
 public class ExternalRendererTexture extends Texture {
     /**
-     * @param gvrContext Current gvrContext
+     * @param vrContext Current vrContext
      */
-    public ExternalRendererTexture(VrContext gvrContext) {
-        super(gvrContext, NativeExternalRendererTexture.ctor());
+    public ExternalRendererTexture(VrContext vrContext) {
+        super(vrContext, NativeExternalRendererTexture.ctor());
     }
 
     public void setData(long data) {

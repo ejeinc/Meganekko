@@ -25,7 +25,7 @@ public class CubemapTexture extends Texture {
     /**
      * Constructs a cube map texture using six pre-existing {@link Bitmap}s.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            Current {@link VrContext}
      * @param bitmapArray
      *            A {@link Bitmap} array which contains six {@link Bitmap}s. The
@@ -35,15 +35,15 @@ public class CubemapTexture extends Texture {
      *            "posz.png", and "negz.png", which can be changed by calling
      *            {@link CubemapTexture#setFaceNames(String[])}.
      */
-    public CubemapTexture(VrContext gvrContext, Bitmap[] bitmapArray) {
-        this(gvrContext, bitmapArray, gvrContext.DEFAULT_TEXTURE_PARAMETERS);
+    public CubemapTexture(VrContext vrContext, Bitmap[] bitmapArray) {
+        this(vrContext, bitmapArray, vrContext.DEFAULT_TEXTURE_PARAMETERS);
     }
 
     /**
      * Constructs a cube map texture using six pre-existing {@link Bitmap}s and
      * the user defined filters {@link TextureParameters}.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            Current {@link VrContext}
      * @param bitmapArray
      *            A {@link Bitmap} array which contains six {@link Bitmap}s. The
@@ -56,9 +56,9 @@ public class CubemapTexture extends Texture {
      *            User defined object for {@link TextureParameters} which may
      *            also contain default values.
      */
-    public CubemapTexture(VrContext gvrContext, Bitmap[] bitmapArray,
+    public CubemapTexture(VrContext vrContext, Bitmap[] bitmapArray,
             TextureParameters textureParameters) {
-        super(gvrContext, NativeCubemapTexture.bitmapArrayConstructor(
+        super(vrContext, NativeCubemapTexture.bitmapArrayConstructor(
                 bitmapArray, textureParameters.getCurrentValuesArray()));
     }
 

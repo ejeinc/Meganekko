@@ -38,11 +38,11 @@ public class TextureParameters {
      * Constructs a texture parameter object with default values for filter and
      * warp.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            Current {@link VrContext}
      */
-    public TextureParameters(VrContext gvrContext) {
-        mGVRContext = gvrContext;
+    public TextureParameters(VrContext vrContext) {
+        mGVRContext = vrContext;
         minFilterType = TextureFilterType.GL_LINEAR;
         magFilterType = TextureFilterType.GL_LINEAR;
         wrapSType = TextureWrapType.GL_CLAMP_TO_EDGE;

@@ -22,15 +22,15 @@ package com.eje_c.meganekko;
 public class ExternalTexture extends Texture {
     /**
      * 
-     * @param gvrContext
-     *            Current gvrContext
+     * @param vrContext
+     *            Current vrContext
      */
-    public ExternalTexture(VrContext gvrContext) {
-        super(gvrContext, NativeExternalTexture.ctor());
+    public ExternalTexture(VrContext vrContext) {
+        super(vrContext, NativeExternalTexture.ctor());
     }
 
-    ExternalTexture(VrContext gvrContext, long ptr) {
-        super(gvrContext, ptr);
+    ExternalTexture(VrContext vrContext, long ptr) {
+        super(vrContext, ptr);
     }
 }
 

@@ -31,7 +31,7 @@ import android.util.Log;
 import static android.opengl.GLES30.*;
 
 /**
- * One of the key GVRF classes: Encapsulates the data associated with rendering
+ * One of the key Meganekko classes: Encapsulates the data associated with rendering
  * a mesh.
  * 
  * This includes the {@link Mesh mesh} itself, the mesh's {@link Material
@@ -52,10 +52,10 @@ public class RenderData extends Component {
      * 
      * You might expect the rendering process to sort the scene graph, from back
      * to front, so it can then draw translucent objects over the objects behind
-     * them. But that's not how GVRF works. Instead, it sorts the scene graph by
+     * them. But that's not how Meganekko works. Instead, it sorts the scene graph by
      * render order, then draws the sorted graph in traversal order. (Please
      * don't waste your time getting angry or trying to make sense of this;
-     * please just take it as a bald statement of How GVRF Currently Works.)
+     * please just take it as a bald statement of How Meganekko Currently Works.)
      * 
      * <p>
      * The point is, to get transparency to work as you expect, you do need to
@@ -96,22 +96,22 @@ public class RenderData extends Component {
     /**
      * Constructor.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            Current {@link VrContext}
      */
-    public RenderData(VrContext gvrContext) {
-        super(gvrContext, NativeRenderData.ctor());
+    public RenderData(VrContext vrContext) {
+        super(vrContext, NativeRenderData.ctor());
         
-        RenderPass basePass = new RenderPass(gvrContext);
+        RenderPass basePass = new RenderPass(vrContext);
         mRenderPassList = new ArrayList<RenderPass>();
         addPass(basePass);
         isLightEnabled = false;
     }
 
-    private RenderData(VrContext gvrContext, long ptr) {
-        super(gvrContext, ptr);
+    private RenderData(VrContext vrContext, long ptr) {
+        super(vrContext, ptr);
         
-        RenderPass basePass = new RenderPass(gvrContext);
+        RenderPass basePass = new RenderPass(vrContext);
         mRenderPassList = new ArrayList<RenderPass>();
         addPass(basePass);
     }

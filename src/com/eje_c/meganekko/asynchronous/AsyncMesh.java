@@ -37,10 +37,10 @@ abstract class AsyncMesh {
      * The API
      */
 
-    static void loadMesh(VrContext gvrContext,
+    static void loadMesh(VrContext vrContext,
             CancelableCallback<Mesh> callback, AndroidResource resource,
             int priority) {
-        Throttler.registerCallback(gvrContext, MESH_CLASS, callback, resource,
+        Throttler.registerCallback(vrContext, MESH_CLASS, callback, resource,
                 priority);
     }
 
@@ -52,19 +52,19 @@ abstract class AsyncMesh {
         static final GlConverter<Mesh, Mesh> sConverter = new GlConverter<Mesh, Mesh>() {
 
             @Override
-            public Mesh convert(VrContext gvrContext, Mesh mesh) {
+            public Mesh convert(VrContext vrContext, Mesh mesh) {
                 return mesh;
             }
         };
 
-        AsyncLoadMesh(VrContext gvrContext, AndroidResource request,
+        AsyncLoadMesh(VrContext vrContext, AndroidResource request,
                 CancelableCallback<HybridObject> callback, int priority) {
-            super(gvrContext, sConverter, request, callback);
+            super(vrContext, sConverter, request, callback);
         }
 
         @Override
         protected Mesh loadResource() throws InterruptedException {
-            return gvrContext.loadMesh(resource);
+            return vrContext.loadMesh(resource);
         }
     }
 
@@ -76,10 +76,10 @@ abstract class AsyncMesh {
 
                     @Override
                     AsyncLoader<Mesh, Mesh> threadProc(
-                            VrContext gvrContext, AndroidResource request,
+                            VrContext vrContext, AndroidResource request,
                             CancelableCallback<HybridObject> callback,
                             int priority) {
-                        return new AsyncLoadMesh(gvrContext, request, callback,
+                        return new AsyncLoadMesh(vrContext, request, callback,
                                 priority);
                     }
                 });

@@ -43,8 +43,8 @@ public class TextSceneObject extends SceneObject {
     private boolean mAutoUpdate = true;
     private Paint mAntiAliasPaint = new Paint(Paint.FILTER_BITMAP_FLAG | Paint.ANTI_ALIAS_FLAG);
 
-    public TextSceneObject(VrContext gvrContext) {
-        super(gvrContext);
+    public TextSceneObject(VrContext vrContext) {
+        super(vrContext);
         mPaint.setTextSize(20.0f);
     }
 

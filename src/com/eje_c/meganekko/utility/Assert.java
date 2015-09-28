@@ -19,7 +19,7 @@ import android.text.TextUtils;
 
 /**
  * The goal of this class is to improve the readability and to provide some
- * common checking method to improve the robustness of GVRF.
+ * common checking method to improve the robustness of Meganekko.
  * 
  * Additionally, this class may help us avoid using {@link JniException},
  * which is (at best) a sort of fake exception-from-JNI.
@@ -651,7 +651,7 @@ public abstract class Assert {
     }
 
     /**
-     * In common shader cases, NaN makes little sense. Correspondingly, GVRF is
+     * In common shader cases, NaN makes little sense. Correspondingly, Meganekko is
      * going to use Float.NaN as illegal flag in many cases. Therefore, we need
      * a function to check if there is any setX that is using NaN as input.
      * 
@@ -671,7 +671,7 @@ public abstract class Assert {
     }
 
     /**
-     * In common shader cases, NaN makes little sense. Correspondingly, GVRF is
+     * In common shader cases, NaN makes little sense. Correspondingly, Meganekko is
      * going to use Float.NaN as illegal flag in many cases. Therefore, we need
      * a function to check if there is any setX that is using NaN as input.
      * 

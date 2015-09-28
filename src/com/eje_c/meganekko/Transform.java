@@ -16,7 +16,7 @@
 package com.eje_c.meganekko;
 
 /**
- * One of the key GVRF classes: Encapsulates a 4x4 matrix that controls how GL
+ * One of the key Meganekko classes: Encapsulates a 4x4 matrix that controls how GL
  * draws a mesh.
  * 
  * Every {@link SceneObject#getTransform() scene object} has a
@@ -26,12 +26,12 @@ package com.eje_c.meganekko;
  * components or as Euler angles.
  */
 public class Transform extends Component {
-    Transform(VrContext gvrContext) {
-        super(gvrContext, NativeTransform.ctor());
+    Transform(VrContext vrContext) {
+        super(vrContext, NativeTransform.ctor());
     }
 
-    private Transform(VrContext gvrContext, long ptr) {
-        super(gvrContext, ptr);
+    private Transform(VrContext vrContext, long ptr) {
+        super(vrContext, ptr);
     }
 
     /**

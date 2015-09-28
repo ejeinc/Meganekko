@@ -162,8 +162,8 @@ class KTX extends CompressedTextureLoader {
         }
 
         @Override
-        public GVRCompressedTexture toTexture(VrContext gvrContext, int quality) {
-            GVRCompressedTexture result = new GVRCompressedTexture(gvrContext,
+        public GVRCompressedTexture toTexture(VrContext vrContext, int quality) {
+            GVRCompressedTexture result = new GVRCompressedTexture(vrContext,
                     GVRCompressedTexture.GL_TARGET, levels, quality);
 
             ByteOrder defaultOrder = data.order();

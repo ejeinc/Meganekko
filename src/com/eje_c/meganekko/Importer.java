@@ -39,28 +39,28 @@ class Importer {
      * Imports a 3D model from the specified file in the application's
      * {@code asset} directory.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            Context to import file from.
      * @param filename
      *            Name of the file to import.
      * @return An instance of {@link AssimpImporter} or {@code null} if the
      *         file does not exist (or cannot be read)
      */
-    static AssimpImporter readFileFromAssets(VrContext gvrContext,
+    static AssimpImporter readFileFromAssets(VrContext vrContext,
             String filename, EnumSet<ImportSettings> settings) { 
-        long nativeValue = NativeImporter.readFileFromAssets(gvrContext
+        long nativeValue = NativeImporter.readFileFromAssets(vrContext
                 .getContext().getAssets(), filename, ImportSettings.getAssimpImportFlags(settings));
-        return nativeValue == 0 ? null : new AssimpImporter(gvrContext,
+        return nativeValue == 0 ? null : new AssimpImporter(vrContext,
                 nativeValue);
     }
 
-    static AssimpImporter readFileFromResources(VrContext gvrContext,
+    static AssimpImporter readFileFromResources(VrContext vrContext,
             int resourceId, EnumSet<ImportSettings> settings) {
-        return readFileFromResources(gvrContext, new AndroidResource(
-                gvrContext, resourceId), settings);
+        return readFileFromResources(vrContext, new AndroidResource(
+                vrContext, resourceId), settings);
     }
 
-    static AssimpImporter readFileFromResources(VrContext gvrContext,
+    static AssimpImporter readFileFromResources(VrContext vrContext,
             AndroidResource resource, EnumSet<ImportSettings> settings) {
         try {
             byte[] bytes;
@@ -77,7 +77,7 @@ class Importer {
             }
             long nativeValue = NativeImporter.readFromByteArray(bytes,
                     resourceFilename, ImportSettings.getAssimpImportFlags(settings));
-            return new AssimpImporter(gvrContext, nativeValue);
+            return new AssimpImporter(vrContext, nativeValue);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -91,16 +91,16 @@ class Importer {
      * Does not check that file exists and is readable by this process: the only
      * public caller does that check.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            Context to import file from.
      * @param filename
      *            Name of the file to import.
      * @return An instance of {@link AssimpImporter}.
      */
-    static AssimpImporter readFileFromSDCard(VrContext gvrContext,
+    static AssimpImporter readFileFromSDCard(VrContext vrContext,
             String filename, EnumSet<ImportSettings> settings) {
         long nativeValue = NativeImporter.readFileFromSDCard(filename, ImportSettings.getAssimpImportFlags(settings));
-        return new AssimpImporter(gvrContext, nativeValue);
+        return new AssimpImporter(vrContext, nativeValue);
     }
 }
 

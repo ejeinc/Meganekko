@@ -38,14 +38,14 @@ public class MeshEyePointee extends EyePointee {
      * When the mesh is complicated, it will be cheaper - though less accurate -
      * to use {@link Mesh#getBoundingBox()} instead of the raw mesh.
      * 
-     * @param gvrContext
+     * @param vrContext
      *            The {@link VrContext} used by the app.
      * 
      * @param mesh
      *            The {@link Mesh} that the picking ray will test against.
      */
-    public MeshEyePointee(VrContext gvrContext, Mesh mesh) {
-        super(gvrContext, NativeMeshEyePointee.ctor(mesh.getNative()));
+    public MeshEyePointee(VrContext vrContext, Mesh mesh) {
+        super(vrContext, NativeMeshEyePointee.ctor(mesh.getNative()));
         mMesh = mesh;
     }
 
