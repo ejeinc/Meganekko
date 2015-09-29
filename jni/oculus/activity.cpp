@@ -31,6 +31,7 @@ GVRActivity::GVRActivity() :
 {
     centerViewMatrix = ovrMatrix4f_CreateIdentity();
     deviceIsDocked = false;
+    MinimumVsyncs = 1;
 }
 
 GVRActivity::~GVRActivity()
