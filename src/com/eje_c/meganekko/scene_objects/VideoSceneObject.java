@@ -23,6 +23,7 @@ import com.eje_c.meganekko.ExternalTexture;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.MaterialShaderId;
 import com.eje_c.meganekko.Mesh;
+import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.Material.GVRShaderType;
 
@@ -43,6 +44,39 @@ public class VideoSceneObject extends SceneObject {
         public static final int HORIZONTAL_STEREO = 1;
         public static final int VERTICAL_STEREO = 2;
     };
+
+    /**
+     * Play a video on a {@linkplain SceneObject scene object} with an
+     * arbitrarily complex geometry, using the Android {@link MediaPlayer}. You
+     * have to call {@code VideoSceneObject#setMediaPlayer(MediaPlayer)}} to
+     * play video.
+     * 
+     * @param vrContext
+     *            current {@link VrContext}
+     * @param mesh
+     *            a {@link Mesh} - see
+     *            {@link VrContext#loadMesh(com.eje_c.meganekko.GVRAndroidResource)}
+     *            and {@link VrContext#createQuad(float, float)}
+     * @param mediaPlayer
+     *            an Android {@link MediaPlayer}
+     * @param videoType
+     *            One of the {@linkplain GVRVideoType video type constants}
+     * @throws IllegalArgumentException
+     *             on an invalid {@code videoType} parameter
+     */
+    public VideoSceneObject(VrContext vrContext) {
+        super(vrContext);
+
+        ExternalTexture texture = new ExternalTexture(vrContext);
+        Material material = new Material(vrContext, GVRShaderType.OES.ID);
+        material.setMainTexture(texture);
+        RenderData renderData = new RenderData(vrContext);
+        renderData.setMaterial(material);
+        attachRenderData(renderData);
+
+        mVideo = new GVRVideo(null, texture);
+        vrContext.registerFrameListener(mVideo);
+    }
 
     /**
      * Play a video on a {@linkplain SceneObject scene object} with an
@@ -188,6 +222,23 @@ public class VideoSceneObject extends SceneObject {
      */
     public long getTimeStamp() {
         return mVideo.getTimeStamp();
+    }
+
+    public void setVideoType(int videoType) {
+
+        switch (videoType) {
+        case GVRVideoType.MONO:
+            getRenderData().getMaterial().setShaderType(GVRShaderType.OES.ID);
+            break;
+        case GVRVideoType.HORIZONTAL_STEREO:
+            getRenderData().getMaterial().setShaderType(GVRShaderType.OESHorizontalStereo.ID);
+            break;
+        case GVRVideoType.VERTICAL_STEREO:
+            getRenderData().getMaterial().setShaderType(GVRShaderType.OESVerticalStereo.ID);
+            break;
+        default:
+            throw new IllegalArgumentException();
+        }
     }
 
     private static class GVRVideo implements FrameListener {

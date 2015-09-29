@@ -39,6 +39,7 @@ import com.eje_c.meganekko.scene_objects.CubeSceneObject;
 import com.eje_c.meganekko.scene_objects.CylinderSceneObject;
 import com.eje_c.meganekko.scene_objects.SphereSceneObject;
 import com.eje_c.meganekko.scene_objects.TextSceneObject;
+import com.eje_c.meganekko.scene_objects.VideoSceneObject;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
@@ -90,7 +91,10 @@ public class XmlSceneObjectParser {
         // Assign mesh if exists
         RenderData renderData = object.getRenderData();
         if (renderData != null) {
-            mesh = new FutureWrapper<Mesh>(renderData.getMesh());
+            Mesh m = renderData.getMesh();
+            if (m != null) {
+                mesh = new FutureWrapper<Mesh>(m);
+            }
         }
 
         // Read attributes
@@ -372,6 +376,8 @@ public class XmlSceneObjectParser {
             return new CylinderSceneObject(context);
         case "text":
             return new TextSceneObject(context);
+        case "video":
+            return new VideoSceneObject(context);
 
         default:
 
