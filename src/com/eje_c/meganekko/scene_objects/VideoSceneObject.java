@@ -76,6 +76,12 @@ public class VideoSceneObject extends SceneObject {
         vrContext.registerFrameListener(mVideo);
     }
 
+    @Deprecated
+    public VideoSceneObject(VrContext vrContext, Mesh mesh,
+            MediaPlayer mediaPlayer, int videoType) {
+        this(vrContext, mesh, mediaPlayer, VideoType.values()[videoType]);
+    }
+
     /**
      * Play a video on a {@linkplain SceneObject scene object} with an
      * arbitrarily complex geometry, using the Android {@link MediaPlayer}
@@ -146,6 +152,12 @@ public class VideoSceneObject extends SceneObject {
             float height, MediaPlayer mediaPlayer, VideoType videoType) {
         this(vrContext, vrContext.createQuad(width, height), mediaPlayer,
                 videoType);
+    }
+
+    @Deprecated
+    public VideoSceneObject(VrContext vrContext, float width,
+            float height, MediaPlayer mediaPlayer, int videoType) {
+        this(vrContext, width, height, mediaPlayer, VideoType.values()[videoType]);
     }
 
     /**
