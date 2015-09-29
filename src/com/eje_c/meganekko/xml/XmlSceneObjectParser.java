@@ -291,12 +291,14 @@ public class XmlSceneObjectParser {
         // Parse children
         while (parser.getEventType() != XmlPullParser.END_TAG) {
 
-            if (parser.next() == XmlPullParser.START_TAG) {
+            if (parser.getEventType() == XmlPullParser.START_TAG) {
                 SceneObject child = parse(parser);
                 if (child != null) {
                     object.addChildObject(child);
                 }
             }
+
+            parser.next();
         }
 
         /*
