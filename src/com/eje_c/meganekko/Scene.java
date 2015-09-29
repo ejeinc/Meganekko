@@ -29,7 +29,7 @@ public class Scene extends HybridObject {
     private final List<SceneObject> mSceneObjects = new ArrayList<SceneObject>();
     private final List<OnFrameListener> mOnFrameListeners = new ArrayList<>();
     private Camera mMainCamera;
-    
+
     public interface OnFrameListener {
         void onFrame(VrFrame vrFrame);
     }
@@ -181,9 +181,10 @@ public class Scene extends HybridObject {
     }
 
     public SceneObject findObjectByName(String name) {
-        for (SceneObject object : getWholeSceneObjects()) {
-            if (name.equals(object.getName())) {
-                return object;
+        for (SceneObject object : mSceneObjects) {
+            SceneObject result = object.findObjectByName(name);
+            if (result != null) {
+                return result;
             }
         }
 
