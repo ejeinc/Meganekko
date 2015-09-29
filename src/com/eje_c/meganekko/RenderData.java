@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import com.eje_c.meganekko.RenderPass;
-import com.eje_c.meganekko.Material.GVRShaderType;
+import com.eje_c.meganekko.Material.ShaderType;
 import com.eje_c.meganekko.RenderPass.GVRCullFaceEnum;
 import com.eje_c.meganekko.utility.Threads;
 
@@ -368,7 +368,7 @@ public class RenderData extends Component {
         boolean supportsLight = false;
         
         for (int pass = 0; pass < mRenderPassList.size(); ++pass) {
-            if (mRenderPassList.get(pass).getMaterial().getShaderType() == GVRShaderType.Texture.ID) {
+            if (mRenderPassList.get(pass).getMaterial().getShaderType() == ShaderType.Texture.ID) {
                 supportsLight = true;
                 break;
             }

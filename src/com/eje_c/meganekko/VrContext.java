@@ -27,7 +27,7 @@ import com.eje_c.meganekko.AndroidResource.BitmapTextureCallback;
 import com.eje_c.meganekko.AndroidResource.CompressedTextureCallback;
 import com.eje_c.meganekko.AndroidResource.MeshCallback;
 import com.eje_c.meganekko.AndroidResource.TextureCallback;
-import com.eje_c.meganekko.Material.GVRShaderType;
+import com.eje_c.meganekko.Material.ShaderType;
 import com.eje_c.meganekko.animation.Animation;
 import com.eje_c.meganekko.animation.AnimationEngine;
 import com.eje_c.meganekko.asynchronous.AsynchronousResourceLoader;
@@ -737,7 +737,7 @@ public class VrContext {
                 assetRelativeFilename), node.getName(), index);
         
         Material meshMaterial = new Material(this,
-                GVRShaderType.Assimp.ID);
+                ShaderType.Assimp.ID);
         
         /* Feature set */
         int assimpFeatureSet = 0x00000000;
@@ -774,8 +774,8 @@ public class VrContext {
         String texDiffuseFileName = material.getTextureFile(
                 AiTextureType.DIFFUSE, 0);
         if (texDiffuseFileName != null && !texDiffuseFileName.isEmpty()) {
-            assimpFeatureSet = GVRShaderType.Assimp.setBit(assimpFeatureSet,
-                    GVRShaderType.Assimp.AS_DIFFUSE_TEXTURE);
+            assimpFeatureSet = ShaderType.Assimp.setBit(assimpFeatureSet,
+                    ShaderType.Assimp.AS_DIFFUSE_TEXTURE);
             Future<Texture> futureDiffuseTexture = this
                     .loadFutureTexture(new AndroidResource(this,
                             texDiffuseFileName));

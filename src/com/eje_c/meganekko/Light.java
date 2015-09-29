@@ -17,7 +17,7 @@ package com.eje_c.meganekko;
 
 import static com.eje_c.meganekko.utility.Assert.*;
 
-import com.eje_c.meganekko.Material.GVRShaderType;
+import com.eje_c.meganekko.Material.ShaderType;
 
 public class Light extends HybridObject {
 
@@ -35,7 +35,7 @@ public class Light extends HybridObject {
      * Get the {@code light_pos} uniform.
      * 
      * By convention, Meganekko shaders can use a {@code vec3} uniform named
-     * {@code light_pos}. With the {@linkplain GVRShaderType.Lit 'lit' shader,}
+     * {@code light_pos}. With the {@linkplain ShaderType.Lit 'lit' shader,}
      * this allows you to add an overlay color on top of the texture.
      * 
      * @return The current {@code vec4 light_pos} as a three-element array
@@ -48,7 +48,7 @@ public class Light extends HybridObject {
      * Set the {@code light_pos} uniform for light.
      * 
      * By convention, Meganekko shaders can use a {@code vec3} uniform named
-     * {@code light_pos}. With the {@linkplain GVRShaderType.Lit 'lit' shader,}
+     * {@code light_pos}. With the {@linkplain ShaderType.Lit 'lit' shader,}
      * this allows you to add an overlay lighting color on top of the texture.
      * The position is in the camera coordinate system. The user is responsible
      * to use the correct coordinate system.
@@ -68,7 +68,7 @@ public class Light extends HybridObject {
      * Get the {@code lightAmbientIntensity} uniform.
      * 
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code lightAmbientIntensity}. With the {@linkplain GVRShaderType.Lit 
+     * {@code lightAmbientIntensity}. With the {@linkplain ShaderType.Lit 
      * 'lit' shader,} this allows you to add an overlay color on top of the
      * texture.
      * 
@@ -83,7 +83,7 @@ public class Light extends HybridObject {
      * Set the {@code lightAmbientIntensity} uniform for lighting.
      * 
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code lightAmbientIntensity}. With the {@linkplain GVRShaderType.Lit 
+     * {@code lightAmbientIntensity}. With the {@linkplain ShaderType.Lit 
      * 'lit' shader,} this allows you to add an overlay ambient light intensity
      * on top of the texture. Values are between {@code 0.0f} and {@code 1.0f},
      * inclusive.
@@ -105,7 +105,7 @@ public class Light extends HybridObject {
      * Get the {@code lightDiffuseIntensity} uniform.
      * 
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code lightDiffuseIntensity}. With the {@linkplain GVRShaderType.Lit 
+     * {@code lightDiffuseIntensity}. With the {@linkplain ShaderType.Lit 
      * 'lit' shader,} this allows you to add an overlay color on top of the
      * texture.
      * 
@@ -120,7 +120,7 @@ public class Light extends HybridObject {
      * Set the {@code lightDiffuseIntensity} uniform for lighting.
      * 
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code lightDiffuseIntensity}. With the {@linkplain GVRShaderType.Lit 
+     * {@code lightDiffuseIntensity}. With the {@linkplain ShaderType.Lit 
      * 'lit' shader,} this allows you to add an overlay diffuse light intensity
      * on top of the texture. Values are between {@code 0.0f} and {@code 1.0f},
      * inclusive.
@@ -142,7 +142,7 @@ public class Light extends HybridObject {
      * Get the {@code lightSpecularIntensity} uniform.
      * 
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code lightSpecularIntensity}. With the {@linkplain GVRShaderType.Lit 
+     * {@code lightSpecularIntensity}. With the {@linkplain ShaderType.Lit 
      * 'lit' shader,} this allows you to add an overlay color on top of the
      * texture.
      * 
@@ -157,7 +157,7 @@ public class Light extends HybridObject {
      * Set the {@code lightSpecularIntensity} uniform for lighting.
      * 
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code lightSpecularIntensity}. With the {@linkplain GVRShaderType.Lit 
+     * {@code lightSpecularIntensity}. With the {@linkplain ShaderType.Lit 
      * 'lit' shader,} this allows you to add an overlay specular light intensity
      * on top of the texture. Values are between {@code 0.0f} and {@code 1.0f},
      * inclusive.

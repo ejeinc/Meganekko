@@ -24,7 +24,7 @@ import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.Texture;
-import com.eje_c.meganekko.Material.GVRShaderType;
+import com.eje_c.meganekko.Material.ShaderType;
 
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -59,7 +59,7 @@ public class CameraSceneObject extends SceneObject implements
         super(vrContext, mesh);
         vrContext.registerFrameListener(this);
         Texture texture = new ExternalTexture(vrContext);
-        Material material = new Material(vrContext, GVRShaderType.OES.ID);
+        Material material = new Material(vrContext, ShaderType.OES.ID);
         material.setMainTexture(texture);
         getRenderData().setMaterial(material);
 

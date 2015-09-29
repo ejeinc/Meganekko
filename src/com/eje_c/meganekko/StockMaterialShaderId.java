@@ -18,7 +18,7 @@ package com.eje_c.meganekko;
 /**
  * Represents a stock material shader.
  * 
- * You get these from {@link Material.GVRShaderType}; you can pass these to
+ * You get these from {@link Material.ShaderType}; you can pass these to
  * {@link Material#GVRMaterial(GVRContext, MaterialShaderId)} and to
  * {@link Material#setShaderType(MaterialShaderId)}; you can <em>not</em>
  * pass these to

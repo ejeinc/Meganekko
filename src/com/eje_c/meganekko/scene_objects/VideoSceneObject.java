@@ -17,33 +17,31 @@ package com.eje_c.meganekko.scene_objects;
 
 import java.io.IOException;
 
-import com.eje_c.meganekko.FrameListener;
-import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.ExternalTexture;
+import com.eje_c.meganekko.FrameListener;
 import com.eje_c.meganekko.Material;
+import com.eje_c.meganekko.Material.ShaderType;
 import com.eje_c.meganekko.MaterialShaderId;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.Material.GVRShaderType;
+import com.eje_c.meganekko.VrContext;
 
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.view.Surface;
 
 /**
- * A {@linkplain SceneObject scene object} that shows video, using the
- * Android {@link MediaPlayer}.
+ * A {@linkplain SceneObject scene object} that shows video, using the Android
+ * {@link MediaPlayer}.
  */
 public class VideoSceneObject extends SceneObject {
-    private final GVRVideo mVideo;
+    private final Video mVideo;
 
     /** Video type constants, for use with {@link VideoSceneObject} */
-    public abstract class GVRVideoType {
-        public static final int MONO = 0;
-        public static final int HORIZONTAL_STEREO = 1;
-        public static final int VERTICAL_STEREO = 2;
-    };
+    public enum VideoType {
+        MONO, HORIZONTAL_STEREO, VERTICAL_STEREO
+    }
 
     /**
      * Play a video on a {@linkplain SceneObject scene object} with an
@@ -60,7 +58,7 @@ public class VideoSceneObject extends SceneObject {
      * @param mediaPlayer
      *            an Android {@link MediaPlayer}
      * @param videoType
-     *            One of the {@linkplain GVRVideoType video type constants}
+     *            One of the {@linkplain VideoType video type constants}
      * @throws IllegalArgumentException
      *             on an invalid {@code videoType} parameter
      */
@@ -68,13 +66,13 @@ public class VideoSceneObject extends SceneObject {
         super(vrContext);
 
         ExternalTexture texture = new ExternalTexture(vrContext);
-        Material material = new Material(vrContext, GVRShaderType.OES.ID);
+        Material material = new Material(vrContext, ShaderType.OES.ID);
         material.setMainTexture(texture);
         RenderData renderData = new RenderData(vrContext);
         renderData.setMaterial(material);
         attachRenderData(renderData);
 
-        mVideo = new GVRVideo(null, texture);
+        mVideo = new Video(null, texture);
         vrContext.registerFrameListener(mVideo);
     }
 
@@ -91,25 +89,25 @@ public class VideoSceneObject extends SceneObject {
      * @param mediaPlayer
      *            an Android {@link MediaPlayer}
      * @param videoType
-     *            One of the {@linkplain GVRVideoType video type constants}
+     *            One of the {@linkplain VideoType video type constants}
      * @throws IllegalArgumentException
      *             on an invalid {@code videoType} parameter
      */
     public VideoSceneObject(VrContext vrContext, Mesh mesh,
-            MediaPlayer mediaPlayer, int videoType) {
+            MediaPlayer mediaPlayer, VideoType videoType) {
         super(vrContext, mesh);
         ExternalTexture texture = new ExternalTexture(vrContext);
 
         MaterialShaderId materialType;
         switch (videoType) {
-        case GVRVideoType.MONO:
-            materialType = GVRShaderType.OES.ID;
+        case MONO:
+            materialType = ShaderType.OES.ID;
             break;
-        case GVRVideoType.HORIZONTAL_STEREO:
-            materialType = GVRShaderType.OESHorizontalStereo.ID;
+        case HORIZONTAL_STEREO:
+            materialType = ShaderType.OESHorizontalStereo.ID;
             break;
-        case GVRVideoType.VERTICAL_STEREO:
-            materialType = GVRShaderType.OESVerticalStereo.ID;
+        case VERTICAL_STEREO:
+            materialType = ShaderType.OESVerticalStereo.ID;
             break;
         default:
             try {
@@ -123,13 +121,13 @@ public class VideoSceneObject extends SceneObject {
         material.setMainTexture(texture);
         getRenderData().setMaterial(material);
 
-        mVideo = new GVRVideo(mediaPlayer, texture);
+        mVideo = new Video(mediaPlayer, texture);
         vrContext.registerFrameListener(mVideo);
     }
 
     /**
-     * Play a video on a 2D, rectangular {@linkplain SceneObject scene
-     * object,} using the Android {@link MediaPlayer}
+     * Play a video on a 2D, rectangular {@linkplain SceneObject scene object,}
+     * using the Android {@link MediaPlayer}
      * 
      * @param vrContext
      *            current {@link VrContext}
@@ -140,12 +138,12 @@ public class VideoSceneObject extends SceneObject {
      * @param mediaPlayer
      *            an Android {@link MediaPlayer}
      * @param videoType
-     *            One of the {@linkplain GVRVideoType video type constants}
+     *            One of the {@linkplain VideoType video type constants}
      * @throws IllegalArgumentException
      *             on an invalid {@code videoType} parameter
      */
     public VideoSceneObject(VrContext vrContext, float width,
-            float height, MediaPlayer mediaPlayer, int videoType) {
+            float height, MediaPlayer mediaPlayer, VideoType videoType) {
         this(vrContext, vrContext.createQuad(width, height), mediaPlayer,
                 videoType);
     }
@@ -224,24 +222,24 @@ public class VideoSceneObject extends SceneObject {
         return mVideo.getTimeStamp();
     }
 
-    public void setVideoType(int videoType) {
+    public void setVideoType(VideoType videoType) {
 
         switch (videoType) {
-        case GVRVideoType.MONO:
-            getRenderData().getMaterial().setShaderType(GVRShaderType.OES.ID);
+        case MONO:
+            getRenderData().getMaterial().setShaderType(ShaderType.OES.ID);
             break;
-        case GVRVideoType.HORIZONTAL_STEREO:
-            getRenderData().getMaterial().setShaderType(GVRShaderType.OESHorizontalStereo.ID);
+        case HORIZONTAL_STEREO:
+            getRenderData().getMaterial().setShaderType(ShaderType.OESHorizontalStereo.ID);
             break;
-        case GVRVideoType.VERTICAL_STEREO:
-            getRenderData().getMaterial().setShaderType(GVRShaderType.OESVerticalStereo.ID);
+        case VERTICAL_STEREO:
+            getRenderData().getMaterial().setShaderType(ShaderType.OESVerticalStereo.ID);
             break;
         default:
             throw new IllegalArgumentException();
         }
     }
 
-    private static class GVRVideo implements FrameListener {
+    private static class Video implements FrameListener {
 
         private SurfaceTexture mSurfaceTexture = null;
         private MediaPlayer mMediaPlayer = null;
@@ -255,10 +253,10 @@ public class VideoSceneObject extends SceneObject {
          *            the {@link MediaPlayer} type object to be used in the
          *            class
          * @param texture
-         *            the {@link ExternalTexture} type object to be used in
-         *            the class
+         *            the {@link ExternalTexture} type object to be used in the
+         *            class
          */
-        public GVRVideo(MediaPlayer mediaPlayer, ExternalTexture texture) {
+        public Video(MediaPlayer mediaPlayer, ExternalTexture texture) {
             mSurfaceTexture = new SurfaceTexture(texture.getId());
             if (mediaPlayer != null) {
                 setMediaPlayer(mediaPlayer);
@@ -268,9 +266,9 @@ public class VideoSceneObject extends SceneObject {
         /**
          * On top of the various {@link MediaPlayer} states, this wrapper may be
          * 'active' or 'inactive'. When the wrapper is active, it updates the
-         * screen each time {@link FrameListener#onDrawFrame(float)} is
-         * called; when the wrapper is inactive, {@link MediaPlayer} changes do
-         * not show on the screen.
+         * screen each time {@link FrameListener#onDrawFrame(float)} is called;
+         * when the wrapper is inactive, {@link MediaPlayer} changes do not show
+         * on the screen.
          * 
          * <p>
          * Note that calling {@link #activate()} does not call
@@ -324,7 +322,7 @@ public class VideoSceneObject extends SceneObject {
          *            An Android {@link MediaPlayer}
          */
         public void setMediaPlayer(MediaPlayer mediaPlayer) {
-            release(); // any current MediaPlayer
+            release();// any current MediaPlayer
 
             mMediaPlayer = mediaPlayer;
             Surface surface = new Surface(mSurfaceTexture);

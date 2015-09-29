@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import com.eje_c.meganekko.Material.GVRShaderType;
+import com.eje_c.meganekko.Material.ShaderType;
 import com.eje_c.meganekko.RenderData.GVRRenderMaskBit;
 
 /**
@@ -111,7 +111,7 @@ public class SceneObject extends HybridObject {
      * @param texture
      *            a {@link Texture}
      * @param shaderId
-     *            a specific shader Id - see {@link GVRShaderType} and
+     *            a specific shader Id - see {@link ShaderType} and
      *            {@link MaterialShaderManager}
      * 
      */
@@ -124,7 +124,7 @@ public class SceneObject extends HybridObject {
         getRenderData().setMaterial(material);
     }
 
-    private static final MaterialShaderId STANDARD_SHADER = GVRShaderType.Texture.ID;
+    private static final MaterialShaderId STANDARD_SHADER = ShaderType.Texture.ID;
 
     /**
      * Constructs a scene object with {@linkplain Mesh an arbitrarily complex

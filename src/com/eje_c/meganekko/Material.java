@@ -45,7 +45,7 @@ import android.graphics.Color;
  * Each {@link Material} contains two main things:
  * <ul>
  * <li>The id of a (stock or custom) shader, which is used to draw the mesh. See
- * {@link GVRShaderType} and {@link VrContext#getMaterialShaderManager()}.
+ * {@link ShaderType} and {@link VrContext#getMaterialShaderManager()}.
  * 
  * <li>Data to pass to the shader. This usually - but not always - means a
  * {@link Texture} and can include other named values to pass to the shader.
@@ -73,7 +73,7 @@ public class Material extends HybridObject implements
     final private Map<String, Texture> textures = new HashMap<String, Texture>();
 
     /** Pre-built shader ids. */
-    public abstract static class GVRShaderType {
+    public abstract static class ShaderType {
 
         public abstract static class UnlitHorizontalStereo {
             public static final MaterialShaderId ID = new StockMaterialShaderId(
@@ -156,7 +156,7 @@ public class Material extends HybridObject implements
      * @param vrContext
      *            Current {@link VrContext}
      * @param shaderId
-     *            Id of a {@linkplain GVRShaderType stock} or
+     *            Id of a {@linkplain ShaderType stock} or
      *            {@linkplain MaterialShaderManager custom} shader.
      */
     public Material(VrContext vrContext, MaterialShaderId shaderId) {
@@ -164,7 +164,7 @@ public class Material extends HybridObject implements
         this.shaderId = shaderId;
         // if texture shader is used, set lighting coefficients to OpenGL default
         // values
-        if (shaderId == GVRShaderType.Texture.ID) {
+        if (shaderId == ShaderType.Texture.ID) {
             setAmbientColor(0.2f, 0.2f, 0.2f, 1.0f);
             setDiffuseColor(0.8f, 0.8f, 0.8f, 1.0f);
             setSpecularColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -175,13 +175,13 @@ public class Material extends HybridObject implements
 
     /**
      * A convenience overload: builds a {@link Material} that uses the most
-     * common stock shader, the {@linkplain GVRShaderType.Texture 'texture'} shader.
+     * common stock shader, the {@linkplain ShaderType.Texture 'texture'} shader.
      * 
      * @param vrContext
      *            Current {@link VrContext}
      */
     public Material(VrContext vrContext) {
-        this(vrContext, GVRShaderType.Texture.ID);
+        this(vrContext, ShaderType.Texture.ID);
     }
 
     Material(VrContext vrContext, long ptr) {
@@ -219,7 +219,7 @@ public class Material extends HybridObject implements
      * Get the {@code color} uniform.
      * 
      * By convention, Meganekko shaders can use a {@code vec3} uniform named
-     * {@code color}. With the default {@linkplain GVRShaderType.Unlit 'unlit'
+     * {@code color}. With the default {@linkplain ShaderType.Unlit 'unlit'
      * shader,} this allows you to add an overlay color on top of the texture.
      * 
      * @return The current {@code vec3 color} as a three-element array
@@ -242,7 +242,7 @@ public class Material extends HybridObject implements
      * Set the {@code color} uniform.
      * 
      * By convention, Meganekko shaders can use a {@code vec3} uniform named
-     * {@code color}. With the default {@linkplain GVRShaderType.Unlit 'unlit'
+     * {@code color}. With the default {@linkplain ShaderType.Unlit 'unlit'
      * shader,} this allows you to add an overlay color on top of the texture.
      * Values are between {@code 0.0f} and {@code 1.0f}, inclusive.
      * 
@@ -274,7 +274,7 @@ public class Material extends HybridObject implements
      * Get the {@code materialAmbientColor} uniform.
      * 
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code materialAmbientColor}. With the {@linkplain GVRShaderType.Lit 
+     * {@code materialAmbientColor}. With the {@linkplain ShaderType.Lit 
      * 'lit' shader,} this allows you to add an overlay color on top of the
      * texture.
      * 
@@ -289,7 +289,7 @@ public class Material extends HybridObject implements
      * Set the {@code materialAmbientColor} uniform for lighting.
      * 
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code materialAmbientColor}. With the {@linkplain GVRShaderType.Lit 
+     * {@code materialAmbientColor}. With the {@linkplain ShaderType.Lit 
      * 'lit' shader,} this allows you to add an overlay ambient light color on
      * top of the texture. Values are between {@code 0.0f} and {@code 1.0f},
      * inclusive.
@@ -311,7 +311,7 @@ public class Material extends HybridObject implements
      * Get the {@code materialDiffuseColor} uniform.
      * 
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code materialDiffuseColor}. With the {@linkplain GVRShaderType.Lit 
+     * {@code materialDiffuseColor}. With the {@linkplain ShaderType.Lit 
      * 'lit' shader,} this allows you to add an overlay color on top of the
      * texture.
      * 
@@ -326,7 +326,7 @@ public class Material extends HybridObject implements
      * Set the {@code materialDiffuseColor} uniform for lighting.
      * 
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code materialDiffuseColor}. With the {@linkplain GVRShaderType.Lit 
+     * {@code materialDiffuseColor}. With the {@linkplain ShaderType.Lit 
      * 'lit' shader,} this allows you to add an overlay diffuse light color on
      * top of the texture. Values are between {@code 0.0f} and {@code 1.0f},
      * inclusive.
@@ -348,7 +348,7 @@ public class Material extends HybridObject implements
      * Get the {@code materialSpecularColor} uniform.
      * 
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code materialSpecularColor}. With the {@linkplain GVRShaderType.Lit 
+     * {@code materialSpecularColor}. With the {@linkplain ShaderType.Lit 
      * 'lit' shader,} this allows you to add an overlay color on top of the
      * texture.
      * 
@@ -363,7 +363,7 @@ public class Material extends HybridObject implements
      * Set the {@code materialSpecularColor} uniform for lighting.
      * 
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code materialSpecularColor}. With the {@linkplain GVRShaderType.Lit 
+     * {@code materialSpecularColor}. With the {@linkplain ShaderType.Lit 
      * 'lit' shader,} this allows you to add an overlay specular light color on
      * top of the texture. Values are between {@code 0.0f} and {@code 1.0f},
      * inclusive.
@@ -385,7 +385,7 @@ public class Material extends HybridObject implements
      * Get the {@code materialSpecularExponent} uniform.
      * 
      * By convention, Meganekko shaders can use a {@code float} uniform named
-     * {@code materialSpecularExponent}. With the {@linkplain GVRShaderType.Lit
+     * {@code materialSpecularExponent}. With the {@linkplain ShaderType.Lit
      * 'lit' shader,} this allows you to add an overlay color on top of the
      * texture.
      * 
@@ -400,7 +400,7 @@ public class Material extends HybridObject implements
      * Set the {@code materialSpecularExponent} uniform for lighting.
      * 
      * By convention, Meganekko shaders can use a {@code float} uniform named
-     * {@code materialSpecularExponent}. With the {@linkplain GVRShaderType.Lit
+     * {@code materialSpecularExponent}. With the {@linkplain ShaderType.Lit
      * 'lit' shader,} this allows you to add an overlay specular light color on
      * top of the texture. Values are between {@code 0.0f} and {@code 128.0f},
      * inclusive.
@@ -449,7 +449,7 @@ public class Material extends HybridObject implements
      * Second, technically all this method does is set the {@code opacity}
      * uniform. What this does depends on the actual shader. If you don't
      * specify a shader (or you specify the
-     * {@linkplain Material.GVRShaderType.Unlit#ID unlit} shader) setting
+     * {@linkplain Material.ShaderType.Unlit#ID unlit} shader) setting
      * {@code opacity} does exactly what you expect; you only have to worry
      * about the render order. However, it is totally up to a custom shader
      * whether or how it will handle opacity.
