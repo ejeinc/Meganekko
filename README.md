@@ -26,7 +26,38 @@ dependencies {
 }
 ```
 
-and build it.
+Add required permissions, attributes and elements.
+
+```xml
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+```
+
+```xml
+<application
+    android:allowBackup="true"
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/app_name"
+    android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+
+    <meta-data
+        android:name="com.samsung.android.vr.application.mode"
+        android:value="vr_only" />
+
+    <activity
+        android:name=".MainActivity"
+        android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
+        android:excludeFromRecents="true"
+        android:label="@string/app_name"
+        android:launchMode="singleTask"
+        android:screenOrientation="landscape">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+</application>
+```
 
 ## Setup (for local development)
 
