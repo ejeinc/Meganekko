@@ -203,6 +203,78 @@ public class Scene extends HybridObject {
 
         return objects;
     }
+
+    /**
+     * Called from VR thread when swipe up gesture is recognized.
+     */
+    public void onSwipeUp() {
+        //        Log.d(TAG, "onSwipeUp called");
+    }
+
+    /**
+     * Called from VR thread when swipe down gesture is recognized.
+     */
+    public void onSwipeDown() {
+        //        Log.d(TAG, "onSwipeDown called");
+    }
+
+    /**
+     * Called from VR thread when swipe forward gesture is recognized.
+     */
+    public void onSwipeForward() {
+        //        Log.d(TAG, "onSwipeForward called");
+    }
+
+    /**
+     * Called from VR thread when swipe back gesture is recognized.
+     */
+    public void onSwipeBack() {
+        //        Log.d(TAG, "onSwipeBack called");
+    }
+
+    /**
+     * Called from VR thread when touch pad single tap is recognized.
+     */
+    public void onTouchSingle() {
+        //        Log.d(TAG, "onTouchSingle called");
+    }
+
+    /**
+     * Called from VR thread when touch pad double tap is recognized.
+     */
+    public void onTouchDouble() {
+        //        Log.d(TAG, "onTouchDouble called");
+    }
+
+    public boolean onKeyShortPress(int keyCode, int repeatCount) {
+        //        Log.d(TAG, "onKeyShortPress key:%d repeat:%d", keyCode, repeatCount);
+        return false;
+    }
+
+    public boolean onKeyDoubleTap(int keyCode, int repeatCount) {
+        //        Log.d(TAG, "onKeyDoubleTap %d repeat:%d", keyCode, repeatCount);
+        return false;
+    }
+
+    public boolean onKeyLongPress(int keyCode, int repeatCount) {
+        //        Log.d(TAG, "onKeyLongPress %d repeat:%d", keyCode, repeatCount);
+        return false;
+    }
+
+    public boolean onKeyDown(int keyCode, int repeatCount) {
+        //        Log.d(TAG, "onKeyDown %d repeat:%d", keyCode, repeatCount);
+        return false;
+    }
+
+    public boolean onKeyUp(int keyCode, int repeatCount) {
+        //        Log.d(TAG, "onKeyUp %d repeat:%d", keyCode, repeatCount);
+        return false;
+    }
+
+    public boolean onKeyMax(int keyCode, int repeatCount) {
+        //        Log.d(TAG, "onKeyMax %d repeat:%d", keyCode, repeatCount);
+        return false;
+    }
 }
 
 class NativeScene {

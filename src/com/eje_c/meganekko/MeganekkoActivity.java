@@ -232,33 +232,30 @@ public class MeganekkoActivity extends VrActivity {
     }
 
     public boolean onKeyShortPress(int keyCode, int repeatCount) {
-        //        Log.d(TAG, "onKeyShortPress key:%d repeat:%d", keyCode, repeatCount);
-        return false;
+        return mVrContext.getMainScene().onKeyShortPress(keyCode, repeatCount);
     }
 
     public boolean onKeyDoubleTap(int keyCode, int repeatCount) {
-        //        Log.d(TAG, "onKeyDoubleTap %d repeat:%d", keyCode, repeatCount);
-        return false;
+        return mVrContext.getMainScene().onKeyDoubleTap(keyCode, repeatCount);
     }
 
     public boolean onKeyLongPress(int keyCode, int repeatCount) {
-        //        Log.d(TAG, "onKeyLongPress %d repeat:%d", keyCode, repeatCount);
-        return onKeyLongPress(keyCode, new KeyEvent(KeyEvent.ACTION_DOWN, keyCode));
+        return onKeyLongPress(keyCode, new KeyEvent(KeyEvent.ACTION_DOWN, keyCode)) ||
+                mVrContext.getMainScene().onKeyLongPress(keyCode, repeatCount);
     }
 
     public boolean onKeyDown(int keyCode, int repeatCount) {
-        //        Log.d(TAG, "onKeyDown %d repeat:%d", keyCode, repeatCount);
-        return onKeyDown(keyCode, new KeyEvent(KeyEvent.ACTION_DOWN, keyCode));
+        return onKeyDown(keyCode, new KeyEvent(KeyEvent.ACTION_DOWN, keyCode)) ||
+                mVrContext.getMainScene().onKeyDown(keyCode, repeatCount);
     }
 
     public boolean onKeyUp(int keyCode, int repeatCount) {
-        //        Log.d(TAG, "onKeyUp %d repeat:%d", keyCode, repeatCount);
-        return onKeyUp(keyCode, new KeyEvent(KeyEvent.ACTION_UP, keyCode));
+        return onKeyUp(keyCode, new KeyEvent(KeyEvent.ACTION_UP, keyCode)) ||
+                mVrContext.getMainScene().onKeyUp(keyCode, repeatCount);
     }
 
     public boolean onKeyMax(int keyCode, int repeatCount) {
-        //        Log.d(TAG, "onKeyMax %d repeat:%d", keyCode, repeatCount);
-        return false;
+        return mVrContext.getMainScene().onKeyMax(keyCode, repeatCount);
     }
 
     @Deprecated
@@ -283,42 +280,42 @@ public class MeganekkoActivity extends VrActivity {
      * Called from VR thread when swipe up gesture is recognized.
      */
     public void onSwipeUp() {
-        //        Log.d(TAG, "onSwipeUp called");
+        mVrContext.getMainScene().onSwipeUp();
     }
 
     /**
      * Called from VR thread when swipe down gesture is recognized.
      */
     public void onSwipeDown() {
-        //        Log.d(TAG, "onSwipeDown called");
+        mVrContext.getMainScene().onSwipeDown();
     }
 
     /**
      * Called from VR thread when swipe forward gesture is recognized.
      */
     public void onSwipeForward() {
-        //        Log.d(TAG, "onSwipeForward called");
+        mVrContext.getMainScene().onSwipeForward();
     }
 
     /**
      * Called from VR thread when swipe back gesture is recognized.
      */
     public void onSwipeBack() {
-        //        Log.d(TAG, "onSwipeBack called");
+        mVrContext.getMainScene().onSwipeBack();
     }
 
     /**
      * Called from VR thread when touch pad single tap is recognized.
      */
     public void onTouchSingle() {
-        //        Log.d(TAG, "onTouchSingle called");
+        mVrContext.getMainScene().onTouchSingle();
     }
 
     /**
      * Called from VR thread when touch pad double tap is recognized.
      */
     public void onTouchDouble() {
-        //        Log.d(TAG, "onTouchDouble called");
+        mVrContext.getMainScene().onTouchDouble();
     }
 
     private final Runnable mRunOnDock = new Runnable() {
