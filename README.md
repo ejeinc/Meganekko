@@ -15,7 +15,7 @@ android {
     ...
 }
 
-// Add this block
+// 1. Add this block
 repositories {
     jcenter()
     maven { url = 'http://ejeinc.github.io/Meganekko/repository' }
@@ -23,7 +23,7 @@ repositories {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.eje_c:meganekko:0.6.1-SNAPSHOT' // Add this line
+    compile 'com.eje_c:meganekko:0.6.1-SNAPSHOT' // 2. Add this line
 }
 ```
 
