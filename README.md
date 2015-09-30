@@ -6,23 +6,24 @@ The [MeganekkoSample](https://github.com/ejeinc/MeganekkoSample) project is simp
 
 ## Using Meganekko
 
-Modify your **project's root** build.gradle to add custom repository.
-
-```gradle
-allprojects {
-    repositories {
-        jcenter()
-        maven { url = 'http://ejeinc.github.io/Meganekko/repository' } // Add this line!
-    }
-}
-```
-
 Modify your **app/build.gradle** to include dependency.
 
 ```gradle
+apply plugin: 'com.android.application'
+
+android {
+    ...
+}
+
+// Add this block
+repositories {
+    jcenter()
+    maven { url = 'http://ejeinc.github.io/Meganekko/repository' }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.eje_c:meganekko:0.6.1-SNAPSHOT' // Add this line!
+    compile 'com.eje_c:meganekko:0.6.1-SNAPSHOT' // Add this line
 }
 ```
 
