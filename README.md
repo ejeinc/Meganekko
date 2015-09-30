@@ -17,7 +17,6 @@ android {
 
 // 1. Add this block
 repositories {
-    jcenter()
     maven { url = 'http://ejeinc.github.io/Meganekko/repository' }
 }
 
