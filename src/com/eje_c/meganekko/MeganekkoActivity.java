@@ -15,13 +15,18 @@
 
 package com.eje_c.meganekko;
 
+import java.io.IOException;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.xmlpull.v1.XmlPullParserException;
+
 import com.eje_c.meganekko.utility.DockEventReceiver;
 import com.eje_c.meganekko.utility.Log;
+import com.eje_c.meganekko.xml.XmlSceneParser;
+import com.eje_c.meganekko.xml.XmlSceneParserFactory;
 import com.oculus.vrappframework.VrActivity;
 
 import android.app.Activity;
@@ -414,5 +419,33 @@ public class MeganekkoActivity extends VrActivity {
 
     public void recenterPose() {
         recenterPose(getAppPtr());
+    }
+
+    /**
+     * Short hand method for getVrContext().getMainScene().findObjectByName().
+     * 
+     * @param name
+     * @return
+     */
+    public SceneObject findObjectByName(String name) {
+        return mVrContext.getMainScene().findObjectByName(name);
+    }
+
+    /**
+     * Short hand method for XML scene parsing.
+     * 
+     * @param xmlRes
+     */
+    public Scene setScene(int xmlRes) {
+
+        XmlSceneParser parser = XmlSceneParserFactory.getInstance(mVrContext).getSceneParser();
+
+        try {
+            Scene scene = parser.parse(getResources().getXml(xmlRes), new Scene(mVrContext));
+            mVrContext.setMainScene(scene);
+            return scene;
+        } catch (XmlPullParserException | IOException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 }
