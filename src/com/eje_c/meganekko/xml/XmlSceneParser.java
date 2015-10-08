@@ -31,12 +31,27 @@ import android.util.Xml;
 
 public class XmlSceneParser {
 
-    private final VrContext context;
-    private final XmlSceneObjectParser objectParser;
+    private final VrContext mContext;
+    private final XmlSceneObjectParser mObjectParser;
 
     public XmlSceneParser(VrContext context) {
-        this.context = context;
-        this.objectParser = new XmlSceneObjectParser(context);
+        this.mContext = context;
+        this.mObjectParser = new XmlSceneObjectParser(context);
+    }
+
+    /**
+     * Parse scene from XML resource.
+     * 
+     * @param xmlRes
+     *            XML resource.
+     * @param scene
+     *            Root scene. It can be null.
+     * @return Parsed {@code Scene}.
+     * @throws XmlPullParserException
+     * @throws IOException
+     */
+    public Scene parse(int xmlRes, Scene scene) throws XmlPullParserException, IOException {
+        return parse(mContext.getContext().getResources().getXml(xmlRes), scene);
     }
 
     /**
@@ -85,7 +100,7 @@ public class XmlSceneParser {
     public Scene parse(XmlPullParser parser, Scene scene) throws XmlPullParserException, IOException {
 
         if (scene == null) {
-            scene = new Scene(context);
+            scene = new Scene(mContext);
         }
 
         while (parser.next() != XmlPullParser.END_DOCUMENT) {
@@ -99,14 +114,14 @@ public class XmlSceneParser {
                     Camera camera = scene.getMainCamera();
 
                     while (parser.nextTag() == XmlPullParser.START_TAG) {
-                        SceneObject object = objectParser.parse(parser);
+                        SceneObject object = mObjectParser.parse(parser);
                         if (object != null) {
                             camera.addChildObject(object);
                         }
                     }
                 } else {
 
-                    SceneObject object = objectParser.parse(parser);
+                    SceneObject object = mObjectParser.parse(parser);
 
                     if (object != null) {
                         scene.addSceneObject(object);
@@ -129,6 +144,6 @@ public class XmlSceneParser {
      * @param useAsyncLoading
      */
     public void setAsyncTextureLoading(boolean useAsyncLoading) {
-        objectParser.setAsyncTextureLoading(useAsyncLoading);
+        mObjectParser.setAsyncTextureLoading(useAsyncLoading);
     }
 }
