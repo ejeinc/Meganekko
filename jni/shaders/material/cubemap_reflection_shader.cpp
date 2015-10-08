@@ -1,4 +1,6 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/*
+ * Copyright 2015 eje inc.
+ * Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +21,6 @@
 
 #include "cubemap_reflection_shader.h"
 
-#include "gl/gl_program.h"
 #include "objects/material.h"
 #include "objects/mesh.h"
 #include "objects/components/render_data.h"
@@ -95,29 +96,26 @@ static const char FRAGMENT_SHADER[] =
                 "}\n";
 
 CubemapReflectionShader::CubemapReflectionShader() :
-        program_(0), a_position_(0), a_normal_(0), u_mv_(0), u_mv_it_(0), u_mvp_(
+        a_position_(0), a_normal_(0), u_mv_(0), u_mv_it_(0), u_mvp_(
                 0), u_view_i_(0), u_texture_(0), u_color_(0), u_opacity_(0) {
-    program_ = new GLProgram(VERTEX_SHADER, FRAGMENT_SHADER);
-    a_position_ = glGetAttribLocation(program_->id(), "a_position");
-    a_normal_ = glGetAttribLocation(program_->id(), "a_normal");
-    u_mv_ = glGetUniformLocation(program_->id(), "u_mv");
-    u_mv_it_ = glGetUniformLocation(program_->id(), "u_mv_it");
-    u_mvp_ = glGetUniformLocation(program_->id(), "u_mvp");
-    u_view_i_ = glGetUniformLocation(program_->id(), "u_view_i");
-    u_texture_ = glGetUniformLocation(program_->id(), "u_texture");
-    u_color_ = glGetUniformLocation(program_->id(), "u_color");
-    u_opacity_ = glGetUniformLocation(program_->id(), "u_opacity");
+    program_ = BuildProgram(VERTEX_SHADER, FRAGMENT_SHADER);
+    a_position_ = glGetAttribLocation(program_.program, "a_position");
+    a_normal_ = glGetAttribLocation(program_.program, "a_normal");
+    u_mv_ = glGetUniformLocation(program_.program, "u_mv");
+    u_mv_it_ = glGetUniformLocation(program_.program, "u_mv_it");
+    u_mvp_ = glGetUniformLocation(program_.program, "u_mvp");
+    u_view_i_ = glGetUniformLocation(program_.program, "u_view_i");
+    u_texture_ = glGetUniformLocation(program_.program, "u_texture");
+    u_color_ = glGetUniformLocation(program_.program, "u_color");
+    u_opacity_ = glGetUniformLocation(program_.program, "u_opacity");
 }
 
 CubemapReflectionShader::~CubemapReflectionShader() {
-    if (program_ != 0) {
-        recycle();
-    }
+    recycle();
 }
 
 void CubemapReflectionShader::recycle() {
-    delete program_;
-    program_ = 0;
+    DeleteProgram(program_);
 }
 
 void CubemapReflectionShader::render(const OVR::Matrix4f& mv_matrix,
@@ -134,12 +132,11 @@ void CubemapReflectionShader::render(const OVR::Matrix4f& mv_matrix,
         throw error;
     }
 
-#if _GVRF_USE_GLES3_
     mesh->setVertexLoc(a_position_);
     mesh->setNormalLoc(a_normal_);
     mesh->generateVAO(Material::CUBEMAP_REFLECTION_SHADER);
 
-    glUseProgram(program_->id());
+    glUseProgram(program_.program);
 
     glUniformMatrix4fv(u_mv_, 1, GL_TRUE, mv_matrix.M[0]);
     glUniformMatrix4fv(u_mv_it_, 1, GL_TRUE, mv_it_matrix.M[0]);
@@ -155,33 +152,6 @@ void CubemapReflectionShader::render(const OVR::Matrix4f& mv_matrix,
     glDrawElements(GL_TRIANGLES, mesh->triangles().size(), GL_UNSIGNED_SHORT,
             0);
     glBindVertexArray(0);
-#else
-    glUseProgram(program_->id());
-
-    glVertexAttribPointer(a_position_, 3, GL_FLOAT, GL_FALSE, 0,
-            mesh->vertices().data());
-    glEnableVertexAttribArray(a_position_);
-
-    glVertexAttribPointer(a_normal_, 3, GL_FLOAT, GL_FALSE, 0,
-            mesh->normals().data());
-    glEnableVertexAttribArray(a_normal_);
-
-    glUniformMatrix4fv(u_mv_, 1, GL_TRUE, mv_matrix.M[0]);
-    glUniformMatrix4fv(u_mv_it_, 1, GL_TRUE, mv_it_matrix.M[0]);
-    glUniformMatrix4fv(u_mvp_, 1, GL_TRUE, mvp_matrix.M[0]);
-    glUniformMatrix4fv(u_view_i_, 1, GL_TRUE, view_invers_matrix.M[0]);
-
-    glActiveTexture (GL_TEXTURE0);
-    glBindTexture(texture->getTarget(), texture->getId());
-    glUniform1i(u_texture_, 0);
-
-    glUniform3f(u_color_, color.r, color.g, color.b);
-
-    glUniform1f(u_opacity_, opacity);
-
-    glDrawElements(GL_TRIANGLES, mesh->triangles().size(), GL_UNSIGNED_SHORT,
-            mesh->triangles().data());
-#endif
 
     checkGlError("CubemapReflectionShader::render");
 }

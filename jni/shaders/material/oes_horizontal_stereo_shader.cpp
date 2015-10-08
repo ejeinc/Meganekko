@@ -1,4 +1,6 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/*
+ * Copyright 2015 eje inc.
+ * Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +21,6 @@
 
 #include "oes_horizontal_stereo_shader.h"
 
-#include "gl/gl_program.h"
 #include "objects/material.h"
 #include "objects/mesh.h"
 #include "objects/components/render_data.h"
@@ -52,27 +53,24 @@ static const char FRAGMENT_SHADER[] =
                 "}\n";
 
 OESHorizontalStereoShader::OESHorizontalStereoShader() :
-        program_(0), a_position_(0), a_tex_coord_(0), u_mvp_(0), u_texture_(0), u_color_(
+        a_position_(0), a_tex_coord_(0), u_mvp_(0), u_texture_(0), u_color_(
                 0), u_opacity_(0), u_right_(0) {
-    program_ = new GLProgram(VERTEX_SHADER, FRAGMENT_SHADER);
-    a_position_ = glGetAttribLocation(program_->id(), "a_position");
-    a_tex_coord_ = glGetAttribLocation(program_->id(), "a_tex_coord");
-    u_mvp_ = glGetUniformLocation(program_->id(), "u_mvp");
-    u_texture_ = glGetUniformLocation(program_->id(), "u_texture");
-    u_color_ = glGetUniformLocation(program_->id(), "u_color");
-    u_opacity_ = glGetUniformLocation(program_->id(), "u_opacity");
-    u_right_ = glGetUniformLocation(program_->id(), "u_right");
+    program_ = BuildProgram(VERTEX_SHADER, FRAGMENT_SHADER);
+    a_position_ = glGetAttribLocation(program_.program, "a_position");
+    a_tex_coord_ = glGetAttribLocation(program_.program, "a_tex_coord");
+    u_mvp_ = glGetUniformLocation(program_.program, "u_mvp");
+    u_texture_ = glGetUniformLocation(program_.program, "u_texture");
+    u_color_ = glGetUniformLocation(program_.program, "u_color");
+    u_opacity_ = glGetUniformLocation(program_.program, "u_opacity");
+    u_right_ = glGetUniformLocation(program_.program, "u_right");
 }
 
 OESHorizontalStereoShader::~OESHorizontalStereoShader() {
-    if (program_ != 0) {
-        recycle();
-    }
+    recycle();
 }
 
 void OESHorizontalStereoShader::recycle() {
-    delete program_;
-    program_ = 0;
+    DeleteProgram(program_);
 }
 
 void OESHorizontalStereoShader::render(const OVR::Matrix4f& mvp_matrix,
@@ -88,12 +86,11 @@ void OESHorizontalStereoShader::render(const OVR::Matrix4f& mvp_matrix,
         throw error;
     }
 
-#if _GVRF_USE_GLES3_
     mesh->setVertexLoc(a_position_);
     mesh->setTexCoordLoc(a_tex_coord_);
     mesh->generateVAO(Material::UNLIT_HORIZONTAL_STEREO_SHADER);
 
-    glUseProgram(program_->id());
+    glUseProgram(program_.program);
 
     glUniformMatrix4fv(u_mvp_, 1, GL_TRUE, mvp_matrix.M[0]);
     glActiveTexture (GL_TEXTURE0);
@@ -107,32 +104,6 @@ void OESHorizontalStereoShader::render(const OVR::Matrix4f& mvp_matrix,
     glDrawElements(GL_TRIANGLES, mesh->triangles().size(), GL_UNSIGNED_SHORT,
             0);
     glBindVertexArray(0);
-#else
-    glUseProgram(program_->id());
-
-    glVertexAttribPointer(a_position_, 3, GL_FLOAT, GL_FALSE, 0,
-            mesh->vertices().data());
-    glEnableVertexAttribArray(a_position_);
-
-    glVertexAttribPointer(a_tex_coord_, 2, GL_FLOAT, GL_FALSE, 0,
-            mesh->tex_coords().data());
-    glEnableVertexAttribArray(a_tex_coord_);
-
-    glUniformMatrix4fv(u_mvp_, 1, GL_TRUE, mvp_matrix.M[0]);
-
-    glActiveTexture (GL_TEXTURE0);
-    glBindTexture(texture->getTarget(), texture->getId());
-    glUniform1i(u_texture_, 0);
-
-    glUniform3f(u_color_, color.x, color.y, color.z);
-
-    glUniform1f(u_opacity_, opacity);
-
-    glUniform1i(u_right_, right ? 1 : 0);
-
-    glDrawElements(GL_TRIANGLES, mesh->triangles().size(), GL_UNSIGNED_SHORT,
-            mesh->triangles().data());
-#endif
 
     checkGlError("OESHorizontalStereoShader::render");
 }

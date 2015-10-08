@@ -1,4 +1,6 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/*
+ * Copyright 2015 eje inc.
+ * Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +21,6 @@
 
 #include "bounding_box_shader.h"
 
-#include "gl/gl_program.h"
 #include "objects/material.h"
 #include "objects/mesh.h"
 #include "objects/components/render_data.h"
@@ -42,49 +43,34 @@ static const char FRAGMENT_SHADER[] = //
                 "}\n";
 
 BoundingBoxShader::BoundingBoxShader() :
-        program_(0), a_position_(0), u_mvp_(0) {
-    program_ = new GLProgram(VERTEX_SHADER, FRAGMENT_SHADER);
-    a_position_ = glGetAttribLocation(program_->id(), "a_position");
-    u_mvp_ = glGetUniformLocation(program_->id(), "u_mvp");
+        a_position_(0), u_mvp_(0) {
+    program_ = BuildProgram(VERTEX_SHADER, FRAGMENT_SHADER);
+    a_position_ = glGetAttribLocation(program_.program, "a_position");
+    u_mvp_ = glGetUniformLocation(program_.program, "u_mvp");
 }
 
 BoundingBoxShader::~BoundingBoxShader() {
-    if (program_ != 0) {
-        recycle();
-    }
+    recycle();
 }
 
 void BoundingBoxShader::recycle() {
-    delete program_;
-    program_ = 0;
+    DeleteProgram(program_);
 }
 
 void BoundingBoxShader::render(const OVR::Matrix4f& mvp_matrix,
         RenderData* render_data, Material* material) {
     Mesh* mesh = render_data->mesh();
 
-#if _GVRF_USE_GLES3_
     mesh->setVertexLoc(a_position_);
     mesh->generateVAO(material->shader_type());
 
-    glUseProgram(program_->id());
+    glUseProgram(program_.program);
     glUniformMatrix4fv(u_mvp_, 1, GL_TRUE, mvp_matrix.M[0]);
 
     glBindVertexArray(mesh->getVAOId(material->shader_type()));
     glDrawElements(GL_TRIANGLES, mesh->triangles().size(), GL_UNSIGNED_SHORT,
             0);
     glBindVertexArray(0);
-
-#else
-    glUseProgram(program_->id());
-    glVertexAttribPointer(a_position_, 3, GL_FLOAT, GL_FALSE, 0,
-            mesh->vertices().data());
-    glEnableVertexAttribArray(a_position_);
-
-    glUniformMatrix4fv(u_mvp_, 1, GL_TRUE, mvp_matrix.M[0]);
-    glDrawElements(GL_TRIANGLES, mesh->triangles().size(), GL_UNSIGNED_SHORT,
-            mesh->triangles().data());
-#endif
 
     checkGlError("BoundingBoxShader::render");
 }

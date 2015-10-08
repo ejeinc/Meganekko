@@ -1,4 +1,6 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/*
+ * Copyright 2015 eje inc.
+ * Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +28,11 @@
 
 #include "objects/recyclable_object.h"
 #include "Kernel/OVR_Math.h"
+#include "GlProgram.h"
+
+using namespace OVR;
 
 namespace mgn {
-class GLProgram;
 class RenderData;
 class Material;
 
@@ -49,14 +53,12 @@ private:
     TextureShader& operator=(TextureShader&& texture_shader);
 
 private:
-    GLProgram* program_light_;
-    GLProgram* program_no_light_;
+    GlProgram program_light_;
+    GlProgram program_no_light_;
 
     GLuint a_position_no_light_;
     GLuint a_tex_coord_no_light_;
-    GLuint u_mvp_no_light_;
     GLuint u_texture_no_light_;
-    GLuint u_color_no_light_;
     GLuint u_opacity_no_light_;
 
     GLuint a_position_;
@@ -64,10 +66,8 @@ private:
     GLuint a_normal_;
     GLuint u_mv_;
     GLuint u_mv_it_;
-    GLuint u_mvp_;
     GLuint u_light_pos_;
     GLuint u_texture_;
-    GLuint u_color_;
     GLuint u_opacity_;
     GLuint u_material_ambient_color_;
     GLuint u_material_diffuse_color_;

@@ -1,4 +1,6 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/*
+ * Copyright 2015 eje inc.
+ * Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,13 +29,15 @@
 
 #include "GLES3/gl3.h"
 #include "Kernel/OVR_Math.h"
+#include "GlProgram.h"
 
 #include "objects/eye_type.h"
 #include "objects/recyclable_object.h"
 
+using namespace OVR;
+
 namespace mgn {
 
-class GLProgram;
 class RenderData;
 class Material;
 
@@ -63,7 +67,7 @@ private:
     CustomShader& operator=(CustomShader&& custom_shader);
 
 private:
-    GLProgram* program_;
+    GlProgram program_;
     GLuint a_position_;
     GLuint a_normal_;
     GLuint a_tex_coord_;

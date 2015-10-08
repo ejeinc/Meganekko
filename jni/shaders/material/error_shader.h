@@ -1,4 +1,6 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/*
+ * Copyright 2015 eje inc.
+ * Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +27,14 @@
 
 #include "GLES3/gl3.h"
 #include "Kernel/OVR_Math.h"
+#include "GlProgram.h"
 
 #include "objects/recyclable_object.h"
 
+using namespace OVR;
+
 namespace mgn {
 class Color;
-class GLProgram;
 class RenderData;
 
 class ErrorShader: public RecyclableObject {
@@ -47,7 +51,7 @@ private:
     ErrorShader& operator=(ErrorShader&& error_shader);
 
 private:
-    GLProgram* program_;
+    GlProgram program_;
     GLuint a_position_;
     GLuint u_mvp_;
     GLuint u_color_;

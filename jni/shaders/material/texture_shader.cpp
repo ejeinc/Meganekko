@@ -1,4 +1,6 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/*
+ * Copyright 2015 eje inc.
+ * Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +21,6 @@
 
 #include "texture_shader.h"
 
-#include "gl/gl_program.h"
 #include "objects/material.h"
 #include "objects/light.h"
 #include "objects/mesh.h"
@@ -35,7 +36,7 @@ static const char NOT_USE_LIGHT[] = "#undef USE_LIGHT\n";
 static const char VERTEX_SHADER[] =
         "attribute vec4 a_position;\n"
                 "attribute vec4 a_tex_coord;\n"
-                "uniform mat4 u_mvp;\n"
+                "uniform mat4 Mvpm;\n"
                 "varying vec2 v_tex_coord;\n"
                 "#ifdef USE_LIGHT\n"
                 "attribute vec3 a_normal;\n"
@@ -54,13 +55,13 @@ static const char VERTEX_SHADER[] =
                 "  v_viewspace_normal = (u_mv_it * vec4(a_normal, 1.0)).xyz;\n"
                 "#endif\n"
                 "  v_tex_coord = a_tex_coord.xy;\n"
-                "  gl_Position = u_mvp * a_position;\n"
+                "  gl_Position = Mvpm * a_position;\n"
                 "}\n";
 
 static const char FRAGMENT_SHADER[] =
         "precision highp float;\n"
                 "uniform sampler2D u_texture;\n"
-                "uniform vec3 u_color;\n"
+                "uniform vec3 UniformColor;\n"
                 "uniform float u_opacity;\n"
                 "varying vec2 v_tex_coord;\n"
                 "#ifdef USE_LIGHT\n"
@@ -101,94 +102,73 @@ static const char FRAGMENT_SHADER[] =
                 "  color = texture2D(u_texture, v_tex_coord);\n"
                 "#endif\n"
                 "\n"
-                "  gl_FragColor = vec4(color.x * u_color.x * u_opacity, color.y * u_color.y * u_opacity, color.z * u_color.z * u_opacity, color.w * u_opacity);\n"
+                "  gl_FragColor = vec4(color.x * UniformColor.x * u_opacity, color.y * UniformColor.y * u_opacity, color.z * UniformColor.z * u_opacity, color.w * u_opacity);\n"
                 "}\n";
 
 TextureShader::TextureShader() :
-        program_light_(0), program_no_light_(0), a_position_(0), a_tex_coord_(
-                0), a_normal_(0), u_mv_(0), u_mv_it_(0), u_mvp_(0), u_light_pos_(
-                0), u_texture_(0), u_color_(0), u_opacity_(0), u_material_ambient_color_(
+        a_position_(0), a_tex_coord_(
+                0), a_normal_(0), u_mv_(0), u_mv_it_(0), u_light_pos_(
+                0), u_texture_(0),  u_opacity_(0), u_material_ambient_color_(
                 0), u_material_diffuse_color_(0), u_material_specular_color_(0), u_material_specular_exponent_(
                 0), u_light_ambient_intensity_(0), u_light_diffuse_intensity_(
                 0), u_light_specular_intensity_(0) {
-    const char* vertex_shader_light_strings[2] = { USE_LIGHT, VERTEX_SHADER };
-    GLint vertex_shader_light_string_lengths[2] = { (GLint) strlen(USE_LIGHT),
-            (GLint) strlen(VERTEX_SHADER) };
-    const char* vertex_shader_no_light_strings[2] = { NOT_USE_LIGHT,
-            VERTEX_SHADER };
-    GLint vertex_shader_no_light_string_lengths[2] = { (GLint) strlen(
-            NOT_USE_LIGHT), (GLint) strlen(VERTEX_SHADER) };
-    const char* fragment_shader_light_strings[2] =
-            { USE_LIGHT, FRAGMENT_SHADER };
-    GLint fragment_shader_light_string_lengths[2] = { (GLint) strlen(USE_LIGHT),
-            (GLint) strlen(FRAGMENT_SHADER) };
-    const char* fragment_shader_no_light_strings[2] = { NOT_USE_LIGHT,
-            FRAGMENT_SHADER };
-    GLint fragment_shader_no_light_string_lengths[2] = { (GLint) strlen(
-            NOT_USE_LIGHT), (GLint) strlen(FRAGMENT_SHADER) };
 
-    program_light_ = new GLProgram(vertex_shader_light_strings,
-            vertex_shader_light_string_lengths, fragment_shader_light_strings,
-            fragment_shader_light_string_lengths, 2);
-    program_no_light_ = new GLProgram(vertex_shader_no_light_strings,
-            vertex_shader_no_light_string_lengths,
-            fragment_shader_no_light_strings,
-            fragment_shader_no_light_string_lengths, 2);
+    char VertexShaderLight[strlen(USE_LIGHT) + strlen(VERTEX_SHADER)];
+    sprintf(VertexShaderLight, "%s%s", USE_LIGHT, VERTEX_SHADER);
 
-    a_position_no_light_ = glGetAttribLocation(program_no_light_->id(),
+    char VertexShaderNoLight[strlen(NOT_USE_LIGHT) + strlen(VERTEX_SHADER)];
+    sprintf(VertexShaderNoLight, "%s%s", NOT_USE_LIGHT, VERTEX_SHADER);
+
+    char FragmentShaderLight[strlen(USE_LIGHT) + strlen(FRAGMENT_SHADER)];
+    sprintf(FragmentShaderLight, "%s%s", USE_LIGHT, FRAGMENT_SHADER);
+
+    char FragmentShaderNoLight[strlen(NOT_USE_LIGHT) + strlen(FRAGMENT_SHADER)];
+    sprintf(FragmentShaderNoLight, "%s%s", NOT_USE_LIGHT, FRAGMENT_SHADER);
+
+    program_light_ = BuildProgram(VertexShaderLight, FragmentShaderLight);
+    program_no_light_ = BuildProgram(VertexShaderNoLight, FragmentShaderNoLight);
+
+    a_position_no_light_ = glGetAttribLocation(program_no_light_.program,
             "a_position");
-    a_tex_coord_no_light_ = glGetAttribLocation(program_no_light_->id(),
+    a_tex_coord_no_light_ = glGetAttribLocation(program_no_light_.program,
             "a_tex_coord");
-    u_mvp_no_light_ = glGetUniformLocation(program_no_light_->id(), "u_mvp");
-    u_texture_no_light_ = glGetUniformLocation(program_no_light_->id(),
+    u_texture_no_light_ = glGetUniformLocation(program_no_light_.program,
             "u_texture");
-    u_color_no_light_ = glGetUniformLocation(program_no_light_->id(),
-            "u_color");
-    u_opacity_no_light_ = glGetUniformLocation(program_no_light_->id(),
+    u_opacity_no_light_ = glGetUniformLocation(program_no_light_.program,
             "u_opacity");
 
-    a_position_ = glGetAttribLocation(program_light_->id(), "a_position");
-    a_tex_coord_ = glGetAttribLocation(program_light_->id(), "a_tex_coord");
-    u_mvp_ = glGetUniformLocation(program_light_->id(), "u_mvp");
-    u_texture_ = glGetUniformLocation(program_light_->id(), "u_texture");
-    u_color_ = glGetUniformLocation(program_light_->id(), "u_color");
-    u_opacity_ = glGetUniformLocation(program_light_->id(), "u_opacity");
+    a_position_ = glGetAttribLocation(program_light_.program, "a_position");
+    a_tex_coord_ = glGetAttribLocation(program_light_.program, "a_tex_coord");
+    u_texture_ = glGetUniformLocation(program_light_.program, "u_texture");
+    u_opacity_ = glGetUniformLocation(program_light_.program, "u_opacity");
 
-    a_normal_ = glGetAttribLocation(program_light_->id(), "a_normal");
-    u_mv_ = glGetUniformLocation(program_light_->id(), "u_mv");
-    u_mv_it_ = glGetUniformLocation(program_light_->id(), "u_mv_it");
-    u_light_pos_ = glGetUniformLocation(program_light_->id(), "u_light_pos");
-    u_material_ambient_color_ = glGetUniformLocation(program_light_->id(),
+    a_normal_ = glGetAttribLocation(program_light_.program, "a_normal");
+    u_mv_ = glGetUniformLocation(program_light_.program, "u_mv");
+    u_mv_it_ = glGetUniformLocation(program_light_.program, "u_mv_it");
+    u_light_pos_ = glGetUniformLocation(program_light_.program, "u_light_pos");
+    u_material_ambient_color_ = glGetUniformLocation(program_light_.program,
             "materialAmbientColor");
-    u_material_diffuse_color_ = glGetUniformLocation(program_light_->id(),
+    u_material_diffuse_color_ = glGetUniformLocation(program_light_.program,
             "materialDiffuseColor");
-    u_material_specular_color_ = glGetUniformLocation(program_light_->id(),
+    u_material_specular_color_ = glGetUniformLocation(program_light_.program,
             "materialSpecularColor");
-    u_material_specular_exponent_ = glGetUniformLocation(program_light_->id(),
+    u_material_specular_exponent_ = glGetUniformLocation(program_light_.program,
             "materialSpecularExponent");
-    u_light_ambient_intensity_ = glGetUniformLocation(program_light_->id(),
+    u_light_ambient_intensity_ = glGetUniformLocation(program_light_.program,
             "lightAmbientIntensity");
-    u_light_diffuse_intensity_ = glGetUniformLocation(program_light_->id(),
+    u_light_diffuse_intensity_ = glGetUniformLocation(program_light_.program,
             "lightDiffuseIntensity");
-    u_light_specular_intensity_ = glGetUniformLocation(program_light_->id(),
+    u_light_specular_intensity_ = glGetUniformLocation(program_light_.program,
             "lightSpecularIntensity");
 }
 
 TextureShader::~TextureShader() {
-    if (program_light_ != 0 || program_no_light_ != 0) {
-        recycle();
-    }
+    recycle();
 }
 
 void TextureShader::recycle() {
-    if (program_light_ != 0) {
-        delete program_light_;
-        program_light_ = 0;
-    }
-    if (program_no_light_ != 0) {
-        delete program_no_light_;
-        program_no_light_ = 0;
-    }
+    DeleteProgram(program_light_);
+    DeleteProgram(program_no_light_);
 }
 
 void TextureShader::render(const OVR::Matrix4f& mv_matrix,
@@ -217,7 +197,6 @@ void TextureShader::render(const OVR::Matrix4f& mv_matrix,
         }
     }
 
-#if _GVRF_USE_GLES3_
     if (use_light) {
         mesh->setVertexLoc(a_position_);
         mesh->setTexCoordLoc(a_tex_coord_);
@@ -231,9 +210,9 @@ void TextureShader::render(const OVR::Matrix4f& mv_matrix,
     }
 
     if (use_light) {
-        glUseProgram(program_light_->id());
+        glUseProgram(program_light_.program);
     } else {
-        glUseProgram(program_no_light_->id());
+        glUseProgram(program_no_light_.program);
     }
 
     glActiveTexture (GL_TEXTURE0);
@@ -245,14 +224,14 @@ void TextureShader::render(const OVR::Matrix4f& mv_matrix,
         OVR::Vector4f light_diffuse_intensity = light->getVec4("diffuse_intensity");
         OVR::Vector4f light_specular_intensity = light->getVec4("specular_intensity");
 
-        glUniformMatrix4fv(u_mvp_, 1, GL_TRUE, mvp_matrix.M[0]);
+        glUniformMatrix4fv(program_light_.uMvp, 1, GL_TRUE, mvp_matrix.M[0]);
         glUniformMatrix4fv(u_mv_, 1, GL_TRUE, mv_matrix.M[0]);
         glUniformMatrix4fv(u_mv_it_, 1, GL_TRUE, mv_it_matrix.M[0]);
         glUniform3f(u_light_pos_, light_position.x, light_position.y,
                 light_position.z);
 
         glUniform1i(u_texture_, 0);
-        glUniform3f(u_color_, color.x, color.y, color.z);
+        glUniform3f(program_light_.uColor, color.x, color.y, color.z);
         glUniform1f(u_opacity_, opacity);
 
         glUniform4f(u_material_ambient_color_, material_ambient_color.x,
@@ -277,10 +256,10 @@ void TextureShader::render(const OVR::Matrix4f& mv_matrix,
 
         glBindVertexArray(mesh->getVAOId(Material::TEXTURE_SHADER));
     } else {
-        glUniformMatrix4fv(u_mvp_no_light_, 1, GL_TRUE, mvp_matrix.M[0]);
+        glUniformMatrix4fv(program_no_light_.uMvp, 1, GL_TRUE, mvp_matrix.M[0]);
 
         glUniform1i(u_texture_no_light_, 0);
-        glUniform3f(u_color_no_light_, color.x, color.y, color.z);
+        glUniform3f(program_no_light_.uColor, color.x, color.y, color.z);
         glUniform1f(u_opacity_no_light_, opacity);
 
         glBindVertexArray(mesh->getVAOId(Material::TEXTURE_SHADER_NOLIGHT));
@@ -289,29 +268,6 @@ void TextureShader::render(const OVR::Matrix4f& mv_matrix,
     glDrawElements(GL_TRIANGLES, mesh->triangles().size(), GL_UNSIGNED_SHORT,
             0);
     glBindVertexArray(0);
-
-#else
-    glUseProgram(program_->id());
-
-    glVertexAttribPointer(a_position_, 3, GL_FLOAT, GL_FALSE, 0,
-            mesh->vertices().data());
-    glEnableVertexAttribArray(a_position_);
-
-    glUniformMatrix4fv(u_mv_, 1, GL_TRUE, mv_matrix.M[0]);
-    glUniformMatrix4fv(u_mv_it_, 1, GL_TRUE, mv_it_matrix.M[0]);
-    glUniformMatrix4fv(u_mvp_, 1, GL_TRUE, mvp_matrix.M[0]);
-
-    glActiveTexture (GL_TEXTURE0);
-    glBindTexture(texture->getTarget(), texture->getId());
-    glUniform1i(u_texture_, 0);
-
-    glUniform3f(u_color_, color.x, color.y, color.z);
-
-    glUniform1f(u_opacity_, opacity);
-
-    glDrawElements(GL_TRIANGLES, mesh->triangles().size(), GL_UNSIGNED_SHORT,
-            mesh->triangles().data());
-#endif
 
     checkGlError("TextureShader::render");
 }
