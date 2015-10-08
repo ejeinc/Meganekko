@@ -32,15 +32,10 @@
 namespace mgn {
 class SceneObject;
 
-class Scene: public HybridObject {
+class Scene: public SceneObject {
 public:
     Scene();
     virtual ~Scene();
-    void addSceneObject(SceneObject* scene_object);
-    void removeSceneObject(SceneObject* scene_object);
-    const std::vector<SceneObject*>& scene_objects() {
-        return scene_objects_;
-    }
     const Camera* main_camera() {
         return main_camera_;
     }
@@ -65,7 +60,6 @@ private:
     Scene& operator=(Scene&& scene);
 
 private:
-    std::vector<SceneObject*> scene_objects_;
     Camera* main_camera_;
 
     int dirtyFlag_;

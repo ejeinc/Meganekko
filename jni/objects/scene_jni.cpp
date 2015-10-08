@@ -27,14 +27,6 @@ JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_NativeScene_ctor(JNIEnv * env, jobject obj);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeScene_addSceneObject(JNIEnv * env,
-        jobject obj, jlong jscene, jlong jscene_object);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeScene_removeSceneObject(JNIEnv * env,
-        jobject obj, jlong jscene, jlong jscene_object);
-
-JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_NativeScene_setMainCamera(JNIEnv * env,
         jobject obj, jlong jscene, jlong jcamera);
 JNIEXPORT void JNICALL
@@ -47,22 +39,6 @@ Java_com_eje_1c_meganekko_NativeScene_setOcclusionQuery(JNIEnv * env,
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_NativeScene_ctor(JNIEnv * env, jobject obj) {
     return reinterpret_cast<jlong>(new Scene());
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeScene_addSceneObject(JNIEnv * env,
-        jobject obj, jlong jscene, jlong jscene_object) {
-    Scene* scene = reinterpret_cast<Scene*>(jscene);
-    SceneObject* scene_object = reinterpret_cast<SceneObject*>(jscene_object);
-    scene->addSceneObject(scene_object);
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeScene_removeSceneObject(JNIEnv * env,
-        jobject obj, jlong jscene, jlong jscene_object) {
-    Scene* scene = reinterpret_cast<Scene*>(jscene);
-    SceneObject* scene_object = reinterpret_cast<SceneObject*>(jscene_object);
-    scene->removeSceneObject(scene_object);
 }
 
 JNIEXPORT void JNICALL

@@ -16,7 +16,6 @@
 package com.eje_c.meganekko;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EventObject;
 import java.util.List;
 
@@ -27,7 +26,7 @@ import com.eje_c.meganekko.event.TouchEventListener;
 import com.eje_c.meganekko.utility.Log;
 
 /** The scene graph */
-public class Scene extends HybridObject {
+public class Scene extends SceneObject {
     @SuppressWarnings("unused")
     private static final String TAG = Log.tag(Scene.class);
 
@@ -107,9 +106,9 @@ public class Scene extends HybridObject {
      * @param sceneObject
      *            The {@linkplain SceneObject scene object} to add.
      */
+    @Deprecated
     public void addSceneObject(SceneObject sceneObject) {
-        mSceneObjects.add(sceneObject);
-        NativeScene.addSceneObject(getNative(), sceneObject.getNative());
+        super.addChildObject(sceneObject);
     }
 
     /**
@@ -118,9 +117,9 @@ public class Scene extends HybridObject {
      * @param sceneObject
      *            The {@linkplain SceneObject scene object} to remove.
      */
+    @Deprecated
     public void removeSceneObject(SceneObject sceneObject) {
-        mSceneObjects.remove(sceneObject);
-        NativeScene.removeSceneObject(getNative(), sceneObject.getNative());
+        super.removeChildObject(sceneObject);
     }
 
     /**
@@ -129,8 +128,9 @@ public class Scene extends HybridObject {
      * @return A read-only list containing all the 'root' scene objects (those
      *         that were added directly to the scene).
      */
+    @Deprecated
     public List<SceneObject> getSceneObjects() {
-        return Collections.unmodifiableList(mSceneObjects);
+        return super.getChildren();
     }
 
     /**
@@ -401,10 +401,6 @@ public class Scene extends HybridObject {
 
 class NativeScene {
     static native long ctor();
-
-    static native void addSceneObject(long scene, long sceneObject);
-
-    static native void removeSceneObject(long scene, long sceneObject);
 
     public static native void setFrustumCulling(long scene, boolean flag);
 

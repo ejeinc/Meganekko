@@ -23,25 +23,15 @@
 
 namespace mgn {
 Scene::Scene() :
-        HybridObject(), scene_objects_(), main_camera_(), frustum_flag_(
+        SceneObject(), main_camera_(), frustum_flag_(
                 false), dirtyFlag_(0), occlusion_flag_(false) {
 }
 
 Scene::~Scene() {
 }
 
-void Scene::addSceneObject(SceneObject* scene_object) {
-    scene_objects_.push_back(scene_object);
-}
-
-void Scene::removeSceneObject(SceneObject* scene_object) {
-    scene_objects_.erase(
-            std::remove(scene_objects_.begin(), scene_objects_.end(),
-                    scene_object), scene_objects_.end());
-}
-
 std::vector<SceneObject*> Scene::getWholeSceneObjects() {
-    std::vector<SceneObject*> scene_objects(scene_objects_);
+    std::vector<SceneObject*> scene_objects(children());
     for (int i = 0; i < scene_objects.size(); ++i) {
         std::vector<SceneObject*> children(scene_objects[i]->children());
         for (auto it = children.begin(); it != children.end(); ++it) {

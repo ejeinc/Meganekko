@@ -130,7 +130,7 @@ public class XmlSceneParser {
                     SceneObject object = mObjectParser.parse(parser);
 
                     if (object != null) {
-                        scene.addSceneObject(object);
+                        scene.addChildObject(object);
                     }
                 }
                 break;
