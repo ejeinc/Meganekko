@@ -215,92 +215,92 @@ public class Scene extends HybridObject {
     /**
      * Called from VR thread when swipe up gesture is recognized.
      */
-    public void onSwipeUp() {
+    void onSwipeUp() {
         eventEmitter.emit("swipeUp", new EventObject(this));
     }
 
     /**
      * Called from VR thread when swipe down gesture is recognized.
      */
-    public void onSwipeDown() {
+    void onSwipeDown() {
         eventEmitter.emit("swipeDown", new EventObject(this));
     }
 
     /**
      * Called from VR thread when swipe forward gesture is recognized.
      */
-    public void onSwipeForward() {
+    void onSwipeForward() {
         eventEmitter.emit("swipeForward", new EventObject(this));
     }
 
     /**
      * Called from VR thread when swipe back gesture is recognized.
      */
-    public void onSwipeBack() {
+    void onSwipeBack() {
         eventEmitter.emit("swipeBack", new EventObject(this));
     }
 
     /**
      * Called from VR thread when touch pad single tap is recognized.
      */
-    public void onTouchSingle() {
+    void onTouchSingle() {
         eventEmitter.emit("touchSingle", new EventObject(this));
     }
 
     /**
      * Called from VR thread when touch pad double tap is recognized.
      */
-    public void onTouchDouble() {
+    void onTouchDouble() {
         eventEmitter.emit("touchDouble", new EventObject(this));
     }
 
-    public boolean onKeyShortPress(int keyCode, int repeatCount) {
+    boolean onKeyShortPress(int keyCode, int repeatCount) {
         com.eje_c.meganekko.event.KeyEvent keyEvent = new com.eje_c.meganekko.event.KeyEvent(this, keyCode,
                 repeatCount);
         eventEmitter.emit("keyShortPress", keyEvent);
         return keyEvent.isPreventDefaultCalled();
     }
 
-    public boolean onKeyDoubleTap(int keyCode, int repeatCount) {
+    boolean onKeyDoubleTap(int keyCode, int repeatCount) {
         com.eje_c.meganekko.event.KeyEvent keyEvent = new com.eje_c.meganekko.event.KeyEvent(this, keyCode,
                 repeatCount);
         eventEmitter.emit("keyDoubleTap", keyEvent);
         return keyEvent.isPreventDefaultCalled();
     }
 
-    public boolean onKeyLongPress(int keyCode, int repeatCount) {
+    boolean onKeyLongPress(int keyCode, int repeatCount) {
         com.eje_c.meganekko.event.KeyEvent keyEvent = new com.eje_c.meganekko.event.KeyEvent(this, keyCode,
                 repeatCount);
         eventEmitter.emit("keyLongPress", keyEvent);
         return keyEvent.isPreventDefaultCalled();
     }
 
-    public boolean onKeyDown(int keyCode, int repeatCount) {
+    boolean onKeyDown(int keyCode, int repeatCount) {
         com.eje_c.meganekko.event.KeyEvent keyEvent = new com.eje_c.meganekko.event.KeyEvent(this, keyCode,
                 repeatCount);
         eventEmitter.emit("keyDown", keyEvent);
         return keyEvent.isPreventDefaultCalled();
     }
 
-    public boolean onKeyUp(int keyCode, int repeatCount) {
+    boolean onKeyUp(int keyCode, int repeatCount) {
         com.eje_c.meganekko.event.KeyEvent keyEvent = new com.eje_c.meganekko.event.KeyEvent(this, keyCode,
                 repeatCount);
         eventEmitter.emit("keyUp", keyEvent);
         return keyEvent.isPreventDefaultCalled();
     }
 
-    public boolean onKeyMax(int keyCode, int repeatCount) {
+    boolean onKeyMax(int keyCode, int repeatCount) {
         com.eje_c.meganekko.event.KeyEvent keyEvent = new com.eje_c.meganekko.event.KeyEvent(this, keyCode,
                 repeatCount);
         eventEmitter.emit("keyMax", keyEvent);
         return keyEvent.isPreventDefaultCalled();
     }
-
-    public void addEventListener(String name, EventListener callback) {
+    
+    private void addEventListener(String name, EventListener callback) {
         eventEmitter.on(name, callback);
     }
 
-    public void removeEventListener(String name, EventListener callback) {
+    private void removeEventListener(String name, EventListener callback) {
         eventEmitter.off(name, callback);
     }
 }
