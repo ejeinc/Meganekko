@@ -432,8 +432,21 @@ public class MeganekkoActivity extends VrActivity {
      * Short hand method for XML scene parsing.
      * 
      * @param xmlRes
+     * @return New scene.
+     * @deprecated Use {@code MeganekkoActivity#parseAndSetScene(int)}.
      */
     public Scene setScene(int xmlRes) {
+        return parseAndSetScene(xmlRes);
+    }
+
+    /**
+     * Short hand method for XML scene parsing.
+     * 
+     * @param xmlRes
+     *            Scene XML resource.
+     * @return New scene.
+     */
+    public Scene parseAndSetScene(int xmlRes) {
 
         XmlSceneParser parser = XmlSceneParserFactory.getInstance(mVrContext).getSceneParser();
 
@@ -444,5 +457,23 @@ public class MeganekkoActivity extends VrActivity {
         } catch (XmlPullParserException | IOException e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    /**
+     * Set current rendering scene.
+     * 
+     * @param scene
+     */
+    public void setScene(Scene scene) {
+        mVrContext.setMainScene(scene);
+    }
+
+    /**
+     * Get current rendering scene.
+     * 
+     * @return Current rendering scene.
+     */
+    public Scene getScene() {
+        return mVrContext.getMainScene();
     }
 }
