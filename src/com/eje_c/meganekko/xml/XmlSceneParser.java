@@ -57,8 +57,11 @@ public class XmlSceneParser {
     /**
      * Parse scene from {@code URL}. XML can be loaded any where.
      * 
-     * @param in
-     * @return
+     * @param url
+     *            URL pointing to XML resource.
+     * @param scene
+     *            Root scene. It can be null.
+     * @return Parsed {@code Scene}.
      * @throws XmlPullParserException
      * @throws IOException
      */
@@ -70,7 +73,10 @@ public class XmlSceneParser {
      * Parse scene from {@code InputStream}. XML can be loaded any where.
      * 
      * @param in
-     * @return
+     *            {@code InputStream} of XML.
+     * @param scene
+     *            Root scene. It can be null.
+     * @return Parsed {@code Scene}.
      * @throws XmlPullParserException
      * @throws IOException
      */
@@ -92,7 +98,7 @@ public class XmlSceneParser {
      * 
      * @param parser
      * @param scene
-     *            can be null.
+     *            Root scene. It can be null.
      * @return
      * @throws XmlPullParserException
      * @throws IOException
