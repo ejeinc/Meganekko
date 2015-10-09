@@ -455,6 +455,7 @@ public class MeganekkoActivity extends VrActivity {
             mVrContext.setMainScene(scene);
             return scene;
         } catch (XmlPullParserException | IOException e) {
+            e.printStackTrace();
             throw new IllegalArgumentException(e);
         }
     }
