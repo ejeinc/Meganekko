@@ -292,7 +292,7 @@ public abstract class Animation {
      * 
      * <pre>
      * 
-     * GVRAnimation animation = new GVRAnimationDescendant(target, duration)
+     * Animation animation = new AnimationDescendant(target, duration)
      *         .setOnFinish(callback).start(animationEngine);
      * </pre>
      * 
@@ -300,7 +300,7 @@ public abstract class Animation {
      * 
      * <pre>
      * 
-     * GVRAnimation animation = new GVRAnimationDescendant(target, duration)
+     * Animation animation = new AnimationDescendant(target, duration)
      *         .setOnFinish(callback);
      * animationEngine.start(animation);
      * </pre>
@@ -311,6 +311,39 @@ public abstract class Animation {
     public Animation start(AnimationEngine engine) {
         engine.start(this);
         return this;
+    }
+
+    /**
+     * Start the animation.
+     * 
+     * Changing properties once the animation is running can have unpredictable
+     * results.
+     * 
+     * <p>
+     * This method is exactly equivalent to
+     * {@link AnimationEngine#start(vrContext.getAnimationEngine())} and is provided as a convenience
+     * so you can write code like
+     * 
+     * <pre>
+     * 
+     * Animation animation = new AnimationDescendant(target, duration)
+     *         .setOnFinish(callback).start();
+     * </pre>
+     * 
+     * instead of
+     * 
+     * <pre>
+     * 
+     * Animation animation = new AnimationDescendant(target, duration)
+     *         .setOnFinish(callback);
+     * animationEngine.start(animation);
+     * </pre>
+     * 
+     * @return {@code this}, so you can save the instance at the end of a chain
+     *         of calls
+     */
+    public Animation start() {
+        return start(mTarget.getVrContext().getAnimationEngine());
     }
 
     /**
