@@ -47,10 +47,16 @@ android {
 	}
 }
 
+repositories {
+    jcenter()
+    maven { url = 'http://ejeinc.github.io/Meganekko/repository' } // Add this line!
+}
+
 dependencies {
     compile files(
             "${System.env.OVR_MOBILE_SDK}/VrApi/Libs/Android/VrApi.jar",
             "${System.env.OVR_MOBILE_SDK}/VrAppFramework/Libs/Android/VrAppFramework.jar")
+     compile 'de.greenrobot:eventbus:2.4.0'
 }
 
 apply plugin: 'maven'

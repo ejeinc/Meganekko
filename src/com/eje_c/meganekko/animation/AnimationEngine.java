@@ -18,9 +18,10 @@ package com.eje_c.meganekko.animation;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.eje_c.meganekko.FrameListener;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrContext;
+import com.eje_c.meganekko.VrFrame;
+import com.eje_c.meganekko.event.FrameListener;
 
 /**
  * This class runs {@linkplain Animation animations}.
@@ -29,20 +30,20 @@ import com.eje_c.meganekko.VrContext;
  * {@linkplain SceneObject scene object}.
  * 
  * <p>
- * The animation engine is an optional part of Meganekko: to use it, you must call
- * {@link #getInstance(VrContext)} to lazy-create the singleton.
+ * The animation engine is an optional part of Meganekko: to use it, you must
+ * call {@link #getInstance(VrContext)} to lazy-create the singleton.
  * 
  * <p>
- * You can {@link #stop(Animation)} a running animation at any time, but
- * usually you will either
+ * You can {@link #stop(Animation)} a running animation at any time, but usually
+ * you will either
  * <ul>
  * 
- * <li>Use {@link Animation#setRepeatCount(int) setRepeatCount(0)} to
- * 'schedule' termination at the end of the current repetition, or
+ * <li>Use {@link Animation#setRepeatCount(int) setRepeatCount(0)} to 'schedule'
+ * termination at the end of the current repetition, or
  * 
  * <li>{@linkplain Animation#setOnFinish(GVROnFinish) Set} a
- * {@linkplain OnRepeat callback,} which allows you to terminate the
- * animation before the next loop.
+ * {@linkplain OnRepeat callback,} which allows you to terminate the animation
+ * before the next loop.
  * </ul>
  */
 public class AnimationEngine {
@@ -61,16 +62,14 @@ public class AnimationEngine {
 
     private final List<Animation> mAnimations = new ArrayList<Animation>();
     private final FrameListener mOnDrawFrame = new DrawFrame();
-    private final VrContext vrContext;
 
     protected AnimationEngine(VrContext vrContext) {
-        vrContext.registerFrameListener(mOnDrawFrame);
-        this.vrContext = vrContext;
+        vrContext.getActivity().onFrame(mOnDrawFrame);
     }
 
     /**
-     * The animation engine is an optional part of Meganekko: You do have to call
-     * {@code getInstance()} to lazy-create the singleton.
+     * The animation engine is an optional part of Meganekko: You do have to
+     * call {@code getInstance()} to lazy-create the singleton.
      * 
      * @param vrContext
      *            current GVR context
@@ -87,8 +86,8 @@ public class AnimationEngine {
      * Registers an animation with the engine: It will start running
      * immediately.
      * 
-     * You will usually use {@link Animation#start(AnimationEngine)}
-     * instead of this method:
+     * You will usually use {@link Animation#start(AnimationEngine)} instead of
+     * this method:
      * 
      * <pre>
      * 
@@ -149,12 +148,11 @@ public class AnimationEngine {
     private final class DrawFrame implements FrameListener {
 
         @Override
-        public void frame() {
+        public void onEvent(VrFrame vrFrame) {
             synchronized (mAnimations) {
-                List<Animation> animations = new ArrayList<Animation>(
-                        mAnimations);
+                List<Animation> animations = new ArrayList<Animation>(mAnimations);
                 for (Animation animation : animations) {
-                    if (animation.onDrawFrame(vrContext.getActivity().getVrFrame().getDeltaSeconds()) == false) {
+                    if (animation.onDrawFrame(vrFrame.getDeltaSeconds()) == false) {
                         mAnimations.remove(animation);
                     }
                 }

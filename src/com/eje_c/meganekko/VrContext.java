@@ -1949,7 +1949,7 @@ public class VrContext {
     }
 
     /** Set the current {@link Scene} */
-    public synchronized void setMainScene(Scene scene) {
+    synchronized void setMainScene(Scene scene) {
 
         if (scene == mMainScene)
             return;
@@ -1973,34 +1973,6 @@ public class VrContext {
      */
     public void runOnGlThread(Runnable runnable) {
         getActivity().runOnGlThread(runnable);
-    }
-
-    /**
-     * Subscribes a {@link FrameListener}.
-     * 
-     * Each frame listener is called, once per frame, after any pending
-     * {@linkplain #runOnGlThread(Runnable) GL callbacks} and before
-     * {@link GVRScript#onStep()}.
-     * 
-     * @param frameListener
-     *            A callback that will fire once per frame, until it is
-     *            {@linkplain #unregisterFrameListener(FrameListener)
-     *            unregistered}
-     */
-    public void registerFrameListener(FrameListener frameListener) {
-        getActivity().registerFrameListener(frameListener);
-    }
-
-    /**
-     * Remove a previously-subscribed {@link FrameListener}.
-     * 
-     * @param frameListener
-     *            An instance of a {@link FrameListener} implementation.
-     *            Unsubscribing a listener which is not actually subscribed will
-     *            not throw an exception.
-     */
-    public void unregisterFrameListener(FrameListener frameListener) {
-        getActivity().unregisterFrameListener(frameListener);
     }
 
     /**

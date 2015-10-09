@@ -1,14 +1,11 @@
 package com.eje_c.meganekko.event;
 
-import java.util.EventObject;
-
-public class KeyEvent extends EventObject {
+public class KeyEvent {
     public final int keyCode;
     public final int repeatCount;
     private boolean mPreventDefaultCalled;
 
-    public KeyEvent(Object source, int keyCode, int repeatCount) {
-        super(source);
+    public KeyEvent(int keyCode, int repeatCount) {
         this.keyCode = keyCode;
         this.repeatCount = repeatCount;
     }

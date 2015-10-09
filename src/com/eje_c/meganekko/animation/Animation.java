@@ -15,11 +15,11 @@
 
 package com.eje_c.meganekko.animation;
 
-import com.eje_c.meganekko.FrameListener;
 import com.eje_c.meganekko.HybridObject;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.Transform;
+import com.eje_c.meganekko.event.FrameListener;
 
 import android.graphics.Color;
 import android.view.animation.Interpolator;

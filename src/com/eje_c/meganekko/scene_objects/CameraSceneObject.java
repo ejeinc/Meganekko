@@ -17,30 +17,30 @@ package com.eje_c.meganekko.scene_objects;
 
 import java.io.IOException;
 
-import com.eje_c.meganekko.FrameListener;
-import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.ExternalTexture;
 import com.eje_c.meganekko.Material;
+import com.eje_c.meganekko.Material.ShaderType;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.Texture;
-import com.eje_c.meganekko.Material.ShaderType;
+import com.eje_c.meganekko.VrContext;
+import com.eje_c.meganekko.VrFrame;
+import com.eje_c.meganekko.event.FrameListener;
 
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 
 /**
- * A {@linkplain SceneObject scene object} that shows live video from one of
- * the device's cameras
+ * A {@linkplain SceneObject scene object} that shows live video from one of the
+ * device's cameras
  */
-public class CameraSceneObject extends SceneObject implements
-        FrameListener {
+public class CameraSceneObject extends SceneObject implements FrameListener {
     private final SurfaceTexture mSurfaceTexture;
     private boolean mPaused = false;
 
     /**
-     * Create a {@linkplain SceneObject scene object} (with arbitrarily
-     * complex geometry) that shows live video from one of the device's cameras
+     * Create a {@linkplain SceneObject scene object} (with arbitrarily complex
+     * geometry) that shows live video from one of the device's cameras
      * 
      * @param vrContext
      *            current {@link VrContext}
@@ -54,10 +54,9 @@ public class CameraSceneObject extends SceneObject implements
      *            should be sure to call it before you call
      *            {@link Camera#startPreview()}.
      */
-    public CameraSceneObject(VrContext vrContext, Mesh mesh,
-            Camera camera) {
+    public CameraSceneObject(VrContext vrContext, Mesh mesh, Camera camera) {
         super(vrContext, mesh);
-        vrContext.registerFrameListener(this);
+        vrContext.getActivity().onFrame(this);
         Texture texture = new ExternalTexture(vrContext);
         Material material = new Material(vrContext, ShaderType.OES.ID);
         material.setMainTexture(texture);
@@ -72,8 +71,8 @@ public class CameraSceneObject extends SceneObject implements
     }
 
     /**
-     * Create a 2D, rectangular {@linkplain SceneObject scene object} that
-     * shows live video from one of the device's cameras
+     * Create a 2D, rectangular {@linkplain SceneObject scene object} that shows
+     * live video from one of the device's cameras
      * 
      * @param vrContext
      *            current {@link VrContext}
@@ -97,8 +96,8 @@ public class CameraSceneObject extends SceneObject implements
      * 
      * <p>
      * Note: {@link #pause()} and {@code resume()} only affect the polling that
-     * links the Android {@link Camera} to this {@linkplain SceneObject Meganekko
-     * scene object:} they have <em>no affect</em> on the underlying
+     * links the Android {@link Camera} to this {@linkplain SceneObject
+     * Meganekko scene object:} they have <em>no affect</em> on the underlying
      * {@link Camera} object.
      */
     public void resume() {
@@ -110,8 +109,8 @@ public class CameraSceneObject extends SceneObject implements
      * 
      * <p>
      * Note: {@code pause()} and {@link #resume()} only affect the polling that
-     * links the Android {@link Camera} to this {@linkplain SceneObject Meganekko
-     * scene object:} they have <em>no affect</em> on the underlying
+     * links the Android {@link Camera} to this {@linkplain SceneObject
+     * Meganekko scene object:} they have <em>no affect</em> on the underlying
      * {@link Camera} object.
      */
     public void pause() {
@@ -119,7 +118,7 @@ public class CameraSceneObject extends SceneObject implements
     }
 
     @Override
-    public void frame() {
+    public void onEvent(VrFrame vrFrame) {
         if (!mPaused) {
             mSurfaceTexture.updateTexImage();
         }

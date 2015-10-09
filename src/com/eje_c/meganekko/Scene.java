@@ -16,24 +16,50 @@
 package com.eje_c.meganekko;
 
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.List;
 
-import com.eje_c.meganekko.event.EventEmitter;
-import com.eje_c.meganekko.event.KeyEventListener;
-import com.eje_c.meganekko.event.SwipeEventListener;
-import com.eje_c.meganekko.event.TouchEventListener;
+import com.eje_c.meganekko.event.FrameListener;
+import com.eje_c.meganekko.event.KeyDoubleTapEvent;
+import com.eje_c.meganekko.event.KeyDoubleTapEventListener;
+import com.eje_c.meganekko.event.KeyDownEvent;
+import com.eje_c.meganekko.event.KeyDownEventListener;
+import com.eje_c.meganekko.event.KeyLongPressEvent;
+import com.eje_c.meganekko.event.KeyLongPressEventListener;
+import com.eje_c.meganekko.event.KeyMaxEvent;
+import com.eje_c.meganekko.event.KeyMaxEventListener;
+import com.eje_c.meganekko.event.KeyShortPressEvent;
+import com.eje_c.meganekko.event.KeyShortPressEventListener;
+import com.eje_c.meganekko.event.KeyUpEvent;
+import com.eje_c.meganekko.event.KeyUpEventListener;
+import com.eje_c.meganekko.event.SwipeBackEvent;
+import com.eje_c.meganekko.event.SwipeBackEventListener;
+import com.eje_c.meganekko.event.SwipeDownEvent;
+import com.eje_c.meganekko.event.SwipeDownEventListener;
+import com.eje_c.meganekko.event.SwipeForwardEvent;
+import com.eje_c.meganekko.event.SwipeForwardEventListener;
+import com.eje_c.meganekko.event.SwipeUpEvent;
+import com.eje_c.meganekko.event.SwipeUpEventListener;
+import com.eje_c.meganekko.event.TouchDoubleEvent;
+import com.eje_c.meganekko.event.TouchDoubleEventListener;
+import com.eje_c.meganekko.event.TouchSingleEvent;
+import com.eje_c.meganekko.event.TouchSingleEventListener;
 import com.eje_c.meganekko.utility.Log;
 
+import de.greenrobot.event.EventBus;
+
 /** The scene graph */
-public class Scene extends SceneObject {
+public class Scene extends SceneObject implements FrameListener,
+        KeyDoubleTapEventListener, KeyDownEventListener, KeyLongPressEventListener, KeyMaxEventListener,
+        KeyShortPressEventListener, KeyUpEventListener,
+        SwipeBackEventListener, SwipeDownEventListener, SwipeForwardEventListener, SwipeUpEventListener,
+        TouchDoubleEventListener, TouchSingleEventListener {
     @SuppressWarnings("unused")
     private static final String TAG = Log.tag(Scene.class);
 
     private final List<SceneObject> mSceneObjects = new ArrayList<SceneObject>();
     private final List<OnFrameListener> mOnFrameListeners = new ArrayList<>();
     private Camera mMainCamera;
-    private EventEmitter eventEmitter = new EventEmitter();
+    private EventBus mEventBus = new EventBus();
 
     public interface OnFrameListener {
         void onFrame(VrFrame vrFrame);
@@ -211,191 +237,168 @@ public class Scene extends SceneObject {
     }
 
     /*
-     * User input events.
-     */
-
-    /**
-     * Called from VR thread when swipe up gesture is recognized.
-     */
-    void onSwipeUp() {
-        eventEmitter.emit("swipeUp", new EventObject(this));
-    }
-
-    /**
-     * Called from VR thread when swipe down gesture is recognized.
-     */
-    void onSwipeDown() {
-        eventEmitter.emit("swipeDown", new EventObject(this));
-    }
-
-    /**
-     * Called from VR thread when swipe forward gesture is recognized.
-     */
-    void onSwipeForward() {
-        eventEmitter.emit("swipeForward", new EventObject(this));
-    }
-
-    /**
-     * Called from VR thread when swipe back gesture is recognized.
-     */
-    void onSwipeBack() {
-        eventEmitter.emit("swipeBack", new EventObject(this));
-    }
-
-    /**
-     * Called from VR thread when touch pad single tap is recognized.
-     */
-    void onTouchSingle() {
-        eventEmitter.emit("touchSingle", new EventObject(this));
-    }
-
-    /**
-     * Called from VR thread when touch pad double tap is recognized.
-     */
-    void onTouchDouble() {
-        eventEmitter.emit("touchDouble", new EventObject(this));
-    }
-
-    boolean onKeyShortPress(int keyCode, int repeatCount) {
-        com.eje_c.meganekko.event.KeyEvent keyEvent = new com.eje_c.meganekko.event.KeyEvent(this, keyCode,
-                repeatCount);
-        eventEmitter.emit("keyShortPress", keyEvent);
-        return keyEvent.isPreventDefaultCalled();
-    }
-
-    boolean onKeyDoubleTap(int keyCode, int repeatCount) {
-        com.eje_c.meganekko.event.KeyEvent keyEvent = new com.eje_c.meganekko.event.KeyEvent(this, keyCode,
-                repeatCount);
-        eventEmitter.emit("keyDoubleTap", keyEvent);
-        return keyEvent.isPreventDefaultCalled();
-    }
-
-    boolean onKeyLongPress(int keyCode, int repeatCount) {
-        com.eje_c.meganekko.event.KeyEvent keyEvent = new com.eje_c.meganekko.event.KeyEvent(this, keyCode,
-                repeatCount);
-        eventEmitter.emit("keyLongPress", keyEvent);
-        return keyEvent.isPreventDefaultCalled();
-    }
-
-    boolean onKeyDown(int keyCode, int repeatCount) {
-        com.eje_c.meganekko.event.KeyEvent keyEvent = new com.eje_c.meganekko.event.KeyEvent(this, keyCode,
-                repeatCount);
-        eventEmitter.emit("keyDown", keyEvent);
-        return keyEvent.isPreventDefaultCalled();
-    }
-
-    boolean onKeyUp(int keyCode, int repeatCount) {
-        com.eje_c.meganekko.event.KeyEvent keyEvent = new com.eje_c.meganekko.event.KeyEvent(this, keyCode,
-                repeatCount);
-        eventEmitter.emit("keyUp", keyEvent);
-        return keyEvent.isPreventDefaultCalled();
-    }
-
-    boolean onKeyMax(int keyCode, int repeatCount) {
-        com.eje_c.meganekko.event.KeyEvent keyEvent = new com.eje_c.meganekko.event.KeyEvent(this, keyCode,
-                repeatCount);
-        eventEmitter.emit("keyMax", keyEvent);
-        return keyEvent.isPreventDefaultCalled();
-    }
-
-    /*
      * Event register methods.
      */
 
-    public void onSwipeUp(SwipeEventListener listener) {
-        eventEmitter.on("swipeUp", listener);
+    public void onSwipeUp(SwipeUpEventListener listener) {
+        mEventBus.register(listener);
     }
 
-    public void onSwipeDown(SwipeEventListener listener) {
-        eventEmitter.on("swipeDown", listener);
+    public void onSwipeDown(SwipeDownEventListener listener) {
+        mEventBus.register(listener);
     }
 
-    public void onSwipeForward(SwipeEventListener listener) {
-        eventEmitter.on("swipeForward", listener);
+    public void onSwipeForward(SwipeForwardEventListener listener) {
+        mEventBus.register(listener);
     }
 
-    public void onSwipeBack(SwipeEventListener listener) {
-        eventEmitter.on("swipeBack", listener);
+    public void onSwipeBack(SwipeBackEventListener listener) {
+        mEventBus.register(listener);
     }
 
-    public void onTouchSingle(TouchEventListener listener) {
-        eventEmitter.on("touchSingle", listener);
+    public void onTouchSingle(TouchSingleEventListener listener) {
+        mEventBus.register(listener);
     }
 
-    public void onTouchDouble(TouchEventListener listener) {
-        eventEmitter.on("touchDouble", listener);
+    public void onTouchDouble(TouchDoubleEventListener listener) {
+        mEventBus.register(listener);
     }
 
-    public void onKeyShortPress(KeyEventListener listener) {
-        eventEmitter.on("keyShortPress", listener);
+    public void onKeyShortPress(KeyShortPressEventListener listener) {
+        mEventBus.register(listener);
     }
 
-    public void onKeyDoubleTap(KeyEventListener listener) {
-        eventEmitter.on("keyDoubleTap", listener);
+    public void onKeyDoubleTap(KeyDoubleTapEventListener listener) {
+        mEventBus.register(listener);
     }
 
-    public void onKeyLongPress(KeyEventListener listener) {
-        eventEmitter.on("keyLongPress", listener);
+    public void onKeyLongPress(KeyLongPressEventListener listener) {
+        mEventBus.register(listener);
     }
 
-    public void onKeyDown(KeyEventListener listener) {
-        eventEmitter.on("keyDown", listener);
+    public void onKeyDown(KeyDownEventListener listener) {
+        mEventBus.register(listener);
     }
 
-    public void onKeyUp(KeyEventListener listener) {
-        eventEmitter.on("keyUp", listener);
+    public void onKeyUp(KeyUpEventListener listener) {
+        mEventBus.register(listener);
     }
 
-    public void onKeyMax(KeyEventListener listener) {
-        eventEmitter.on("keyMax", listener);
+    public void onKeyMax(KeyMaxEventListener listener) {
+        mEventBus.register(listener);
     }
 
-    public void offSwipeUp(SwipeEventListener listener) {
-        eventEmitter.off("swipeUp", listener);
+    public void offSwipeUp(SwipeUpEventListener listener) {
+        mEventBus.unregister(listener);
     }
 
-    public void offSwipeDown(SwipeEventListener listener) {
-        eventEmitter.off("swipeDown", listener);
+    public void offSwipeDown(SwipeDownEventListener listener) {
+        mEventBus.unregister(listener);
     }
 
-    public void offSwipeForward(SwipeEventListener listener) {
-        eventEmitter.off("swipeForward", listener);
+    public void offSwipeForward(SwipeForwardEventListener listener) {
+        mEventBus.unregister(listener);
     }
 
-    public void offSwipeBack(SwipeEventListener listener) {
-        eventEmitter.off("swipeBack", listener);
+    public void offSwipeBack(SwipeBackEventListener listener) {
+        mEventBus.unregister(listener);
     }
 
-    public void offTouchSingle(TouchEventListener listener) {
-        eventEmitter.off("touchSingle", listener);
+    public void offTouchSingle(TouchSingleEventListener listener) {
+        mEventBus.unregister(listener);
     }
 
-    public void offTouchDouble(TouchEventListener listener) {
-        eventEmitter.off("touchDouble", listener);
+    public void offTouchDouble(TouchDoubleEventListener listener) {
+        mEventBus.unregister(listener);
     }
 
-    public void offKeyShortPress(KeyEventListener listener) {
-        eventEmitter.off("keyShortPress", listener);
+    public void offKeyShortPress(KeyShortPressEventListener listener) {
+        mEventBus.unregister(listener);
     }
 
-    public void offKeyDoubleTap(KeyEventListener listener) {
-        eventEmitter.off("keyDoubleTap", listener);
+    public void offKeyDoubleTap(KeyDoubleTapEventListener listener) {
+        mEventBus.unregister(listener);
     }
 
-    public void offKeyLongPress(KeyEventListener listener) {
-        eventEmitter.off("keyLongPress", listener);
+    public void offKeyLongPress(KeyLongPressEventListener listener) {
+        mEventBus.unregister(listener);
     }
 
-    public void offKeyDown(KeyEventListener listener) {
-        eventEmitter.off("keyDown", listener);
+    public void offKeyDown(KeyDownEventListener listener) {
+        mEventBus.unregister(listener);
     }
 
-    public void offKeyUp(KeyEventListener listener) {
-        eventEmitter.off("keyUp", listener);
+    public void offKeyUp(KeyUpEventListener listener) {
+        mEventBus.unregister(listener);
     }
 
-    public void offKeyMax(KeyEventListener listener) {
-        eventEmitter.off("keyMax", listener);
+    public void offKeyMax(KeyMaxEventListener listener) {
+        mEventBus.unregister(listener);
+    }
+
+    @Override
+    public void onEvent(TouchSingleEvent event) {
+        mEventBus.post(event);
+    }
+
+    @Override
+    public void onEvent(TouchDoubleEvent event) {
+        mEventBus.post(event);
+    }
+
+    @Override
+    public void onEvent(SwipeUpEvent event) {
+        mEventBus.post(event);
+    }
+
+    @Override
+    public void onEvent(SwipeForwardEvent event) {
+        mEventBus.post(event);
+    }
+
+    @Override
+    public void onEvent(SwipeDownEvent event) {
+        mEventBus.post(event);
+    }
+
+    @Override
+    public void onEvent(SwipeBackEvent event) {
+        mEventBus.post(event);
+    }
+
+    @Override
+    public void onEvent(KeyUpEvent event) {
+        mEventBus.post(event);
+    }
+
+    @Override
+    public void onEvent(KeyShortPressEvent event) {
+        mEventBus.post(event);
+    }
+
+    @Override
+    public void onEvent(KeyMaxEvent event) {
+        mEventBus.post(event);
+    }
+
+    @Override
+    public void onEvent(KeyLongPressEvent event) {
+        mEventBus.post(event);
+    }
+
+    @Override
+    public void onEvent(KeyDownEvent event) {
+        mEventBus.post(event);
+    }
+
+    @Override
+    public void onEvent(KeyDoubleTapEvent event) {
+        mEventBus.post(event);
+    }
+
+    @Override
+    public void onEvent(VrFrame vrFrame) {
+        mEventBus.post(vrFrame);
     }
 }
 

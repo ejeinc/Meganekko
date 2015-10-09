@@ -17,12 +17,23 @@ package com.eje_c.meganekko;
 
 import java.io.IOException;
 import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.xmlpull.v1.XmlPullParserException;
 
+import com.eje_c.meganekko.event.FrameListener;
+import com.eje_c.meganekko.event.KeyDoubleTapEvent;
+import com.eje_c.meganekko.event.KeyDownEvent;
+import com.eje_c.meganekko.event.KeyLongPressEvent;
+import com.eje_c.meganekko.event.KeyMaxEvent;
+import com.eje_c.meganekko.event.KeyShortPressEvent;
+import com.eje_c.meganekko.event.KeyUpEvent;
+import com.eje_c.meganekko.event.SwipeBackEvent;
+import com.eje_c.meganekko.event.SwipeDownEvent;
+import com.eje_c.meganekko.event.SwipeForwardEvent;
+import com.eje_c.meganekko.event.SwipeUpEvent;
+import com.eje_c.meganekko.event.TouchDoubleEvent;
+import com.eje_c.meganekko.event.TouchSingleEvent;
 import com.eje_c.meganekko.utility.DockEventReceiver;
 import com.eje_c.meganekko.utility.Log;
 import com.eje_c.meganekko.xml.XmlSceneParser;
@@ -37,6 +48,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
+import de.greenrobot.event.EventBus;
 
 /**
  * The typical Meganekko application will have a single Android {@link Activity}
@@ -52,11 +64,18 @@ public class MeganekkoActivity extends VrActivity {
     private static final String TAG = Log.tag(MeganekkoActivity.class);
 
     private final Queue<Runnable> mRunnables = new LinkedBlockingQueue<Runnable>();
-    private final Set<FrameListener> mFrameListeners = new CopyOnWriteArraySet<>();
     private InternalSensorManager mInternalSensorManager;
     private VrContext mVrContext = null;
     private boolean mDocked;
     private VrFrame vrFrame;
+    private EventBus mEventBus = EventBus.getDefault();
+    private com.eje_c.meganekko.event.FrameListener mDefaultFrameListener = new com.eje_c.meganekko.event.FrameListener() {
+
+        @Override
+        public void onEvent(VrFrame vrFrame) {
+            frame();
+        }
+    };
 
     static {
         System.loadLibrary("meganekko");
@@ -134,6 +153,8 @@ public class MeganekkoActivity extends VrActivity {
             mInternalSensorManager.start();
         }
 
+        mEventBus.register(mDefaultFrameListener);
+
         oneTimeInit(mVrContext);
     }
 
@@ -163,12 +184,10 @@ public class MeganekkoActivity extends VrActivity {
             event.run();
         }
 
-        // DrawFrameListener handling
-        for (FrameListener frameListener : mFrameListeners) {
-            frameListener.frame();
-        }
-
         mVrContext.getMainScene().onFrame(vrFrame);
+
+        // Notify frame event
+        mEventBus.post(vrFrame);
 
         frame();
     }
@@ -187,6 +206,8 @@ public class MeganekkoActivity extends VrActivity {
         if (!mDocked) {
             mInternalSensorManager.stop();
         }
+
+        mEventBus.unregister(mDefaultFrameListener);
 
         oneTimeShutDown(mVrContext);
     }
@@ -232,30 +253,39 @@ public class MeganekkoActivity extends VrActivity {
     }
 
     public boolean onKeyShortPress(int keyCode, int repeatCount) {
-        return mVrContext.getMainScene().onKeyShortPress(keyCode, repeatCount);
+        KeyShortPressEvent event = new KeyShortPressEvent(keyCode, repeatCount);
+        mEventBus.post(event);
+        return event.isPreventDefaultCalled();
     }
 
     public boolean onKeyDoubleTap(int keyCode, int repeatCount) {
-        return mVrContext.getMainScene().onKeyDoubleTap(keyCode, repeatCount);
+        KeyDoubleTapEvent event = new KeyDoubleTapEvent(keyCode, repeatCount);
+        mEventBus.post(event);
+        return event.isPreventDefaultCalled();
     }
 
     public boolean onKeyLongPress(int keyCode, int repeatCount) {
-        return onKeyLongPress(keyCode, new KeyEvent(KeyEvent.ACTION_DOWN, keyCode)) ||
-                mVrContext.getMainScene().onKeyLongPress(keyCode, repeatCount);
+        KeyLongPressEvent event = new KeyLongPressEvent(keyCode, repeatCount);
+        mEventBus.post(event);
+        return event.isPreventDefaultCalled() || onKeyLongPress(keyCode, new KeyEvent(KeyEvent.ACTION_DOWN, keyCode));
     }
 
     public boolean onKeyDown(int keyCode, int repeatCount) {
-        return onKeyDown(keyCode, new KeyEvent(KeyEvent.ACTION_DOWN, keyCode)) ||
-                mVrContext.getMainScene().onKeyDown(keyCode, repeatCount);
+        KeyDownEvent event = new KeyDownEvent(keyCode, repeatCount);
+        mEventBus.post(event);
+        return event.isPreventDefaultCalled() || onKeyDown(keyCode, new KeyEvent(KeyEvent.ACTION_DOWN, keyCode));
     }
 
     public boolean onKeyUp(int keyCode, int repeatCount) {
-        return onKeyUp(keyCode, new KeyEvent(KeyEvent.ACTION_UP, keyCode)) ||
-                mVrContext.getMainScene().onKeyUp(keyCode, repeatCount);
+        KeyUpEvent event = new KeyUpEvent(keyCode, repeatCount);
+        mEventBus.post(event);
+        return event.isPreventDefaultCalled() || onKeyUp(keyCode, new KeyEvent(KeyEvent.ACTION_UP, keyCode));
     }
 
     public boolean onKeyMax(int keyCode, int repeatCount) {
-        return mVrContext.getMainScene().onKeyMax(keyCode, repeatCount);
+        KeyMaxEvent event = new KeyMaxEvent(keyCode, repeatCount);
+        mEventBus.post(event);
+        return event.isPreventDefaultCalled();
     }
 
     @Deprecated
@@ -280,42 +310,42 @@ public class MeganekkoActivity extends VrActivity {
      * Called from VR thread when swipe up gesture is recognized.
      */
     public void onSwipeUp() {
-        mVrContext.getMainScene().onSwipeUp();
+        mEventBus.post(new SwipeUpEvent());
     }
 
     /**
      * Called from VR thread when swipe down gesture is recognized.
      */
     public void onSwipeDown() {
-        mVrContext.getMainScene().onSwipeDown();
+        mEventBus.post(new SwipeDownEvent());
     }
 
     /**
      * Called from VR thread when swipe forward gesture is recognized.
      */
     public void onSwipeForward() {
-        mVrContext.getMainScene().onSwipeForward();
+        mEventBus.post(new SwipeForwardEvent());
     }
 
     /**
      * Called from VR thread when swipe back gesture is recognized.
      */
     public void onSwipeBack() {
-        mVrContext.getMainScene().onSwipeBack();
+        mEventBus.post(new SwipeBackEvent());
     }
 
     /**
      * Called from VR thread when touch pad single tap is recognized.
      */
     public void onTouchSingle() {
-        mVrContext.getMainScene().onTouchSingle();
+        mEventBus.post(new TouchSingleEvent());
     }
 
     /**
      * Called from VR thread when touch pad double tap is recognized.
      */
     public void onTouchDouble() {
-        mVrContext.getMainScene().onTouchDouble();
+        mEventBus.post(new TouchDoubleEvent());
     }
 
     private final Runnable mRunOnDock = new Runnable() {
@@ -354,46 +384,6 @@ public class MeganekkoActivity extends VrActivity {
             throw new IllegalArgumentException("runnable must not be null");
         }
         mRunnables.add(runnable);
-    }
-
-    /**
-     * Subscribes a {@link FrameListener}.
-     * 
-     * Each frame listener is called, once per frame, after any pending
-     * {@linkplain #runOnGlThread(Runnable) GL callbacks} and before
-     * {@link MeganekkoActivity#frame()}.
-     * 
-     * @param frameListener
-     *            A callback that will fire once per frame, until it is
-     *            {@linkplain #unregisterFrameListener(FrameListener)
-     *            unregistered}
-     * 
-     * @deprecated Use {@code OnFrameListener} and
-     *             {@code Scene#addOnFrameListener(OnFrameListener)}
-     */
-    public void registerFrameListener(FrameListener frameListener) {
-        if (frameListener == null) {
-            throw new IllegalArgumentException("frameListener must not be null");
-        }
-        mFrameListeners.add(frameListener);
-    }
-
-    /**
-     * Remove a previously-subscribed {@link FrameListener}.
-     * 
-     * @param frameListener
-     *            An instance of a {@link FrameListener} implementation.
-     *            Unsubscribing a listener which is not actually subscribed will
-     *            not throw an exception.
-     * 
-     * @deprecated Use {@code OnFrameListener} and
-     *             {@code Scene#removeOnFrameListener(OnFrameListener)}
-     */
-    public void unregisterFrameListener(FrameListener frameListener) {
-        if (frameListener == null) {
-            throw new IllegalArgumentException("frameListener must not be null");
-        }
-        mFrameListeners.remove(frameListener);
     }
 
     /**
@@ -452,7 +442,7 @@ public class MeganekkoActivity extends VrActivity {
 
         try {
             Scene scene = parser.parse(getResources().getXml(xmlRes), new Scene(mVrContext));
-            mVrContext.setMainScene(scene);
+            setScene(scene);
             return scene;
         } catch (XmlPullParserException | IOException e) {
             e.printStackTrace();
@@ -466,6 +456,14 @@ public class MeganekkoActivity extends VrActivity {
      * @param scene
      */
     public void setScene(Scene scene) {
+
+        Scene currentScene = mVrContext.getMainScene();
+        if (currentScene == scene)
+            return;
+
+        mEventBus.unregister(currentScene);
+        mEventBus.register(scene);
+
         mVrContext.setMainScene(scene);
     }
 
@@ -476,5 +474,23 @@ public class MeganekkoActivity extends VrActivity {
      */
     public Scene getScene() {
         return mVrContext.getMainScene();
+    }
+
+    /**
+     * Add callback for every frame update.
+     * 
+     * @param listener
+     */
+    public void onFrame(com.eje_c.meganekko.event.FrameListener listener) {
+        mEventBus.register(listener);
+    }
+
+    /**
+     * Remove callback for every frame update.
+     * 
+     * @param listener
+     */
+    public void offFrame(com.eje_c.meganekko.event.FrameListener listener) {
+        mEventBus.unregister(listener);
     }
 }

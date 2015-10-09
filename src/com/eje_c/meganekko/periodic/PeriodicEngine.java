@@ -17,8 +17,9 @@ package com.eje_c.meganekko.periodic;
 
 import java.util.PriorityQueue;
 
-import com.eje_c.meganekko.FrameListener;
 import com.eje_c.meganekko.VrContext;
+import com.eje_c.meganekko.VrFrame;
+import com.eje_c.meganekko.event.FrameListener;
 
 /**
  * Schedule {@linkplain Runnable runnables} to run on the GL thread at a future
@@ -41,8 +42,8 @@ import com.eje_c.meganekko.VrContext;
  * Runnable pulse = new Runnable() {
  * 
  *     public void run() {
- *         new ScaleAnimation(uiObject, 0.5f, 2f) //
- *                 .setRepeatMode(GVRRepeatMode.PINGPONG) //
+ *         new ScaleAnimation(uiObject, 0.5f, 2f)//
+ *                 .setRepeatMode(GVRRepeatMode.PINGPONG)//
  *                 .start(mAnimationEngine);
  *     }
  * };
@@ -89,7 +90,7 @@ public class PeriodicEngine {
 
     protected PeriodicEngine(VrContext context) {
         mContext = context;
-        context.registerFrameListener(mDrawFrameListener);
+        context.getActivity().onFrame(mDrawFrameListener);
     }
 
     /**
@@ -345,13 +346,13 @@ public class PeriodicEngine {
     private class DrawFrameListener implements FrameListener {
 
         @Override
-        public void frame() {
+        public void onEvent(VrFrame vrFrame) {
             float now = PeriodicEngine.now();
             synchronized (mQueue) {
-                for (EventImplementation //
+                for (EventImplementation//
                 first = mQueue.peek(); //
                 first != null && first.getScheduledTime() <= now; //
-                first = mQueue.peek() //
+                first = mQueue.peek()//
                 ) {
 
                     mContext.runOnGlThread(mQueue.poll());
@@ -451,7 +452,7 @@ public class PeriodicEngine {
         private void reschedule() {
             if (repeats()) {
                 if (mCallback != null && mCallback.keepRunning(this) != true) {
-                    return; // Do NOT reschedule
+                    return;// Do NOT reschedule
                 }
 
                 float next = mTimeBase + (((now() - mTimeBase) / mPeriod) + 1)

@@ -18,7 +18,6 @@ package com.eje_c.meganekko.scene_objects;
 import java.io.IOException;
 
 import com.eje_c.meganekko.ExternalTexture;
-import com.eje_c.meganekko.FrameListener;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Material.ShaderType;
 import com.eje_c.meganekko.MaterialShaderId;
@@ -26,6 +25,8 @@ import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrContext;
+import com.eje_c.meganekko.VrFrame;
+import com.eje_c.meganekko.event.FrameListener;
 
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
@@ -73,7 +74,7 @@ public class VideoSceneObject extends SceneObject {
         attachRenderData(renderData);
 
         mVideo = new Video(null, texture);
-        vrContext.registerFrameListener(mVideo);
+        vrContext.getActivity().onFrame(mVideo);
     }
 
     @Deprecated
@@ -128,7 +129,7 @@ public class VideoSceneObject extends SceneObject {
         getRenderData().setMaterial(material);
 
         mVideo = new Video(mediaPlayer, texture);
-        vrContext.registerFrameListener(mVideo);
+        vrContext.getActivity().offFrame(mVideo);
     }
 
     /**
@@ -365,11 +366,10 @@ public class VideoSceneObject extends SceneObject {
         }
 
         @Override
-        public void frame() {
+        public void onEvent(VrFrame vrFrame) {
             if (mMediaPlayer != null && mActive) {
                 mSurfaceTexture.updateTexImage();
             }
         }
     }
-
 }
