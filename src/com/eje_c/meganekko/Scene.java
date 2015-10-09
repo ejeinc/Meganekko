@@ -1,4 +1,6 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/* 
+ * Copyright 2015 eje inc.
+ * Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +16,6 @@
  */
 
 package com.eje_c.meganekko;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import com.eje_c.meganekko.event.FrameListener;
 import com.eje_c.meganekko.event.KeyDoubleTapEvent;
@@ -43,7 +42,6 @@ import com.eje_c.meganekko.event.TouchDoubleEvent;
 import com.eje_c.meganekko.event.TouchDoubleEventListener;
 import com.eje_c.meganekko.event.TouchSingleEvent;
 import com.eje_c.meganekko.event.TouchSingleEventListener;
-import com.eje_c.meganekko.utility.Log;
 
 import de.greenrobot.event.EventBus;
 
@@ -53,16 +51,9 @@ public class Scene extends SceneObject implements FrameListener,
         KeyShortPressEventListener, KeyUpEventListener,
         SwipeBackEventListener, SwipeDownEventListener, SwipeForwardEventListener, SwipeUpEventListener,
         TouchDoubleEventListener, TouchSingleEventListener {
-    @SuppressWarnings("unused")
-    private static final String TAG = Log.tag(Scene.class);
 
-    private final List<OnFrameListener> mOnFrameListeners = new ArrayList<>();
     private Camera mMainCamera;
-    private EventBus mEventBus = new EventBus();
-
-    public interface OnFrameListener {
-        void onFrame(VrFrame vrFrame);
-    }
+    private EventBus mEventBus = EventBus.builder().logNoSubscriberMessages(false).build();
 
     /**
      * Constructs a scene with a camera rig holding left & right cameras in it.
@@ -74,88 +65,12 @@ public class Scene extends SceneObject implements FrameListener,
         super(vrContext, NativeScene.ctor());
 
         Camera camera = new Camera(vrContext);
-        addSceneObject(camera);
+        addChildObject(camera);
         setMainCamera(camera);
     }
 
     private Scene(VrContext vrContext, long ptr) {
         super(vrContext, ptr);
-    }
-
-    /**
-     * Called from GL thread in every frame.
-     * 
-     * @param vrFrame
-     */
-    protected void onFrame(VrFrame vrFrame) {
-        synchronized (this) {
-            final List<OnFrameListener> list = mOnFrameListeners;
-            final int size = mOnFrameListeners.size();
-            for (int i = 0; i < size; ++i) {
-                list.get(i).onFrame(vrFrame);
-            }
-        }
-    }
-
-    /**
-     * Register a callback to be invoked when frame update.
-     * 
-     * @param onFrameListener
-     */
-    public void addOnFrameListener(OnFrameListener onFrameListener) {
-        synchronized (this) {
-            if (onFrameListener == null) {
-                throw new IllegalArgumentException("onFrameListener must not be null");
-            }
-            mOnFrameListeners.add(onFrameListener);
-        }
-    }
-
-    /**
-     * Remove a callback for frame update listener.
-     * 
-     * @param onFrameListener
-     */
-    public void removeOnFrameListener(OnFrameListener onFrameListener) {
-        synchronized (this) {
-            if (onFrameListener == null) {
-                throw new IllegalArgumentException("onFrameListener must not be null");
-            }
-            mOnFrameListeners.remove(onFrameListener);
-        }
-    }
-
-    /**
-     * Add an {@linkplain SceneObject scene object}
-     * 
-     * @param sceneObject
-     *            The {@linkplain SceneObject scene object} to add.
-     */
-    @Deprecated
-    public void addSceneObject(SceneObject sceneObject) {
-        super.addChildObject(sceneObject);
-    }
-
-    /**
-     * Remove a {@linkplain SceneObject scene object}
-     * 
-     * @param sceneObject
-     *            The {@linkplain SceneObject scene object} to remove.
-     */
-    @Deprecated
-    public void removeSceneObject(SceneObject sceneObject) {
-        super.removeChildObject(sceneObject);
-    }
-
-    /**
-     * The top-level scene objects.
-     * 
-     * @return A read-only list containing all the 'root' scene objects (those
-     *         that were added directly to the scene).
-     */
-    @Deprecated
-    public List<SceneObject> getSceneObjects() {
-        return super.getChildren();
     }
 
     /**
@@ -195,164 +110,173 @@ public class Scene extends SceneObject implements FrameListener,
      * Event register methods.
      */
 
-    public void onSwipeUp(SwipeUpEventListener listener) {
+    public final void onSwipeUp(SwipeUpEventListener listener) {
         mEventBus.register(listener);
     }
 
-    public void onSwipeDown(SwipeDownEventListener listener) {
+    public final void onSwipeDown(SwipeDownEventListener listener) {
         mEventBus.register(listener);
     }
 
-    public void onSwipeForward(SwipeForwardEventListener listener) {
+    public final void onSwipeForward(SwipeForwardEventListener listener) {
         mEventBus.register(listener);
     }
 
-    public void onSwipeBack(SwipeBackEventListener listener) {
+    public final void onSwipeBack(SwipeBackEventListener listener) {
         mEventBus.register(listener);
     }
 
-    public void onTouchSingle(TouchSingleEventListener listener) {
+    public final void onTouchSingle(TouchSingleEventListener listener) {
         mEventBus.register(listener);
     }
 
-    public void onTouchDouble(TouchDoubleEventListener listener) {
+    public final void onTouchDouble(TouchDoubleEventListener listener) {
         mEventBus.register(listener);
     }
 
-    public void onKeyShortPress(KeyShortPressEventListener listener) {
+    public final void onKeyShortPress(KeyShortPressEventListener listener) {
         mEventBus.register(listener);
     }
 
-    public void onKeyDoubleTap(KeyDoubleTapEventListener listener) {
+    public final void onKeyDoubleTap(KeyDoubleTapEventListener listener) {
         mEventBus.register(listener);
     }
 
-    public void onKeyLongPress(KeyLongPressEventListener listener) {
+    public final void onKeyLongPress(KeyLongPressEventListener listener) {
         mEventBus.register(listener);
     }
 
-    public void onKeyDown(KeyDownEventListener listener) {
+    public final void onKeyDown(KeyDownEventListener listener) {
         mEventBus.register(listener);
     }
 
-    public void onKeyUp(KeyUpEventListener listener) {
+    public final void onKeyUp(KeyUpEventListener listener) {
         mEventBus.register(listener);
     }
 
-    public void onKeyMax(KeyMaxEventListener listener) {
+    public final void onKeyMax(KeyMaxEventListener listener) {
         mEventBus.register(listener);
     }
 
-    public void offSwipeUp(SwipeUpEventListener listener) {
+    /*
+     * Event unregister methods.
+     */
+
+    public final void offSwipeUp(SwipeUpEventListener listener) {
         mEventBus.unregister(listener);
     }
 
-    public void offSwipeDown(SwipeDownEventListener listener) {
+    public final void offSwipeDown(SwipeDownEventListener listener) {
         mEventBus.unregister(listener);
     }
 
-    public void offSwipeForward(SwipeForwardEventListener listener) {
+    public final void offSwipeForward(SwipeForwardEventListener listener) {
         mEventBus.unregister(listener);
     }
 
-    public void offSwipeBack(SwipeBackEventListener listener) {
+    public final void offSwipeBack(SwipeBackEventListener listener) {
         mEventBus.unregister(listener);
     }
 
-    public void offTouchSingle(TouchSingleEventListener listener) {
+    public final void offTouchSingle(TouchSingleEventListener listener) {
         mEventBus.unregister(listener);
     }
 
-    public void offTouchDouble(TouchDoubleEventListener listener) {
+    public final void offTouchDouble(TouchDoubleEventListener listener) {
         mEventBus.unregister(listener);
     }
 
-    public void offKeyShortPress(KeyShortPressEventListener listener) {
+    public final void offKeyShortPress(KeyShortPressEventListener listener) {
         mEventBus.unregister(listener);
     }
 
-    public void offKeyDoubleTap(KeyDoubleTapEventListener listener) {
+    public final void offKeyDoubleTap(KeyDoubleTapEventListener listener) {
         mEventBus.unregister(listener);
     }
 
-    public void offKeyLongPress(KeyLongPressEventListener listener) {
+    public final void offKeyLongPress(KeyLongPressEventListener listener) {
         mEventBus.unregister(listener);
     }
 
-    public void offKeyDown(KeyDownEventListener listener) {
+    public final void offKeyDown(KeyDownEventListener listener) {
         mEventBus.unregister(listener);
     }
 
-    public void offKeyUp(KeyUpEventListener listener) {
+    public final void offKeyUp(KeyUpEventListener listener) {
         mEventBus.unregister(listener);
     }
 
-    public void offKeyMax(KeyMaxEventListener listener) {
+    public final void offKeyMax(KeyMaxEventListener listener) {
         mEventBus.unregister(listener);
     }
+
+    /*
+     * These onEvents are notified from MeganekkoActivity. These redirect passed
+     * event to scene local event bus.
+     */
 
     @Override
-    public void onEvent(TouchSingleEvent event) {
+    public final void onEvent(TouchSingleEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public void onEvent(TouchDoubleEvent event) {
+    public final void onEvent(TouchDoubleEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public void onEvent(SwipeUpEvent event) {
+    public final void onEvent(SwipeUpEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public void onEvent(SwipeForwardEvent event) {
+    public final void onEvent(SwipeForwardEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public void onEvent(SwipeDownEvent event) {
+    public final void onEvent(SwipeDownEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public void onEvent(SwipeBackEvent event) {
+    public final void onEvent(SwipeBackEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public void onEvent(KeyUpEvent event) {
+    public final void onEvent(KeyUpEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public void onEvent(KeyShortPressEvent event) {
+    public final void onEvent(KeyShortPressEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public void onEvent(KeyMaxEvent event) {
+    public final void onEvent(KeyMaxEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public void onEvent(KeyLongPressEvent event) {
+    public final void onEvent(KeyLongPressEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public void onEvent(KeyDownEvent event) {
+    public final void onEvent(KeyDownEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public void onEvent(KeyDoubleTapEvent event) {
+    public final void onEvent(KeyDoubleTapEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public void onEvent(VrFrame vrFrame) {
+    public final void onEvent(VrFrame vrFrame) {
         mEventBus.post(vrFrame);
     }
 }

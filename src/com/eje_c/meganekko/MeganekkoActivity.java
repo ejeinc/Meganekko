@@ -1,4 +1,6 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/* 
+ * Copyright 2015 eje inc.
+ * Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,14 +70,7 @@ public class MeganekkoActivity extends VrActivity {
     private VrContext mVrContext = null;
     private boolean mDocked;
     private VrFrame vrFrame;
-    private EventBus mEventBus = EventBus.getDefault();
-    private com.eje_c.meganekko.event.FrameListener mDefaultFrameListener = new com.eje_c.meganekko.event.FrameListener() {
-
-        @Override
-        public void onEvent(VrFrame vrFrame) {
-            frame();
-        }
-    };
+    private EventBus mEventBus = EventBus.builder().logNoSubscriberMessages(false).build();
 
     static {
         System.loadLibrary("meganekko");
@@ -153,8 +148,6 @@ public class MeganekkoActivity extends VrActivity {
             mInternalSensorManager.start();
         }
 
-        mEventBus.register(mDefaultFrameListener);
-
         oneTimeInit(mVrContext);
     }
 
@@ -184,8 +177,6 @@ public class MeganekkoActivity extends VrActivity {
             event.run();
         }
 
-        mVrContext.getMainScene().onFrame(vrFrame);
-
         // Notify frame event
         mEventBus.post(vrFrame);
 
@@ -206,8 +197,6 @@ public class MeganekkoActivity extends VrActivity {
         if (!mDocked) {
             mInternalSensorManager.stop();
         }
-
-        mEventBus.unregister(mDefaultFrameListener);
 
         oneTimeShutDown(mVrContext);
     }
