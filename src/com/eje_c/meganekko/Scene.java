@@ -56,7 +56,6 @@ public class Scene extends SceneObject implements FrameListener,
     @SuppressWarnings("unused")
     private static final String TAG = Log.tag(Scene.class);
 
-    private final List<SceneObject> mSceneObjects = new ArrayList<SceneObject>();
     private final List<OnFrameListener> mOnFrameListeners = new ArrayList<>();
     private Camera mMainCamera;
     private EventBus mEventBus = new EventBus();
@@ -179,26 +178,6 @@ public class Scene extends SceneObject implements FrameListener,
     }
 
     /**
-     * @return The flattened hierarchy of {@link SceneObject objects} as an
-     *         array.
-     */
-    public SceneObject[] getWholeSceneObjects() {
-        List<SceneObject> list = new ArrayList<SceneObject>(mSceneObjects);
-        for (SceneObject child : mSceneObjects) {
-            addChildren(list, child);
-        }
-        return list.toArray(new SceneObject[list.size()]);
-    }
-
-    private void addChildren(List<SceneObject> list,
-            SceneObject sceneObject) {
-        for (SceneObject child : sceneObject.rawGetChildren()) {
-            list.add(child);
-            addChildren(list, child);
-        }
-    }
-
-    /**
      * Sets the frustum culling for the {@link Scene}.
      */
     public void setFrustumCulling(boolean flag) {
@@ -210,30 +189,6 @@ public class Scene extends SceneObject implements FrameListener,
      */
     public void setOcclusionQuery(boolean flag) {
         NativeScene.setOcclusionQuery(getNative(), flag);
-    }
-
-    public SceneObject findObjectByName(String name) {
-        for (SceneObject object : mSceneObjects) {
-            SceneObject result = object.findObjectByName(name);
-            if (result != null) {
-                return result;
-            }
-        }
-
-        return null;
-    }
-
-    public List<SceneObject> findObjectsByName(String name) {
-
-        List<SceneObject> objects = new ArrayList<>();
-
-        for (SceneObject object : getWholeSceneObjects()) {
-            if (name.equals(object.getName())) {
-                objects.add(object);
-            }
-        }
-
-        return objects;
     }
 
     /*
