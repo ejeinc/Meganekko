@@ -34,6 +34,7 @@ import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.Texture;
 import com.eje_c.meganekko.Transform;
 import com.eje_c.meganekko.RenderData.GVRRenderingOrder;
+import com.eje_c.meganekko.scene_objects.CanvasSceneObject;
 import com.eje_c.meganekko.scene_objects.ConeSceneObject;
 import com.eje_c.meganekko.scene_objects.CubeSceneObject;
 import com.eje_c.meganekko.scene_objects.CylinderSceneObject;
@@ -235,6 +236,12 @@ public class XmlSceneObjectParser {
             case "scaleZ":
                 object.getTransform().setScaleZ(attributeSet.getAttributeFloatValue(i, 1.0f));
                 break;
+
+            // CanvasSceneObject
+            case "canvasSize":
+                if (object instanceof CanvasSceneObject) {
+                    parseCanvasSize((CanvasSceneObject) object, attributeSet.getAttributeValue(i));
+                }
             }
         }
 
@@ -378,6 +385,8 @@ public class XmlSceneObjectParser {
             return new TextSceneObject(context);
         case "video":
             return new VideoSceneObject(context);
+        case "canvas":
+            return new CanvasSceneObject(context);
 
         default:
 
@@ -460,6 +469,17 @@ public class XmlSceneObjectParser {
             float axisY = Float.parseFloat(arr[2]);
             float axisZ = Float.parseFloat(arr[3]);
             transform.setRotationByAxis(angle, axisX, axisY, axisZ);
+        }
+    }
+
+    private static void parseCanvasSize(CanvasSceneObject canvasSceneObject, String value) {
+
+        String[] arr = value.split("\\s+");
+
+        if (arr.length == 2) {
+            int width = Integer.parseInt(arr[0]);
+            int height = Integer.parseInt(arr[1]);
+            canvasSceneObject.setCanvasSize(width, height);
         }
     }
 
