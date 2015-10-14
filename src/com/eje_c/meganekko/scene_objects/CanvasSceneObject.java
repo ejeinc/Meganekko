@@ -27,7 +27,6 @@ import com.eje_c.meganekko.event.FrameListener;
 
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.view.Surface;
 
@@ -39,7 +38,6 @@ public class CanvasSceneObject extends SceneObject implements FrameListener {
 
     private final Surface mSurface;
     private final SurfaceTexture mSurfaceTexture;
-    private final Rect mInOutDirty = new Rect(0, 0, 256, 256);
     private OnDrawListener mOnDrawListener;
 
     public CanvasSceneObject(VrContext vrContext) {
@@ -72,14 +70,13 @@ public class CanvasSceneObject extends SceneObject implements FrameListener {
      */
     public void setCanvasSize(int width, int height) {
         mSurfaceTexture.setDefaultBufferSize(width, height);
-        mInOutDirty.set(0, 0, width, height);
     }
 
     @SuppressLint("WrongCall")
     @Override
     public void onEvent(VrFrame vrFrame) {
         if (mOnDrawListener != null) {
-            Canvas canvas = mSurface.lockCanvas(mInOutDirty);
+            Canvas canvas = mSurface.lockCanvas(null);
             mOnDrawListener.onDraw(this, canvas, vrFrame);
             mSurface.unlockCanvasAndPost(canvas);
             mSurfaceTexture.updateTexImage();
