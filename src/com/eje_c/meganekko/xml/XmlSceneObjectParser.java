@@ -41,6 +41,7 @@ import com.eje_c.meganekko.scene_objects.CylinderSceneObject;
 import com.eje_c.meganekko.scene_objects.SphereSceneObject;
 import com.eje_c.meganekko.scene_objects.TextSceneObject;
 import com.eje_c.meganekko.scene_objects.VideoSceneObject;
+import com.eje_c.meganekko.scene_objects.ViewSceneObject;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
@@ -242,6 +243,17 @@ public class XmlSceneObjectParser {
                 if (object instanceof CanvasSceneObject) {
                     parseCanvasSize((CanvasSceneObject) object, attributeSet.getAttributeValue(i));
                 }
+                break;
+
+            // ViewSceneObject
+            case "layout":
+                if (object instanceof ViewSceneObject) {
+                    int layoutRes = attributeSet.getAttributeResourceValue(i, -1);
+                    if (layoutRes != -1) {
+                        ((ViewSceneObject) object).setView(layoutRes);
+                    }
+                }
+                break;
             }
         }
 
@@ -387,6 +399,8 @@ public class XmlSceneObjectParser {
             return new VideoSceneObject(context);
         case "canvas":
             return new CanvasSceneObject(context);
+        case "view":
+            return new ViewSceneObject(context);
 
         default:
 
