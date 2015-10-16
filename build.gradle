@@ -18,6 +18,7 @@ android {
             manifest.srcFile 'AndroidManifest.xml'
             java.srcDirs = [
                 'src',
+                "${System.env.OVR_MOBILE_SDK}/VrAppSupport/VrGUI/Projects/Android/src",
                 "${System.env.OVR_MOBILE_SDK}/VrAppSupport/VrLocale/Projects/Android/src",
                 "${System.env.OVR_MOBILE_SDK}/VrAppSupport/VrSound/Projects/Android/src"]
             jniLibs.srcDirs = ['libs']
