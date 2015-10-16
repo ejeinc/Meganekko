@@ -28,7 +28,7 @@ namespace mgn {
 extern "C" {
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeCamera_ctor(JNIEnv * env, jobject obj);
+Java_com_eje_1c_meganekko_Camera_initNativeInstance(JNIEnv * env, jobject obj);
 
 JNIEXPORT jfloatArray JNICALL
 Java_com_eje_1c_meganekko_NativeCamera_getLookAt(JNIEnv * env, jobject obj, jlong jcamera);
@@ -36,7 +36,7 @@ Java_com_eje_1c_meganekko_NativeCamera_getLookAt(JNIEnv * env, jobject obj, jlon
 };
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeCamera_ctor(JNIEnv * env, jobject obj) {
+Java_com_eje_1c_meganekko_Camera_initNativeInstance(JNIEnv * env, jobject obj) {
     return reinterpret_cast<jlong>(new Camera());
 }
 

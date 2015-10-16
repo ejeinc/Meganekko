@@ -24,9 +24,7 @@ public class Camera extends SceneObject {
     }
 
     @Override
-    protected long initNativeInstance() {
-        return NativeCamera.ctor();
-    }
+    protected native long initNativeInstance();
 
     public void attachToParent(SceneObject parentObject) {
         parentObject.addChildObject(this);
@@ -49,7 +47,5 @@ public class Camera extends SceneObject {
 }
 
 class NativeCamera {
-    static native long ctor();
-
     static native float[] getLookAt(long camera);
 }

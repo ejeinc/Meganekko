@@ -24,7 +24,7 @@
 namespace mgn {
 extern "C" {
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeScene_ctor(JNIEnv * env, jobject obj);
+Java_com_eje_1c_meganekko_Scene_initNativeInstance(JNIEnv * env, jobject obj);
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_NativeScene_setMainCamera(JNIEnv * env,
@@ -37,7 +37,7 @@ Java_com_eje_1c_meganekko_NativeScene_setOcclusionQuery(JNIEnv * env,
         jobject obj, jlong jscene, jboolean flag);
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeScene_ctor(JNIEnv * env, jobject obj) {
+Java_com_eje_1c_meganekko_Scene_initNativeInstance(JNIEnv * env, jobject obj) {
     return reinterpret_cast<jlong>(new Scene());
 }
 

@@ -62,9 +62,7 @@ public class SceneObject extends HybridObject {
     }
 
     @Override
-    protected long initNativeInstance() {
-        return NativeSceneObject.ctor();
-    }
+    protected native long initNativeInstance();
 
     /**
      * Constructs a scene object with an arbitrarily complex mesh.
@@ -776,8 +774,6 @@ public class SceneObject extends HybridObject {
 }
 
 class NativeSceneObject {
-    static native long ctor();
-
     static native String getName(long sceneObject);
 
     static native void setName(long sceneObject, String name);

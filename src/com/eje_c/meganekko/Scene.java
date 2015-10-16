@@ -69,9 +69,7 @@ public class Scene extends SceneObject implements FrameListener,
     }
     
     @Override
-    protected long initNativeInstance() {
-        return NativeScene.ctor();
-    }
+    protected native long initNativeInstance();
 
     /**
      * @return The {@link Camera camera rig} used for rendering the scene on the
