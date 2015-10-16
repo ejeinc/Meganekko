@@ -26,7 +26,9 @@
 #include <memory>
 
 #define __gl2_h_
+#ifndef GL_ES_VERSION_3_0
 #include "GLES3/gl3.h"
+#endif
 #include <GLES2/gl2ext.h>
 #include "Kernel/OVR_Math.h"
 #include "GlProgram.h"

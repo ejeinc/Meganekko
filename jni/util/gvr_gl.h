@@ -27,8 +27,10 @@
 
 #include <android/bitmap.h>
 #include "util/gvr_jni.h"
+#ifndef GL_ES_VERSION_3_0
 #include <GLES3/gl3.h>
 #include <GLES3/gl3ext.h>
+#endif
 
 #include "util/gvr_log.h"
 

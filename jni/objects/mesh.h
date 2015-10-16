@@ -25,7 +25,9 @@
 #include <vector>
 #include <string>
 
+#ifndef GL_ES_VERSION_3_0
 #include "GLES3/gl3.h"
+#endif
 
 #include "objects/hybrid_object.h"
 #include "objects/material.h"

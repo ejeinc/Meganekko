@@ -18,11 +18,11 @@
 #ifndef ACTIVITY_JNI_H
 #define ACTIVITY_JNI_H
 
-#include <OVR.h>
+#include <Kernel/OVR_Math.h>
 #include "App.h"
 #include "AppLocal.h"
 #include "GuiSys.h"
-#include "GuiSysLocal.h"
+#include "GazeCursor.h"
 #include "OVR_Locale.h"
 #include "SoundEffectContext.h"
 #include "Input.h"
@@ -45,7 +45,7 @@ public:
     virtual void        Configure( ovrSettings & settings );
     virtual void        OneTimeInit( const char * fromPackage, const char * launchIntentJSON, const char * launchIntentURI );
     virtual void        OneTimeShutdown();
-    virtual Matrix4f    DrawEyeView( const int eye, const float fovDegrees, ovrFrameParms & frameParms );
+    virtual Matrix4f    DrawEyeView( const int eye, const float fovDegreesX, const float fovDegreesY, ovrFrameParms & frameParms );
     virtual Matrix4f    Frame( const VrFrame & vrFrame );
     virtual bool        OnKeyEvent( const int keyCode, const int repeatCount, const KeyEventType eventType );
 

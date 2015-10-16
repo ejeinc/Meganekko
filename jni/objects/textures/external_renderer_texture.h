@@ -3,7 +3,9 @@
 #define EXTERNAL_RENDERER_TEXTURE_H_
 
 #define __gl2_h_
+#ifndef GL_ES_VERSION_3_0
 #include <GLES3/gl3.h>
+#endif
 #include <GLES2/gl2ext.h>
 
 #include "objects/textures/base_texture.h"

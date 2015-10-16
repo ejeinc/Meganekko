@@ -16,7 +16,7 @@
 
 #include <jni.h>
 #include <VrApi.h>
-#include <OVR.h>
+#include <Kernel/OVR_Math.h>
 #include "activity.h"
 
 using namespace OVR;

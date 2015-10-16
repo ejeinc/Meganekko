@@ -21,9 +21,11 @@
 #define ASSIMP_SHADER_H_
 
 #include <memory>
-#include <OVR.h>
+#include <Kernel/OVR_Math.h>
 
+#ifndef GL_ES_VERSION_3_0
 #include "GLES3/gl3.h"
+#endif
 
 #include "objects/recyclable_object.h"
 
