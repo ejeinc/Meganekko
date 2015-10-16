@@ -1,4 +1,6 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/*
+ * Copyright 2015 eje inc.
+ * Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,11 +36,11 @@ using namespace OVR;
 namespace mgn
 {
 
-class GVRActivity : public VrAppInterface
+class MeganekkoActivity : public VrAppInterface
 {
 public:
-                        GVRActivity();
-                        ~GVRActivity();
+                        MeganekkoActivity();
+                        ~MeganekkoActivity();
 
     virtual void        Configure( ovrSettings & settings );
     virtual void        OneTimeInit( const char * fromPackage, const char * launchIntentJSON, const char * launchIntentURI );

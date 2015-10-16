@@ -1,4 +1,6 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/*
+ * Copyright 2015 eje inc.
+ * Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,41 +34,41 @@ long Java_com_eje_1c_meganekko_MeganekkoActivity_nativeSetAppInterface(
         jstring fromPackageName, jstring commandString,
         jstring uriString)
 {
-    return (new GVRActivity())->SetActivity( jni, clazz, activity, fromPackageName, commandString, uriString );
+    return (new MeganekkoActivity())->SetActivity( jni, clazz, activity, fromPackageName, commandString, uriString );
 }
 
 void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeHideGazeCursor(JNIEnv * jni, jclass clazz, jlong appPtr)
 {
-    GVRActivity* activity = (GVRActivity*)((App *)appPtr)->GetAppInterface();
+    MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
     activity->GuiSys->GetGazeCursor().HideCursor();
 }
 
 void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeShowGazeCursor(JNIEnv * jni, jclass clazz, jlong appPtr)
 {
-    GVRActivity* activity = (GVRActivity*)((App *)appPtr)->GetAppInterface();
+    MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
     activity->GuiSys->GetGazeCursor().ShowCursor();
 }
 
 void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeSetMinimumVsyncs(JNIEnv * jni, jclass clazz, jlong appPtr, jint vsyncs)
 {
-    ((GVRActivity*)((App *)appPtr)->GetAppInterface())->MinimumVsyncs = vsyncs;
+    ((MeganekkoActivity*)((App *)appPtr)->GetAppInterface())->MinimumVsyncs = vsyncs;
 }
 
 jint Java_com_eje_1c_meganekko_MeganekkoActivity_nativeGetMinimumVsyncs(JNIEnv * jni, jclass clazz, jlong appPtr)
 {
-    return ((GVRActivity*)((App *)appPtr)->GetAppInterface())->MinimumVsyncs;
+    return ((MeganekkoActivity*)((App *)appPtr)->GetAppInterface())->MinimumVsyncs;
 }
 
 void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeOnDock(JNIEnv * jni, jclass clazz, jlong appPtr)
 {
 
-    GVRActivity* activity = (GVRActivity*)((App *)appPtr)->GetAppInterface();
+    MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
     activity->deviceIsDocked = true;
 }
 
 void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeOnUndock(JNIEnv * jni, jclass clazz, jlong appPtr)
 {
-    GVRActivity* activity = (GVRActivity*)((App *)appPtr)->GetAppInterface();
+    MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
     activity->deviceIsDocked = false;
 }
 
@@ -83,14 +85,14 @@ void Java_com_eje_1c_meganekko_MeganekkoActivity_recenterPose(JNIEnv * jni, jcla
 
 void Java_com_eje_1c_meganekko_MeganekkoActivity_setScene(JNIEnv * jni, jclass clazz, jlong appPtr, jlong jscene)
 {
-    GVRActivity* activity = (GVRActivity*)((App *)appPtr)->GetAppInterface();
+    MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
     Scene* scene = reinterpret_cast<Scene*>(jscene);
     activity->scene = scene;
 }
 
 void Java_com_eje_1c_meganekko_MeganekkoActivity_setShaderManager(JNIEnv * jni, jclass clazz, jlong appPtr, jlong jshaderManager)
 {
-    GVRActivity* activity = (GVRActivity*)((App *)appPtr)->GetAppInterface();
+    MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
     ShaderManager* shaderManager = reinterpret_cast<ShaderManager*>(jshaderManager);
     activity->shaderManager = shaderManager;
 }

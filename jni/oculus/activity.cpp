@@ -1,4 +1,6 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/*
+ * Copyright 2015 eje inc.
+ * Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +27,7 @@
 namespace mgn
 {
 
-GVRActivity::GVRActivity() :
+MeganekkoActivity::MeganekkoActivity() :
       GuiSys( OvrGuiSys::Create() ),
       Locale( NULL ),
       scene(NULL),
@@ -36,16 +38,16 @@ GVRActivity::GVRActivity() :
     MinimumVsyncs = 1;
 }
 
-GVRActivity::~GVRActivity()
+MeganekkoActivity::~MeganekkoActivity()
 {
     OvrGuiSys::Destroy( GuiSys );
 }
 
-void GVRActivity::Configure(ovrSettings & settings)
+void MeganekkoActivity::Configure(ovrSettings & settings)
 {
 }
 
-void GVRActivity::OneTimeInit(const char * fromPackage, const char * launchIntentJSON, const char * launchIntentURI)
+void MeganekkoActivity::OneTimeInit(const char * fromPackage, const char * launchIntentJSON, const char * launchIntentURI)
 {
     auto java = app->GetJava();
     SoundEffectContext.reset( new ovrSoundEffectContext( *java->Env, java->ActivityObject ) );
@@ -77,13 +79,13 @@ void GVRActivity::OneTimeInit(const char * fromPackage, const char * launchInten
     onTouchDoubleMethodId = GetMethodID("onTouchDouble", "()V");
 }
 
-void GVRActivity::OneTimeShutdown()
+void MeganekkoActivity::OneTimeShutdown()
 {
     jmethodID oneTimeShutdownMethodId = GetMethodID("oneTimeShutDown", "()V");
     app->GetVrJni()->CallVoidMethod(app->GetJavaObject(), oneTimeShutdownMethodId);
 }
 
-Matrix4f GVRActivity::DrawEyeView(const int eye, const float fovDegrees, ovrFrameParms & frameParms)
+Matrix4f MeganekkoActivity::DrawEyeView(const int eye, const float fovDegrees, ovrFrameParms & frameParms)
 {
     frameParms.MinimumVsyncs = MinimumVsyncs;
 
@@ -99,7 +101,7 @@ Matrix4f GVRActivity::DrawEyeView(const int eye, const float fovDegrees, ovrFram
 
 }
 
-Matrix4f GVRActivity::Frame( const VrFrame & vrFrame )
+Matrix4f MeganekkoActivity::Frame( const VrFrame & vrFrame )
 {
     // Update Camera orientation
     Camera * camera = const_cast<Camera *>(scene->main_camera());
@@ -143,7 +145,7 @@ Matrix4f GVRActivity::Frame( const VrFrame & vrFrame )
     return centerViewMatrix;
 }
 
-bool GVRActivity::OnKeyEvent(const int keyCode, const int repeatCount, const KeyEventType eventType)
+bool MeganekkoActivity::OnKeyEvent(const int keyCode, const int repeatCount, const KeyEventType eventType)
 {
     bool handled = false;
 
