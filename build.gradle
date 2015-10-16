@@ -24,7 +24,8 @@ android {
             jniLibs.srcDirs = ['libs']
             res.srcDirs = [
                 'res',
-                "${System.env.OVR_MOBILE_SDK}/VrAppFramework/res"
+                "${System.env.OVR_MOBILE_SDK}/VrAppFramework/res",
+                "${System.env.OVR_MOBILE_SDK}/VrAppSupport/VrGUI/res"
             ]
         }
     }
