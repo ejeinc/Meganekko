@@ -23,7 +23,6 @@ import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.VrFrame;
-import com.eje_c.meganekko.event.FrameListener;
 
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;
@@ -34,7 +33,7 @@ import android.view.Surface;
  * A {@linkplain SceneObject scene object} that renders like a standard Android
  * Views.
  */
-public class CanvasSceneObject extends SceneObject implements FrameListener {
+public class CanvasSceneObject extends SceneObject {
 
     private final Surface mSurface;
     private final SurfaceTexture mSurfaceTexture;
@@ -74,13 +73,17 @@ public class CanvasSceneObject extends SceneObject implements FrameListener {
 
     @SuppressLint("WrongCall")
     @Override
-    public void onEvent(VrFrame vrFrame) {
+    protected boolean onRender() {
+
         if (mOnDrawListener != null) {
             Canvas canvas = mSurface.lockCanvas(null);
-            mOnDrawListener.onDraw(this, canvas, vrFrame);
+            mOnDrawListener.onDraw(this, canvas, getVrContext().getActivity().getVrFrame());
             mSurface.unlockCanvasAndPost(canvas);
             mSurfaceTexture.updateTexImage();
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -91,12 +94,6 @@ public class CanvasSceneObject extends SceneObject implements FrameListener {
      */
     public void setOnDrawListener(OnDrawListener onDrawListener) {
         this.mOnDrawListener = onDrawListener;
-
-        if (mOnDrawListener != null) {
-            getVrContext().getActivity().onFrame(this);
-        } else {
-            getVrContext().getActivity().offFrame(this);
-        }
     }
 
     /**

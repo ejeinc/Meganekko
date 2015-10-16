@@ -24,8 +24,6 @@ import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.Texture;
 import com.eje_c.meganekko.VrContext;
-import com.eje_c.meganekko.VrFrame;
-import com.eje_c.meganekko.event.FrameListener;
 
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -34,7 +32,7 @@ import android.hardware.Camera;
  * A {@linkplain SceneObject scene object} that shows live video from one of the
  * device's cameras
  */
-public class CameraSceneObject extends SceneObject implements FrameListener {
+public class CameraSceneObject extends SceneObject {
     private final SurfaceTexture mSurfaceTexture;
     private boolean mPaused = false;
 
@@ -56,7 +54,6 @@ public class CameraSceneObject extends SceneObject implements FrameListener {
      */
     public CameraSceneObject(VrContext vrContext, Mesh mesh, Camera camera) {
         super(vrContext, mesh);
-        vrContext.getActivity().onFrame(this);
         Texture texture = new ExternalTexture(vrContext);
         Material material = new Material(vrContext, ShaderType.OES.ID);
         material.setMainTexture(texture);
@@ -118,9 +115,10 @@ public class CameraSceneObject extends SceneObject implements FrameListener {
     }
 
     @Override
-    public void onEvent(VrFrame vrFrame) {
+    protected boolean onRender() {
         if (!mPaused) {
             mSurfaceTexture.updateTexImage();
         }
+        return true;
     }
 }

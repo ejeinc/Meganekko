@@ -1,4 +1,6 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/* 
+ * Copyright 2015 eje inc.
+ * Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +27,6 @@ import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrContext;
-import com.eje_c.meganekko.VrFrame;
-import com.eje_c.meganekko.event.FrameListener;
 
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
@@ -37,7 +37,9 @@ import android.view.Surface;
  * {@link MediaPlayer}.
  */
 public class VideoSceneObject extends SceneObject {
-    private final Video mVideo;
+    private SurfaceTexture mSurfaceTexture = null;
+    private MediaPlayer mMediaPlayer = null;
+    private boolean mActive = true;
 
     /** Video type constants, for use with {@link VideoSceneObject} */
     public enum VideoType {
@@ -73,13 +75,11 @@ public class VideoSceneObject extends SceneObject {
         renderData.setMaterial(material);
         attachRenderData(renderData);
 
-        mVideo = new Video(null, texture);
-        vrContext.getActivity().onFrame(mVideo);
+        mSurfaceTexture = new SurfaceTexture(texture.getId());
     }
 
     @Deprecated
-    public VideoSceneObject(VrContext vrContext, Mesh mesh,
-            MediaPlayer mediaPlayer, int videoType) {
+    public VideoSceneObject(VrContext vrContext, Mesh mesh, MediaPlayer mediaPlayer, int videoType) {
         this(vrContext, mesh, mediaPlayer, VideoType.values()[videoType]);
     }
 
@@ -100,8 +100,7 @@ public class VideoSceneObject extends SceneObject {
      * @throws IllegalArgumentException
      *             on an invalid {@code videoType} parameter
      */
-    public VideoSceneObject(VrContext vrContext, Mesh mesh,
-            MediaPlayer mediaPlayer, VideoType videoType) {
+    public VideoSceneObject(VrContext vrContext, Mesh mesh, MediaPlayer mediaPlayer, VideoType videoType) {
         super(vrContext, mesh);
         ExternalTexture texture = new ExternalTexture(vrContext);
 
@@ -128,8 +127,8 @@ public class VideoSceneObject extends SceneObject {
         material.setMainTexture(texture);
         getRenderData().setMaterial(material);
 
-        mVideo = new Video(mediaPlayer, texture);
-        vrContext.getActivity().offFrame(mVideo);
+        mSurfaceTexture = new SurfaceTexture(texture.getId());
+        mMediaPlayer = mediaPlayer;
     }
 
     /**
@@ -170,7 +169,7 @@ public class VideoSceneObject extends SceneObject {
      * {@link MediaPlayer#start()}.
      */
     public void activate() {
-        mVideo.activate();
+        mActive = true;
     }
 
     /**
@@ -182,7 +181,7 @@ public class VideoSceneObject extends SceneObject {
      * {@link MediaPlayer#pause()}.
      */
     public void deactivate() {
-        mVideo.deactivate();
+        mActive = false;
     }
 
     /**
@@ -194,7 +193,7 @@ public class VideoSceneObject extends SceneObject {
      * @return Whether or not we polling the {@code MediaPlayer} every frame.
      */
     public boolean isActive() {
-        return mVideo.isActive();
+        return mActive;
     }
 
     /**
@@ -203,7 +202,7 @@ public class VideoSceneObject extends SceneObject {
      * @return current {@link MediaPlayer}
      */
     public MediaPlayer getMediaPlayer() {
-        return mVideo.getMediaPlayer();
+        return mMediaPlayer;
     }
 
     /**
@@ -213,7 +212,12 @@ public class VideoSceneObject extends SceneObject {
      *            An Android {@link MediaPlayer}
      */
     public void setMediaPlayer(MediaPlayer mediaPlayer) {
-        mVideo.setMediaPlayer(mediaPlayer);
+        release();// any current MediaPlayer
+
+        mMediaPlayer = mediaPlayer;
+        Surface surface = new Surface(mSurfaceTexture);
+        mMediaPlayer.setSurface(surface);
+        surface.release();
     }
 
     /**
@@ -221,7 +225,10 @@ public class VideoSceneObject extends SceneObject {
      * {@link MediaPlayer}, if any
      */
     public void release() {
-        mVideo.release();
+        if (mMediaPlayer != null) {
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
     }
 
     /**
@@ -232,7 +239,7 @@ public class VideoSceneObject extends SceneObject {
      * @return current time stamp, in nanoseconds
      */
     public long getTimeStamp() {
-        return mVideo.getTimeStamp();
+        return mSurfaceTexture.getTimestamp();
     }
 
     public void setVideoType(VideoType videoType) {
@@ -252,124 +259,11 @@ public class VideoSceneObject extends SceneObject {
         }
     }
 
-    private static class Video implements FrameListener {
-
-        private SurfaceTexture mSurfaceTexture = null;
-        private MediaPlayer mMediaPlayer = null;
-        private boolean mActive = true;
-
-        /**
-         * Constructs a GVRVideo with a {@link MediaPlayer} and a
-         * {@link ExternalTexture} to be used
-         * 
-         * @param mediaPlayer
-         *            the {@link MediaPlayer} type object to be used in the
-         *            class
-         * @param texture
-         *            the {@link ExternalTexture} type object to be used in the
-         *            class
-         */
-        public Video(MediaPlayer mediaPlayer, ExternalTexture texture) {
-            mSurfaceTexture = new SurfaceTexture(texture.getId());
-            if (mediaPlayer != null) {
-                setMediaPlayer(mediaPlayer);
-            }
+    @Override
+    protected boolean onRender() {
+        if (mMediaPlayer != null && mActive) {
+            mSurfaceTexture.updateTexImage();
         }
-
-        /**
-         * On top of the various {@link MediaPlayer} states, this wrapper may be
-         * 'active' or 'inactive'. When the wrapper is active, it updates the
-         * screen each time {@link FrameListener#onDrawFrame(float)} is called;
-         * when the wrapper is inactive, {@link MediaPlayer} changes do not show
-         * on the screen.
-         * 
-         * <p>
-         * Note that calling {@link #activate()} does not call
-         * {@link MediaPlayer#start()}, and calling {@link #deactivate()} does
-         * not call {@link MediaPlayer#pause()}.
-         * 
-         * @return Whether this wrapper is actively polling its
-         *         {@link MediaPlayer}
-         */
-        public boolean isActive() {
-            return mActive;
-        }
-
-        /**
-         * Tell the wrapper to poll its {@link MediaPlayer} each time
-         * {@link FrameListener#onDrawFrame(float)} is called.
-         * 
-         * <p>
-         * Note that activation is not the same as calling
-         * {@link MediaPlayer#start()}.
-         */
-        public void activate() {
-            mActive = true;
-        }
-
-        /**
-         * Tell the wrapper to stop polling its {@link MediaPlayer} each time
-         * {@link FrameListener#onDrawFrame(float)} is called.
-         * 
-         * <p>
-         * Note that deactivation is not the same as calling
-         * {@link MediaPlayer#pause()}.
-         */
-        public void deactivate() {
-            mActive = false;
-        }
-
-        /**
-         * Returns the current {@link MediaPlayer}, if any
-         * 
-         * @return the current {@link MediaPlayer}
-         */
-        public MediaPlayer getMediaPlayer() {
-            return mMediaPlayer;
-        }
-
-        /**
-         * Set the {@link MediaPlayer} used to show video
-         * 
-         * @param mediaPlayer
-         *            An Android {@link MediaPlayer}
-         */
-        public void setMediaPlayer(MediaPlayer mediaPlayer) {
-            release();// any current MediaPlayer
-
-            mMediaPlayer = mediaPlayer;
-            Surface surface = new Surface(mSurfaceTexture);
-            mMediaPlayer.setSurface(surface);
-            surface.release();
-        }
-
-        /**
-         * Returns the current time stamp, in nanoseconds. This comes from
-         * {@link SurfaceTexture#getTimestamp()}: you should read the Android
-         * documentation on that before you use this value.
-         * 
-         * @return current time stamp, in nanoseconds
-         */
-        public long getTimeStamp() {
-            return mSurfaceTexture.getTimestamp();
-        }
-
-        /**
-         * Reset and {@link MediaPlayer#release() release()} the
-         * {@link MediaPlayer}
-         */
-        public void release() {
-            if (mMediaPlayer != null) {
-                mMediaPlayer.release();
-                mMediaPlayer = null;
-            }
-        }
-
-        @Override
-        public void onEvent(VrFrame vrFrame) {
-            if (mMediaPlayer != null && mActive) {
-                mSurfaceTexture.updateTexImage();
-            }
-        }
+        return true;
     }
 }

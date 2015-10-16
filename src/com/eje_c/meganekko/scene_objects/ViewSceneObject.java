@@ -80,16 +80,27 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
     }
 
     @Override
-    public void onEvent(VrFrame vrFrame) {
+    protected boolean onRender() {
+
+        if (mView != null) {
+            // Update texture size
+            setCanvasSize(mView.getWidth(), mView.getHeight());
+            
+            // call on
+            return super.onRender();
+        }
+        
+        return false;
+    }
+
+    @Override
+    public void onDraw(CanvasSceneObject object, Canvas canvas, VrFrame vrFrame) {
 
         if (mView != null) {
 
-            // Update texture size
-            setCanvasSize(mView.getWidth(), mView.getHeight());
-
             // Simulate pressing
             if (mSimulatePressing && getEyePointeeHolder() != null) {
-                float distance = Picker.pickSceneObject(this, getVrContext().getMainScene().getMainCamera());
+                float distance = Picker.pickSceneObject(this, getVrContext().getActivity().getScene().getMainCamera());
                 if (distance < Float.POSITIVE_INFINITY) {
                     if (!mLooking) {
                         mLooking = true;
@@ -111,14 +122,6 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
                     mView.performLongClick();
                 }
             }
-        }
-
-        super.onEvent(vrFrame);
-    }
-
-    @Override
-    public void onDraw(CanvasSceneObject object, Canvas canvas, VrFrame vrFrame) {
-        if (mView != null) {
             mView.draw(canvas);
         }
     }
