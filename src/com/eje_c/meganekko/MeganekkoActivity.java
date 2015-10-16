@@ -71,6 +71,8 @@ public class MeganekkoActivity extends VrActivity {
     private boolean mDocked;
     private VrFrame vrFrame;
     private EventBus mEventBus = EventBus.builder().logNoSubscriberMessages(false).build();
+    private Scene mScene;
+    private MaterialShaderManager mMaterialShaderManager;
 
     static {
         System.loadLibrary("meganekko");
@@ -99,6 +101,10 @@ public class MeganekkoActivity extends VrActivity {
 
     private static native void recenterPose(long appPtr);
 
+    static native void setScene(long appPtr, long nativeScene);
+
+    static native void setShaderManager(long appPtr, long nativeShaderManager);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         /*
@@ -123,7 +129,7 @@ public class MeganekkoActivity extends VrActivity {
         mInternalSensorManager = new InternalSensorManager(this, getAppPtr());
 
         mVrContext = new VrContext(this);
-        nativeSetContext(getAppPtr(), mVrContext.getNativePtr());
+        mMaterialShaderManager = new MaterialShaderManager(mVrContext);
     }
 
     @Override
@@ -142,6 +148,9 @@ public class MeganekkoActivity extends VrActivity {
      * Called from native AppInterface::oneTimeInit().
      */
     private void oneTimeInit() {
+
+        setScene(new Scene(mVrContext));
+        setShaderManager(getAppPtr(), getMaterialShaderManager().getNative());
         mVrContext.onSurfaceCreated();
 
         if (!mDocked) {
@@ -404,7 +413,7 @@ public class MeganekkoActivity extends VrActivity {
      * @return
      */
     public SceneObject findObjectByName(String name) {
-        return mVrContext.getMainScene().findObjectByName(name);
+        return mScene.findObjectByName(name);
     }
 
     /**
@@ -444,16 +453,19 @@ public class MeganekkoActivity extends VrActivity {
      * 
      * @param scene
      */
-    public void setScene(Scene scene) {
+    public synchronized void setScene(Scene scene) {
 
-        Scene currentScene = mVrContext.getMainScene();
-        if (currentScene == scene)
+        if (scene == mScene)
             return;
 
-        mEventBus.unregister(currentScene);
+        if (mScene != null) {
+            mEventBus.unregister(mScene);
+        }
+
         mEventBus.register(scene);
 
-        mVrContext.setMainScene(scene);
+        mScene = scene;
+        setScene(getAppPtr(), scene.getNative());
     }
 
     /**
@@ -462,7 +474,7 @@ public class MeganekkoActivity extends VrActivity {
      * @return Current rendering scene.
      */
     public Scene getScene() {
-        return mVrContext.getMainScene();
+        return mScene;
     }
 
     /**
@@ -481,5 +493,9 @@ public class MeganekkoActivity extends VrActivity {
      */
     public void offFrame(com.eje_c.meganekko.event.FrameListener listener) {
         mEventBus.unregister(listener);
+    }
+    
+    public MaterialShaderManager getMaterialShaderManager() {
+        return mMaterialShaderManager;
     }
 }

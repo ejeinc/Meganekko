@@ -26,7 +26,8 @@
 #include "Input.h"
 #include "Android/JniUtils.h"
 #include "SoundEffectContext.h"
-#include "vr_context.h"
+#include "objects/scene.h"
+#include "shaders/shader_manager.h"
 
 using namespace OVR;
 
@@ -48,11 +49,12 @@ public:
 
     ovrLocale &         GetLocale() { return *Locale; }
 
-    Context*            context;
-
     OvrGuiSys *         GuiSys;
     bool                deviceIsDocked;
     int                 MinimumVsyncs;
+
+    Scene*              scene;
+    ShaderManager*      shaderManager;
 
 private:
     std::unique_ptr<ovrSoundEffectContext> SoundEffectContext;

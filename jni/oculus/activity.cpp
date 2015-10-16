@@ -27,7 +27,9 @@ namespace mgn
 
 GVRActivity::GVRActivity() :
       GuiSys( OvrGuiSys::Create() ),
-      Locale( NULL )
+      Locale( NULL ),
+      scene(NULL),
+      shaderManager(NULL)
 {
     centerViewMatrix = ovrMatrix4f_CreateIdentity();
     deviceIsDocked = false;
@@ -89,7 +91,7 @@ Matrix4f GVRActivity::DrawEyeView(const int eye, const float fovDegrees, ovrFram
     const Matrix4f eyeProjectionMatrix = Matrix4f::PerspectiveRH( DegreeToRad( fovDegrees ), 1.0f, 0.01f, 2000.0f );
     const Matrix4f eyeViewProjection = eyeProjectionMatrix * eyeViewMatrix;
 
-    context->RenderEyeView(eyeViewMatrix, eyeProjectionMatrix, eyeViewProjection, eye);
+    Renderer::RenderEyeView(scene, shaderManager, eyeViewMatrix, eyeProjectionMatrix, eyeViewProjection, eye);
 
     GuiSys->RenderEyeView( centerViewMatrix, eyeViewProjection );
 
@@ -100,7 +102,7 @@ Matrix4f GVRActivity::DrawEyeView(const int eye, const float fovDegrees, ovrFram
 Matrix4f GVRActivity::Frame( const VrFrame & vrFrame )
 {
     // Update Camera orientation
-    Camera * camera = const_cast<Camera *>(context->scene->main_camera());
+    Camera * camera = const_cast<Camera *>(scene->main_camera());
     JNIEnv * jni = app->GetVrJni();
 
     if (deviceIsDocked)

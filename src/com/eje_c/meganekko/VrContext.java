@@ -64,16 +64,7 @@ import android.opengl.GLES20;
 public class VrContext {
     private static final String TAG = Log.tag(VrContext.class);
 
-    private final long nativePtr;
     private final MeganekkoActivity mContext;
-    private final MaterialShaderManager mMaterialShaderManager;
-    private Scene mMainScene;
-
-    private static native long nativeInit();
-
-    private static native void nativeSetMainScene(long nativePtr, long scene);
-
-    private static native void nativeSetShaderManager(long nativePtr, long shaderManager);
 
     /*
      * Fields and constants
@@ -82,37 +73,36 @@ public class VrContext {
     // Priorities constants, for asynchronous loading
 
     /**
-     * Meganekko can't use every {@code int} as a priority - it needs some sentinel
-     * values. It will probably never need anywhere near this many, but raising
-     * the number of reserved values narrows the 'dynamic range' available to
-     * apps mapping some internal score to the {@link #LOWEST_PRIORITY} to
-     * {@link #HIGHEST_PRIORITY} range, and might change app behavior in subtle
-     * ways that seem best avoided.
+     * Meganekko can't use every {@code int} as a priority - it needs some
+     * sentinel values. It will probably never need anywhere near this many, but
+     * raising the number of reserved values narrows the 'dynamic range'
+     * available to apps mapping some internal score to the
+     * {@link #LOWEST_PRIORITY} to {@link #HIGHEST_PRIORITY} range, and might
+     * change app behavior in subtle ways that seem best avoided.
      */
     public static final int RESERVED_PRIORITIES = 1024;
 
     /**
-     * Meganekko can't use every {@code int} as a priority - it needs some sentinel
-     * values. A simple approach to generating priorities is to score resources
-     * from 0 to 1, and then map that to the range {@link #LOWEST_PRIORITY} to
-     * {@link #HIGHEST_PRIORITY}.
+     * Meganekko can't use every {@code int} as a priority - it needs some
+     * sentinel values. A simple approach to generating priorities is to score
+     * resources from 0 to 1, and then map that to the range
+     * {@link #LOWEST_PRIORITY} to {@link #HIGHEST_PRIORITY}.
      */
     public static final int LOWEST_PRIORITY = Integer.MIN_VALUE
             + RESERVED_PRIORITIES;
 
     /**
-     * Meganekko can't use every {@code int} as a priority - it needs some sentinel
-     * values. A simple approach to generating priorities is to score resources
-     * from 0 to 1, and then map that to the range {@link #LOWEST_PRIORITY} to
-     * {@link #HIGHEST_PRIORITY}.
+     * Meganekko can't use every {@code int} as a priority - it needs some
+     * sentinel values. A simple approach to generating priorities is to score
+     * resources from 0 to 1, and then map that to the range
+     * {@link #LOWEST_PRIORITY} to {@link #HIGHEST_PRIORITY}.
      */
     public static final int HIGHEST_PRIORITY = Integer.MAX_VALUE;
 
     /**
      * The priority used by
      * {@link #loadBitmapTexture(AndroidResource.BitmapTextureCallback, AndroidResource)}
-     * and
-     * {@link #loadMesh(AndroidResource.MeshCallback, AndroidResource)}
+     * and {@link #loadMesh(AndroidResource.MeshCallback, AndroidResource)}
      */
     public static final int DEFAULT_PRIORITY = 0;
 
@@ -141,12 +131,9 @@ public class VrContext {
 
     VrContext(MeganekkoActivity context) {
         mContext = context;
-        nativePtr = nativeInit();
 
         // Clear singletons and per-run data structures
         resetOnRestart();
-
-        mMaterialShaderManager = new MaterialShaderManager(this);
 
         AsynchronousResourceLoader.setup(this);
     }
@@ -154,9 +141,9 @@ public class VrContext {
     /**
      * Get the Android {@link Context}, which provides access to system services
      * and to your application's resources. Since version 2.0.1, this is
-     * actually your {@link MeganekkoActivity} implementation, but you should probably
-     * use the new {@link #getActivity()} method, rather than casting this
-     * method to an {@code (Activity)} or {@code (GVRActivity)}.
+     * actually your {@link MeganekkoActivity} implementation, but you should
+     * probably use the new {@link #getActivity()} method, rather than casting
+     * this method to an {@code (Activity)} or {@code (GVRActivity)}.
      * 
      * @return An Android {@code Context}
      */
@@ -172,12 +159,12 @@ public class VrContext {
      * also provides additional services, including
      * {@link Activity#runOnUiThread(Runnable)}.
      * 
-     * @return The {@link MeganekkoActivity} which launched your Meganekko app. The
-     *         {@link MeganekkoActivity} class doesn't actually add much useful
-     *         functionality besides
-     *         {@link MeganekkoActivity#setScript(GVRScript, String)}, but returning
-     *         the most-derived class here may prevent someone from having to
-     *         write {@code (GVRActivity) vrContext.getActivity();}.
+     * @return The {@link MeganekkoActivity} which launched your Meganekko app.
+     *         The {@link MeganekkoActivity} class doesn't actually add much
+     *         useful functionality besides
+     *         {@link MeganekkoActivity#setScript(GVRScript, String)}, but
+     *         returning the most-derived class here may prevent someone from
+     *         having to write {@code (GVRActivity) vrContext.getActivity();}.
      */
     public MeganekkoActivity getActivity() {
         return mContext;
@@ -194,8 +181,8 @@ public class VrContext {
      * 
      * @param androidResource
      *            Basically, a stream containing a 3D model. The
-     *            {@link AndroidResource} class has six constructors to
-     *            handle a wide variety of Android resource types. Taking a
+     *            {@link AndroidResource} class has six constructors to handle a
+     *            wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * @return The file as a GL mesh.
      */
@@ -215,8 +202,8 @@ public class VrContext {
      * 
      * @param androidResource
      *            Basically, a stream containing a 3D model. The
-     *            {@link AndroidResource} class has six constructors to
-     *            handle a wide variety of Android resource types. Taking a
+     *            {@link AndroidResource} class has six constructors to handle a
+     *            wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * 
      * @param settings
@@ -276,8 +263,8 @@ public class VrContext {
      *            </ul>
      * @param androidResource
      *            Basically, a stream containing a 3D model. The
-     *            {@link AndroidResource} class has six constructors to
-     *            handle a wide variety of Android resource types. Taking a
+     *            {@link AndroidResource} class has six constructors to handle a
+     *            wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * @throws IllegalArgumentException
      *             If either parameter is {@code null} or if you 'abuse' request
@@ -342,8 +329,8 @@ public class VrContext {
      *            </ul>
      * @param resource
      *            Basically, a stream containing a 3D model. The
-     *            {@link AndroidResource} class has six constructors to
-     *            handle a wide variety of Android resource types. Taking a
+     *            {@link AndroidResource} class has six constructors to handle a
+     *            wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * @param priority
      *            This request's priority. Please see the notes on asynchronous
@@ -381,15 +368,15 @@ public class VrContext {
      * {@link RenderData#setMesh(Future)}.
      * 
      * This method uses a default priority; use
-     * {@link #loadFutureMesh(AndroidResource, int)} to specify a priority;
-     * use one of the lower-level
-     * {@link #loadMesh(AndroidResource.MeshCallback, AndroidResource)}
-     * methods to get more control over loading.
+     * {@link #loadFutureMesh(AndroidResource, int)} to specify a priority; use
+     * one of the lower-level
+     * {@link #loadMesh(AndroidResource.MeshCallback, AndroidResource)} methods
+     * to get more control over loading.
      * 
      * @param resource
      *            Basically, a stream containing a 3D model. The
-     *            {@link AndroidResource} class has six constructors to
-     *            handle a wide variety of Android resource types. Taking a
+     *            {@link AndroidResource} class has six constructors to handle a
+     *            wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * @return A {@link Future} that you can pass to
      *         {@link RenderData#setMesh(Future)}
@@ -421,14 +408,14 @@ public class VrContext {
      * {@link RenderData#setMesh(Future)}.
      * 
      * This method trades control for convenience; use one of the lower-level
-     * {@link #loadMesh(AndroidResource.MeshCallback, AndroidResource)}
-     * methods if, say, you want to do something more than just
+     * {@link #loadMesh(AndroidResource.MeshCallback, AndroidResource)} methods
+     * if, say, you want to do something more than just
      * {@link RenderData#setMesh(Mesh)} when the mesh loads.
      * 
      * @param resource
      *            Basically, a stream containing a 3D model. The
-     *            {@link AndroidResource} class has six constructors to
-     *            handle a wide variety of Android resource types. Taking a
+     *            {@link AndroidResource} class has six constructors to handle a
+     *            wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * @param priority
      *            This request's priority. Please see the notes on asynchronous
@@ -462,8 +449,8 @@ public class VrContext {
     }
 
     /**
-     * Simple, high-level method to load a scene as {@link SceneObject} from
-     * 3D model.
+     * Simple, high-level method to load a scene as {@link SceneObject} from 3D
+     * model.
      * 
      * @param assetRelativeFilename
      *            A filename, relative to the {@code assets} directory. The file
@@ -483,8 +470,8 @@ public class VrContext {
     }
 
     /**
-     * Simple, high-level method to load a scene as {@link SceneObject} from
-     * 3D model.
+     * Simple, high-level method to load a scene as {@link SceneObject} from 3D
+     * model.
      * 
      * @param assetRelativeFilename
      *            A filename, relative to the {@code assets} directory. The file
@@ -637,8 +624,8 @@ public class VrContext {
 
     /**
      * Helper method to recurse through all the assimp nodes and get all their
-     * meshes that can be used to create {@link SceneObject} to be attached
-     * to the set of complete scene objects for the assimp model.
+     * meshes that can be used to create {@link SceneObject} to be attached to
+     * the set of complete scene objects for the assimp model.
      * 
      * @param assetRelativeFilename
      *            A filename, relative to the {@code assets} directory. The file
@@ -735,13 +722,13 @@ public class VrContext {
 
         AiMaterial material = this.getMeshMaterial(new AndroidResource(this,
                 assetRelativeFilename), node.getName(), index);
-        
+
         Material meshMaterial = new Material(this,
                 ShaderType.Assimp.ID);
-        
+
         /* Feature set */
         int assimpFeatureSet = 0x00000000;
-        
+
         /* Diffuse color */
         AiColor diffuseColor = material.getDiffuseColor(wrapperProvider);
         meshMaterial.setDiffuseColor(diffuseColor.getRed(),
@@ -943,8 +930,8 @@ public class VrContext {
     }
 
     /**
-     * Loads file placed in the assets folder, as a {@link BitmapTexture}
-     * with the user provided texture parameters.
+     * Loads file placed in the assets folder, as a {@link BitmapTexture} with
+     * the user provided texture parameters.
      * 
      * <p>
      * Note that this method may take hundreds of milliseconds to return: unless
@@ -1025,8 +1012,8 @@ public class VrContext {
      * 
      * @param resource
      *            Basically, a stream containing a bitmap texture. The
-     *            {@link AndroidResource} class has six constructors to
-     *            handle a wide variety of Android resource types. Taking a
+     *            {@link AndroidResource} class has six constructors to handle a
+     *            wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * @return The file as a texture, or {@code null} if the file can not be
      *         decoded into a Bitmap.
@@ -1036,8 +1023,8 @@ public class VrContext {
     }
 
     /**
-     * Loads file placed in the assets folder, as a {@link BitmapTexture}
-     * with the user provided texture parameters.
+     * Loads file placed in the assets folder, as a {@link BitmapTexture} with
+     * the user provided texture parameters.
      * 
      * <p>
      * Note that this method may take hundreds of milliseconds to return: unless
@@ -1058,8 +1045,8 @@ public class VrContext {
      * 
      * @param resource
      *            Basically, a stream containing a bitmap texture. The
-     *            {@link AndroidResource} class has six constructors to
-     *            handle a wide variety of Android resource types. Taking a
+     *            {@link AndroidResource} class has six constructors to handle a
+     *            wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * @param textureParameters
      *            The texture parameter object which has all the values that
@@ -1156,24 +1143,24 @@ public class VrContext {
      * Because it is asynchronous, this method <em>is</em> a bit harder to use
      * than {@link #loadTexture(String)}, but it moves a large amount of work
      * (in {@link BitmapFactory#decodeStream(InputStream)} from the GL thread to
-     * a background thread. Since you <em>can</em> create a
-     * {@link SceneObject} without a mesh and texture - and set them later -
-     * using the asynchronous API can improve startup speed and/or reduce frame
-     * misses (where an {@link GVRScript#onStep() onStep()} takes too long).
-     * This API may also use less RAM than {@link #loadTexture(String)}.
+     * a background thread. Since you <em>can</em> create a {@link SceneObject}
+     * without a mesh and texture - and set them later - using the asynchronous
+     * API can improve startup speed and/or reduce frame misses (where an
+     * {@link GVRScript#onStep() onStep()} takes too long). This API may also
+     * use less RAM than {@link #loadTexture(String)}.
      * 
      * <p>
      * This API will 'consolidate' requests: If you request a texture like
      * {@code R.raw.wood_grain} and then - before it has loaded - issue another
-     * request for {@code R.raw.wood_grain}, Meganekko will only read the bitmap file
-     * once; only create a single {@link Texture}; and then call both
+     * request for {@code R.raw.wood_grain}, Meganekko will only read the bitmap
+     * file once; only create a single {@link Texture}; and then call both
      * callbacks, passing each the same texture.
      * 
      * <p>
      * Please be aware that {@link BitmapFactory#decodeStream(InputStream)} is a
      * comparatively expensive operation: it can take hundreds of milliseconds
-     * and use several megabytes of temporary RAM. Meganekko includes a throttler to
-     * keep the total load manageable - but
+     * and use several megabytes of temporary RAM. Meganekko includes a
+     * throttler to keep the total load manageable - but
      * {@link #loadCompressedTexture(AndroidResource.CompressedTextureCallback, AndroidResource)}
      * is <em>much</em> faster and lighter-weight: that API simply loads the
      * compressed texture into a small amount RAM (which doesn't take very long)
@@ -1208,8 +1195,8 @@ public class VrContext {
      *            you a chance to abort a 'stale' load.
      * @param resource
      *            Basically, a stream containing a bitmapped image. The
-     *            {@link AndroidResource} class has six constructors to
-     *            handle a wide variety of Android resource types. Taking a
+     *            {@link AndroidResource} class has six constructors to handle a
+     *            wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * 
      * @throws IllegalArgumentException
@@ -1241,23 +1228,23 @@ public class VrContext {
      * Because it is asynchronous, this method <em>is</em> a bit harder to use
      * than {@link #loadTexture(String)}, but it moves a large amount of work
      * (in {@link BitmapFactory#decodeStream(InputStream)} from the GL thread to
-     * a background thread. Since you <em>can</em> create a
-     * {@link SceneObject} without a mesh and texture - and set them later -
-     * using the asynchronous API can improve startup speed and/or reduce frame
-     * misses, where an {@link GVRScript#onStep() onStep()} takes too long.
+     * a background thread. Since you <em>can</em> create a {@link SceneObject}
+     * without a mesh and texture - and set them later - using the asynchronous
+     * API can improve startup speed and/or reduce frame misses, where an
+     * {@link GVRScript#onStep() onStep()} takes too long.
      * 
      * <p>
      * This API will 'consolidate' requests: If you request a texture like
      * {@code R.raw.wood_grain} and then - before it has loaded - issue another
-     * request for {@code R.raw.wood_grain}, Meganekko will only read the bitmap file
-     * once; only create a single {@link Texture}; and then call both
+     * request for {@code R.raw.wood_grain}, Meganekko will only read the bitmap
+     * file once; only create a single {@link Texture}; and then call both
      * callbacks, passing each the same texture.
      * 
      * <p>
      * Please be aware that {@link BitmapFactory#decodeStream(InputStream)} is a
      * comparatively expensive operation: it can take hundreds of milliseconds
-     * and use several megabytes of temporary RAM. Meganekko includes a throttler to
-     * keep the total load manageable - but
+     * and use several megabytes of temporary RAM. Meganekko includes a
+     * throttler to keep the total load manageable - but
      * {@link #loadCompressedTexture(AndroidResource.CompressedTextureCallback, AndroidResource)}
      * is <em>much</em> faster and lighter-weight: that API simply loads the
      * compressed texture into a small amount RAM (which doesn't take very long)
@@ -1289,8 +1276,8 @@ public class VrContext {
      *            you a chance to abort a 'stale' load.
      * @param resource
      *            Basically, a stream containing a bitmapped image. The
-     *            {@link AndroidResource} class has six constructors to
-     *            handle a wide variety of Android resource types. Taking a
+     *            {@link AndroidResource} class has six constructors to handle a
+     *            wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * @param priority
      *            This request's priority. Please see the notes on asynchronous
@@ -1328,8 +1315,8 @@ public class VrContext {
     /**
      * Load a compressed texture, asynchronously.
      * 
-     * Meganekko currently supports ASTC, ETC2, and KTX formats: applications can add
-     * new formats by implementing {@link CompressedTextureLoader}.
+     * Meganekko currently supports ASTC, ETC2, and KTX formats: applications
+     * can add new formats by implementing {@link CompressedTextureLoader}.
      * 
      * <p>
      * This method uses the fastest possible rendering. To specify higher
@@ -1345,8 +1332,8 @@ public class VrContext {
      *            failed()}, with no promises about threading.
      * @param resource
      *            Basically, a stream containing a compressed texture. The
-     *            {@link AndroidResource} class has six constructors to
-     *            handle a wide variety of Android resource types. Taking a
+     *            {@link AndroidResource} class has six constructors to handle a
+     *            wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * 
      * @throws IllegalArgumentException
@@ -1376,8 +1363,8 @@ public class VrContext {
     /**
      * Load a compressed texture, asynchronously.
      * 
-     * Meganekko currently supports ASTC, ETC2, and KTX formats: applications can add
-     * new formats by implementing {@link CompressedTextureLoader}.
+     * Meganekko currently supports ASTC, ETC2, and KTX formats: applications
+     * can add new formats by implementing {@link CompressedTextureLoader}.
      * 
      * @param callback
      *            Successful loads will call
@@ -1387,8 +1374,8 @@ public class VrContext {
      *            , with no promises about threading.
      * @param resource
      *            Basically, a stream containing a compressed texture. The
-     *            {@link AndroidResource} class has six constructors to
-     *            handle a wide variety of Android resource types. Taking a
+     *            {@link AndroidResource} class has six constructors to handle a
+     *            wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * @param quality
      *            Speed/quality tradeoff: should be one of
@@ -1479,8 +1466,8 @@ public class VrContext {
      *            having to implement a callback.
      * @param resource
      *            Basically, a stream containing a texture file. The
-     *            {@link AndroidResource} class has six constructors to
-     *            handle a wide variety of Android resource types. Taking a
+     *            {@link AndroidResource} class has six constructors to handle a
+     *            wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * 
      * @throws IllegalArgumentException
@@ -1562,8 +1549,8 @@ public class VrContext {
      *            having to implement a callback.
      * @param resource
      *            Basically, a stream containing a texture file. The
-     *            {@link AndroidResource} class has six constructors to
-     *            handle a wide variety of Android resource types. Taking a
+     *            {@link AndroidResource} class has six constructors to handle a
+     *            wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * @param priority
      *            This request's priority. Please see the notes on asynchronous
@@ -1648,8 +1635,8 @@ public class VrContext {
      *            having to implement a callback.
      * @param resource
      *            Basically, a stream containing a texture file. The
-     *            {@link AndroidResource} class has six constructors to
-     *            handle a wide variety of Android resource types. Taking a
+     *            {@link AndroidResource} class has six constructors to handle a
+     *            wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * @param priority
      *            This request's priority. Please see the notes on asynchronous
@@ -1700,33 +1687,32 @@ public class VrContext {
      * {@link Shaders#setTexture(String, Future)}.
      * 
      * This method uses a default priority and a default render quality: use
-     * {@link #loadFutureTexture(AndroidResource, int)} to specify a priority
-     * or {@link #loadFutureTexture(AndroidResource, int, int)} to specify a
+     * {@link #loadFutureTexture(AndroidResource, int)} to specify a priority or
+     * {@link #loadFutureTexture(AndroidResource, int, int)} to specify a
      * priority and render quality.
      * 
      * <p>
      * This method is significantly easier to use than
-     * {@link #loadTexture(AndroidResource.TextureCallback, AndroidResource)}
-     * : you don't have to implement a callback; you don't have to pay attention
+     * {@link #loadTexture(AndroidResource.TextureCallback, AndroidResource)} :
+     * you don't have to implement a callback; you don't have to pay attention
      * to the low-level details of
      * {@linkplain SceneObject#attachRenderData(RenderData) attaching} a
-     * {@link RenderData} to your scene object. What's more, you don't even
-     * lose any functionality: {@link Future#cancel(boolean)} lets you cancel a
+     * {@link RenderData} to your scene object. What's more, you don't even lose
+     * any functionality: {@link Future#cancel(boolean)} lets you cancel a
      * 'stale' request, just like
      * {@link AndroidResource.CancelableCallback#stillWanted(AndroidResource)
      * stillWanted()} does. The flip side, of course, is that it <em>is</em> a
-     * bit more expensive: methods like
-     * {@link Material#setMainTexture(Future)} use an extra thread from the
-     * thread pool to wait for the blocking {@link Future#get()} call. For
-     * modest numbers of loads, this overhead is acceptable - but thread
-     * creation is not free, and if your {@link GVRScript#onInit(VrContext)
-     * onInit()} method fires of dozens of future loads, you may well see an
-     * impact.
+     * bit more expensive: methods like {@link Material#setMainTexture(Future)}
+     * use an extra thread from the thread pool to wait for the blocking
+     * {@link Future#get()} call. For modest numbers of loads, this overhead is
+     * acceptable - but thread creation is not free, and if your
+     * {@link GVRScript#onInit(VrContext) onInit()} method fires of dozens of
+     * future loads, you may well see an impact.
      * 
      * @param resource
      *            Basically, a stream containing a texture file. The
-     *            {@link AndroidResource} class has six constructors to
-     *            handle a wide variety of Android resource types. Taking a
+     *            {@link AndroidResource} class has six constructors to handle a
+     *            wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * @return A {@link Future} that you can pass to methods like
      *         {@link Shaders#setMainTexture(Future)}
@@ -1759,8 +1745,8 @@ public class VrContext {
      * {@link Shaders#setTexture(String, Future)}.
      * 
      * This method uses a default render quality:
-     * {@link #loadFutureTexture(AndroidResource, int, int)} to specify
-     * render quality.
+     * {@link #loadFutureTexture(AndroidResource, int, int)} to specify render
+     * quality.
      * 
      * <p>
      * This method is significantly easier to use than
@@ -1768,23 +1754,22 @@ public class VrContext {
      * : you don't have to implement a callback; you don't have to pay attention
      * to the low-level details of
      * {@linkplain SceneObject#attachRenderData(RenderData) attaching} a
-     * {@link RenderData} to your scene object. What's more, you don't even
-     * lose any functionality: {@link Future#cancel(boolean)} lets you cancel a
+     * {@link RenderData} to your scene object. What's more, you don't even lose
+     * any functionality: {@link Future#cancel(boolean)} lets you cancel a
      * 'stale' request, just like
      * {@link AndroidResource.CancelableCallback#stillWanted(AndroidResource)
      * stillWanted()} does. The flip side, of course, is that it <em>is</em> a
-     * bit more expensive: methods like
-     * {@link Material#setMainTexture(Future)} use an extra thread from the
-     * thread pool to wait for the blocking {@link Future#get()} call. For
-     * modest numbers of loads, this overhead is acceptable - but thread
-     * creation is not free, and if your {@link GVRScript#onInit(VrContext)
-     * onInit()} method fires of dozens of future loads, you may well see an
-     * impact.
+     * bit more expensive: methods like {@link Material#setMainTexture(Future)}
+     * use an extra thread from the thread pool to wait for the blocking
+     * {@link Future#get()} call. For modest numbers of loads, this overhead is
+     * acceptable - but thread creation is not free, and if your
+     * {@link GVRScript#onInit(VrContext) onInit()} method fires of dozens of
+     * future loads, you may well see an impact.
      * 
      * @param resource
      *            Basically, a stream containing a texture file. The
-     *            {@link AndroidResource} class has six constructors to
-     *            handle a wide variety of Android resource types. Taking a
+     *            {@link AndroidResource} class has six constructors to handle a
+     *            wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * @param priority
      *            This request's priority. Please see the notes on asynchronous
@@ -1833,23 +1818,22 @@ public class VrContext {
      * : you don't have to implement a callback; you don't have to pay attention
      * to the low-level details of
      * {@linkplain SceneObject#attachRenderData(RenderData) attaching} a
-     * {@link RenderData} to your scene object. What's more, you don't even
-     * lose any functionality: {@link Future#cancel(boolean)} lets you cancel a
+     * {@link RenderData} to your scene object. What's more, you don't even lose
+     * any functionality: {@link Future#cancel(boolean)} lets you cancel a
      * 'stale' request, just like
      * {@link AndroidResource.CancelableCallback#stillWanted(AndroidResource)
      * stillWanted()} does. The flip side, of course, is that it <em>is</em> a
-     * bit more expensive: methods like
-     * {@link Material#setMainTexture(Future)} use an extra thread from the
-     * thread pool to wait for the blocking {@link Future#get()} call. For
-     * modest numbers of loads, this overhead is acceptable - but thread
-     * creation is not free, and if your {@link GVRScript#onInit(VrContext)
-     * onInit()} method fires of dozens of future loads, you may well see an
-     * impact.
+     * bit more expensive: methods like {@link Material#setMainTexture(Future)}
+     * use an extra thread from the thread pool to wait for the blocking
+     * {@link Future#get()} call. For modest numbers of loads, this overhead is
+     * acceptable - but thread creation is not free, and if your
+     * {@link GVRScript#onInit(VrContext) onInit()} method fires of dozens of
+     * future loads, you may well see an impact.
      * 
      * @param resource
      *            Basically, a stream containing a texture file. The
-     *            {@link AndroidResource} class has six constructors to
-     *            handle a wide variety of Android resource types. Taking a
+     *            {@link AndroidResource} class has six constructors to handle a
+     *            wide variety of Android resource types. Taking a
      *            {@code GVRAndroidResource} here eliminates six overloads.
      * @param priority
      *            This request's priority. Please see the notes on asynchronous
@@ -1941,21 +1925,22 @@ public class VrContext {
      * hierarchy of {@linkplain SceneObject scene objects}) and the
      * {@linkplain Camera camera rig}
      * 
-     * @return A {@link Scene} instance, containing scene and camera
-     *         information
+     * @return A {@link Scene} instance, containing scene and camera information
      */
+    @Deprecated
     public Scene getMainScene() {
-        return mMainScene;
+        return getActivity().getScene();
     }
 
     /** Set the current {@link Scene} */
+    @Deprecated
     synchronized void setMainScene(Scene scene) {
-
-        if (scene == mMainScene)
-            return;
-
-        mMainScene = scene;
-        nativeSetMainScene(nativePtr, scene.getNative());
+        getActivity().setScene(scene);
+        //        if (scene == mMainScene)
+        //            return;
+        //
+        //        mMainScene = scene;
+        //        nativeSetMainScene(nativePtr, scene.getNative());
     }
 
     /**
@@ -1965,8 +1950,7 @@ public class VrContext {
      * (GUI) thread) and pass it to the coprocessor, using calls that must be
      * made from the GL thread (aka the "GL context"). The callback queue is
      * processed before any registered
-     * {@linkplain #registerFrameListener(FrameListener) frame
-     * listeners}.
+     * {@linkplain #registerFrameListener(FrameListener) frame listeners}.
      * 
      * @param runnable
      *            A bit of code that must run on the GL thread
@@ -1976,17 +1960,16 @@ public class VrContext {
     }
 
     /**
-     * The {@linkplain MaterialShaderManager object shader manager}
-     * singleton.
+     * The {@linkplain MaterialShaderManager object shader manager} singleton.
      * 
      * Use the shader manager to define custom GL object shaders, which are used
      * to render a scene object's surface.
      * 
-     * @return The {@linkplain MaterialShaderManager shader manager}
-     *         singleton.
+     * @return The {@linkplain MaterialShaderManager shader manager} singleton.
      */
+    @Deprecated
     public MaterialShaderManager getMaterialShaderManager() {
-        return mMaterialShaderManager;
+        return getActivity().getMaterialShaderManager();
     }
 
     /**
@@ -2045,8 +2028,9 @@ public class VrContext {
      * </pre>
      * 
      * <p>
-     * Meganekko will force an Android garbage collection after running any handlers,
-     * which will free any remaining native objects from the previous run.
+     * Meganekko will force an Android garbage collection after running any
+     * handlers, which will free any remaining native objects from the previous
+     * run.
      * 
      * @param handler
      *            Callback to run on restart.
@@ -2103,12 +2087,6 @@ public class VrContext {
         /*
          * GL Initializations.
          */
-        nativeSetShaderManager(nativePtr, getMaterialShaderManager().getNative());
-
-        setMainScene(new Scene(this));
-    }
-
-    public long getNativePtr() {
-        return nativePtr;
+//        nativeSetShaderManager(nativePtr, getMaterialShaderManager().getNative());
     }
 }

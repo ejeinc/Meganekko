@@ -27,12 +27,6 @@ namespace mgn
 extern "C"
 {
 
-void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeSetContext(JNIEnv * jni, jobject object, jlong appPtr, jlong contextPtr)
-{
-    GVRActivity* activity = (GVRActivity*)((App *)appPtr)->GetAppInterface();
-    activity->context = (Context*)contextPtr;
-}
-
 long Java_com_eje_1c_meganekko_MeganekkoActivity_nativeSetAppInterface(
         JNIEnv * jni, jclass clazz, jobject activity,
         jstring fromPackageName, jstring commandString,
@@ -85,6 +79,20 @@ void Java_com_eje_1c_meganekko_MeganekkoActivity_recenterPose(JNIEnv * jni, jcla
 {
     ovrMobile * mobile = ((App *)appPtr)->GetOvrMobile();
     vrapi_RecenterPose(mobile);
+}
+
+void Java_com_eje_1c_meganekko_MeganekkoActivity_setScene(JNIEnv * jni, jclass clazz, jlong appPtr, jlong jscene)
+{
+    GVRActivity* activity = (GVRActivity*)((App *)appPtr)->GetAppInterface();
+    Scene* scene = reinterpret_cast<Scene*>(jscene);
+    activity->scene = scene;
+}
+
+void Java_com_eje_1c_meganekko_MeganekkoActivity_setShaderManager(JNIEnv * jni, jclass clazz, jlong appPtr, jlong jshaderManager)
+{
+    GVRActivity* activity = (GVRActivity*)((App *)appPtr)->GetAppInterface();
+    ShaderManager* shaderManager = reinterpret_cast<ShaderManager*>(jshaderManager);
+    activity->shaderManager = shaderManager;
 }
 
 } // extern "C"
