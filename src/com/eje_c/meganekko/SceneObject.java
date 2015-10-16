@@ -57,12 +57,13 @@ public class SceneObject extends HybridObject {
      *            current {@link VrContext}
      */
     public SceneObject(VrContext vrContext) {
-        this(vrContext, NativeSceneObject.ctor());
+        super(vrContext);
+        attachTransform(new Transform(vrContext));
     }
 
-    protected SceneObject(VrContext vrContext, long nativePointer) {
-        super(vrContext, nativePointer);
-        attachTransform(new Transform(vrContext));
+    @Override
+    protected long initNativeInstance() {
+        return NativeSceneObject.ctor();
     }
 
     /**

@@ -62,15 +62,15 @@ public class Scene extends SceneObject implements FrameListener,
      *            {@link VrContext} the app is using.
      */
     public Scene(VrContext vrContext) {
-        super(vrContext, NativeScene.ctor());
-
+        super(vrContext);
         Camera camera = new Camera(vrContext);
         addChildObject(camera);
         setMainCamera(camera);
     }
-
-    private Scene(VrContext vrContext, long ptr) {
-        super(vrContext, ptr);
+    
+    @Override
+    protected long initNativeInstance() {
+        return NativeScene.ctor();
     }
 
     /**

@@ -62,6 +62,10 @@ public abstract class HybridObject implements Closeable {
      * @param nativePointer
      *            The native pointer, returned by the native constructor
      */
+    protected HybridObject(VrContext vrContext) {
+        this(vrContext, null);
+    }
+
     protected HybridObject(VrContext vrContext, long nativePointer) {
         this(vrContext, nativePointer, null);
     }
@@ -88,13 +92,36 @@ public abstract class HybridObject implements Closeable {
      *            concatenated lists - see {@link EyePointeeHolder} for an
      *            example.
      */
-    protected HybridObject(VrContext vrContext, long nativePointer,
-            List<NativeCleanupHandler> cleanupHandlers) {
+    protected HybridObject(VrContext vrContext, List<NativeCleanupHandler> cleanupHandlers) {
+        mVrContext = vrContext;
+        mNativePointer = initNativeInstance();
+
+        if (mNativePointer == 0l) {
+            throw new IllegalStateException("You must override initNativeInstance to get native pointer.");
+        }
+
+        sReferenceSet.add(new Reference(this, mNativePointer, cleanupHandlers));
+    }
+
+    protected HybridObject(VrContext vrContext, long nativePointer, List<NativeCleanupHandler> cleanupHandlers) {
         mVrContext = vrContext;
         mNativePointer = nativePointer;
 
-        sReferenceSet
-                .add(new Reference(this, nativePointer, cleanupHandlers));
+        if (mNativePointer == 0l) {
+            throw new IllegalStateException("You must pass valid native pointer.");
+        }
+        
+        sReferenceSet.add(new Reference(this, mNativePointer, cleanupHandlers));
+    }
+
+    /**
+     * You must override this method if you use constructor that don't take
+     * nativePointer.
+     * 
+     * @return
+     */
+    protected long initNativeInstance() {
+        return 0l;
     }
 
     /*

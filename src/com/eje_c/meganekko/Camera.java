@@ -20,11 +20,12 @@ public class Camera extends SceneObject {
 
     /** Constructs a camera rig without cameras attached. */
     public Camera(VrContext vrContext) {
-        super(vrContext, NativeCamera.ctor());
+        super(vrContext);
     }
 
-    private Camera(VrContext vrContext, long ptr) {
-        super(vrContext, ptr);
+    @Override
+    protected long initNativeInstance() {
+        return NativeCamera.ctor();
     }
 
     public void attachToParent(SceneObject parentObject) {
