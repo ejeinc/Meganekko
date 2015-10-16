@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.eje_c:meganekko:0.6.1-SNAPSHOT' // 2. Add this line
+    compile 'com.eje_c:meganekko:0.6.2-SNAPSHOT' // 2. Add this line
 }
 ```
 
@@ -63,8 +63,8 @@ Add required permissions, attributes and elements.
 
 *Note: Migrating to newer SDK is in progress. These instructions would be changed.*
 
-1. Download Oculus Mobile SDK 0.6.1.0
-2. Extract Oculus Mobile SDK 0.6.1.0
+1. Download Oculus Mobile SDK 0.6.2.0
+2. Extract Oculus Mobile SDK 0.6.2.0
 3. Set environment variable `OVR_MOBILE_SDK` to point extracted Oculus Mobile SDK directory
 4. Import these projects to Eclipse workspace (*Do not* check to Copy projects into workspace)
   * VrGUI
