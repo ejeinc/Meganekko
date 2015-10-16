@@ -35,7 +35,7 @@ class RenderData;
 
 class SceneObject: public HybridObject {
 public:
-    SceneObject();
+    SceneObject(JNIEnv * jni, jobject javaObject);
     ~SceneObject();
 
     std::string name() const {
@@ -131,6 +131,10 @@ public:
         return false;
     }
 
+    bool inline onRender(JNIEnv * jni) {
+        return jni->CallBooleanMethod(JavaObject, onRenderMethodID);
+    }
+
 private:
     SceneObject(const SceneObject& scene_object);
     SceneObject(SceneObject&& scene_object);
@@ -138,6 +142,10 @@ private:
     SceneObject& operator=(SceneObject&& scene_object);
 
 private:
+    JavaVM *  Java;
+    jobject   JavaObject;
+    jmethodID onRenderMethodID;
+
     std::string name_;
     Transform* transform_;
     RenderData* render_data_;

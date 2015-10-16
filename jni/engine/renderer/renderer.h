@@ -35,7 +35,8 @@
 #include "gl/gl_program.h"
 #include "Kernel/OVR_Math.h"
 
-namespace mgn {
+namespace mgn
+{
 class Camera;
 class Scene;
 class SceneObject;
@@ -43,13 +44,15 @@ class RenderData;
 class RenderTexture;
 class ShaderManager;
 
-class Renderer {
+class Renderer
+{
 private:
     Renderer();
 
 public:
 
-    static void RenderEyeView(Scene* scene,
+    static void RenderEyeView(JNIEnv* jni,
+            Scene* scene,
             ShaderManager* shader_manager,
             const OVR::Matrix4f &eyeViewMatrix,
             const OVR::Matrix4f &eyeProjectionMatrix,
@@ -64,7 +67,7 @@ private:
 
     static void occlusion_cull(Scene* scene,
             std::vector<SceneObject*> scene_objects);
-    static void frustum_cull(Scene* scene, const OVR::Vector3f& camera_position,
+    static void frustum_cull(JNIEnv* jni, Scene* scene, const OVR::Vector3f& camera_position,
             std::vector<SceneObject*> scene_objects,
             std::vector<RenderData*>& render_data_vector, const OVR::Matrix4f &vp_matrix,
             ShaderManager* shader_manager);

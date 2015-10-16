@@ -22,8 +22,8 @@
 #include "objects/scene_object.h"
 
 namespace mgn {
-Scene::Scene() :
-        SceneObject(), main_camera_(), frustum_flag_(
+Scene::Scene(JNIEnv * jni, jobject javaObject) :
+        SceneObject(jni, javaObject), main_camera_(), frustum_flag_(
                 false), dirtyFlag_(0), occlusion_flag_(false) {
 }
 

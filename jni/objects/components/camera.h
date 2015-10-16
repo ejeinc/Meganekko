@@ -25,7 +25,7 @@ namespace mgn {
 class Camera: public SceneObject {
 public:
 
-    Camera();
+    Camera(JNIEnv * jni, jobject javaObject);
     ~Camera();
 
     void setRotation(const OVR::Quatf & transform_rotation);

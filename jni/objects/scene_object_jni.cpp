@@ -88,7 +88,7 @@ Java_com_eje_1c_meganekko_NativeSceneObject_getLODMaxRange(
 
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_SceneObject_initNativeInstance(JNIEnv * env, jobject obj) {
-    return reinterpret_cast<jlong>(new SceneObject());
+    return reinterpret_cast<jlong>(new SceneObject(env, obj));
 }
 
 JNIEXPORT jstring JNICALL

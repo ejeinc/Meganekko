@@ -30,7 +30,7 @@
 
 namespace mgn {
 
-void Renderer::RenderEyeView(Scene* scene, ShaderManager* shader_manager,
+void Renderer::RenderEyeView(JNIEnv * jni, Scene* scene, ShaderManager* shader_manager,
         const OVR::Matrix4f &eyeViewMatrix, const OVR::Matrix4f &eyeProjectionMatrix, const OVR::Matrix4f &eyeViewProjection, int eye) {
     // there is no need to flat and sort every frame.
     // however let's keep it as is and assume we are not changed
@@ -47,7 +47,7 @@ void Renderer::RenderEyeView(Scene* scene, ShaderManager* shader_manager,
         occlusion_cull(scene, scene_objects);
 
         // do frustum culling, if enabled
-        frustum_cull(scene, eyeViewMatrix.GetTranslation(), scene_objects, render_data_vector,
+        frustum_cull(jni, scene, eyeViewMatrix.GetTranslation(), scene_objects, render_data_vector,
                 eyeViewProjection, shader_manager);
 
         // do sorting based on render order
@@ -123,7 +123,7 @@ void Renderer::occlusion_cull(Scene* scene,
 #endif
 }
 
-void Renderer::frustum_cull(Scene* scene, const OVR::Vector3f& camera_position,
+void Renderer::frustum_cull(JNIEnv * jni, Scene* scene, const OVR::Vector3f& camera_position,
         std::vector<SceneObject*> scene_objects,
         std::vector<RenderData*>& render_data_vector, const OVR::Matrix4f &vp_matrix,
         ShaderManager* shader_manager) {
@@ -135,7 +135,7 @@ void Renderer::frustum_cull(Scene* scene, const OVR::Vector3f& camera_position,
         }
 
         // Check for frustum culling flag
-        if (!scene->get_frustum_culling()) {
+        if (!scene->get_frustum_culling() && scene_object->onRender(jni)) {
             //No occlusion or frustum tests enabled
             render_data_vector.push_back(render_data);
             continue;
@@ -200,7 +200,7 @@ void Renderer::frustum_cull(Scene* scene, const OVR::Vector3f& camera_position,
 
         //If visibility flag was set by an earlier occlusion query,
         //turn visibility on for the object
-        if (visible) {
+        if (visible && scene_object->onRender(jni)) {
             render_data_vector.push_back(render_data);
         }
 

@@ -25,9 +25,13 @@
 #include "mesh.h"
 
 namespace mgn {
-SceneObject::SceneObject() :
+SceneObject::SceneObject(JNIEnv * jni, jobject javaObject) :
         HybridObject(), name_(""), transform_(), render_data_(), eye_pointee_holder_(), parent_(), children_(), visible_(
                 true), in_frustum_(false), query_currently_issued_(false), vis_count_(0), lod_min_range_(0), lod_max_range_(MAXFLOAT), using_lod_(false) {
+
+    jni->GetJavaVM(&Java);
+    this->JavaObject = jni->NewGlobalRef(javaObject);
+    this->onRenderMethodID = jni->GetMethodID(jni->GetObjectClass(javaObject), "onRender", "()Z");
 
     // Occlusion query setup
 #if _GVRF_USE_GLES3_
@@ -37,6 +41,9 @@ SceneObject::SceneObject() :
 }
 
 SceneObject::~SceneObject() {
+    JNIEnv * jni;
+    Java->GetEnv((void**)&jni, JNI_VERSION_1_6);
+    jni->DeleteGlobalRef(this->JavaObject);
 #if _GVRF_USE_GLES3_
     delete queries_;
 #endif
