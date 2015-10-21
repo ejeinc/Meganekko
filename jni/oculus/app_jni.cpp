@@ -67,6 +67,18 @@ void Java_ovr_App_setDoNotDisturbMode(JNIEnv * jni, jclass clazz, jlong appPtr, 
     ((App *) appPtr)->SetDoNotDisturbMode(enable);
 }
 
+jlong Java_ovr_App_getEyeBufferParms(JNIEnv * jni, jclass clazz, jlong appPtr)
+{
+	const ovrEyeBufferParms & eyeBufferParms = ((App *) appPtr)->GetEyeBufferParms();
+	return (jlong)(intptr_t)&eyeBufferParms;
+}
+
+void Java_ovr_App_setEyeBufferParms(JNIEnv * jni, jclass clazz, jlong appPtr, jlong nativePtr)
+{
+	ovrEyeBufferParms * eyeBufferParms = reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
+	((App *) appPtr)->SetEyeBufferParms(*eyeBufferParms);
+}
+
 jint Java_ovr_App_getCpuLevel(JNIEnv * jni, jclass clazz, jlong appPtr)
 {
     return ((App *) appPtr)->GetCpuLevel();

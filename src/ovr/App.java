@@ -63,6 +63,14 @@ public class App {
 	// accessors
 	// -----------------------------------------------------------------
 
+	public EyeBufferParms getEyeBufferParms() {
+		return new EyeBufferParms(getEyeBufferParms(mAppPtr));
+	}
+
+	public void setEyeBufferParms(EyeBufferParms eyeBufferParms) {
+		setEyeBufferParms(mAppPtr, eyeBufferParms.getNativePtr());
+	}
+
 	public int getCpuLevel() {
 		return getCpuLevel(mAppPtr);
 	}
@@ -118,6 +126,10 @@ public class App {
 	private native boolean getDoNotDisturbMode(long appPtr);
 
 	private native void setDoNotDisturbMode(long appPtr, boolean enable);
+
+	private native long getEyeBufferParms(long appPtr);
+
+	private native long setEyeBufferParms(long appPtr, long nativeEyeBufferParms);
 
 	private native int getCpuLevel(long appPtr);
 
