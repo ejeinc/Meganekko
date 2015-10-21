@@ -51,6 +51,7 @@ import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 import de.greenrobot.event.EventBus;
+import ovr.App;
 
 /**
  * The typical Meganekko application will have a single Android {@link Activity}
@@ -73,6 +74,7 @@ public class MeganekkoActivity extends VrActivity {
     private EventBus mEventBus = EventBus.builder().logNoSubscriberMessages(false).build();
     private Scene mScene;
     private MaterialShaderManager mMaterialShaderManager;
+	private App mApp;
 
     static {
         System.loadLibrary("meganekko");
@@ -86,10 +88,6 @@ public class MeganekkoActivity extends VrActivity {
     private static native void nativeHideGazeCursor(long appPtr);
 
     private static native void nativeShowGazeCursor(long appPtr);
-
-    private static native void nativeSetMinimumVsyncs(long appPtr, int vsyncs);
-
-    private static native int nativeGetMinimumVsyncs(long appPtr);
 
     private static native void nativeOnDock(long appPtr);
 
@@ -130,6 +128,7 @@ public class MeganekkoActivity extends VrActivity {
 
         mVrContext = new VrContext(this);
         mMaterialShaderManager = new MaterialShaderManager(mVrContext);
+        mApp = new App(getAppPtr());
     }
 
     @Override
@@ -227,11 +226,11 @@ public class MeganekkoActivity extends VrActivity {
     }
 
     public void setMinimumVsyncs(int vsyncs) {
-        nativeSetMinimumVsyncs(getAppPtr(), vsyncs);
+        mApp.setMinimumVsyncs(vsyncs);
     }
 
     public int getMinimumVsyncs() {
-        return nativeGetMinimumVsyncs(getAppPtr());
+        return mApp.getMinimumVsyncs();
     }
 
     @Override
@@ -497,5 +496,9 @@ public class MeganekkoActivity extends VrActivity {
     
     public MaterialShaderManager getMaterialShaderManager() {
         return mMaterialShaderManager;
+    }
+    
+    public App getApp() {
+    	return mApp;
     }
 }

@@ -35,7 +35,6 @@ MeganekkoActivity::MeganekkoActivity() :
 {
     centerViewMatrix = ovrMatrix4f_CreateIdentity();
     deviceIsDocked = false;
-    MinimumVsyncs = 1;
 }
 
 MeganekkoActivity::~MeganekkoActivity()
@@ -87,8 +86,6 @@ void MeganekkoActivity::OneTimeShutdown()
 
 Matrix4f MeganekkoActivity::DrawEyeView(const int eye, const float fovDegreesX, const float fovDegreesY, ovrFrameParms & frameParms)
 {
-    frameParms.MinimumVsyncs = MinimumVsyncs;
-
 	const Matrix4f eyeViewMatrix = vrapi_GetEyeViewMatrix( &app->GetHeadModelParms(), &centerViewMatrix, eye );
 	const Matrix4f eyeProjectionMatrix = ovrMatrix4f_CreateProjectionFov( fovDegreesX, fovDegreesY, 0.0f, 0.0f, 1.0f, 0.0f );
 	const Matrix4f eyeViewProjection = eyeProjectionMatrix * eyeViewMatrix;

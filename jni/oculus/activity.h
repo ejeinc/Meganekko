@@ -53,7 +53,6 @@ public:
 
     OvrGuiSys *         GuiSys;
     bool                deviceIsDocked;
-    int                 MinimumVsyncs;
 
     Scene*              scene;
     ShaderManager*      shaderManager;

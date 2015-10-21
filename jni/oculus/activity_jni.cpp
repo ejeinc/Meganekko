@@ -49,16 +49,6 @@ void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeShowGazeCursor(JNIEnv * j
     activity->GuiSys->GetGazeCursor().ShowCursor();
 }
 
-void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeSetMinimumVsyncs(JNIEnv * jni, jclass clazz, jlong appPtr, jint vsyncs)
-{
-    ((MeganekkoActivity*)((App *)appPtr)->GetAppInterface())->MinimumVsyncs = vsyncs;
-}
-
-jint Java_com_eje_1c_meganekko_MeganekkoActivity_nativeGetMinimumVsyncs(JNIEnv * jni, jclass clazz, jlong appPtr)
-{
-    return ((MeganekkoActivity*)((App *)appPtr)->GetAppInterface())->MinimumVsyncs;
-}
-
 void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeOnDock(JNIEnv * jni, jclass clazz, jlong appPtr)
 {
 
