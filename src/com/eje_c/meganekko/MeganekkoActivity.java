@@ -501,4 +501,17 @@ public class MeganekkoActivity extends VrActivity {
     public App getApp() {
     	return mApp;
     }
+
+	/**
+	 * Check if user is looking at target object.
+	 * 
+	 * @param object target object.
+	 * @return true if user is looking at object.
+	 */
+	public boolean isLookingAt(SceneObject object) {
+		if (object.getEyePointeeHolder() == null) {
+			object.attachEyePointeeHolder();
+		}
+		return Picker.pickSceneObject(object, mScene.getMainCamera()) < Float.POSITIVE_INFINITY;
+	}
 }
