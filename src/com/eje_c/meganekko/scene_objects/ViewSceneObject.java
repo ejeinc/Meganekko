@@ -59,10 +59,11 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
             // if mesh is missing, assign quad mesh
             if (getRenderData().getMesh() == null) {
                 getRenderData()
-                        .setMesh(getVrContext().createQuad(mView.getWidth() * 0.002f, mView.getHeight() * 0.002f));
+                        .setMesh(getVrContext().createQuad(mView.getMeasuredWidth() * 0.002f,
+                                mView.getMeasuredHeight() * 0.002f));
             }
 
-            setCanvasSize(mView.getWidth(), mView.getHeight());
+            setCanvasSize(mView.getMeasuredWidth(), mView.getMeasuredHeight());
 
             setOnDrawListener(ViewSceneObject.this);
         } else {
