@@ -25,7 +25,6 @@ import com.eje_c.meganekko.scene_objects.CanvasSceneObject.OnDrawListener;
 import android.graphics.Canvas;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import ovr.JoyButton;
 
 /**
@@ -53,7 +52,19 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
         this.mView = view;
 
         if (mView != null) {
-            getVrContext().getActivity().runOnUiThread(addContentViewAndStartRendering);
+
+            mView.measure(0, 0);
+            mView.layout(0, 0, mView.getMeasuredWidth(), mView.getMeasuredHeight());
+
+            // if mesh is missing, assign quad mesh
+            if (getRenderData().getMesh() == null) {
+                getRenderData()
+                        .setMesh(getVrContext().createQuad(mView.getWidth() * 0.002f, mView.getHeight() * 0.002f));
+            }
+
+            setCanvasSize(mView.getWidth(), mView.getHeight());
+
+            setOnDrawListener(ViewSceneObject.this);
         } else {
             clearOnDrawListener();
         }
@@ -77,20 +88,6 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
      */
     public View getView() {
         return mView;
-    }
-
-    @Override
-    protected boolean onRender() {
-
-        if (mView != null) {
-            // Update texture size
-            setCanvasSize(mView.getWidth(), mView.getHeight());
-            
-            // call on
-            return super.onRender();
-        }
-        
-        return false;
     }
 
     @Override
@@ -125,21 +122,6 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
             mView.draw(canvas);
         }
     }
-
-    private final Runnable addContentViewAndStartRendering = new Runnable() {
-        @Override
-        public void run() {
-
-            if (mView == null)
-                return;
-
-            getVrContext().getActivity().addContentView(mView,
-                    new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-            mView.setVisibility(View.INVISIBLE);
-
-            setOnDrawListener(ViewSceneObject.this);
-        }
-    };
 
     private final Runnable updateViewState = new Runnable() {
         @Override
