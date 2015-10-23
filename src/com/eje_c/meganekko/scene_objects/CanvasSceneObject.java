@@ -73,17 +73,16 @@ public class CanvasSceneObject extends SceneObject {
 
     @SuppressLint("WrongCall")
     @Override
-    protected boolean onRender() {
+    public void onEvent(VrFrame vrFrame) {
 
         if (mOnDrawListener != null) {
             Canvas canvas = mSurface.lockCanvas(null);
-            mOnDrawListener.onDraw(this, canvas, getVrContext().getActivity().getVrFrame());
+            mOnDrawListener.onDraw(this, canvas, vrFrame);
             mSurface.unlockCanvasAndPost(canvas);
             mSurfaceTexture.updateTexImage();
-            return true;
         }
 
-        return false;
+        super.onEvent(vrFrame);
     }
 
     /**
