@@ -27,6 +27,7 @@ import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrContext;
+import com.eje_c.meganekko.VrFrame;
 
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
@@ -260,10 +261,10 @@ public class VideoSceneObject extends SceneObject {
     }
 
     @Override
-    protected boolean onRender() {
+    public void onEvent(VrFrame vrFrame) {
         if (mMediaPlayer != null && mActive) {
             mSurfaceTexture.updateTexImage();
         }
-        return true;
+        super.onEvent(vrFrame);
     }
 }
