@@ -25,6 +25,7 @@ import java.util.concurrent.Future;
 
 import com.eje_c.meganekko.Material.ShaderType;
 import com.eje_c.meganekko.RenderData.GVRRenderMaskBit;
+import com.eje_c.meganekko.event.FrameListener;
 
 /**
  * One of the key Meganekko classes: a scene object.
@@ -41,7 +42,7 @@ import com.eje_c.meganekko.RenderData.GVRRenderMaskBit;
  * {@link RenderData} has a {@link Mesh GL mesh} that defines its geometry, and
  * a {@link Material} that defines its surface.
  */
-public class SceneObject extends HybridObject {
+public class SceneObject extends HybridObject implements FrameListener {
 
     private Transform mTransform;
     private RenderData mRenderData;
@@ -782,6 +783,13 @@ public class SceneObject extends HybridObject {
      */
     protected boolean onRender() {
         return true;
+    }
+
+    @Override
+    public void onEvent(VrFrame vrFrame) {
+        for (SceneObject child : children()) {
+            child.onEvent(vrFrame);
+        }
     }
 }
 

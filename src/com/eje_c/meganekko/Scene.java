@@ -104,6 +104,18 @@ public class Scene extends SceneObject implements FrameListener,
         NativeScene.setOcclusionQuery(getNative(), flag);
     }
 
+    @Override
+    public void addChildObject(SceneObject child) {
+        super.addChildObject(child);
+        mEventBus.register(child);
+    }
+
+    @Override
+    public void removeChildObject(SceneObject child) {
+        super.removeChildObject(child);
+        mEventBus.unregister(child);
+    }
+
     /*
      * Event register methods.
      */
