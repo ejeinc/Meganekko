@@ -23,6 +23,7 @@ import com.eje_c.meganekko.VrFrame;
 import com.eje_c.meganekko.scene_objects.CanvasSceneObject.OnDrawListener;
 
 import android.graphics.Canvas;
+import android.graphics.PorterDuff.Mode;
 import android.view.LayoutInflater;
 import android.view.View;
 import ovr.JoyButton;
@@ -120,6 +121,8 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
                     mView.performLongClick();
                 }
             }
+
+            canvas.drawColor(0, Mode.CLEAR);
             mView.draw(canvas);
         }
     }
