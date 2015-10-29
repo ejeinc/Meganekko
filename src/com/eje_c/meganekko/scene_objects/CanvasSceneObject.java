@@ -75,7 +75,7 @@ public class CanvasSceneObject extends SceneObject {
     @Override
     public void onEvent(VrFrame vrFrame) {
 
-        if (mOnDrawListener != null) {
+        if (mOnDrawListener != null && mOnDrawListener.isDirty()) {
 
             Canvas canvas = null;
 
@@ -120,6 +120,15 @@ public class CanvasSceneObject extends SceneObject {
     }
 
     public interface OnDrawListener {
+        /**
+         * Called before onDraw is called. If this method returns true, canvas
+         * is refreshed with onDraw method. If this method returns false, onDraw
+         * will not be called.
+         * 
+         * @return Refreshing canvas is required.
+         */
+        boolean isDirty();
+
         /**
          * Called at each frame update. Use {@code VrFrame#getDeltaSeconds()}
          * and {@code VrFrame#getPredictedDisplayTimeInSeconds()} to implement

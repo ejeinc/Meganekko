@@ -155,4 +155,9 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
             mView.setPressed(mLooking);
         }
     };
+
+    @Override
+    public boolean isDirty() {
+        return mView != null ? mView.isDirty() : false;
+    }
 }
