@@ -76,9 +76,17 @@ public class CanvasSceneObject extends SceneObject {
     public void onEvent(VrFrame vrFrame) {
 
         if (mOnDrawListener != null) {
-            Canvas canvas = mSurface.lockCanvas(null);
-            mOnDrawListener.onDraw(this, canvas, vrFrame);
-            mSurface.unlockCanvasAndPost(canvas);
+
+            Canvas canvas = null;
+
+            try {
+                canvas = mSurface.lockCanvas(null);
+                mOnDrawListener.onDraw(this, canvas, vrFrame);
+            } finally {
+                if (canvas != null)
+                    mSurface.unlockCanvasAndPost(canvas);
+            }
+
             mSurfaceTexture.updateTexImage();
         }
 
