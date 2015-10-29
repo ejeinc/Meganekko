@@ -111,7 +111,7 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
     }
 
     @Override
-    public void onDraw(CanvasSceneObject object, Canvas canvas, VrFrame vrFrame) {
+    public void onEvent(VrFrame vrFrame) {
 
         if (mView != null) {
 
@@ -139,7 +139,15 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
                     mView.performLongClick();
                 }
             }
+        }
 
+        super.onEvent(vrFrame);
+    }
+
+    @Override
+    public void onDraw(CanvasSceneObject object, Canvas canvas, VrFrame vrFrame) {
+
+        if (mView != null) {
             canvas.drawColor(0, Mode.CLEAR);
             mView.draw(canvas);
         }
@@ -153,11 +161,20 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
                 return;
 
             mView.setPressed(mLooking);
+            mView.invalidate();
         }
     };
 
     @Override
     public boolean isDirty() {
         return mView != null ? mView.isDirty() : false;
+    }
+
+    public void setSimulatePressingEnabled(boolean enabled) {
+        this.mSimulatePressing = enabled;
+    }
+
+    public boolean isSimulatePressingEnabled() {
+        return mSimulatePressing;
     }
 }
