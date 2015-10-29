@@ -16,6 +16,7 @@
 
 package com.eje_c.meganekko.scene_objects;
 
+import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.Picker;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrContext;
@@ -36,6 +37,8 @@ import ovr.JoyButton;
  */
 public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener {
 
+    public static final float AUTO_SIZE_SCALE = 0.006f;
+    
     private View mView;
     private boolean mLooking;
     private boolean mSimulatePressing = true;
@@ -54,17 +57,12 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
 
         if (mView != null) {
 
-            mView.measure(0, 0);
-            mView.layout(0, 0, mView.getMeasuredWidth(), mView.getMeasuredHeight());
+            updateLayout();
 
             // if mesh is missing, assign quad mesh
             if (getRenderData().getMesh() == null) {
-                getRenderData()
-                        .setMesh(getVrContext().createQuad(mView.getMeasuredWidth() * 0.006f,
-                                mView.getMeasuredHeight() * 0.006f));
+                setAutoSizedQuadMesh();
             }
-
-            setCanvasSize(mView.getMeasuredWidth(), mView.getMeasuredHeight());
 
             setOnDrawListener(ViewSceneObject.this);
         } else {
@@ -90,6 +88,26 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
      */
     public View getView() {
         return mView;
+    }
+
+    /**
+     * Update view size.
+     */
+    public void updateLayout() {
+        View view = getView();
+        view.measure(0, 0);
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+        setCanvasSize(view.getMeasuredWidth(), view.getMeasuredHeight());
+    }
+
+    /**
+     * Set mesh to auto sized quad.
+     */
+    public void setAutoSizedQuadMesh() {
+        float width = mView.getMeasuredWidth() * AUTO_SIZE_SCALE;
+        float height = mView.getMeasuredHeight() * AUTO_SIZE_SCALE;
+        Mesh quadMesh = getVrContext().createQuad(width, height);
+        getRenderData().setMesh(quadMesh);
     }
 
     @Override
