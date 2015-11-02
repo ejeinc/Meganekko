@@ -58,13 +58,16 @@ public class XmlSceneObjectParser {
 
     public static final float DEFAULT_TEXT_SIZE = 30.0f;
     private final VrContext mContext;
-    private boolean useAsyncLoading = true;
 
     public XmlSceneObjectParser(VrContext context) {
         this.mContext = context;
     }
 
     public SceneObject parse(XmlPullParser parser) throws XmlPullParserException, IOException {
+        return parse(parser, false);
+    }
+
+    public SceneObject parse(XmlPullParser parser, boolean useAsyncLoading) throws XmlPullParserException, IOException {
 
         // Skip until start tag appears
         while (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -314,7 +317,7 @@ public class XmlSceneObjectParser {
         while (parser.getEventType() != XmlPullParser.END_TAG) {
 
             if (parser.getEventType() == XmlPullParser.START_TAG) {
-                SceneObject child = parse(parser);
+                SceneObject child = parse(parser, useAsyncLoading);
                 if (child != null) {
                     object.addChildObject(child);
                 }
@@ -438,8 +441,9 @@ public class XmlSceneObjectParser {
         return mContext.loadTexture(new AndroidResource(mContext, value));
     }
 
+    @Deprecated
     public void setAsyncTextureLoading(boolean useAsyncLoading) {
-        this.useAsyncLoading = useAsyncLoading;
+        // NOOP
     }
 
     private static void parsePosition(Transform transform, String value) {
