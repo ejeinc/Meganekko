@@ -89,10 +89,6 @@ public class MeganekkoActivity extends VrActivity {
 
     private static native void nativeShowGazeCursor(long appPtr);
 
-    private static native void nativeOnDock(long appPtr);
-
-    private static native void nativeOnUndock(long appPtr);
-
     private static native void nativeSetIntervalSensorValues(long appPtr, float x, float y, float z, float w);
 
     public static native void setDebugOptionEnable(boolean enable);
@@ -349,7 +345,6 @@ public class MeganekkoActivity extends VrActivity {
         @Override
         public void run() {
             mDocked = true;
-            nativeOnDock(getAppPtr());
             mInternalSensorManager.stop();
         }
     };
@@ -358,7 +353,6 @@ public class MeganekkoActivity extends VrActivity {
         @Override
         public void run() {
             mDocked = false;
-            nativeOnUndock(getAppPtr());
         }
     };
 

@@ -49,19 +49,6 @@ void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeShowGazeCursor(JNIEnv * j
     activity->GuiSys->GetGazeCursor().ShowCursor();
 }
 
-void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeOnDock(JNIEnv * jni, jclass clazz, jlong appPtr)
-{
-
-    MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
-    activity->deviceIsDocked = true;
-}
-
-void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeOnUndock(JNIEnv * jni, jclass clazz, jlong appPtr)
-{
-    MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
-    activity->deviceIsDocked = false;
-}
-
 void Java_com_eje_1c_meganekko_MeganekkoActivity_setDebugOptionEnable(JNIEnv * jni, jclass clazz, jboolean enable)
 {
     ovr_SetLocalPreferenceValueForKey(LOCAL_PREF_APP_DEBUG_OPTIONS, enable ? "1" : "0");

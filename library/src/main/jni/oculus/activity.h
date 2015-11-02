@@ -52,7 +52,6 @@ public:
     ovrLocale &         GetLocale() { return *Locale; }
 
     OvrGuiSys *         GuiSys;
-    bool                deviceIsDocked;
 
     Scene*              scene;
     ShaderManager*      shaderManager;

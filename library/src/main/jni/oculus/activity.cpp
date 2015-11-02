@@ -35,7 +35,6 @@ MeganekkoActivity::MeganekkoActivity() :
       shaderManager(NULL)
 {
     centerViewMatrix = ovrMatrix4f_CreateIdentity();
-    deviceIsDocked = false;
 }
 
 MeganekkoActivity::~MeganekkoActivity()
@@ -105,7 +104,7 @@ Matrix4f MeganekkoActivity::Frame( const VrFrame & vrFrame )
     Camera * camera = const_cast<Camera *>(scene->main_camera());
     JNIEnv * jni = app->GetJava()->Env;
 
-    if (deviceIsDocked)
+    if (vrFrame.DeviceStatus.DeviceIsDocked)
     {
         camera->transform()->set_rotation(vrFrame.Tracking.HeadPose.Pose.Orientation);
     }
@@ -130,7 +129,7 @@ Matrix4f MeganekkoActivity::Frame( const VrFrame & vrFrame )
     jni->CallVoidMethod(app->GetJava()->ActivityObject, frameMethodId, (jlong)(intptr_t)&vrFrame);
 
     // Apply Camera movement to centerViewMatrix
-    ovrMatrix4f input = deviceIsDocked
+    ovrMatrix4f input = vrFrame.DeviceStatus.DeviceIsDocked
             ? Matrix4f::Translation(camera->transform()->position())
             : camera->transform()->getModelMatrix();
     centerViewMatrix = vrapi_GetCenterEyeViewMatrix( &app->GetHeadModelParms(), &vrFrame.Tracking, &input );
