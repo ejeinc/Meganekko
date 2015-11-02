@@ -46,3 +46,12 @@ proguard/
 # Log Files
 *.log
 libs/armeabi-v7a/
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
+*.iml
+.idea/*

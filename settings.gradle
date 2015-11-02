@@ -1,0 +1,14 @@
+include ':sample', ':library'
+include 'VrApi:Projects:AndroidPrebuilt', 'VrAppSupport:VrLocale:Projects:AndroidPrebuilt', 'VrAppSupport:VrSound:Projects:AndroidPrebuilt', 'VrAppSupport:SystemUtils:Projects:AndroidPrebuilt', 'VrAppSupport:VrGUI:Projects:AndroidPrebuilt'
+
+def ovrMobile = System.getenv('OVR_SDK_MOBILE')
+
+if (!ovrMobile) {
+    ovrMobile = "../ovr_sdk_mobile_1.0.0.0"
+}
+
+project(':VrApi:Projects:AndroidPrebuilt').projectDir = new File(ovrMobile, 'VrApi/Projects/AndroidPrebuilt')
+project(':VrAppSupport:VrLocale:Projects:AndroidPrebuilt').projectDir = new File(ovrMobile, 'VrAppSupport/VrLocale/Projects/AndroidPrebuilt')
+project(':VrAppSupport:VrSound:Projects:AndroidPrebuilt').projectDir = new File(ovrMobile, 'VrAppSupport/VrSound/Projects/AndroidPrebuilt')
+project(':VrAppSupport:SystemUtils:Projects:AndroidPrebuilt').projectDir = new File(ovrMobile, 'VrAppSupport/SystemUtils/Projects/AndroidPrebuilt')
+project(':VrAppSupport:VrGUI:Projects:AndroidPrebuilt').projectDir = new File(ovrMobile, 'VrAppSupport/VrGUI/Projects/AndroidPrebuilt')
