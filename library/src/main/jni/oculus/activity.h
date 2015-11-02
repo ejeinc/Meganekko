@@ -57,9 +57,9 @@ public:
     ShaderManager*      shaderManager;
 
 private:
-    std::unique_ptr<ovrSoundEffectContext> SoundEffectContext;
-    std::unique_ptr<OvrGuiSys::SoundEffectPlayer> SoundEffectPlayer;
-    ovrLocale *         Locale;
+    ovrSoundEffectContext *        SoundEffectContext;
+    OvrGuiSys::SoundEffectPlayer * SoundEffectPlayer;
+    ovrLocale *                    Locale;
 
     ovrMatrix4f         centerViewMatrix;
 

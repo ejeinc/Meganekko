@@ -48,10 +48,10 @@ void MeganekkoActivity::Configure(ovrSettings & settings)
 
 void MeganekkoActivity::OneTimeInit(const char * fromPackage, const char * launchIntentJSON, const char * launchIntentURI)
 {
-    auto java = app->GetJava();
-    SoundEffectContext.reset( new ovrSoundEffectContext( *java->Env, java->ActivityObject ) );
+    const ovrJava * java = app->GetJava();
+    SoundEffectContext = new ovrSoundEffectContext( *java->Env, java->ActivityObject );
     SoundEffectContext->Initialize();
-    SoundEffectPlayer.reset( new OvrGuiSys::ovrDummySoundEffectPlayer() );
+    SoundEffectPlayer = new OvrGuiSys::ovrDummySoundEffectPlayer();
 
     Locale = ovrLocale::Create( *app, "default" );
 
@@ -80,6 +80,12 @@ void MeganekkoActivity::OneTimeInit(const char * fromPackage, const char * launc
 
 void MeganekkoActivity::OneTimeShutdown()
 {
+    delete SoundEffectPlayer;
+    SoundEffectPlayer = NULL;
+
+    delete SoundEffectContext;
+    SoundEffectContext = NULL;
+
     jmethodID oneTimeShutdownMethodId = GetMethodID("oneTimeShutDown", "()V");
     app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, oneTimeShutdownMethodId);
 }
