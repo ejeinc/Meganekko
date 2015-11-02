@@ -72,7 +72,7 @@ uploadArchives {
         mavenDeployer {
             def deployPath = file('./repository')
             repository(url: "file://${deployPath.absolutePath}")
-            pom.version = '1.0.0-SNAPSHOT'
+            pom.version = '1.0.0'
             pom.groupId = 'com.eje_c'
             pom.artifactId = 'meganekko'
         }
