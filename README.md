@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.eje_c:meganekko:1.0-SNAPSHOT' // 2. Add this line
+    compile 'com.eje_c:meganekko:0.6.2-SNAPSHOT' // 2. Add this line
 }
 ```
 
