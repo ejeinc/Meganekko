@@ -19,6 +19,7 @@
 
 
 #include "camera.h"
+#include "util/convert.h"
 #include "util/gvr_jni.h"
 
 #include "util/gvr_java_stack_trace.h"
@@ -43,15 +44,7 @@ Java_com_eje_1c_meganekko_Camera_initNativeInstance(JNIEnv * env, jobject obj) {
 JNIEXPORT jfloatArray JNICALL
 Java_com_eje_1c_meganekko_NativeCamera_getLookAt(JNIEnv * env, jobject obj, jlong jcamera) {
     Camera* camera = reinterpret_cast<Camera*>(jcamera);
-    OVR::Vector3f look_at_vector = camera->getLookAt();
-    jsize size = sizeof(OVR::Vector3f) / sizeof(jfloat);
-    if (size != 3) {
-        LOGE("sizeof(OVR::Vector3f) / sizeof(jfloat) != 3");
-        throw "sizeof(OVR::Vector3f) / sizeof(jfloat) != 3";
-    }
-    jfloatArray look_at_array = env->NewFloatArray(size);
-    env->SetFloatArrayRegion(look_at_array, 0, size, reinterpret_cast<jfloat *>(&look_at_vector));
-    return look_at_array;
+    return ToFloatArray(env, camera->getLookAt());
 }
 
 }
