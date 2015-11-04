@@ -4,6 +4,8 @@ VR rendering framework built on Oculus Mobile SDK. Forked from [GearVRf](http://
 
 ## Using Meganekko
 
+**Version 1.0 is not yet available with this steps. Please see below.**
+
 Modify your **app/build.gradle** to include dependency.
 
 ```gradle
@@ -24,7 +26,54 @@ dependencies {
 }
 ```
 
-Add required permissions, attributes and elements.
+### For 1.0 (or local development)
+
+1. Download Oculus Mobile SDK 1.0.0.0
+2. Extract Oculus Mobile SDK 1.0.0.0
+3. Set environment variable `OVR_SDK_MOBILE` to point extracted Oculus Mobile SDK directory
+4. Open Android Studio
+5. Open Meganekko directory
+
+Run sample module. (confirmation for correct setup)
+
+To create your app:
+
+1. File->New->New Module...
+2. Select *Phone & Tablt Module*
+3. Next
+4. Enter your app name, module name and package name
+5. Next
+6. Select *Empty Activity*
+7. Enter *Activiy Name* and **uncheck** *Genarate Layout File*
+8. Finish
+9. Open `yourappmodule/build.gradle`
+10. Edit `dependencies` section to include `compile project(':library')`
+
+## Common setup
+
+### MeganekkoActivity
+
+You have to extend `MeganekkoActivity`.
+
+```java
+import com.eje_c.meganekko.MeganekkoActivity;
+
+public class MainActivity extends MeganekkoActivity {
+
+    @Override
+    protected void oneTimeInit(VrContext context) {
+        // Do something on initial setup
+        // In most cases create scene here
+    }
+
+    @Override
+    protected void frame() {
+        // Do something on frame update
+    }
+}
+```
+
+### AndroidManifest.xml
 
 ```xml
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -57,10 +106,9 @@ Add required permissions, attributes and elements.
 </application>
 ```
 
-## Setup (for local development)
+### osig
 
-1. Download Oculus Mobile SDK 1.0.0.0
-2. Extract Oculus Mobile SDK 1.0.0.0
-3. Set environment variable `OVR_SDK_MOBILE` to point extracted Oculus Mobile SDK directory
-4. Open Android Studio
-5. Open Meganekko directory
+You must put your osig file to debug Gear VR app. See also https://developer.oculus.com/osig/
+
+1. Create 'YourAppModuleDirectory/src/debug/assets' directory.
+2. Put your osig file into 'YourAppModuleDirectory/src/debug/assets' directory.
