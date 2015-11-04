@@ -1,14 +1,18 @@
+import org.gradle.internal.os.OperatingSystem
+
 apply plugin: 'com.android.library'
 
 dependencies {
     /*
      * Oculus Mobile SDK integration
      */
-    compile name: 'VrAppFramework', ext: 'aar'
-    compile project(':VrAppSupport:SystemUtils:Projects:AndroidPrebuilt')
-    compile project(':VrAppSupport:VrGUI:Projects:AndroidPrebuilt')
-    compile project(':VrAppSupport:VrLocale:Projects:AndroidPrebuilt')
-    compile project(':VrAppSupport:VrSound:Projects:AndroidPrebuilt')
+    def ovrMobile = System.getenv('OVR_SDK_MOBILE')
+    compile files("$ovrMobile/VrApi/Libs/Android/VrApi.jar")
+    compile files("$ovrMobile/VrAppFramework/Libs/Android/VrAppFramework.jar")
+    compile files("$ovrMobile/VrAppSupport/SystemUtils/Libs/Android/SystemUtils.jar")
+    compile files("$ovrMobile/VrAppSupport/VrGUI/Libs/Android/VrGUI.jar")
+    compile files("$ovrMobile/VrAppSupport/VrLocale/Libs/Android/VrLocale.jar")
+    compile files("$ovrMobile/VrAppSupport/VrSound/Libs/Android/VrSound.jar")
 
     /*
      * Dependencies
@@ -43,6 +47,30 @@ android {
 /*
  * NDK integration
  */
+
+def GetNDKBuildCmd() {
+
+    def ndkDir = System.getenv('ANDROID_NDK_HOME')
+    if (ndkDir == null) {
+        ndkDir = System.getenv('ANDROID_NDK')
+    }
+    if (ndkDir == null) {
+        ndkDir = System.getenv('NDKROOT')
+    }
+    if (ndkDir == null) {
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        ndkDir = properties.getProperty('ndk.dir')
+    }
+    if (ndkDir == null) {
+        throw new GradleException('NDK not found! Check your environment for ANDROID_NDK or your local.properties contains ndk.dir')
+    }
+    if (OperatingSystem.current().isWindows()) {
+        return ndkDir + '/ndk-build.cmd'
+    } else {
+        return ndkDir + '/ndk-build'
+    }
+}
 
 project.afterEvaluate {
     compileDebugNdk.dependsOn 'NDKBuildDebugMGN'

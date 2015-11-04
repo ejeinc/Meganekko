@@ -80,8 +80,7 @@ LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
 
 LOCAL_SHARED_LIBRARIES += assimp
 LOCAL_SHARED_LIBRARIES += vrapi
-LOCAL_STATIC_LIBRARIES += libvrmodel
-LOCAL_STATIC_LIBRARIES += vrsound vrlocale vrgui vrappframework libovrkernel
+LOCAL_STATIC_LIBRARIES += systemutils vrsound vrlocale vrgui vrappframework libovrkernel
 
 LOCAL_ARM_NEON := true
 
