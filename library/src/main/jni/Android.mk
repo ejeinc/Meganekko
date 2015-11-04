@@ -28,9 +28,15 @@ include $(OVR_SDK_MOBILE)/cflags.mk
 
 LOCAL_MODULE := meganekko
 
+# jni/** all .cpp .c .s files
 FILE_LIST := $(wildcard $(LOCAL_PATH)/*.cpp)
+FILE_LIST += $(wildcard $(LOCAL_PATH)/**/*.cpp)
+FILE_LIST += $(wildcard $(LOCAL_PATH)/**/**/*.cpp)
+FILE_LIST += $(wildcard $(LOCAL_PATH)/contrib/libpng/*.c)
+FILE_LIST += $(wildcard $(LOCAL_PATH)/contrib/libpng/*.s)
 LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
 
+# Include directories
 LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrAppFramework/Include
 LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/LibOVRKernel/Include
 LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/LibOVRKernel/Src
@@ -44,39 +50,8 @@ LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrAppSupport/SystemUtils/Include
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/contrib/assimp
 LOCAL_C_INCLUDES +=	$(LOCAL_PATH)/contrib/assimp/include
 LOCAL_C_INCLUDES +=	$(LOCAL_PATH)/contrib/assimp/include/Compiler
-
 LOCAL_C_INCLUDES +=	$(LOCAL_PATH)/contrib/libpng
-FILE_LIST := $(wildcard $(LOCAL_PATH)/contrib/libpng/*.c)
-LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
-FILE_LIST := $(wildcard $(LOCAL_PATH)/contrib/libpng/*.s)
-LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
-
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/contrib
-
-FILE_LIST := $(wildcard $(LOCAL_PATH)/engine/importer/*.cpp)
-LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
-FILE_LIST := $(wildcard $(LOCAL_PATH)/engine/picker/*.cpp)
-LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
-FILE_LIST := $(wildcard $(LOCAL_PATH)/engine/renderer/*.cpp)
-LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
-FILE_LIST := $(wildcard $(LOCAL_PATH)/engine/memory/*.cpp)
-LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
-FILE_LIST := $(wildcard $(LOCAL_PATH)/gl/*.cpp)
-LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
-FILE_LIST := $(wildcard $(LOCAL_PATH)/objects/*.cpp)
-LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
-FILE_LIST := $(wildcard $(LOCAL_PATH)/objects/components/*.cpp)
-LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
-FILE_LIST := $(wildcard $(LOCAL_PATH)/objects/textures/*.cpp)
-LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
-FILE_LIST := $(wildcard $(LOCAL_PATH)/oculus/*.cpp)
-LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
-FILE_LIST := $(wildcard $(LOCAL_PATH)/shaders/*.cpp)
-LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
-FILE_LIST := $(wildcard $(LOCAL_PATH)/shaders/material/*.cpp)
-LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
-FILE_LIST := $(wildcard $(LOCAL_PATH)/util/*.cpp)
-LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
 
 LOCAL_SHARED_LIBRARIES += assimp
 LOCAL_SHARED_LIBRARIES += vrapi
