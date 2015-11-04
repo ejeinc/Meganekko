@@ -80,16 +80,12 @@ public class MeganekkoActivity extends VrActivity {
         System.loadLibrary("meganekko");
     }
 
-    private static native void nativeSetContext(long appPtr, long contextPtr);
-
     private static native long nativeSetAppInterface(VrActivity act,
             String fromPackageName, String commandString, String uriString);
 
     private static native void nativeHideGazeCursor(long appPtr);
 
     private static native void nativeShowGazeCursor(long appPtr);
-
-    private static native void nativeSetIntervalSensorValues(long appPtr, float x, float y, float z, float w);
 
     public static native void setDebugOptionEnable(boolean enable);
 
