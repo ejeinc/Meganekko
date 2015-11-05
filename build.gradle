@@ -1,11 +1,7 @@
-import org.gradle.internal.os.OperatingSystem
-
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-
+// Check environment variable OVR_SDK_MOBILE exists.
 def ovrMobile = System.getenv('OVR_SDK_MOBILE')
-
-if (!ovrMobile) {
-    throw new RuntimeException("Please specify environment variable OVR_SDK_MOBILE !")
+if (ovrMobile == null) {
+    throw new GradleException('Please specify environment variable OVR_SDK_MOBILE !')
 }
 
 buildscript {
