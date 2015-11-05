@@ -406,6 +406,16 @@ public class MeganekkoActivity extends VrActivity {
     }
 
     /**
+     * Short hand method for getScene().findObjectById().
+     *
+     * @param id
+     * @return Found object or null.
+     */
+    public SceneObject findObjectById(int id) {
+        return mScene.findObjectById(id);
+    }
+
+    /**
      * Short hand method for XML scene parsing.
      * 
      * @param xmlRes

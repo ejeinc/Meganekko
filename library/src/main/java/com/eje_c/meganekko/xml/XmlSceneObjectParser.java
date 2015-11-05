@@ -107,6 +107,10 @@ public class XmlSceneObjectParser {
 
             switch (attributeSet.getAttributeName(i)) {
 
+                case "id":
+                    object.setId(attributeSet.getIdAttributeResourceValue(0));
+                    break;
+
                 case "name":
                     object.setName(attributeSet.getAttributeValue(i));
                     break;

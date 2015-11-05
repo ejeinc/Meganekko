@@ -44,6 +44,7 @@ import com.eje_c.meganekko.event.FrameListener;
  */
 public class SceneObject extends HybridObject implements FrameListener {
 
+    private int mId;
     private Transform mTransform;
     private RenderData mRenderData;
     private EyePointeeHolder mEyePointeeHolder;
@@ -243,6 +244,27 @@ public class SceneObject extends HybridObject implements FrameListener {
     public SceneObject(VrContext vrContext, float width, float height,
             Texture texture) {
         this(vrContext, width, height, texture, STANDARD_SHADER);
+    }
+
+    /**
+     * Get the (optional) ID of the object.
+     *
+     * @return The ID of the object. If no name has been assigned, return 0.
+     */
+    public int getId() {
+        return mId;
+    }
+
+    /**
+     * Set the (optional) ID of the object.
+     *
+     * Scene object IDs are not needed: they are only for the application's
+     * convenience.
+     *
+     * @param id ID of the object.
+     */
+    public void setId(int id) {
+        this.mId = id;
     }
 
     /**
@@ -758,6 +780,21 @@ public class SceneObject extends HybridObject implements FrameListener {
         for (SceneObject child : children()) {
             child.updateOpacity();
         }
+    }
+
+    public SceneObject findObjectById(int id) {
+        if (mId == id) {
+            return this;
+        }
+
+        for (SceneObject child : children()) {
+            SceneObject result = child.findObjectById(id);
+            if (result != null) {
+                return result;
+            }
+        }
+
+        return null;
     }
 
     public SceneObject findObjectByName(String name) {
