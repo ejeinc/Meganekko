@@ -27,38 +27,33 @@
 #include "util/gvr_gl.h"
 
 namespace mgn {
-static const char VERTEX_SHADER[] = "attribute vec4 a_position;\n"
-        "attribute vec4 a_tex_coord;\n"
-        "uniform mat4 u_mvp;\n"
-        "varying vec2 v_tex_coord;\n"
+
+static const char VERTEX_SHADER[] =
+        "attribute vec4 Position;\n"
+        "attribute vec4 TexCoord;\n"
+        "uniform mat4 Mvpm;\n"
+        "varying vec2 TextureCoordXY;\n"
         "void main() {\n"
-        "  v_tex_coord = a_tex_coord.xy;\n"
-        "  gl_Position = u_mvp * a_position;\n"
+        "  TextureCoordXY = TexCoord.xy;\n"
+        "  gl_Position = Mvpm * Position;\n"
         "}\n";
 
 static const char FRAGMENT_SHADER[] =
         "#extension GL_OES_EGL_image_external : require\n"
-                "precision highp float;\n"
-                "uniform samplerExternalOES u_texture;\n"
-                "uniform vec3 u_color;\n"
-                "uniform float u_opacity;\n"
-                "varying vec2 v_tex_coord;\n"
-                "void main()\n"
-                "{\n"
-                "  vec4 color = texture2D(u_texture, v_tex_coord);"
-                "  gl_FragColor = vec4(color.r * u_color.r * u_opacity, color.g * u_color.g * u_opacity, color.b * u_color.b * u_opacity, color.a * u_opacity);\n"
-                "}\n";
+        "precision highp float;\n"
+        "uniform samplerExternalOES Texture;\n"
+        "uniform vec3 UniformColor;\n"
+        "uniform float Opacity;\n"
+        "varying vec2 TextureCoordXY;\n"
+        "void main() {\n"
+        "  vec4 color = texture2D(Texture, TextureCoordXY);"
+        "  gl_FragColor = vec4(color.r * UniformColor.r * Opacity, color.g * UniformColor.g * Opacity, color.b * UniformColor.b * Opacity, color.a * Opacity);\n"
+        "}\n";
 
-OESShader::OESShader() :
-        a_position_(0), a_tex_coord_(0), u_mvp_(0), u_texture_(0), u_color_(
-                0), u_opacity_(0) {
-    program_ = BuildProgram(VERTEX_SHADER, FRAGMENT_SHADER);
-    a_position_ = glGetAttribLocation(program_.program, "a_position");
-    a_tex_coord_ = glGetAttribLocation(program_.program, "a_tex_coord");
-    u_mvp_ = glGetUniformLocation(program_.program, "u_mvp");
-    u_texture_ = glGetUniformLocation(program_.program, "u_texture");
-    u_color_ = glGetUniformLocation(program_.program, "u_color");
-    u_opacity_ = glGetUniformLocation(program_.program, "u_opacity");
+OESShader::OESShader() {
+    program = BuildProgram(VERTEX_SHADER, FRAGMENT_SHADER);
+    texture = glGetUniformLocation(program.program, "Texture");
+    opacity = glGetUniformLocation(program.program, "Opacity");
 }
 
 OESShader::~OESShader() {
@@ -66,36 +61,35 @@ OESShader::~OESShader() {
 }
 
 void OESShader::recycle() {
-    DeleteProgram(program_);
+    DeleteProgram(program);
 }
 
-void OESShader::render(const OVR::Matrix4f& mvp_matrix, RenderData* render_data, Material* material) {
-    Mesh* mesh = render_data->mesh();
-    Texture* texture = material->getTexture("main_texture");
-    OVR::Vector3f color = material->getVec3("color");
-    float opacity = material->getFloat("opacity");
+void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Material * material) {
+    
+    Mesh * mesh = renderData->mesh();
+    Texture * mainTexture = material->getTexture("main_texture");
+    Vector3f color = material->getVec3("color");
 
-    if (texture->getTarget() != GL_TEXTURE_EXTERNAL_OES) {
+    if (mainTexture->getTarget() != GL_TEXTURE_EXTERNAL_OES) {
         std::string error = "OESShader::render : texture with wrong target";
         throw error;
     }
 
-    mesh->setVertexLoc(a_position_);
-    mesh->setTexCoordLoc(a_tex_coord_);
+    mesh->setVertexLoc(VERTEX_ATTRIBUTE_LOCATION_POSITION);
+    mesh->setTexCoordLoc(VERTEX_ATTRIBUTE_LOCATION_UV0);
     mesh->generateVAO(Material::OES_SHADER);
 
-    glUseProgram(program_.program);
+    glUseProgram(program.program);
 
-    glUniformMatrix4fv(u_mvp_, 1, GL_TRUE, mvp_matrix.M[0]);
+    glUniformMatrix4fv(program.uMvp, 1, GL_TRUE, mvpMatrix.M[0]);
     glActiveTexture (GL_TEXTURE0);
-    glBindTexture(texture->getTarget(), texture->getId());
-    glUniform1i(u_texture_, 0);
-    glUniform3f(u_color_, color.x, color.y, color.z);
-    glUniform1f(u_opacity_, opacity);
+    glBindTexture(mainTexture->getTarget(), mainTexture->getId());
+    glUniform1i(texture, 0);
+    glUniform3f(program.uColor, color.x, color.y, color.z);
+    glUniform1f(opacity, material->getFloat("opacity"));
 
     glBindVertexArray(mesh->getVAOId(Material::OES_SHADER));
-    glDrawElements(GL_TRIANGLES, mesh->triangles().size(), GL_UNSIGNED_SHORT,
-            0);
+    glDrawElements(GL_TRIANGLES, mesh->triangles().size(), GL_UNSIGNED_SHORT, 0);
     glBindVertexArray(0);
 
     checkGlError("OESShader::render");

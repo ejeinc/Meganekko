@@ -46,7 +46,7 @@ public:
     OESShader();
     ~OESShader();
     void recycle();
-    void render(const OVR::Matrix4f& mvp_matrix, RenderData* render_data, Material* material);
+    void render(const Matrix4f& mvpMatrix, RenderData* renderData, Material* material);
 
 private:
     OESShader(const OESShader& oes_shader);
@@ -55,13 +55,9 @@ private:
     OESShader& operator=(OESShader&& oes_shader);
 
 private:
-    GlProgram program_;
-    GLuint a_position_;
-    GLuint a_tex_coord_;
-    GLuint u_mvp_;
-    GLuint u_texture_;
-    GLuint u_color_;
-    GLuint u_opacity_;
+    GlProgram program;
+    GLuint texture;
+    GLuint opacity;
 };
 
 }
