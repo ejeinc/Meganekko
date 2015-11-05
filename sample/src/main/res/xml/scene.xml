@@ -1,0 +1,8 @@
+<scene>
+    <object
+        drawable="@mipmap/ic_launcher"
+        height="1.0"
+        id="@+id/myObject"
+        width="1.0"
+        z="-3.0" />
+</scene>
