@@ -21,6 +21,7 @@
 #include "picker.h"
 
 #include "util/gvr_jni.h"
+#include "util/convert.h"
 
 namespace mgn {
 extern "C" {
@@ -29,8 +30,9 @@ Java_com_eje_1c_meganekko_NativePicker_pickScene(JNIEnv * env,
         jobject obj, jlong jscene, jfloat ox, jfloat oy, jfloat z, jfloat dx,
         jfloat dy, jfloat dz);
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativePicker_pickSceneObject(JNIEnv * env,
-        jobject obj, jlong jscene_object, jlong jcamera);
+Java_com_eje_1c_meganekko_NativePicker_pickSceneObject(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jcamera);
+JNIEXPORT jfloatArray JNICALL
+Java_com_eje_1c_meganekko_NativePicker_pickSceneObjectv(JNIEnv * env, jclass clazz, jlong jsceneObject, jlong jcamera);
 }
 
 JNIEXPORT jlongArray JNICALL
@@ -55,12 +57,18 @@ Java_com_eje_1c_meganekko_NativePicker_pickScene(JNIEnv * env,
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativePicker_pickSceneObject(JNIEnv * env,
-        jobject obj, jlong jscene_object, jlong jcamera) {
-    SceneObject* scene_object =
-            reinterpret_cast<SceneObject*>(jscene_object);
+Java_com_eje_1c_meganekko_NativePicker_pickSceneObject(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jcamera) {
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
     Camera* camera = reinterpret_cast<Camera*>(jcamera);
-    return Picker::pickSceneObject(scene_object, camera);
+    return Picker::pickSceneObject(sceneObject, camera);
+}
+
+JNIEXPORT jfloatArray JNICALL
+Java_com_eje_1c_meganekko_NativePicker_pickSceneObjectv(JNIEnv * env, jclass clazz, jlong jsceneObject, jlong jcamera) {
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    Camera* camera = reinterpret_cast<Camera*>(jcamera);
+    Vector3f vec = Picker::pickSceneObjectv(sceneObject, camera);
+    return ToFloatArray(env, vec);
 }
 
 }

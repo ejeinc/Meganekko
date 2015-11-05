@@ -182,6 +182,10 @@ public class Picker {
                 camera.getNative());
     }
 
+    public static final float[] pickSceneObjectv(SceneObject sceneObject, Camera camera) {
+        return NativePicker.pickSceneObjectv(sceneObject.getNative(), camera.getNative());
+    }
+
     /**
      * Casts a ray into the scene graph, and returns the objects it intersects.
      * 
@@ -339,4 +343,5 @@ final class NativePicker {
             float dx, float dy, float dz);
 
     static native float pickSceneObject(long sceneObject, long camera);
+    static native float[] pickSceneObjectv(long sceneObject, long camera);
 }

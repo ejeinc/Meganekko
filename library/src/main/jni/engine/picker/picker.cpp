@@ -90,4 +90,15 @@ float Picker::pickSceneObject(const SceneObject* scene_object,
 
     return std::numeric_limits<float>::infinity();
 }
+
+Vector3f Picker::pickSceneObjectv(const SceneObject* sceneObject, const Camera* camera) {
+    Matrix4f viewMatrix = camera->transform()->getModelMatrix().InvertedHomogeneousTransform();
+    EyePointeeHolder* eyePointeeHolder = sceneObject->eye_pointee_holder();
+    if (eyePointeeHolder != 0 && eyePointeeHolder->enable()) {
+        EyePointData data = eyePointeeHolder->isPointed(viewMatrix);
+        return data.hit();
+    }
+
+    return Vector3f();
+}
 }

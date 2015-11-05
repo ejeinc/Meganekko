@@ -24,6 +24,10 @@
 #include <vector>
 #include <memory>
 
+#include "Kernel/OVR_Math.h"
+
+using namespace OVR;
+
 namespace mgn {
 class Scene;
 class EyePointeeHolder;
@@ -43,6 +47,7 @@ public:
     static float pickSceneObject(
             const SceneObject* scene_object,
             const Camera* camera);
+    static Vector3f pickSceneObjectv(const SceneObject* sceneObject, const Camera* camera);
 };
 
 }
