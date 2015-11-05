@@ -105,9 +105,9 @@ apply plugin: 'maven'
 uploadArchives {
     repositories {
         mavenDeployer {
-            def deployPath = file('./repository')
+            def deployPath = file("$rootDir/../Meganekko_pages/repository")
             repository(url: "file://${deployPath.absolutePath}")
-            pom.version = '1.0.0'
+            pom.version = '1.0.1'
             pom.groupId = 'com.eje_c'
             pom.artifactId = 'meganekko'
         }
