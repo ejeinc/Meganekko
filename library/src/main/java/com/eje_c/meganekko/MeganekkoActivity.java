@@ -396,10 +396,10 @@ public class MeganekkoActivity extends VrActivity {
     }
 
     /**
-     * Short hand method for getVrContext().getMainScene().findObjectByName().
+     * Short hand method for getScene().findObjectByName().
      * 
      * @param name
-     * @return
+     * @return Found object or null.
      */
     public SceneObject findObjectByName(String name) {
         return mScene.findObjectByName(name);
