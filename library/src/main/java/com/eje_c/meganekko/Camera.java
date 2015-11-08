@@ -26,14 +26,6 @@ public class Camera extends SceneObject {
     @Override
     protected native long initNativeInstance();
 
-    public void attachToParent(SceneObject parentObject) {
-        parentObject.addChildObject(this);
-    }
-
-    public void detachFromParent(SceneObject parentObject) {
-        parentObject.removeChildObject(this);
-    }
-
     /**
      * The direction the camera rig is looking at. In other words, the direction
      * of the local -z axis.
