@@ -44,7 +44,7 @@ import com.eje_c.meganekko.event.FrameListener;
  *     public void run() {
  *         new ScaleAnimation(uiObject, 0.5f, 2f)//
  *                 .setRepeatMode(GVRRepeatMode.PINGPONG)//
- *                 .start(mAnimationEngine);
+ *                 .start();
  *     }
  * };
  * vrContext.getPeriodicEngine().runEvery(pulse, 1f, 2f, 10);
@@ -53,23 +53,6 @@ import com.eje_c.meganekko.event.FrameListener;
  * will grow and shrink the {@code uiObject} ten times, every other second,
  * starting in a second. This can be a good way to draw the user's attention to
  * something like a notification.
- * 
- * <p>
- * The engine maintains a priority queue of events, which it checks in a
- * {@linkplain FrameListener frame listener}; events run as
- * {@linkplain VrContext#runOnGlThread(Runnable) run-once events.} Every frame,
- * Meganekko runs any run-once events; then any frame listeners (including
- * animations); then your {@linkplain GVRScript#onStep() onStep() method;} and
- * then it renders the scene. This means that any periodic events that run on a
- * given frame will run before any animations. It also means that there is
- * always a one frame delay between the time an event is dequeued and the time
- * it actually runs. Scheduling an event from a point in the render pipeline
- * after the periodic engine will add an additional one frame delay. (The
- * periodic engine may run before the animation engine or after it - try not to
- * write code that depends on one running before the other.) Running at 60 fps,
- * each frame is normally 17 milliseconds apart, unless you add too many
- * callbacks or put too much code into your {@code onStep()}; Android garbage
- * collection can introduce additional delays.
  */
 public class PeriodicEngine {
     private static PeriodicEngine sInstance = null;

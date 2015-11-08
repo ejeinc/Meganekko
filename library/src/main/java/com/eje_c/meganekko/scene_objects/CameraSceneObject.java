@@ -45,7 +45,7 @@ public class CameraSceneObject extends SceneObject {
      *            current {@link VrContext}
      * @param mesh
      *            an arbitrarily complex {@link Mesh} object - see
-     *            {@link VrContext#loadMesh(com.eje_c.meganekko.GVRAndroidResource)}
+     *            {@link VrContext#loadMesh(com.eje_c.meganekko.AndroidResource)}
      *            and {@link VrContext#createQuad(float, float)}
      * @param camera
      *            an Android {@link Camera}. <em>Note</em>: this constructor

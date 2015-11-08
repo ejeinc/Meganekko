@@ -96,7 +96,7 @@ public class SphereSceneObject extends SceneObject {
      *            facing out.
      * 
      * @param futureTexture
-     *            the texture for the sphere. {@code Future<GVRTexture>} is used
+     *            the texture for the sphere. {@code Future<Texture>} is used
      *            here for asynchronously loading the texture.
      */
     public SphereSceneObject(VrContext vrContext, boolean facingOut,

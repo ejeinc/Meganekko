@@ -23,7 +23,7 @@ import com.eje_c.meganekko.SceneObject;
  * Animate a {@link Material}.
  * 
  * The constructors cast their {@code target} parameter to a
- * {@code protected final GVRMaterial mMaterial} field.
+ * {@code protected final Material mMaterial} field.
  */
 public abstract class MaterialAnimation extends Animation {
 
@@ -33,8 +33,8 @@ public abstract class MaterialAnimation extends Animation {
     protected final Material mMaterial;
 
     /**
-     * Sets the {@code protected final GVRMaterial mMaterial} field.
-     * 
+     * Sets the {@code protected final Material mMaterial} field.
+     *
      * @param target
      *            May be a {@link Material} or a {@link SceneObject} -
      *            does runtime checks.
@@ -70,7 +70,7 @@ public abstract class MaterialAnimation extends Animation {
     }
 
     /**
-     * Sets the {@code protected final GVRMaterial mMaterial} field without
+     * Sets the {@code protected final Material mMaterial} field without
      * doing any runtime checks.
      * 
      * @param target
@@ -84,7 +84,7 @@ public abstract class MaterialAnimation extends Animation {
     }
 
     /**
-     * Sets the {@code protected final GVRMaterial mMaterial} field without
+     * Sets the {@code protected final Material mMaterial} field without
      * doing any runtime checks.
      * 
      * <p>
@@ -93,7 +93,7 @@ public abstract class MaterialAnimation extends Animation {
      * set. Rather than replicate the final field setting code, the best pattern
      * is to write a 'master' constructor, and call it <i>via</i>
      * {@code this(getMaterial(target), duration), ...);} - see
-     * {@link OpacityAnimation#GVROpacityAnimation(SceneObject, float, float)}
+     * {@link OpacityAnimation#OpacityAnimation(SceneObject, float, float)}
      * for an example.
      * 
      * @param target

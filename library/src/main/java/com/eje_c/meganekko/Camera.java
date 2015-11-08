@@ -15,10 +15,9 @@
 
 package com.eje_c.meganekko;
 
-/** Holds the GVRCameras. */
+/** Holds the Cameras. */
 public class Camera extends SceneObject {
 
-    /** Constructs a camera rig without cameras attached. */
     public Camera(VrContext vrContext) {
         super(vrContext);
     }

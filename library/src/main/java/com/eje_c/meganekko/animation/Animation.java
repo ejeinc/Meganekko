@@ -28,13 +28,7 @@ import android.view.animation.Interpolator;
  * The root of the animation tree.
  * 
  * This class (and the {@linkplain AnimationEngine engine}) supply the common
- * functionality: descendants are tiny classes that contain compiled (ie, no
- * runtime reflection is used) code to change individual properties. Most
- * animations involve a {@linkplain Transform scene object's position,}
- * {@linkplain Material a scene object's surface appearance,} <s>or an optional
- * {@linkplain GVRPostEffect "post effect":}</s> accordingly, most actual animations
- * descend from {@link TransformAnimation}, {@link MaterialAnimation},<s> or
- * {@link GVRPostEffectAnimation} </s>and not directly from {@link Animation}.
+ * functionality.
  * 
  * <p>
  * All animations have at least three or more required parameters: the object to
@@ -61,26 +55,18 @@ import android.view.animation.Interpolator;
  * <pre>
  * 
  * new ScaleAnimation(sceneObject, 1.5f, 2f) //
- *         .setRepeatMode(GVRRepetitionType.PINGPONG) //
+ *         .setRepeatMode(RepeatMode.PINGPONG) //
  *         .start({@linkplain AnimationEngine animationEngine});
  * </pre>
  * 
  * which will 'pulse' the size of the {@code sceneObject} from its current level
  * to double size, and back.
  * 
- * <p>
- * Animations run in a {@link FrameListener}, so they happen before your
- * {@link GVRScript#onStep() onStep()} handler, which happens before 
- * renders the scene graph. This has two consequences:
- * <ul>
- * <li>When you start an animation in an {@link GVRScript#onStep()} handler, it
- * starts running on the <em>next</em> frame.
- * <li>If you start multiple animations (with the same duration and the same
- * interpolator!) in the same {@code onStep()} handler, they will always be in
+ * If you start multiple animations (with the same duration and the same
+ * interpolator!) in the same time, they will always be in
  * sync. That is, you can 'compose' animations simply by starting them together;
  * you do not need to write a composite animation that animates multiple
  * properties in a single method.
- * </ul>
  */
 public abstract class Animation {
 

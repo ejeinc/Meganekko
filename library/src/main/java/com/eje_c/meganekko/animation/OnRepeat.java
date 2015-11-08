@@ -22,16 +22,16 @@ public interface OnRepeat extends OnFinish {
      * a desired state.
      * 
      * When you {@linkplain Animation#setOnFinish(OnFinish) set} a
-     * {@code GVROnRepeat} callback, {@code iteration} will be called after each
+     * {@code OnRepeat} callback, {@code iteration} will be called after each
      * iteration: returning {@code false} will stop the animation.
      * 
      * <p>
      * The repeat count {@linkplain Animation#DEFAULT_REPEAT_COUNT defaults
-     * to 2,} but setting a {@code GVROnRepeat} callback also sets the repeat
+     * to 2,} but setting a {@code OnRepeat} callback also sets the repeat
      * count to a negative number, so that the animation is under your
      * callback's control. Do note that {@link Animation#setRepeatCount(int)
      * setting a positive repeat count} <em>after</em> setting the
-     * {@code GVROnRepeat} callback will override this: {@code iteration} is not
+     * {@code OnRepeat} callback will override this: {@code iteration} is not
      * called when the repeat count is {@literal >=} 0.
      * 
      * @param animation

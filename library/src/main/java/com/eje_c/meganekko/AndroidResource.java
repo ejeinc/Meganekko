@@ -239,8 +239,8 @@ public class AndroidResource {
 
     /**
      * Returns the filename of the resource with extension.
-     * 
-     * @return Filename of the GVRAndroidResource. May return null if the
+     *
+     * @return Filename of the AndroidResource. May return null if the
      *         resource is not associated with any file
      */
     public String getResourceFilename() {
@@ -325,7 +325,7 @@ public class AndroidResource {
 
     /*
      * Generic callback interfaces, for asynchronous APIs that take a {@link
-     * GVRAndroidResource} parameter
+     * AndroidResource} parameter
      */
 
     /**

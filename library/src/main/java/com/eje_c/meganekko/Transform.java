@@ -20,7 +20,7 @@ package com.eje_c.meganekko;
  * draws a mesh.
  * 
  * Every {@link SceneObject#getTransform() scene object} has a
- * {@code GVRTransform} which exposes more-or-less convenient methods to do
+ * {@code Transform} which exposes more-or-less convenient methods to do
  * translation, rotation and scaling. Rotations can be made in either quaternion
  * or angle/axis terms; rotation values can be retrieved as either quaternion
  * components or as Euler angles.
@@ -411,7 +411,7 @@ public class Transform extends Component {
 
     @Override
     public String toString() {
-        return "GVRTransform " + Integer.toHexString(hashCode()) + ", positionX = " + getPositionX()
+        return "Transform " + Integer.toHexString(hashCode()) + ", positionX = " + getPositionX()
                 + ", positionY = " + getPositionY() + ", positionZ = " + getPositionZ()
                 + ", scaleX = " + getScaleX() + ", scaleY = " + getScaleY() + ", scaleZ = "
                 + getScaleZ() + ", rotationW = " + getRotationW() + ", rotationX = "

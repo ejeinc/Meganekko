@@ -40,8 +40,8 @@ import com.eje_c.meganekko.event.FrameListener;
  * 
  * <li>Use {@link Animation#setRepeatCount(int) setRepeatCount(0)} to 'schedule'
  * termination at the end of the current repetition, or
- * 
- * <li>{@linkplain Animation#setOnFinish(GVROnFinish) Set} a
+ *
+ * <li>{@linkplain Animation#setOnFinish(OnFinish) Set} a
  * {@linkplain OnRepeat callback,} which allows you to terminate the animation
  * before the next loop.
  * </ul>
@@ -72,7 +72,7 @@ public class AnimationEngine {
      * call {@code getInstance()} to lazy-create the singleton.
      * 
      * @param vrContext
-     *            current GVR context
+     *            current  context
      */
     public static synchronized AnimationEngine getInstance(
             VrContext vrContext) {
@@ -90,8 +90,8 @@ public class AnimationEngine {
      * this method:
      * 
      * <pre>
-     * 
-     * new GVRSomeAnimation(object, duration, parameter)//
+     *
+     * new SomeAnimation(object, duration, parameter)//
      *         .setOnFinish(handler)//
      *         .start(animationEngine);
      * </pre>
@@ -101,7 +101,7 @@ public class AnimationEngine {
      * <pre>
      * 
      * animationEngine.start(//
-     *         new GVRSomeAnimation(object, duration, parameter)//
+     *         new SomeAnimation(object, duration, parameter)//
      *                 .setOnFinish(handler)//
      * );
      * </pre>
@@ -127,7 +127,7 @@ public class AnimationEngine {
      * <ul>
      * <li>Use {@link Animation#setRepeatCount(int) setRepeatCount(0)} to
      * 'schedule' termination at the end of the current repetition, or
-     * <li>{@linkplain Animation#setOnFinish(GVROnFinish) Set} a
+     * <li>{@linkplain Animation#setOnFinish(OnFinish) Set} a
      * {@linkplain OnRepeat callback,} which allows you to terminate the
      * animation before the next loop.
      * </ul>

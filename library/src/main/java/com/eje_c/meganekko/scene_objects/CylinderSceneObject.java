@@ -100,7 +100,7 @@ public class CylinderSceneObject extends SceneObject {
      *            facing out.
      * 
      * @param futureTexture
-     *            the texture for the cylinder. {@code Future<GVRTexture>} is
+     *            the texture for the cylinder. {@code Future<Texture>} is
      *            used here for asynchronously loading the texture.
      */
     public CylinderSceneObject(VrContext vrContext, boolean facingOut,
@@ -152,7 +152,7 @@ public class CylinderSceneObject extends SceneObject {
      *            facing out.
      * 
      * @param futureTextureList
-     *            the list of three textures for the cylinder. {@code Future<GVRTexture>} is used here for asynchronously loading
+     *            the list of three textures for the cylinder. {@code Future<Texture>} is used here for asynchronously loading
      *            the texture. The six textures are for top, side, and bottom faces respectively.
      */
     public CylinderSceneObject(VrContext vrContext, boolean facingOut,
@@ -293,7 +293,7 @@ public class CylinderSceneObject extends SceneObject {
      *            number of quads around to make the cylinder.
      *            
      * @param futureTextureList
-     *            the list of three textures for the cylinder. {@code Future<GVRTexture>} is used here for asynchronously loading
+     *            the list of three textures for the cylinder. {@code Future<Texture>} is used here for asynchronously loading
      *            the texture. The six textures are for top, side, and bottom faces respectively.
      */
     public CylinderSceneObject(VrContext vrContext, float bottomRadius,
@@ -351,7 +351,7 @@ public class CylinderSceneObject extends SceneObject {
      *            
      * @param futureTextureList
      *            the list of three textures for the cylinder. {@code Future<
-     *            {@code GVRTexture}>} is used here for asynchronously loading
+     *            {@code Texture}>} is used here for asynchronously loading
      *            the texture. The six textures are for top, side, and bottom faces respectively.
      *            
      * @param stackSegmentNumber
