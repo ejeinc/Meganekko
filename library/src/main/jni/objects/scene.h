@@ -44,9 +44,6 @@ public:
     }
     std::vector<SceneObject*> getWholeSceneObjects();
 
-    int getSceneDirtyFlag() { return 1 || dirtyFlag_;  /* force to be true */}
-    void setSceneDirtyFlag(int dirtyBits) { dirtyFlag_ |= dirtyBits; }
-
     void set_frustum_culling( bool frustum_flag){ frustum_flag_ = frustum_flag; }
     bool get_frustum_culling(){ return frustum_flag_; }
 

@@ -38,49 +38,45 @@ void Renderer::RenderEyeView(JNIEnv * jni, Scene* scene, ShaderManager* shader_m
     // bone/weight/joint and other assimp data, we will put general model conversion
     // on hold and do this kind of conversion fist
 
-    if (scene->getSceneDirtyFlag()) {
+    std::vector<SceneObject*> scene_objects = scene->getWholeSceneObjects();
+    std::vector<RenderData*> render_data_vector;
 
-        std::vector<SceneObject*> scene_objects = scene->getWholeSceneObjects();
-        std::vector<RenderData*> render_data_vector;
+    // do occlusion culling, if enabled
+    occlusion_cull(scene, scene_objects);
 
-        // do occlusion culling, if enabled
-        occlusion_cull(scene, scene_objects);
+    // do frustum culling, if enabled
+    frustum_cull(jni, scene, eyeViewMatrix.GetTranslation(), scene_objects, render_data_vector,
+            eyeViewProjection, shader_manager);
 
-        // do frustum culling, if enabled
-        frustum_cull(jni, scene, eyeViewMatrix.GetTranslation(), scene_objects, render_data_vector,
-                eyeViewProjection, shader_manager);
+    // do sorting based on render order
+    if (!scene->get_frustum_culling()) {
+        std::sort(render_data_vector.begin(), render_data_vector.end(),
+                compareRenderData);
+    } else {
+        std::sort(render_data_vector.begin(), render_data_vector.end(),
+                compareRenderDataWithFrustumCulling);
+    }
 
-        // do sorting based on render order
-        if (!scene->get_frustum_culling()) {
-            std::sort(render_data_vector.begin(), render_data_vector.end(),
-                    compareRenderData);
-        } else {
-            std::sort(render_data_vector.begin(), render_data_vector.end(),
-                    compareRenderDataWithFrustumCulling);
-        }
+    glEnable (GL_DEPTH_TEST);
+    glDepthFunc (GL_LEQUAL);
+    glEnable (GL_CULL_FACE);
+    glFrontFace (GL_CCW);
+    glCullFace (GL_BACK);
+    glEnable (GL_BLEND);
+    glBlendEquation (GL_FUNC_ADD);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable (GL_POLYGON_OFFSET_FILL);
 
-        glEnable (GL_DEPTH_TEST);
-        glDepthFunc (GL_LEQUAL);
-        glEnable (GL_CULL_FACE);
-        glFrontFace (GL_CCW);
-        glCullFace (GL_BACK);
-        glEnable (GL_BLEND);
-        glBlendEquation (GL_FUNC_ADD);
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        glDisable (GL_POLYGON_OFFSET_FILL);
+    // TODO background color as parameter
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-        // TODO background color as parameter
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+    int renderMask = eye == 0 ? RenderData::RenderMaskBit::Left : RenderData::RenderMaskBit::Right;
 
-        int renderMask = eye == 0 ? RenderData::RenderMaskBit::Left : RenderData::RenderMaskBit::Right;
-
-        for (auto it = render_data_vector.begin();
-                it != render_data_vector.end(); ++it) {
-            renderRenderData(*it, eyeViewMatrix, eyeProjectionMatrix, renderMask, shader_manager);
-        }
-
-    } // flag checking
+    for (auto it = render_data_vector.begin();
+            it != render_data_vector.end(); ++it) {
+        renderRenderData(*it, eyeViewMatrix, eyeProjectionMatrix, renderMask, shader_manager);
+    }
 
 }
 
