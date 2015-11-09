@@ -57,7 +57,7 @@ public class VideoSceneObject extends SceneObject {
      *            current {@link VrContext}
      * @param mesh
      *            a {@link Mesh} - see
-     *            {@link VrContext#loadMesh(com.eje_c.meganekko.GVRAndroidResource)}
+     *            {@link VrContext#loadMesh(com.eje_c.meganekko.AndroidResource)}
      *            and {@link VrContext#createQuad(float, float)}
      * @param mediaPlayer
      *            an Android {@link MediaPlayer}
@@ -92,7 +92,7 @@ public class VideoSceneObject extends SceneObject {
      *            current {@link VrContext}
      * @param mesh
      *            a {@link Mesh} - see
-     *            {@link VrContext#loadMesh(com.eje_c.meganekko.GVRAndroidResource)}
+     *            {@link VrContext#loadMesh(com.eje_c.meganekko.AndroidResource)}
      *            and {@link VrContext#createQuad(float, float)}
      * @param mediaPlayer
      *            an Android {@link MediaPlayer}

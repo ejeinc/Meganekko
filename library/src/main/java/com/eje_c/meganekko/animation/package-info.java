@@ -20,7 +20,7 @@
  * You can animate any Meganekko object's properties. By default, when you start an 
  * animation it runs once and terminates, without any need for further action
  * on your part. You can, however, specify an {@linkplain 
- * com.eje_c.meganekko.animation.Animation#setOnFinish(GVROnFinish)
+ * com.eje_c.meganekko.animation.Animation#setOnFinish(OnFinish)
  *  on-finish callback;} you can specify a {@linkplain 
  * com.eje_c.meganekko.animation.Animation#setRepeatCount(int) 
  * repeat count} and/or a {@linkplain 
@@ -33,7 +33,7 @@
  * The animation engine is an optional part of Meganekko; you need to create an instance
  * of the {@linkplain com.eje_c.meganekko.animation.AnimationEngine animation 
  * engine.} See {@link 
- * com.eje_c.meganekko.animation.Animation GVRAnimation} for the details, but
+ * com.eje_c.meganekko.animation.Animation Animation} for the details, but
  * the general use model is
  * <ul>
  * <li>{@code new} an animation, supplying the required parameters

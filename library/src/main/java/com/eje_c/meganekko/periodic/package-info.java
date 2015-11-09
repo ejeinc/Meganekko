@@ -16,7 +16,7 @@
 /** Schedule Runnables to run on the GL thread, in the future.
  * 
  * This is an optional component of Meganekko: You need to {@linkplain 
- * com.eje_c.meganekko.periodic.PeriodicEngine#getInstance(com.eje_c.meganekko.GVRContext)
+ * com.eje_c.meganekko.periodic.PeriodicEngine#getInstance(com.eje_c.meganekko.VRContext)
  * get an instance} to use it.
  * 
  * <p>

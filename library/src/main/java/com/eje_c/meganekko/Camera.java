@@ -15,24 +15,15 @@
 
 package com.eje_c.meganekko;
 
-/** Holds the GVRCameras. */
+/** Holds the Cameras. */
 public class Camera extends SceneObject {
 
-    /** Constructs a camera rig without cameras attached. */
     public Camera(VrContext vrContext) {
         super(vrContext);
     }
 
     @Override
     protected native long initNativeInstance();
-
-    public void attachToParent(SceneObject parentObject) {
-        parentObject.addChildObject(this);
-    }
-
-    public void detachFromParent(SceneObject parentObject) {
-        parentObject.removeChildObject(this);
-    }
 
     /**
      * The direction the camera rig is looking at. In other words, the direction

@@ -24,7 +24,7 @@ import com.eje_c.meganekko.Transform;
  * Animate a {@link Transform}.
  * 
  * The constructors cast their {@code target} parameter to a
- * {@code protected final GVRTransform mTransform} field.
+ * {@code protected final Transform mTransform} field.
  */
 public abstract class TransformAnimation extends Animation {
 
@@ -34,7 +34,7 @@ public abstract class TransformAnimation extends Animation {
     protected final Transform mTransform;
 
     /**
-     * Sets the {@code protected final GVRTransform mTransform} field.
+     * Sets the {@code protected final Transform mTransform} field.
      * 
      * @param target
      *            May be a {@link Transform} or a {@link SceneObject} -
@@ -70,7 +70,7 @@ public abstract class TransformAnimation extends Animation {
     }
 
     /**
-     * Sets the {@code protected final GVRTransform mTransform} field without
+     * Sets the {@code protected final Transform mTransform} field without
      * doing any runtime checks.
      * 
      * @param target
@@ -84,7 +84,7 @@ public abstract class TransformAnimation extends Animation {
     }
 
     /**
-     * Sets the {@code protected final GVRTransform mTransform} field without
+     * Sets the {@code protected final Transform mTransform} field without
      * doing any runtime checks.
      * 
      * <p>
@@ -93,7 +93,7 @@ public abstract class TransformAnimation extends Animation {
      * set. Rather than replicate the final field setting code, the best pattern
      * is to write a 'master' constructor, and call it <i>via</i>
      * {@code this(getTransform(target), duration), ...);} - see
-     * {@link RotationByAxisAnimation#GVRRotationByAxisAnimation(SceneObject, float, float, float, float, float)}
+     * {@link RotationByAxisAnimation#RotationByAxisAnimation(SceneObject, float, float, float, float, float)}
      * for an example.
      * 
      * @param target

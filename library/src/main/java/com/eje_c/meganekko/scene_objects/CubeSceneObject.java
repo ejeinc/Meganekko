@@ -234,7 +234,7 @@ public class CubeSceneObject extends SceneObject {
      *            facing out.
      * 
      * @param futureTexture
-     *            the texture for six faces. {@code Future<GVRTexture>}
+     *            the texture for six faces. {@code Future<Texture>}
      *            is used here for asynchronously loading the texture.
      */
     public CubeSceneObject(VrContext vrContext, boolean facingOut,
@@ -285,7 +285,7 @@ public class CubeSceneObject extends SceneObject {
      * 
      * @param futureTextureList
      *            the list of six textures for six faces.
-     *            {@code Future<GVRTexture>} is used here for asynchronously
+     *            {@code Future<Texture>} is used here for asynchronously
      *            loading the texture. The six textures are for front, right,
      *            back, left, top, and bottom faces respectively.
      */
@@ -318,7 +318,7 @@ public class CubeSceneObject extends SceneObject {
      *            facing out.
      * 
      * @param futureTextureList
-     *            the list of six textures for six faces. {@code Future<GVRTexture>} is used here for asynchronously loading
+     *            the list of six textures for six faces. {@code Future<Texture>} is used here for asynchronously loading
      *            the texture. The six textures are for front, right, back,
      *            left, top, and bottom faces respectively.
      *            
