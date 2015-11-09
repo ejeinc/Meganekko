@@ -430,8 +430,6 @@ public class Scene extends SceneObject implements FrameListener,
 }
 
 class NativeScene {
-    static native long ctor();
-
     public static native void setFrustumCulling(long scene, boolean flag);
 
     public static native void setOcclusionQuery(long scene, boolean flag);
