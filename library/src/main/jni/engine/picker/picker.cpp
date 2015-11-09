@@ -25,7 +25,7 @@
 #include "engine/picker/eye_pointee_holder_data.h"
 #include "objects/scene.h"
 #include "objects/scene_object.h"
-#include "objects/components/camera.h"
+#include "objects/camera.h"
 #include "objects/components/eye_pointee_holder.h"
 
 namespace mgn {

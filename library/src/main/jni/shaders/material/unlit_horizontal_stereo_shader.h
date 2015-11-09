@@ -29,7 +29,6 @@
 #include "GLES3/gl3.h"
 #endif
 
-#include "objects/eye_type.h"
 #include "objects/recyclable_object.h"
 #include "Kernel/OVR_Math.h"
 #include "GlProgram.h"

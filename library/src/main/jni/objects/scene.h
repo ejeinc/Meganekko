@@ -26,7 +26,7 @@
 
 
 #include "objects/hybrid_object.h"
-#include "components/camera.h"
+#include "objects/camera.h"
 #include "engine/renderer/renderer.h"
 
 namespace mgn {

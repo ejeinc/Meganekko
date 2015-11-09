@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-#include "activity.h"
+#include "MeganekkoActivity.h"
 
 #include <jni.h>
 #include <VrApi.h>

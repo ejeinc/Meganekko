@@ -33,7 +33,6 @@
 #include "Kernel/OVR_Math.h"
 #include "GlProgram.h"
 
-#include "objects/eye_type.h"
 #include "objects/recyclable_object.h"
 
 using namespace OVR;
