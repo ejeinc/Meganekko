@@ -164,24 +164,29 @@ public class Picker {
     }
 
     /**
-     * Tests the {@link SceneObject} against the camera rig's lookat vector.
-     * 
+     * Tests the {@link SceneObject} against the camera's lookat vector.
+     *
      * @param sceneObject
      *            The {@link SceneObject} to be tested.
      * 
      * @param camera
      *            The {@link Camera} to use for ray testing.
-     * 
-     * @return the distance from the camera rig. It returns positive infinity if
+     *
+     * @return the distance from the camera. It returns positive infinity if
      *         the camera is not pointing to the sceneObject.
      * 
      */
-    public static final float pickSceneObject(SceneObject sceneObject,
-            Camera camera) {
-        return NativePicker.pickSceneObject(sceneObject.getNative(),
-                camera.getNative());
+    public static final float pickSceneObject(SceneObject sceneObject, Camera camera) {
+        return NativePicker.pickSceneObject(sceneObject.getNative(), camera.getNative());
     }
 
+    /**
+     * Tests the {@link SceneObject} against the camera's lookat vector.
+     *
+     * @param sceneObject The {@link SceneObject} to be tested.
+     * @param camera      The {@link Camera} to use for ray testing.
+     * @return Hit location on object local coordinates.
+     */
     public static final float[] pickSceneObjectv(SceneObject sceneObject, Camera camera) {
         return NativePicker.pickSceneObjectv(sceneObject.getNative(), camera.getNative());
     }
@@ -234,7 +239,7 @@ public class Picker {
      * @param dz
      *            The z vector of the ray direction.
      * @return A list of {@link GVRPickedObject}, sorted by distance from the
-     *         camera rig. Each {@link GVRPickedObject} contains the object
+     *         camera. Each {@link GVRPickedObject} contains the object
      *         within the {@link EyePointeeHolder} along with the hit
      *         location. (Note that the hit location is actually the point where
      *         the cast ray intersected the holder's axis-aligned bounding box,
@@ -264,8 +269,8 @@ public class Picker {
 
     /**
      * Tests the {@link SceneObject}s contained within scene against the
-     * camera rig's lookat vector.
-     * 
+     * camera's lookat vector.
+     *
      * <p>
      * This method uses higher-level function
      * {@linkplain #findObjects(Scene, float, float, float, float, float, float)
@@ -275,7 +280,7 @@ public class Picker {
      *            The {@link Scene} with all the objects to be tested.
      * 
      * @return A list of {@link GVRPickedObject}, sorted by distance from the
-     *         camera rig. Each {@link GVRPickedObject} contains the object
+     *         camera. Each {@link GVRPickedObject} contains the object
      *         within the {@link EyePointeeHolder} along with the hit
      *         location.
      * 
