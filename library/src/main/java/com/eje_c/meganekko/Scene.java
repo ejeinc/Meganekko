@@ -57,7 +57,7 @@ public class Scene extends SceneObject implements FrameListener,
 
     /**
      * Constructs a scene with a camera rig holding left & right cameras in it.
-     * 
+     *
      * @param vrContext
      *            {@link VrContext} the app is using.
      */
@@ -67,7 +67,7 @@ public class Scene extends SceneObject implements FrameListener,
         addChildObject(camera);
         setMainCamera(camera);
     }
-    
+
     @Override
     protected native long initNativeInstance();
 
@@ -81,7 +81,7 @@ public class Scene extends SceneObject implements FrameListener,
 
     /**
      * Set the {@link Camera camera} used for rendering the scene on the screen.
-     * 
+     *
      * @param camera
      *            The {@link Camera camera} to render with.
      */
@@ -120,50 +120,119 @@ public class Scene extends SceneObject implements FrameListener,
      * Event register methods.
      */
 
+    /**
+     * Register a {@link FrameListener}.
+     *
+     * @param listener
+     */
+    public final void onFrame(FrameListener listener) {
+        mEventBus.register(listener);
+    }
+
+    /**
+     * Register a {@link SwipeUpEventListener}.
+     *
+     * @param listener
+     */
     public final void onSwipeUp(SwipeUpEventListener listener) {
         mEventBus.register(listener);
     }
 
+    /**
+     * Register a {@link SwipeDownEventListener}.
+     *
+     * @param listener
+     */
     public final void onSwipeDown(SwipeDownEventListener listener) {
         mEventBus.register(listener);
     }
 
+    /**
+     * Register a {@link SwipeForwardEventListener}.
+     *
+     * @param listener
+     */
     public final void onSwipeForward(SwipeForwardEventListener listener) {
         mEventBus.register(listener);
     }
 
+    /**
+     * Register a {@link SwipeBackEventListener}.
+     *
+     * @param listener
+     */
     public final void onSwipeBack(SwipeBackEventListener listener) {
         mEventBus.register(listener);
     }
 
+    /**
+     * Register a {@link TouchSingleEventListener}.
+     *
+     * @param listener
+     */
     public final void onTouchSingle(TouchSingleEventListener listener) {
         mEventBus.register(listener);
     }
 
+    /**
+     * Register a {@link TouchDoubleEventListener}.
+     *
+     * @param listener
+     */
     public final void onTouchDouble(TouchDoubleEventListener listener) {
         mEventBus.register(listener);
     }
 
+    /**
+     * Register a {@link KeyShortPressEventListener}.
+     *
+     * @param listener
+     */
     public final void onKeyShortPress(KeyShortPressEventListener listener) {
         mEventBus.register(listener);
     }
 
+    /**
+     * Register a {@link KeyDoubleTapEventListener}.
+     *
+     * @param listener
+     */
     public final void onKeyDoubleTap(KeyDoubleTapEventListener listener) {
         mEventBus.register(listener);
     }
 
+    /**
+     * Register a {@link KeyLongPressEventListener}.
+     *
+     * @param listener
+     */
     public final void onKeyLongPress(KeyLongPressEventListener listener) {
         mEventBus.register(listener);
     }
 
+    /**
+     * Register a {@link KeyDownEventListener}.
+     *
+     * @param listener
+     */
     public final void onKeyDown(KeyDownEventListener listener) {
         mEventBus.register(listener);
     }
 
+    /**
+     * Register a {@link KeyUpEventListener}.
+     *
+     * @param listener
+     */
     public final void onKeyUp(KeyUpEventListener listener) {
         mEventBus.register(listener);
     }
 
+    /**
+     * Register a {@link KeyMaxEventListener}.
+     *
+     * @param listener
+     */
     public final void onKeyMax(KeyMaxEventListener listener) {
         mEventBus.register(listener);
     }
@@ -172,50 +241,119 @@ public class Scene extends SceneObject implements FrameListener,
      * Event unregister methods.
      */
 
+    /**
+     * Unregister a {@link FrameListener}.
+     *
+     * @param listener
+     */
+    public final void offFrame(FrameListener listener) {
+        mEventBus.unregister(listener);
+    }
+
+    /**
+     * Unregister a {@link SwipeUpEventListener}.
+     *
+     * @param listener
+     */
     public final void offSwipeUp(SwipeUpEventListener listener) {
         mEventBus.unregister(listener);
     }
 
+    /**
+     * Unregister a {@link SwipeDownEventListener}.
+     *
+     * @param listener
+     */
     public final void offSwipeDown(SwipeDownEventListener listener) {
         mEventBus.unregister(listener);
     }
 
+    /**
+     * Unregister a {@link SwipeForwardEventListener}.
+     *
+     * @param listener
+     */
     public final void offSwipeForward(SwipeForwardEventListener listener) {
         mEventBus.unregister(listener);
     }
 
+    /**
+     * Unregister a {@link SwipeBackEventListener}.
+     *
+     * @param listener
+     */
     public final void offSwipeBack(SwipeBackEventListener listener) {
         mEventBus.unregister(listener);
     }
 
+    /**
+     * Unregister a {@link TouchSingleEventListener}.
+     *
+     * @param listener
+     */
     public final void offTouchSingle(TouchSingleEventListener listener) {
         mEventBus.unregister(listener);
     }
 
+    /**
+     * Unregister a {@link TouchDoubleEventListener}.
+     *
+     * @param listener
+     */
     public final void offTouchDouble(TouchDoubleEventListener listener) {
         mEventBus.unregister(listener);
     }
 
+    /**
+     * Unregister a {@link KeyShortPressEventListener}.
+     *
+     * @param listener
+     */
     public final void offKeyShortPress(KeyShortPressEventListener listener) {
         mEventBus.unregister(listener);
     }
 
+    /**
+     * Unregister a {@link KeyDoubleTapEventListener}.
+     *
+     * @param listener
+     */
     public final void offKeyDoubleTap(KeyDoubleTapEventListener listener) {
         mEventBus.unregister(listener);
     }
 
+    /**
+     * Unregister a {@link KeyLongPressEventListener}.
+     *
+     * @param listener
+     */
     public final void offKeyLongPress(KeyLongPressEventListener listener) {
         mEventBus.unregister(listener);
     }
 
+    /**
+     * Unregister a {@link KeyDownEventListener}.
+     *
+     * @param listener
+     */
     public final void offKeyDown(KeyDownEventListener listener) {
         mEventBus.unregister(listener);
     }
 
+    /**
+     * Unregister a {@link KeyUpEventListener}.
+     *
+     * @param listener
+     */
     public final void offKeyUp(KeyUpEventListener listener) {
         mEventBus.unregister(listener);
     }
 
+    /**
+     * Unregister a {@link KeyMaxEventListener}.
+     *
+     * @param listener
+     */
     public final void offKeyMax(KeyMaxEventListener listener) {
         mEventBus.unregister(listener);
     }
