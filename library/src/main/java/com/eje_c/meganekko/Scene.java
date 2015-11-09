@@ -364,67 +364,67 @@ public class Scene extends SceneObject implements FrameListener,
      */
 
     @Override
-    public final void onEvent(TouchSingleEvent event) {
+    public void onEvent(TouchSingleEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public final void onEvent(TouchDoubleEvent event) {
+    public void onEvent(TouchDoubleEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public final void onEvent(SwipeUpEvent event) {
+    public void onEvent(SwipeUpEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public final void onEvent(SwipeForwardEvent event) {
+    public void onEvent(SwipeForwardEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public final void onEvent(SwipeDownEvent event) {
+    public void onEvent(SwipeDownEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public final void onEvent(SwipeBackEvent event) {
+    public void onEvent(SwipeBackEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public final void onEvent(KeyUpEvent event) {
+    public void onEvent(KeyUpEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public final void onEvent(KeyShortPressEvent event) {
+    public void onEvent(KeyShortPressEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public final void onEvent(KeyMaxEvent event) {
+    public void onEvent(KeyMaxEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public final void onEvent(KeyLongPressEvent event) {
+    public void onEvent(KeyLongPressEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public final void onEvent(KeyDownEvent event) {
+    public void onEvent(KeyDownEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public final void onEvent(KeyDoubleTapEvent event) {
+    public void onEvent(KeyDoubleTapEvent event) {
         mEventBus.post(event);
     }
 
     @Override
-    public final void onEvent(VrFrame vrFrame) {
+    public void onEvent(VrFrame vrFrame) {
         mEventBus.post(vrFrame);
     }
 }
