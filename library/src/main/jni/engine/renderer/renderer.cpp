@@ -465,7 +465,7 @@ void Renderer::renderRenderData(RenderData* render_data,
                         }
                     } catch (std::string error) {
                         LOGE(
-                                "Error detected in Renderer::renderRenderData; name : %s, error : %s", render_data->owner_object()->name().c_str(), error.c_str());
+                                "Error detected in Renderer::renderRenderData; error : %s", error.c_str());
                         shader_manager->getErrorShader()->render(mvp_matrix,
                                 render_data);
                     }

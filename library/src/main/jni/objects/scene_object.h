@@ -38,14 +38,6 @@ public:
     SceneObject(JNIEnv * jni, jobject javaObject);
     ~SceneObject();
 
-    std::string name() const {
-        return name_;
-    }
-
-    void set_name(std::string name) {
-        name_ = name;
-    }
-
     void set_in_frustum(bool in_frustum = true) {
         in_frustum_ = in_frustum;
     }
@@ -146,7 +138,6 @@ private:
     jobject   JavaObject;
     jmethodID onRenderMethodID;
 
-    std::string name_;
     Transform* transform_;
     RenderData* render_data_;
     EyePointeeHolder* eye_pointee_holder_;

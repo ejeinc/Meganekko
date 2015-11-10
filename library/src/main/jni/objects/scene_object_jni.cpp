@@ -27,13 +27,6 @@ extern "C" {
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_SceneObject_initNativeInstance(JNIEnv * env,
         jobject obj);
-JNIEXPORT jstring JNICALL
-Java_com_eje_1c_meganekko_NativeSceneObject_getName(JNIEnv * env,
-        jobject obj, jlong jscene_object);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeSceneObject_setName(JNIEnv * env,
-        jobject obj, jlong jscene_object, jstring name);
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_NativeSceneObject_attachTransform(JNIEnv * env,
@@ -89,24 +82,6 @@ Java_com_eje_1c_meganekko_NativeSceneObject_getLODMaxRange(
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_SceneObject_initNativeInstance(JNIEnv * env, jobject obj) {
     return reinterpret_cast<jlong>(new SceneObject(env, obj));
-}
-
-JNIEXPORT jstring JNICALL
-Java_com_eje_1c_meganekko_NativeSceneObject_getName(JNIEnv * env,
-        jobject obj, jlong jscene_object) {
-    SceneObject* scene_object = reinterpret_cast<SceneObject*>(jscene_object);
-    std::string name = scene_object->name();
-    jstring jname = env->NewStringUTF(name.c_str());
-    return jname;
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeSceneObject_setName(JNIEnv * env,
-        jobject obj, jlong jscene_object, jstring name) {
-    SceneObject* scene_object = reinterpret_cast<SceneObject*>(jscene_object);
-    const char* native_name = env->GetStringUTFChars(name, 0);
-    scene_object->set_name(std::string(native_name));
-    env->ReleaseStringUTFChars(name, native_name);
 }
 
 JNIEXPORT void JNICALL

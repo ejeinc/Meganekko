@@ -45,6 +45,7 @@ import com.eje_c.meganekko.event.FrameListener;
 public class SceneObject extends HybridObject implements FrameListener {
 
     private int mId;
+    private String mName;
     private Transform mTransform;
     private RenderData mRenderData;
     private EyePointeeHolder mEyePointeeHolder;
@@ -274,7 +275,7 @@ public class SceneObject extends HybridObject implements FrameListener {
      *         returned string will be empty.
      */
     public String getName() {
-        return NativeSceneObject.getName(getNative());
+        return mName;
     }
 
     /**
@@ -287,7 +288,7 @@ public class SceneObject extends HybridObject implements FrameListener {
      *            Name of the object.
      */
     public void setName(String name) {
-        NativeSceneObject.setName(getNative(), name);
+        mName = name;
     }
 
     /**
@@ -831,10 +832,6 @@ public class SceneObject extends HybridObject implements FrameListener {
 }
 
 class NativeSceneObject {
-    static native String getName(long sceneObject);
-
-    static native void setName(long sceneObject, String name);
-
     static native void attachTransform(long sceneObject, long transform);
 
     static native void detachTransform(long sceneObject);
