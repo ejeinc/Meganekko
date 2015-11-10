@@ -53,14 +53,11 @@ public class JoyButton {
     public static final int BUTTON_TOUCH_LONGPRESS = 1 << 30;
 
     /**
-     * 
-     * @param buttonState
-     *            Returned value from {@code VrFrame#getButtonPressed()},
-     *            {@code VrFrame#getButtonReleased()} or
-     *            {@code VrFrame#getButtonState()}.
-     * @param code
-     *            JoyButton.BUTTON_* constant value.
-     * @return 
+     * @param buttonState Returned value from {@code VrFrame#getButtonPressed()},
+     *                    {@code VrFrame#getButtonReleased()} or
+     *                    {@code VrFrame#getButtonState()}.
+     * @param code        JoyButton.BUTTON_* constant value.
+     * @return
      */
     public static boolean contains(int buttonState, int code) {
         return (buttonState & code) > 0;

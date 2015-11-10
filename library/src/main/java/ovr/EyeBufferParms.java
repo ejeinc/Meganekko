@@ -16,63 +16,66 @@
 
 package ovr;
 
+/**
+ * Native OVR::ovrEyeBufferParms wrapper. See VrAppFramework/Include/EyeBuffers.h for more details.
+ */
 public class EyeBufferParms {
 
-	private final long mNativePtr;
+    private final long mNativePtr;
 
-	protected EyeBufferParms(long nativePtr) {
-		this.mNativePtr = nativePtr;
-	}
+    protected EyeBufferParms(long nativePtr) {
+        this.mNativePtr = nativePtr;
+    }
 
-	long getNativePtr() {
-		return mNativePtr;
-	}
+    long getNativePtr() {
+        return mNativePtr;
+    }
 
-	public int getResolutionWidth() {
-		return getResolutionWidth(mNativePtr);
-	}
+    public int getResolutionWidth() {
+        return getResolutionWidth(mNativePtr);
+    }
 
-	public void setResolutionWidth(int resolutionWidth) {
-		setResolutionWidth(mNativePtr, resolutionWidth);
-	}
+    public void setResolutionWidth(int resolutionWidth) {
+        setResolutionWidth(mNativePtr, resolutionWidth);
+    }
 
-	public int getResolutionHeight() {
-		return getResolutionHeight(mNativePtr);
-	}
+    public int getResolutionHeight() {
+        return getResolutionHeight(mNativePtr);
+    }
 
-	public void setResolutionHeight(int resolutionHeight) {
-		setResolutionWidth(mNativePtr, resolutionHeight);
-	}
+    public void setResolutionHeight(int resolutionHeight) {
+        setResolutionWidth(mNativePtr, resolutionHeight);
+    }
 
-	public int getMultisamples() {
-		return getMultisamples(mNativePtr);
-	}
+    public int getMultisamples() {
+        return getMultisamples(mNativePtr);
+    }
 
-	public void setMultisamples(int multisamples) {
-		setResolutionWidth(mNativePtr, multisamples);
-	}
+    public void setMultisamples(int multisamples) {
+        setResolutionWidth(mNativePtr, multisamples);
+    }
 
-	public boolean getResolveDepth() {
-		return getResolveDepth(mNativePtr);
-	}
+    public boolean getResolveDepth() {
+        return getResolveDepth(mNativePtr);
+    }
 
-	public void setResolveDepth(boolean resolveDepth) {
-		setResolveDepth(mNativePtr, resolveDepth);
-	}
+    public void setResolveDepth(boolean resolveDepth) {
+        setResolveDepth(mNativePtr, resolveDepth);
+    }
 
-	private native int getResolutionWidth(long nativePtr);
+    private native int getResolutionWidth(long nativePtr);
 
-	private native void setResolutionWidth(long nativePtr, int resolutionWidth);
+    private native void setResolutionWidth(long nativePtr, int resolutionWidth);
 
-	private native int getResolutionHeight(long nativePtr);
+    private native int getResolutionHeight(long nativePtr);
 
-	private native void setResolutionHeight(long nativePtr, int resolutionHeight);
+    private native void setResolutionHeight(long nativePtr, int resolutionHeight);
 
-	private native int getMultisamples(long nativePtr);
+    private native int getMultisamples(long nativePtr);
 
-	private native void setMultisamples(long nativePtr, int multisamples);
+    private native void setMultisamples(long nativePtr, int multisamples);
 
-	private native boolean getResolveDepth(long nativePtr);
+    private native boolean getResolveDepth(long nativePtr);
 
-	private native void setResolveDepth(long nativePtr, boolean resolveDepth);
+    private native void setResolveDepth(long nativePtr, boolean resolveDepth);
 }

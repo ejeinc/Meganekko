@@ -16,6 +16,9 @@
 
 package ovr;
 
+/**
+ * Native OVR::App wrapper. See VrAppFramework/Include/App.h for more details.
+ */
 public class App {
     private final long mAppPtr;
 
@@ -26,38 +29,6 @@ public class App {
     public void startSystemActivity(String command) {
         startSystemActivity(mAppPtr, command);
     }
-
-//    public void returnToHome() {
-//        returnToHome(mAppPtr);
-//    }
-
-    // -----------------------------------------------------------------
-    // system settings
-    // -----------------------------------------------------------------
-
-//    public int getSystemBrightness() {
-//        return getSystemBrightness(mAppPtr);
-//    }
-
-//    public void setSystemBrightness(int brightness) {
-//        setSystemBrightness(mAppPtr, brightness);
-//    }
-
-//    public boolean getComfortMode() {
-//        return getComfortMode(mAppPtr);
-//    }
-
-//    public void setComfortMode(boolean enable) {
-//        setComfortMode(mAppPtr, enable);
-//    }
-
-//    public boolean getDoNotDisturbMode() {
-//        return getDoNotDisturbMode(mAppPtr);
-//    }
-
-//    public void setDoNotDisturbMode(boolean enable) {
-//        setDoNotDisturbMode(mAppPtr, enable);
-//    }
 
     // -----------------------------------------------------------------
     // accessors
@@ -112,20 +83,6 @@ public class App {
     }
 
     private native void startSystemActivity(long appPtr, String command);
-
-//    private native void returnToHome(long appPtr);
-
-//    private native int getSystemBrightness(long appPtr);
-
-//    private native void setSystemBrightness(long appPtr, int brightness);
-
-//    private native boolean getComfortMode(long appPtr);
-
-//    private native void setComfortMode(long appPtr, boolean enable);
-
-//    private native boolean getDoNotDisturbMode(long appPtr);
-
-//    private native void setDoNotDisturbMode(long appPtr, boolean enable);
 
     private native long getEyeBufferParms(long appPtr);
 
