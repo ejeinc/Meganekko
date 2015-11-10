@@ -361,8 +361,8 @@ public class MeganekkoActivity extends VrActivity {
      * (GUI) thread) and pass it to the coprocessor, using calls that must be
      * made from the GL thread (aka the "GL context"). The callback queue is
      * processed before any registered
-     * {@linkplain #registerFrameListener(FrameListener) frame listeners}.
-     * 
+     * {@linkplain #onFrame(FrameListener)} frame listeners}.
+     *
      * @param runnable
      *            A bit of code that must run on the GL thread
      */
