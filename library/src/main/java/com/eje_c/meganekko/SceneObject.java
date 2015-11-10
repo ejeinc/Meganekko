@@ -156,7 +156,7 @@ public class SceneObject extends HybridObject implements FrameListener {
      * Note that because of <a href="package-summary.html#async">asynchronous
      * request consolidation</a> you generally don't have to do anything special
      * to create several objects that share the same mesh or texture: if you
-     * create all the objects in {@link GVRScript#onInit(VrContext) onInit(),}
+     * create all the objects in {@link MeganekkoActivity#oneTimeInit()},
      * the meshes and textures will generally <em>not</em> have loaded before
      * your {@code onInit()} method finishes. Thus, the loading code will see
      * that, say, {@code sceneObject2} and {@code sceneObject3} are using the
@@ -667,7 +667,7 @@ public class SceneObject extends HybridObject implements FrameListener {
     /**
      * Add {@code childComponent} as a child of this object (owner object of the
      * component is added as child). Adding a component will increase the
-     * {@link getChildrenCount() getChildrenCount()} for this scene object.
+     * {@link SceneObject#getChildrenCount() getChildrenCount()} for this scene object.
      * 
      * @param childComponent
      *            {@link Component Component} to add as a child of this object.
@@ -681,7 +681,7 @@ public class SceneObject extends HybridObject implements FrameListener {
     /**
      * Remove {@code childComponent} as a child of this object (owner object of
      * the component is removed as child). Removing a component will decrease
-     * the {@link getChildrenCount() getChildrenCount()} for this scene object.
+     * the {@link SceneObject#getChildrenCount() getChildrenCount()} for this scene object.
      * 
      * @param childComponent
      *            {@link Component Component} to remove as a child of this
@@ -705,7 +705,7 @@ public class SceneObject extends HybridObject implements FrameListener {
     }
 
     /**
-     * Get visibility set by {@link setVisible() setVisible()}.
+     * Get visibility set by {@link SceneObject#setVisible(boolean) setVisible()}.
      * 
      * @return Visibility of this object.
      */
@@ -754,7 +754,7 @@ public class SceneObject extends HybridObject implements FrameListener {
     }
 
     /**
-     * Get opacity set by {@link setOpacity() setOpacity()}.
+     * Get opacity set by {@link SceneObject#setOpacity(float) setOpacity()}.
      * 
      * @return opacity
      */
