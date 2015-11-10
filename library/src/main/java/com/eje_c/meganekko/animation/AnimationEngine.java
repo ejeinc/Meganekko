@@ -46,6 +46,7 @@ import com.eje_c.meganekko.event.FrameListener;
  * before the next loop.
  * </ul>
  */
+@Deprecated
 public class AnimationEngine {
 
     private static AnimationEngine sInstance = null;

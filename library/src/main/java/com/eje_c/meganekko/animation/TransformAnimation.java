@@ -26,6 +26,7 @@ import com.eje_c.meganekko.Transform;
  * The constructors cast their {@code target} parameter to a
  * {@code protected final Transform mTransform} field.
  */
+@Deprecated
 public abstract class TransformAnimation extends Animation {
 
     private final static Class<?>[] SUPPORTED = { Transform.class,

@@ -25,6 +25,7 @@ import com.eje_c.meganekko.Transform;
  * to do an animated rotation about a specific axis, with a specific pivot
  * point.
  */
+@Deprecated
 public class RotationByAxisWithPivotAnimation extends TransformAnimation {
 
     private final Orientation mOrientation;

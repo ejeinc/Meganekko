@@ -25,6 +25,7 @@ import com.eje_c.meganekko.SceneObject;
  * The constructors cast their {@code target} parameter to a
  * {@code protected final Material mMaterial} field.
  */
+@Deprecated
 public abstract class MaterialAnimation extends Animation {
 
     private final static Class<?>[] SUPPORTED = { Material.class,

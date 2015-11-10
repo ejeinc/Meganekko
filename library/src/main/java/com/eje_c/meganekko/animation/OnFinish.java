@@ -16,6 +16,7 @@
 package com.eje_c.meganekko.animation;
 
 /** Optional on-finish callback */
+@Deprecated
 public interface OnFinish {
 
     /**

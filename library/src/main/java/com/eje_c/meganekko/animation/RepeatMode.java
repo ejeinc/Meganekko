@@ -16,6 +16,7 @@
 package com.eje_c.meganekko.animation;
 
 /** The three supported repeat modes. */
+@Deprecated
 public abstract class RepeatMode {
     /**
      * Run once.

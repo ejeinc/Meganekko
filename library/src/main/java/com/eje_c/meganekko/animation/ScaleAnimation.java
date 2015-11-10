@@ -20,6 +20,7 @@ import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.Transform;
 
 /** Size animation. */
+@Deprecated
 public class ScaleAnimation extends TransformAnimation {
 
     private final float mStartX, mStartY, mStartZ;

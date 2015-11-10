@@ -68,6 +68,7 @@ import android.view.animation.Interpolator;
  * you do not need to write a composite animation that animates multiple
  * properties in a single method.
  */
+@Deprecated
 public abstract class Animation {
 
     /**

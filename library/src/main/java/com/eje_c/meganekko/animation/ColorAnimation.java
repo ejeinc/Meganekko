@@ -21,6 +21,7 @@ import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.utility.Colors;
 
 /** Animate the overlay color. */
+@Deprecated
 public class ColorAnimation extends MaterialAnimation {
 
     private final float mStartR, mStartG, mStartB;

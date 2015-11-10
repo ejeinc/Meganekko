@@ -20,6 +20,7 @@ import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.Transform;
 
 /** Animate an object's position. */
+@Deprecated
 public class RelativeMotionAnimation extends TransformAnimation {
 
     private final float mStartX, mDeltaX, mStartY, mDeltaY, mStartZ, mDeltaZ;

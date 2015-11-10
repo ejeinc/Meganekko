@@ -19,6 +19,7 @@ import com.eje_c.meganekko.HybridObject;
 import com.eje_c.meganekko.SceneObject;
 
 /** Animate the opacity. */
+@Deprecated
 public class OpacityAnimation extends Animation {
 
     private final float mInitialOpacity;

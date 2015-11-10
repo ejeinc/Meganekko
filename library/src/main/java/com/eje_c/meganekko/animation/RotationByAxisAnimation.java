@@ -20,6 +20,7 @@ import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.Transform;
 
 /** Rotation animation. */
+@Deprecated
 public class RotationByAxisAnimation extends TransformAnimation {
 
     private final Orientation mOrientation;

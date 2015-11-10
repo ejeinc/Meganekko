@@ -16,6 +16,7 @@
 package com.eje_c.meganekko.animation;
 
 /** Optional on-finish callback, with options for controlling repetition */
+@Deprecated
 public interface OnRepeat extends OnFinish {
     /**
      * Optional callback, that lets you stop an animation when your app reaches
