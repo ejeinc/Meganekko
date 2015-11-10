@@ -42,10 +42,14 @@ import com.eje_c.meganekko.xml.XmlSceneParser;
 import com.eje_c.meganekko.xml.XmlSceneParserFactory;
 import com.oculus.vrappframework.VrActivity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Window;
@@ -514,4 +518,81 @@ public class MeganekkoActivity extends VrActivity {
 		}
 		return Picker.pickSceneObject(object, mScene.getMainCamera()) < Float.POSITIVE_INFINITY;
 	}
+
+    /**
+     * Run {@link Animator} on UI thread and notify end callback on GL thread.
+     *
+     * @param anim        {@link Animator}.
+     * @param endCallback Callback for animation end. This is <b>not</b> called when animation is canceled.
+     *                    If you require more complicated callbacks, use {@code AnimatorListener} instead of this.
+     */
+    public void animate(@NonNull final Animator anim, @Nullable final Runnable endCallback) {
+
+        if (anim.isRunning()) {
+            cancel(anim, new Runnable() {
+                @Override
+                public void run() {
+                    animate(anim, endCallback);
+                }
+            });
+            return;
+        }
+
+        // Register one time animation end callback
+        if (endCallback != null) {
+            anim.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    anim.removeListener(this);
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    anim.removeListener(this);
+                    runOnGlThread(endCallback);
+                }
+            });
+        }
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                anim.start();
+            }
+        });
+    }
+
+    /**
+     * Run {@link Animator} on UI thread.
+     *
+     * @param anim {@link Animator}.
+     */
+    public void animate(@NonNull Animator anim) {
+        animate(anim, null);
+    }
+
+    /**
+     * Cancel {@link Animator} running.
+     *
+     * @param anim     {@link Animator}.
+     * @param callback Callback for canceling operation was called in UI thread.
+     */
+    public void cancel(@NonNull final Animator anim, @NonNull final Runnable callback) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                anim.cancel();
+                if (callback != null) runOnGlThread(callback);
+            }
+        });
+    }
+
+    /**
+     * Cancel {@link Animator} running.
+     *
+     * @param anim
+     */
+    public void cancel(@NonNull final Animator anim) {
+        cancel(anim, null);
+    }
 }
