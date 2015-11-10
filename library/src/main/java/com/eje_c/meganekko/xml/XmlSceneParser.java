@@ -1,4 +1,5 @@
-/* Copyright 2015 eje inc.
+/*
+ * Copyright 2015 eje inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.eje_c.meganekko.xml;
 
 import android.util.Xml;
@@ -29,6 +29,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+/**
+ * Load XML and add {@link SceneObject}s to {@link Scene}.
+ */
 public class XmlSceneParser {
 
     private final VrContext mContext;

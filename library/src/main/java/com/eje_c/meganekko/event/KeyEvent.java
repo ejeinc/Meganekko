@@ -15,6 +15,9 @@
  */
 package com.eje_c.meganekko.event;
 
+/**
+ * Base class for keyboard related events.
+ */
 public class KeyEvent {
     /**
      * Key code defined in VrAppFramework/Include/Input.h
