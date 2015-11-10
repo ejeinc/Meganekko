@@ -37,7 +37,7 @@ void Java_com_eje_1c_meganekko_InternalSensorManager_setSensorValues(const JNIEn
 
     MeganekkoActivity* activity = (MeganekkoActivity*) ((App *) appPtr)->GetAppInterface();
     Camera * camera = const_cast<Camera *>(activity->scene->main_camera());
-    camera->transform()->set_rotation(quaternion);
+    camera->transform()->setRotation(quaternion);
 }
 
 } // extern "C"

@@ -147,154 +147,154 @@ JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_getPositionX(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    return transform->position().x;
+    return transform->getPosition().x;
 }
 
 JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_getPositionY(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    return transform->position().y;
+    return transform->getPosition().y;
 }
 
 JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_getPositionZ(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    return transform->position().z;
+    return transform->getPosition().z;
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_setPosition(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat x, jfloat y, jfloat z) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    transform->set_position(OVR::Vector3f(x, y, z));
+    transform->setPosition(OVR::Vector3f(x, y, z));
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_setPositionX(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat x) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    transform->set_position_x(x);
+    transform->setPositionX(x);
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_setPositionY(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat y) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    transform->set_position_y(y);
+    transform->setPositionY(y);
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_setPositionZ(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat z) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    transform->set_position_z(z);
+    transform->setPositionZ(z);
 }
 
 JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_getRotationW(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    return transform->rotation().w;
+    return transform->getRotation().w;
 }
 
 JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_getRotationX(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    return transform->rotation().x;
+    return transform->getRotation().x;
 }
 
 JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_getRotationY(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    return transform->rotation().y;
+    return transform->getRotation().y;
 }
 
 JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_getRotationZ(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    return transform->rotation().z;
+    return transform->getRotation().z;
 }
 
 JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_getRotationYaw(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    return transform->rotation_yaw();
+    return transform->getRotationYaw();
 }
 
 JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_getRotationPitch(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    return transform->rotation_pitch();
+    return transform->getRotationPitch();
 }
 
 JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_getRotationRoll(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    return transform->rotation_roll();
+    return transform->getRotationRoll();
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_setRotation(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat w, jfloat x, jfloat y, jfloat z) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    transform->set_rotation(OVR::Quatf(x, y, z, w));
+    transform->setRotation(OVR::Quatf(x, y, z, w));
 }
 
 JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_getScaleX(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    return transform->scale().x;
+    return transform->getScale().x;
 }
 
 JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_getScaleY(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    return transform->scale().y;
+    return transform->getScale().y;
 }
 
 JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_getScaleZ(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    return transform->scale().z;
+    return transform->getScale().z;
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_setScale(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat x, jfloat y, jfloat z) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    transform->set_scale(OVR::Vector3f(x, y, z));
+    transform->setScale(OVR::Vector3f(x, y, z));
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_setScaleX(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat x) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    transform->set_scale_x(x);
+    transform->setScaleX(x);
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_setScaleY(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat y) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    transform->set_scale_y(y);
+    transform->setScaleY(y);
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_NativeTransform_setScaleZ(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat z) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    transform->set_scale_z(z);
+    transform->setScaleZ(z);
 }
 
 JNIEXPORT jfloatArray JNICALL

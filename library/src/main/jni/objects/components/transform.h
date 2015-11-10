@@ -28,83 +28,85 @@
 
 #include "Kernel/OVR_Math.h"
 
+using namespace OVR;
+
 namespace mgn {
 class Transform: public Component {
 public:
     Transform();
     virtual ~Transform();
 
-    const OVR::Vector3f& position() const {
-        return position_;
+    const Vector3f& getPosition() const {
+        return position;
     }
 
-    void set_position(const OVR::Vector3f& position) {
-        position_ = position;
+    void setPosition(const Vector3f &position) {
+        this->position = position;
         invalidate(false);
     }
 
-    void set_position_x(float x) {
-        position_.x = x;
+    void setPositionX(float x) {
+        position.x = x;
         invalidate(false);
     }
 
-    void set_position_y(float y) {
-        position_.y = y;
+    void setPositionY(float y) {
+        position.y = y;
         invalidate(false);
     }
 
-    void set_position_z(float z) {
-        position_.z = z;
+    void setPositionZ(float z) {
+        position.z = z;
         invalidate(false);
     }
 
-    const OVR::Quatf& rotation() const {
-        return rotation_;
+    const Quatf& getRotation() const {
+        return rotation;
     }
 
-    float rotation_yaw() const {
-        return yaw(rotation_);
+    float getRotationYaw() const {
+        return yaw(rotation);
     }
 
-    float rotation_pitch() const {
-        return pitch(rotation_);
+    float getRotationPitch() const {
+        return pitch(rotation);
     }
 
-    float rotation_roll() const {
-        return roll(rotation_);
+    float getRotationRoll() const {
+        return roll(rotation);
     }
 
-    void set_rotation(const OVR::Quatf& roation) {
-        rotation_ = roation;
+    void setRotation(const Quatf &rotation) {
+        this->rotation = rotation;
         invalidate(true);
     }
 
-    const OVR::Vector3f& scale() const {
-        return scale_;
+    const Vector3f& getScale() const {
+        return scale;
     }
 
-    void set_scale(const OVR::Vector3f& scale) {
-        scale_ = scale;
+    void setScale(const Vector3f& scale) {
+        this->scale = scale;
         invalidate(false);
     }
 
-    void set_scale_x(float x) {
-        scale_.x = x;
+    void setScaleX(float x) {
+        scale.x = x;
         invalidate(false);
     }
 
-    void set_scale_y(float y) {
-        scale_.y = y;
+    void setScaleY(float y) {
+        scale.y = y;
         invalidate(false);
     }
 
-    void set_scale_z(float z) {
-        scale_.z = z;
+    void setScaleZ(float z) {
+        scale.z = z;
         invalidate(false);
     }
 
     void invalidate(bool rotationUpdated);
-    const OVR::Matrix4f & getModelMatrix();
+    const Matrix4f & getModelMatrix();
     void translate(float x, float y, float z);
     void setRotationByAxis(float angle, float x, float y, float z);
     void rotate(float w, float x, float y, float z);
@@ -113,10 +115,10 @@ public:
             float axis_z, float pivot_x, float pivot_y, float pivot_z);
     void rotateWithPivot(float w, float x, float y, float z, float pivot_x,
             float pivot_y, float pivot_z);
-    void setModelMatrix(const OVR::Matrix4f & mat);
+    void setModelMatrix(const Matrix4f & mat);
 
-    static inline const OVR::Quatf angleAxis(float angle, float axis_x, float axis_y, float axis_z) {
-        return OVR::Quatf(OVR::Vector3f(axis_x, axis_y, axis_z), OVR::DegreeToRad(angle));
+    static inline const Quatf angleAxis(float angle, float axis_x, float axis_y, float axis_z) {
+        return Quatf(Vector3f(axis_x, axis_y, axis_z), DegreeToRad(angle));
     }
 
 private:
@@ -129,25 +131,25 @@ private:
         return value < 0 ? -1.0f : 1.0f;
     }
 private:
-    OVR::Vector3f position_;
-    OVR::Quatf rotation_;
-    OVR::Vector3f scale_;
+    Vector3f position;
+    Quatf rotation;
+    Vector3f scale;
 
-    Lazy<OVR::Matrix4f> model_matrix_;
+    Lazy<Matrix4f> modelMatrix;
 
     // from glm::yaw
-    inline static float yaw(OVR::Quatf q) {
-        return OVR::RadToDegree(asinf(-2.0f * (q.x * q.z - q.w * q.y)));
+    inline static float yaw(Quatf q) {
+        return RadToDegree(asinf(-2.0f * (q.x * q.z - q.w * q.y)));
     }
 
     // from glm::pitch
-    inline static float pitch(OVR::Quatf q) {
-        return OVR::RadToDegree(atan2(2.0f * (q.y * q.z + q.w * q.x), q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z));
+    inline static float pitch(Quatf q) {
+        return RadToDegree(atan2(2.0f * (q.y * q.z + q.w * q.x), q.w * q.w - q.x * q.x - q.y * q.y + q.z * q.z));
     }
 
     // from glm::roll
-    inline static float roll(OVR::Quatf q) {
-        return OVR::RadToDegree(atan2(2.0f * (q.x * q.y + q.w * q.z), q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z));
+    inline static float roll(Quatf q) {
+        return RadToDegree(atan2(2.0f * (q.x * q.y + q.w * q.z), q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z));
     }
 };
 

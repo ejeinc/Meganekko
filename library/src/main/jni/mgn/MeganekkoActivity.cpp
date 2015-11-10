@@ -112,7 +112,7 @@ Matrix4f MeganekkoActivity::Frame( const VrFrame & vrFrame )
 
     if (vrFrame.DeviceStatus.DeviceIsDocked)
     {
-        camera->transform()->set_rotation(vrFrame.Tracking.HeadPose.Pose.Orientation);
+        camera->transform()->setRotation(vrFrame.Tracking.HeadPose.Pose.Orientation);
     }
 
     // Input handling
@@ -136,7 +136,7 @@ Matrix4f MeganekkoActivity::Frame( const VrFrame & vrFrame )
 
     // Apply Camera movement to centerViewMatrix
     ovrMatrix4f input = vrFrame.DeviceStatus.DeviceIsDocked
-            ? Matrix4f::Translation(camera->transform()->position())
+            ? Matrix4f::Translation(camera->transform()->getPosition())
             : camera->transform()->getModelMatrix();
     centerViewMatrix = vrapi_GetCenterEyeViewMatrix( &app->GetHeadModelParms(), &vrFrame.Tracking, &input );
 
