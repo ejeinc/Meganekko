@@ -59,8 +59,6 @@ public abstract class HybridObject implements Closeable {
      * 
      * @param vrContext
      *            The current VR context
-     * @param nativePointer
-     *            The native pointer, returned by the native constructor
      */
     protected HybridObject(VrContext vrContext) {
         this(vrContext, null);
@@ -76,8 +74,6 @@ public abstract class HybridObject implements Closeable {
      * 
      * @param vrContext
      *            The current Meganekko context
-     * @param nativePointer
-     *            The native pointer, returned by the native constructor
      * @param cleanupHandlers
      *            Cleanup handler(s).
      * 
@@ -118,7 +114,7 @@ public abstract class HybridObject implements Closeable {
      * You must override this method if you use constructor that don't take
      * nativePointer.
      * 
-     * @return
+     * @return native pointer
      */
     protected long initNativeInstance() {
         return 0l;
@@ -216,7 +212,7 @@ public abstract class HybridObject implements Closeable {
      * cleanup handlers to a minimum.
      * 
      * Maintains a prefix list (the static list that the descendant class passes
-     * to {@link HybridObject#GVRHybridObject(VrContext, long, List)}) and a
+     * to {@link HybridObject#HybridObject(VrContext, long, List)}) and a
      * {@code Map} of suffixes: the {@code Map} lets there be one list per
      * descendant class that adds a list of cleanup handler(s), instead of
      * (potentially) one list per instance.
