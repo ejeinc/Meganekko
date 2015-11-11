@@ -471,6 +471,9 @@ public class XmlSceneObjectParser {
             float y = Float.parseFloat(arr[1]);
             float z = Float.parseFloat(arr[2]);
             transform.setScale(x, y, z);
+        } else if (arr.length == 1) {
+            float val = Float.parseFloat(arr[0]);
+            transform.setScale(val, val, val);
         }
     }
 
