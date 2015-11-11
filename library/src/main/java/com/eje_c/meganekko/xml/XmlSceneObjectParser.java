@@ -79,7 +79,7 @@ public class XmlSceneObjectParser {
                 throw new XmlPullParserException("Unexpected END_DOCUMENT");
         }
 
-        SceneObject object = createSceneObject(parser.getName());
+        SceneObject object = createSceneObject(parser);
 
         if (object == null)
             return null;
@@ -383,45 +383,42 @@ public class XmlSceneObjectParser {
         }
     }
 
-    private SceneObject createSceneObject(String name) {
-        switch (name) {
+    private SceneObject createSceneObject(XmlPullParser parser) {
 
-            case "object":
-                return new SceneObject(mContext);
-            case "cube":
-                return new CubeSceneObject(mContext);
-            case "sphere":
-                return new SphereSceneObject(mContext);
-            case "cone":
-                return new ConeSceneObject(mContext);
-            case "cylinder":
-                return new CylinderSceneObject(mContext);
-            case "text":
-                return new TextSceneObject(mContext);
-            case "video":
-                return new VideoSceneObject(mContext);
-            case "canvas":
-                return new CanvasSceneObject(mContext);
-            case "view":
-                return new ViewSceneObject(mContext);
+        String name = parser.getName();
 
-            default:
+        try {
+            switch (name) {
 
-                try {
-                    Class<?> clazz = Class.forName(name);
-
-                    if (SceneObject.class.isAssignableFrom(clazz)) {
-                        return (SceneObject) clazz.getConstructor(VrContext.class).newInstance(mContext);
+                case "object":
+                    final String className = parser.getAttributeValue(null, "class");
+                    if (className == null) {
+                        return new SceneObject(mContext);
+                    } else {
+                        return ObjectFactory.newInstance(className, mContext);
                     }
-
-                } catch (ClassNotFoundException e) {
-                    //                e.printStackTrace();
-                } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-                        | InvocationTargetException | NoSuchMethodException e) {
-                    throw new RuntimeException(e);
-                }
-
-                return null;
+                case "cube":
+                    return new CubeSceneObject(mContext);
+                case "sphere":
+                    return new SphereSceneObject(mContext);
+                case "cone":
+                    return new ConeSceneObject(mContext);
+                case "cylinder":
+                    return new CylinderSceneObject(mContext);
+                case "text":
+                    return new TextSceneObject(mContext);
+                case "video":
+                    return new VideoSceneObject(mContext);
+                case "canvas":
+                    return new CanvasSceneObject(mContext);
+                case "view":
+                    return new ViewSceneObject(mContext);
+                default:
+                    return ObjectFactory.newInstance(name, mContext);
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException("Cannot instantiate " + name, e);
         }
     }
 
