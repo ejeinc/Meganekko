@@ -442,7 +442,7 @@ public class MeganekkoActivity extends VrActivity {
         XmlSceneParser parser = XmlSceneParserFactory.getInstance(mVrContext).getSceneParser();
 
         try {
-            Scene scene = parser.parse(getResources().getXml(xmlRes), new Scene(mVrContext));
+            Scene scene = parser.parse(getResources().getXml(xmlRes), null);
             setScene(scene);
             return scene;
         } catch (XmlPullParserException | IOException e) {

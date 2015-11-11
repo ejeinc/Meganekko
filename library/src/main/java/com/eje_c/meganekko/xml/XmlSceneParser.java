@@ -15,6 +15,7 @@
  */
 package com.eje_c.meganekko.xml;
 
+import android.util.AttributeSet;
 import android.util.Xml;
 
 import com.eje_c.meganekko.Camera;
@@ -27,6 +28,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
 /**
@@ -124,7 +126,6 @@ public class XmlSceneParser {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(in, null);
-            parser.nextTag();
             return parse(parser, scene, useAsyncLoading);
         } finally {
             in.close();
@@ -158,8 +159,35 @@ public class XmlSceneParser {
      */
     public Scene parse(XmlPullParser parser, Scene scene, boolean useAsyncLoading) throws XmlPullParserException, IOException {
 
+        AttributeSet attributeSet = Xml.asAttributeSet(parser);
+
+        // Skip to first tag
+        if (parser.getEventType() == XmlPullParser.START_DOCUMENT) {
+            while (parser.getEventType() != XmlPullParser.START_TAG) {
+                if (parser.next() == XmlPullParser.END_DOCUMENT) {
+                    return scene;
+                }
+            }
+        }
+
+        // Parse first tag as Scene if scene was not passed
         if (scene == null) {
-            scene = new Scene(mContext);
+
+            if ("scene".equals(parser.getName())) {
+                String className = attributeSet.getClassAttribute();
+                if (className == null) {
+                    scene = new Scene(mContext);
+                } else {
+                    scene = createScene(parser, className);
+                }
+            } else {
+                scene = createScene(parser, parser.getName());
+            }
+
+        } else {
+
+            // Do nothing with first tag
+            parser.next();
         }
 
         while (parser.next() != XmlPullParser.END_DOCUMENT) {
@@ -194,6 +222,15 @@ public class XmlSceneParser {
         }
 
         return scene;
+    }
+
+    private Scene createScene(XmlPullParser parser, String className) throws XmlPullParserException {
+        try {
+            return ObjectFactory.newInstance(className, mContext);
+        } catch (IllegalAccessException | InvocationTargetException | InstantiationException | ClassNotFoundException | NoSuchMethodException e) {
+            e.printStackTrace();
+            throw new XmlPullParserException("Invalid class name " + className + ".", parser, e);
+        }
     }
 
     /**
