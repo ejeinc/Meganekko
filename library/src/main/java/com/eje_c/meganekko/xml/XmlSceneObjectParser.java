@@ -100,7 +100,7 @@ public class XmlSceneObjectParser {
         if (renderData != null) {
             Mesh m = renderData.getMesh();
             if (m != null) {
-                mesh = new FutureWrapper<Mesh>(m);
+                mesh = new FutureWrapper<>(m);
             }
         }
 
@@ -123,7 +123,7 @@ public class XmlSceneObjectParser {
                     break;
 
                 case "opacity":
-                    opacity = attributeSet.getAttributeFloatValue(i, opacity);
+                    opacity = Float.parseFloat(parser.getAttributeValue(i));
                     break;
 
                 case "position":
@@ -139,11 +139,11 @@ public class XmlSceneObjectParser {
                     break;
 
                 case "width":
-                    width = attributeSet.getAttributeFloatValue(i, width);
+                    width = Float.parseFloat(parser.getAttributeValue(i));
                     break;
 
                 case "height":
-                    height = attributeSet.getAttributeFloatValue(i, height);
+                    height = Float.parseFloat(parser.getAttributeValue(i));
                     break;
 
                 case "renderingOrder":
@@ -154,7 +154,7 @@ public class XmlSceneObjectParser {
                     if (useAsyncLoading) {
                         mesh = parseMesh(attributeSet.getAttributeValue(i));
                     } else {
-                        mesh = new FutureWrapper<Mesh>(parseMeshSync(attributeSet.getAttributeValue(i)));
+                        mesh = new FutureWrapper<>(parseMeshSync(attributeSet.getAttributeValue(i)));
                     }
                     break;
 
@@ -162,7 +162,7 @@ public class XmlSceneObjectParser {
                     if (useAsyncLoading) {
                         texture = parseTexture(attributeSet.getAttributeValue(i));
                     } else {
-                        texture = new FutureWrapper<Texture>(parseTextureSync(attributeSet.getAttributeValue(i)));
+                        texture = new FutureWrapper<>(parseTextureSync(attributeSet.getAttributeValue(i)));
                     }
                     break;
 
@@ -204,7 +204,7 @@ public class XmlSceneObjectParser {
                     if (res != -1) {
                         Texture t = parseDrawableAsTexture(res);
                         if (t != null) {
-                            texture = new FutureWrapper<Texture>(t);
+                            texture = new FutureWrapper<>(t);
                         }
                     }
                     break;
@@ -214,7 +214,7 @@ public class XmlSceneObjectParser {
                     if (colorVal.startsWith("@color")) {
                         int colorRes = attributeSet.getAttributeResourceValue(i, -1);
                         if (colorRes != -1) {
-                            color = getColorResourceValue(colorRes);
+                            color = ContextCompat.getColor(mContext.getContext(), colorRes);
                         }
                     } else {
                         color = Color.parseColor(colorVal);
@@ -223,28 +223,28 @@ public class XmlSceneObjectParser {
 
                 // Simple position
                 case "x":
-                    object.getTransform().setPositionX(attributeSet.getAttributeFloatValue(i, 0.0f));
+                    object.getTransform().setPositionX(Float.parseFloat(parser.getAttributeValue(i)));
                     break;
 
                 case "y":
-                    object.getTransform().setPositionY(attributeSet.getAttributeFloatValue(i, 0.0f));
+                    object.getTransform().setPositionY(Float.parseFloat(parser.getAttributeValue(i)));
                     break;
 
                 case "z":
-                    object.getTransform().setPositionZ(attributeSet.getAttributeFloatValue(i, 0.0f));
+                    object.getTransform().setPositionZ(Float.parseFloat(parser.getAttributeValue(i)));
                     break;
 
                 // Simple scale
                 case "scaleX":
-                    object.getTransform().setScaleX(attributeSet.getAttributeFloatValue(i, 1.0f));
+                    object.getTransform().setScaleX(Float.parseFloat(parser.getAttributeValue(i)));
                     break;
 
                 case "scaleY":
-                    object.getTransform().setScaleY(attributeSet.getAttributeFloatValue(i, 1.0f));
+                    object.getTransform().setScaleY(Float.parseFloat(parser.getAttributeValue(i)));
                     break;
 
                 case "scaleZ":
-                    object.getTransform().setScaleZ(attributeSet.getAttributeFloatValue(i, 1.0f));
+                    object.getTransform().setScaleZ(Float.parseFloat(parser.getAttributeValue(i)));
                     break;
 
                 // CanvasSceneObject
@@ -266,7 +266,7 @@ public class XmlSceneObjectParser {
             }
         }
 
-        // Parse text node
+        // Parse text node (deprecated)
         if (parser.next() == XmlPullParser.TEXT) {
             String text = parser.getText();
             Bitmap bitmap = textAsBitmap(text, textSize, color, textAlign);
@@ -295,7 +295,7 @@ public class XmlSceneObjectParser {
 
         // Create quad mesh if needed
         if (mesh == null && width >= 0.0f && height >= 0.0f) {
-            mesh = new FutureWrapper<Mesh>(mContext.createQuad(width, height));
+            mesh = new FutureWrapper<>(mContext.createQuad(width, height));
         }
 
         // Set mesh if needed
@@ -347,10 +347,6 @@ public class XmlSceneObjectParser {
         object.setVisible(visible);
 
         return object;
-    }
-
-    private int getColorResourceValue(int colorRes) {
-        return ContextCompat.getColor(mContext.getContext(), colorRes);
     }
 
     private Texture parseDrawableAsTexture(int res) {
