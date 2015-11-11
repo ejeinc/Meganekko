@@ -463,9 +463,11 @@ public class MeganekkoActivity extends VrActivity {
 
         if (mScene != null) {
             mEventBus.unregister(mScene);
+            mScene.onPause();
         }
 
         mEventBus.register(scene);
+        scene.onResume();
 
         mScene = scene;
         setScene(getAppPtr(), scene.getNative());
