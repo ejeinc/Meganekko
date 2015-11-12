@@ -29,30 +29,72 @@ public class VrFrame {
         this.nativePtr = nativePtr;
     }
 
+    /**
+     * Predicted absolute time in seconds this frame will be displayed.
+     * To make accurate journal playback possible, applications should
+     * use this time instead of geting system time directly.
+     *
+     * @return Predicted absolute time
+     */
     public double getPredictedDisplayTimeInSeconds() {
         return getPredictedDisplayTimeInSeconds(nativePtr);
     }
 
+    /**
+     * The amount of time in seconds that has passed since the last frame,
+     * usable for movement scaling.
+     * This will be clamped to no more than 0.1 seconds to prevent
+     * excessive movement after pauses for loading or initialization.
+     *
+     * @return The amount of time in seconds that has passed since the last frame
+     */
     public float getDeltaSeconds() {
         return getDeltaSeconds(nativePtr);
     }
 
+    /**
+     * Incremented once for every frame.
+     *
+     * @return Frame number
+     */
     public int getFrameNumber() {
         return getFrameNumber(nativePtr);
     }
 
+    /**
+     * Ranges from 0.0 - 1.0 during a swipe action.
+     * Applications can provide visual feedback that a swipe
+     * is being recognized.
+     *
+     * @return Swipe fraction.
+     */
     public float getSwipeFraction() {
         return getSwipeFraction(nativePtr);
     }
 
+    /**
+     * Bits are set for the buttons that are currently pressed down.
+     *
+     * @return Button state
+     */
     public int getButtonState() {
         return getButtonState(nativePtr);
     }
 
+    /**
+     * Pressed button from the last VrFrame.
+     *
+     * @return Pressed buttons from the last VrFrame.
+     */
     public int getButtonPressed() {
         return getButtonPressed(nativePtr);
     }
 
+    /**
+     * Released button from the last VrFrame.
+     *
+     * @return Released button from the last VrFrame.
+     */
     public int getButtonReleased() {
         return getButtonReleased(nativePtr);
     }

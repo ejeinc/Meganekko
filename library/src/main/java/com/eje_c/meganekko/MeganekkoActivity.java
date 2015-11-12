@@ -17,11 +17,18 @@
 
 package com.eje_c.meganekko;
 
-import java.io.IOException;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
-
-import org.xmlpull.v1.XmlPullParserException;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.eje_c.meganekko.event.FrameListener;
 import com.eje_c.meganekko.event.KeyDoubleTapEvent;
@@ -42,29 +49,19 @@ import com.eje_c.meganekko.xml.XmlSceneParser;
 import com.eje_c.meganekko.xml.XmlSceneParserFactory;
 import com.oculus.vrappframework.VrActivity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.app.Activity;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.Window;
-import android.view.WindowManager;
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 import de.greenrobot.event.EventBus;
 import ovr.App;
 
 /**
- * The typical Meganekko application will have a single Android {@link Activity}
- * , which <em>must</em> descend from {@link MeganekkoActivity}, not directly
- * from {@code Activity}.
- *
- * {@code MeganekkoActivity} creates and manages the internal classes which use
- * sensor data to manage a viewpoint, and thus present an appropriate
- * stereoscopic view of your scene graph.
+ * The Meganekko application will have a single Android {@link Activity} which extends {@link MeganekkoActivity},
+ * not directly from {@code Activity}. {@code MeganekkoActivity} creates and manages the internal classes which use
+ * sensor data to manage a viewpoint, and thus present an appropriate stereoscopic view of your scene graph.
  */
 public class MeganekkoActivity extends VrActivity {
 
@@ -78,14 +75,13 @@ public class MeganekkoActivity extends VrActivity {
     private EventBus mEventBus = EventBus.builder().logNoSubscriberMessages(false).build();
     private Scene mScene;
     private MaterialShaderManager mMaterialShaderManager;
-	private App mApp;
+    private App mApp;
 
     static {
         System.loadLibrary("meganekko");
     }
 
-    private static native long nativeSetAppInterface(VrActivity act,
-            String fromPackageName, String commandString, String uriString);
+    private static native long nativeSetAppInterface(VrActivity act, String fromPackageName, String commandString, String uriString);
 
     private static native void nativeHideGazeCursor(long appPtr);
 
@@ -95,9 +91,9 @@ public class MeganekkoActivity extends VrActivity {
 
     private static native void recenterPose(long appPtr);
 
-    static native void setScene(long appPtr, long nativeScene);
+    private static native void setScene(long appPtr, long nativeScene);
 
-    static native void setShaderManager(long appPtr, long nativeShaderManager);
+    private static native void setShaderManager(long appPtr, long nativeShaderManager);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,19 +101,16 @@ public class MeganekkoActivity extends VrActivity {
          * Removes the title bar and the status bar.
          */
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
         String commandString = VrActivity.getCommandStringFromIntent(intent);
-        String fromPackageNameString = VrActivity
-                .getPackageStringFromIntent(intent);
+        String fromPackageNameString = VrActivity.getPackageStringFromIntent(intent);
         String uriString = VrActivity.getUriStringFromIntent(intent);
 
-        setAppPtr(nativeSetAppInterface(this, fromPackageNameString,
-                commandString, uriString));
+        setAppPtr(nativeSetAppInterface(this, fromPackageNameString, commandString, uriString));
 
         mDockEventReceiver = new DockEventReceiver(this, mRunOnDock, mRunOnUndock);
         mInternalSensorManager = new InternalSensorManager(this, getAppPtr());
@@ -157,7 +150,7 @@ public class MeganekkoActivity extends VrActivity {
 
     /**
      * Called when native oneTimeInit is called.
-     * 
+     *
      * @param context
      */
     protected void oneTimeInit(VrContext context) {
@@ -188,7 +181,7 @@ public class MeganekkoActivity extends VrActivity {
     }
 
     /**
-     * Called from GL thread at every frame.
+     * @deprecated Use {@link #onFrame(FrameListener)} to handle global frame update event or {@link Scene#onFrame(FrameListener)} to scene specific frame update event.
      */
     protected void frame() {
     }
@@ -207,7 +200,7 @@ public class MeganekkoActivity extends VrActivity {
 
     /**
      * Called when native oneTimeShutDown is called.
-     * 
+     *
      * @param context
      */
     protected void oneTimeShutDown(VrContext context) {
@@ -221,10 +214,18 @@ public class MeganekkoActivity extends VrActivity {
         nativeShowGazeCursor(getAppPtr());
     }
 
+    /**
+     * @param vsyncs
+     * @deprecated This method will be deleted in future. Use {@link App#setMinimumVsyncs(int)}.
+     */
     public void setMinimumVsyncs(int vsyncs) {
         mApp.setMinimumVsyncs(vsyncs);
     }
 
+    /**
+     * @return Minimum Vsyncs value
+     * @deprecated This method will be deleted in future. Use {@link App#setMinimumVsyncs(int)}.
+     */
     public int getMinimumVsyncs() {
         return mApp.getMinimumVsyncs();
     }
@@ -360,26 +361,21 @@ public class MeganekkoActivity extends VrActivity {
 
     /**
      * Enqueues a callback to be run in the GL thread.
-     * 
      * This is how you take data generated on a background thread (or the main
      * (GUI) thread) and pass it to the coprocessor, using calls that must be
      * made from the GL thread (aka the "GL context"). The callback queue is
      * processed before any registered
      * {@linkplain #onFrame(FrameListener)} frame listeners}.
      *
-     * @param runnable
-     *            A bit of code that must run on the GL thread
+     * @param runnable A bit of code that must run on the GL thread
      */
-    public void runOnGlThread(Runnable runnable) {
-        if (runnable == null) {
-            throw new IllegalArgumentException("runnable must not be null");
-        }
+    public void runOnGlThread(@NonNull Runnable runnable) {
         mRunnables.add(runnable);
     }
 
     /**
-     * Get {@code VrContext}.
-     * 
+     * Get {@link VrContext}.
+     *
      * @return {@code VrContext}
      */
     public VrContext getVrContext() {
@@ -387,8 +383,8 @@ public class MeganekkoActivity extends VrActivity {
     }
 
     /**
-     * Get {@code VrFrame}.
-     * 
+     * Get {@link VrFrame}.
+     *
      * @return {@code VrFrame}
      */
     public VrFrame getVrFrame() {
@@ -401,7 +397,7 @@ public class MeganekkoActivity extends VrActivity {
 
     /**
      * Short hand method for getScene().findObjectByName().
-     * 
+     *
      * @param name
      * @return Found object or null.
      */
@@ -421,10 +417,10 @@ public class MeganekkoActivity extends VrActivity {
 
     /**
      * Short hand method for XML scene parsing.
-     * 
+     *
      * @param xmlRes
      * @return New scene.
-     * @deprecated Use {@code MeganekkoActivity#parseAndSetScene(int)}.
+     * @deprecated Use {@link MeganekkoActivity#parseAndSetScene(int)}.
      */
     public Scene setScene(int xmlRes) {
         return parseAndSetScene(xmlRes);
@@ -432,9 +428,8 @@ public class MeganekkoActivity extends VrActivity {
 
     /**
      * Short hand method for XML scene parsing.
-     * 
-     * @param xmlRes
-     *            Scene XML resource.
+     *
+     * @param xmlRes Scene XML resource.
      * @return New scene.
      */
     public Scene parseAndSetScene(int xmlRes) {
@@ -453,10 +448,10 @@ public class MeganekkoActivity extends VrActivity {
 
     /**
      * Set current rendering scene.
-     * 
+     *
      * @param scene
      */
-    public synchronized void setScene(Scene scene) {
+    public synchronized void setScene(@NonNull Scene scene) {
 
         if (scene == mScene)
             return;
@@ -475,7 +470,7 @@ public class MeganekkoActivity extends VrActivity {
 
     /**
      * Get current rendering scene.
-     * 
+     *
      * @return Current rendering scene.
      */
     public Scene getScene() {
@@ -484,42 +479,42 @@ public class MeganekkoActivity extends VrActivity {
 
     /**
      * Add callback for every frame update.
-     * 
+     *
      * @param listener
      */
-    public void onFrame(com.eje_c.meganekko.event.FrameListener listener) {
+    public void onFrame(@NonNull FrameListener listener) {
         mEventBus.register(listener);
     }
 
     /**
      * Remove callback for every frame update.
-     * 
+     *
      * @param listener
      */
-    public void offFrame(com.eje_c.meganekko.event.FrameListener listener) {
+    public void offFrame(@NonNull FrameListener listener) {
         mEventBus.unregister(listener);
     }
-    
+
     public MaterialShaderManager getMaterialShaderManager() {
         return mMaterialShaderManager;
     }
-    
+
     public App getApp() {
-    	return mApp;
+        return mApp;
     }
 
-	/**
-	 * Check if user is looking at target object.
-	 * 
-	 * @param object target object.
-	 * @return true if user is looking at object.
-	 */
-	public boolean isLookingAt(SceneObject object) {
-		if (object.getEyePointeeHolder() == null) {
-			object.attachEyePointeeHolder();
-		}
-		return Picker.pickSceneObject(object, mScene.getMainCamera()) < Float.POSITIVE_INFINITY;
-	}
+    /**
+     * Check if user is looking at target object.
+     *
+     * @param object target object.
+     * @return true if user is looking at object.
+     */
+    public boolean isLookingAt(@NonNull SceneObject object) {
+        if (object.getEyePointeeHolder() == null) {
+            object.attachEyePointeeHolder();
+        }
+        return Picker.pickSceneObject(object, mScene.getMainCamera()) < Float.POSITIVE_INFINITY;
+    }
 
     /**
      * Run {@link Animator} on UI thread and notify end callback on GL thread.
@@ -579,7 +574,7 @@ public class MeganekkoActivity extends VrActivity {
      * @param anim     {@link Animator}.
      * @param callback Callback for canceling operation was called in UI thread.
      */
-    public void cancel(@NonNull final Animator anim, @NonNull final Runnable callback) {
+    public void cancel(@NonNull final Animator anim, @Nullable final Runnable callback) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

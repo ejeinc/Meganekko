@@ -170,10 +170,18 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
         return mView != null ? mView.isDirty() : false;
     }
 
+    /**
+     * Set whether this change automatically its View's pressed state. Default is {@code true}.
+     *
+     * @param enabled
+     */
     public void setSimulatePressingEnabled(boolean enabled) {
         this.mSimulatePressing = enabled;
     }
 
+    /**
+     * @return whether simulate pressing is enabled
+     */
     public boolean isSimulatePressingEnabled() {
         return mSimulatePressing;
     }

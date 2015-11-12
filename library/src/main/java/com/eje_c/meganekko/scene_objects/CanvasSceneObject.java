@@ -31,7 +31,8 @@ import android.view.Surface;
 
 /**
  * A {@linkplain SceneObject scene object} that renders like a standard Android
- * Views.
+ * Views. You have to call {@link #setCanvasSize(int, int)} to set Canvas size.
+ * Actual drawing is done with subclass of {@link OnDrawListener}.
  */
 public class CanvasSceneObject extends SceneObject {
 
@@ -59,13 +60,11 @@ public class CanvasSceneObject extends SceneObject {
 
     /**
      * Must be called before start drawing.
-     * 
-     * @param width
-     *            Internal texture width. This value can be get with
-     *            {@code Canvas#getWidth()} on drawing.
-     * @param height
-     *            Internal texture height. This value can be get with
-     *            {@code Canvas#getHeight()} on drawing.
+     *
+     * @param width  Internal texture width. This value can be get with
+     *               {@code Canvas#getWidth()} on drawing.
+     * @param height Internal texture height. This value can be get with
+     *               {@code Canvas#getHeight()} on drawing.
      */
     public void setCanvasSize(int width, int height) {
         mSurfaceTexture.setDefaultBufferSize(width, height);
@@ -96,7 +95,7 @@ public class CanvasSceneObject extends SceneObject {
     /**
      * Set an {@code OnDrawListener} for rendering. Pass null to unregister
      * listener.
-     * 
+     *
      * @param onDrawListener
      */
     public void setOnDrawListener(OnDrawListener onDrawListener) {
@@ -105,7 +104,7 @@ public class CanvasSceneObject extends SceneObject {
 
     /**
      * Get an {@code OnDrawListener} for rendering.
-     * 
+     *
      * @return
      */
     public OnDrawListener getOnDrawListener() {
@@ -124,7 +123,7 @@ public class CanvasSceneObject extends SceneObject {
          * Called before onDraw is called. If this method returns true, canvas
          * is refreshed with onDraw method. If this method returns false, onDraw
          * will not be called.
-         * 
+         *
          * @return Refreshing canvas is required.
          */
         boolean isDirty();
@@ -133,13 +132,10 @@ public class CanvasSceneObject extends SceneObject {
          * Called at each frame update. Use {@code VrFrame#getDeltaSeconds()}
          * and {@code VrFrame#getPredictedDisplayTimeInSeconds()} to implement
          * time based animation.
-         * 
-         * @param object
-         *            Target object.
-         * @param canvas
-         *            Rendering canvas.
-         * @param vrFrame
-         *            Current frame information passed from native framework.
+         *
+         * @param object  Target object.
+         * @param canvas  Rendering canvas.
+         * @param vrFrame Current frame information passed from native framework.
          */
         void onDraw(CanvasSceneObject object, Canvas canvas, VrFrame vrFrame);
     }
