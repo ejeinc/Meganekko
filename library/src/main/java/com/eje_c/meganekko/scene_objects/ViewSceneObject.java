@@ -16,6 +16,7 @@
 
 package com.eje_c.meganekko.scene_objects;
 
+import android.view.ViewGroup;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.Picker;
 import com.eje_c.meganekko.SceneObject;
@@ -167,7 +168,29 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
 
     @Override
     public boolean isDirty() {
-        return mView != null ? mView.isDirty() : false;
+        return mView != null ? isDirty(mView) : false;
+    }
+
+    /**
+     * Check dirty state of view recursively.
+     *
+     * @param view Checked View.
+     * @return Returns true if at least one View is dirty in hierarchy.
+     */
+    private static boolean isDirty(View view) {
+
+        if (view.isDirty()) return true;
+
+        // Apply this method to all children of view if view is ViewGroup
+        if (view instanceof ViewGroup) {
+            final ViewGroup viewGroup = (ViewGroup) view;
+
+            for (int i = 0, count = viewGroup.getChildCount(); i < count; ++i) {
+                if (isDirty(viewGroup.getChildAt(i))) return true;
+            }
+        }
+
+        return false;
     }
 
     /**
