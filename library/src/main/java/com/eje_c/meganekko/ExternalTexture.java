@@ -1,4 +1,6 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/*
+ * Copyright 2015 eje inc.
+ * Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,19 +23,12 @@ package com.eje_c.meganekko;
  */
 public class ExternalTexture extends Texture {
     /**
-     * 
-     * @param vrContext
-     *            Current vrContext
+     * @param vrContext Current vrContext
      */
     public ExternalTexture(VrContext vrContext) {
-        super(vrContext, NativeExternalTexture.ctor());
+        super(vrContext);
     }
 
-    ExternalTexture(VrContext vrContext, long ptr) {
-        super(vrContext, ptr);
-    }
-}
-
-class NativeExternalTexture {
-    static native long ctor();
+    @Override
+    protected native long initNativeInstance();
 }

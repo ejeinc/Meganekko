@@ -1,4 +1,6 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/*
+ * Copyright 2015 eje inc.
+ * Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +21,15 @@
  ***************************************************************************/
 
 #include "external_texture.h"
-
 #include "util/gvr_jni.h"
 
 namespace mgn {
-extern "C" {
-JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeExternalTexture_ctor(JNIEnv * env,
-        jobject obj);
-}
-;
 
-JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeExternalTexture_ctor(JNIEnv * env,
-        jobject obj) {
-    return reinterpret_cast<jlong>(new ExternalTexture());
-}
+    extern "C" {
 
+    jlong Java_com_eje_1c_meganekko_ExternalTexture_initNativeInstance(JNIEnv *env, jobject obj) {
+        return reinterpret_cast<jlong>(new ExternalTexture());
+    }
+
+    }
 }
