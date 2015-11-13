@@ -15,7 +15,9 @@
 
 package com.eje_c.meganekko;
 
-/** Holds the Cameras. */
+/**
+ * Holds the Cameras.
+ */
 public class Camera extends SceneObject {
 
     public Camera(VrContext vrContext) {
@@ -28,9 +30,9 @@ public class Camera extends SceneObject {
     /**
      * The direction the camera rig is looking at. In other words, the direction
      * of the local -z axis.
-     * 
+     *
      * @return Array with 3 floats corresponding to a normalized direction
-     *         vector. ([0] : x, [1] : y, [2] : z)
+     * vector. ([0] : x, [1] : y, [2] : z)
      */
     public float[] getLookAt() {
         return NativeCamera.getLookAt(getNative());

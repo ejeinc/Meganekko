@@ -15,6 +15,8 @@
 
 package com.eje_c.meganekko;
 
+import com.eje_c.meganekko.utility.Log;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.ref.PhantomReference;
@@ -26,11 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.eje_c.meganekko.utility.Log;
-
 /**
  * Root of the Meganekko object hierarchy.
- * 
+ * <p/>
  * Descendant classes all have native (JNI) implementations; this base class
  * manages the native life cycles.
  */
@@ -56,9 +56,8 @@ public abstract class HybridObject implements Closeable {
 
     /**
      * Normal constructor
-     * 
-     * @param vrContext
-     *            The current VR context
+     *
+     * @param vrContext The current VR context
      */
     protected HybridObject(VrContext vrContext) {
         this(vrContext, null);
@@ -69,24 +68,22 @@ public abstract class HybridObject implements Closeable {
     }
 
     /**
-     * Special constructor, for descendants like {#link GVRMeshEyePointee} that
+     * Special constructor, for descendants like {#link MeshEyePointee} that
      * need to 'unregister' instances.
-     * 
-     * @param vrContext
-     *            The current Meganekko context
-     * @param cleanupHandlers
-     *            Cleanup handler(s).
-     * 
-     *            <p>
-     *            Normally, this will be a {@code private static} class
-     *            constant, so that there is only one {@code List} per class.
-     *            Descendants that supply a {@code List} and <em>also</em> have
-     *            descendants that supply a {@code List} should use
-     *            {@link CleanupHandlerListManager} to maintain a
-     *            {@code Map<List<NativeCleanupHandler>, List<NativeCleanupHandler>>}
-     *            whose keys are descendant lists and whose values are unique
-     *            concatenated lists - see {@link EyePointeeHolder} for an
-     *            example.
+     *
+     * @param vrContext       The current Meganekko context
+     * @param cleanupHandlers Cleanup handler(s).
+     *                        <p/>
+     *                        <p/>
+     *                        Normally, this will be a {@code private static} class
+     *                        constant, so that there is only one {@code List} per class.
+     *                        Descendants that supply a {@code List} and <em>also</em> have
+     *                        descendants that supply a {@code List} should use
+     *                        {@link CleanupHandlerListManager} to maintain a
+     *                        {@code Map<List<NativeCleanupHandler>, List<NativeCleanupHandler>>}
+     *                        whose keys are descendant lists and whose values are unique
+     *                        concatenated lists - see {@link EyePointeeHolder} for an
+     *                        example.
      */
     protected HybridObject(VrContext vrContext, List<NativeCleanupHandler> cleanupHandlers) {
         mVrContext = vrContext;
@@ -106,14 +103,14 @@ public abstract class HybridObject implements Closeable {
         if (mNativePointer == 0l) {
             throw new IllegalStateException("You must pass valid native pointer.");
         }
-        
+
         sReferenceSet.add(new Reference(this, mNativePointer, cleanupHandlers));
     }
 
     /**
      * You must override this method if you use constructor that don't take
      * nativePointer.
-     * 
+     *
      * @return native pointer
      */
     protected long initNativeInstance() {
@@ -126,7 +123,7 @@ public abstract class HybridObject implements Closeable {
 
     /**
      * Get the {@link VrContext} this object is attached to.
-     * 
+     *
      * @return The object's {@link VrContext}.
      */
     public VrContext getVrContext() {
@@ -135,8 +132,7 @@ public abstract class HybridObject implements Closeable {
 
     /**
      * The actual address of the native object.
-     * 
-     * <p>
+     * <p/>
      * This is an internal method that may be useful in diagnostic code.
      */
     public long getNative() {
@@ -181,7 +177,7 @@ public abstract class HybridObject implements Closeable {
      * Our {@linkplain Reference references} are placed on this queue, once
      * they've been finalized
      */
-    private static final ReferenceQueue<HybridObject> sReferenceQueue = new ReferenceQueue<HybridObject>();
+    private static final ReferenceQueue<HybridObject> sReferenceQueue = new ReferenceQueue<>();
     /**
      * We need hard references to {@linkplain Reference our references} -
      * otherwise, the references get garbage collected (usually before their
@@ -193,16 +189,17 @@ public abstract class HybridObject implements Closeable {
         new FinalizeThread();
     }
 
-    /** Optional after-finalization callback to 'deregister' native pointers. */
+    /**
+     * Optional after-finalization callback to 'deregister' native pointers.
+     */
     protected interface NativeCleanupHandler {
         /**
          * Remove the native pointer from any maps or other data structures.
-         * 
+         * <p/>
          * Do note that the Java 'owner object' has already been finalized.
-         * 
-         * @param nativePointer
-         *            The native pointer associated with a Java object that has
-         *            already been garbage collected.
+         *
+         * @param nativePointer The native pointer associated with a Java object that has
+         *                      already been garbage collected.
          */
         void nativeCleanup(long nativePointer);
     }
@@ -210,30 +207,28 @@ public abstract class HybridObject implements Closeable {
     /**
      * Small class to help descendants keep the number of lists of native
      * cleanup handlers to a minimum.
-     * 
+     * <p/>
      * Maintains a prefix list (the static list that the descendant class passes
      * to {@link HybridObject#HybridObject(VrContext, long, List)}) and a
      * {@code Map} of suffixes: the {@code Map} lets there be one list per
      * descendant class that adds a list of cleanup handler(s), instead of
      * (potentially) one list per instance.
-     * 
+     * <p/>
      * See the usage in {@link EyePointeeHolder}.
      */
     protected static class CleanupHandlerListManager {
         private final List<NativeCleanupHandler> mPrefixList;
 
         private final Map<List<NativeCleanupHandler>, List<NativeCleanupHandler>> //
-        mUniqueCopies = new HashMap<List<NativeCleanupHandler>, List<NativeCleanupHandler>>();
+                mUniqueCopies = new HashMap<List<NativeCleanupHandler>, List<NativeCleanupHandler>>();
 
         /**
          * Typically, descendants have a single (static) list of cleanup
          * handlers: pass that list to this constructor.
-         * 
-         * @param prefixList
-         *            List of cleanup handler(s)
+         *
+         * @param prefixList List of cleanup handler(s)
          */
-        protected CleanupHandlerListManager(
-                List<NativeCleanupHandler> prefixList) {
+        protected CleanupHandlerListManager(List<NativeCleanupHandler> prefixList) {
             mPrefixList = prefixList;
         }
 
@@ -241,22 +236,18 @@ public abstract class HybridObject implements Closeable {
          * Descendants that add a cleanup handler list use this method to create
          * unique concatenations of their list with any of <em>their</em>
          * descendants' list(s).
-         * 
-         * @param suffix
-         *            Descendant's (static) list
+         *
+         * @param suffix Descendant's (static) list
          * @return A unique concatenation
          */
-        protected List<NativeCleanupHandler> getUniqueConcatenation(
-                List<NativeCleanupHandler> suffix) {
+        protected List<NativeCleanupHandler> getUniqueConcatenation(List<NativeCleanupHandler> suffix) {
             if (suffix == null) {
                 return mPrefixList;
             }
 
-            List<NativeCleanupHandler> concatenation = mUniqueCopies
-                    .get(suffix);
+            List<NativeCleanupHandler> concatenation = mUniqueCopies.get(suffix);
             if (concatenation == null) {
-                concatenation = new ArrayList<NativeCleanupHandler>(
-                        mPrefixList.size() + suffix.size());
+                concatenation = new ArrayList<NativeCleanupHandler>(mPrefixList.size() + suffix.size());
                 concatenation.addAll(mPrefixList);
                 concatenation.addAll(suffix);
                 mUniqueCopies.put(suffix, concatenation);
@@ -267,13 +258,12 @@ public abstract class HybridObject implements Closeable {
 
     private static class Reference extends PhantomReference<HybridObject> {
 
-        // private static final String TAG = Log.tag(GVRReference.class);
+        // private static final String TAG = Log.tag(Reference.class);
 
         private long mNativePointer;
         private final List<NativeCleanupHandler> mCleanupHandlers;
 
-        private Reference(HybridObject object, long nativePointer,
-                List<NativeCleanupHandler> cleanupHandlers) {
+        private Reference(HybridObject object, long nativePointer, List<NativeCleanupHandler> cleanupHandlers) {
             super(object, sReferenceQueue);
 
             mNativePointer = nativePointer;
@@ -308,8 +298,7 @@ public abstract class HybridObject implements Closeable {
         public void run() {
             try {
                 while (true) {
-                    Reference reference = (Reference) sReferenceQueue
-                            .remove();
+                    Reference reference = (Reference) sReferenceQueue.remove();
                     reference.close();
                 }
             } catch (InterruptedException e) {
@@ -320,7 +309,7 @@ public abstract class HybridObject implements Closeable {
 
     /**
      * Close this object, releasing any native resources.
-     * 
+     * <p/>
      * Most objects will be automatically closed when Java's garbage collector
      * detects that they are no longer being used: Explicitly closing an object
      * that's still linked into the scene graph will almost certainly crash your

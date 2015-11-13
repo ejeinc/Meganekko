@@ -1,5 +1,7 @@
 package com.eje_c.meganekko;
 
+import android.support.annotation.NonNull;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -10,16 +12,15 @@ import java.util.concurrent.TimeoutException;
  * versions of constructor for {@link SceneObject} for different combinations
  * of {@link Mesh} or Future<{@link Mesh}>, {@link Texture} or Future<
  * {@link Texture}>.
- * 
- * @param <V>
- *            Internal type to be wrapped. It can be either mesh or texture.
+ *
+ * @param <V> Internal type to be wrapped. It can be either mesh or texture.
  */
 public class FutureWrapper<V> implements Future<V> {
 
-    private final V value_;
+    private final V mValue;
 
     public FutureWrapper(V value) {
-        value_ = value;
+        mValue = value;
     }
 
     @Override
@@ -39,12 +40,11 @@ public class FutureWrapper<V> implements Future<V> {
 
     @Override
     public V get() throws InterruptedException, ExecutionException {
-        return value_;
+        return mValue;
     }
 
     @Override
-    public V get(long timeout, TimeUnit unit) throws InterruptedException,
-            ExecutionException, TimeoutException {
-        return value_;
+    public V get(long timeout, @NonNull TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        return mValue;
     }
 }

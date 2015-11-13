@@ -45,7 +45,9 @@ import com.eje_c.meganekko.event.TouchSingleEventListener;
 
 import de.greenrobot.event.EventBus;
 
-/** The scene graph */
+/**
+ * The scene graph
+ */
 public class Scene extends SceneObject implements FrameListener,
         KeyDoubleTapEventListener, KeyDownEventListener, KeyLongPressEventListener, KeyMaxEventListener,
         KeyShortPressEventListener, KeyUpEventListener,
@@ -58,8 +60,7 @@ public class Scene extends SceneObject implements FrameListener,
     /**
      * Constructs a scene with a camera rig holding left & right cameras in it.
      *
-     * @param vrContext
-     *            {@link VrContext} the app is using.
+     * @param vrContext {@link VrContext} the app is using.
      */
     public Scene(VrContext vrContext) {
         super(vrContext);
@@ -72,8 +73,7 @@ public class Scene extends SceneObject implements FrameListener,
     protected native long initNativeInstance();
 
     /**
-     * @return The {@link Camera camera rig} used for rendering the scene on the
-     *         screen.
+     * @return The {@link Camera camera rig} used for rendering the scene on the screen.
      */
     public Camera getMainCamera() {
         return mMainCamera;
@@ -82,8 +82,7 @@ public class Scene extends SceneObject implements FrameListener,
     /**
      * Set the {@link Camera camera} used for rendering the scene on the screen.
      *
-     * @param camera
-     *            The {@link Camera camera} to render with.
+     * @param camera The {@link Camera camera} to render with.
      */
     public void setMainCamera(Camera camera) {
         mMainCamera = camera;

@@ -17,15 +17,14 @@ package com.eje_c.meganekko;
 
 /**
  * An actual eye pointee.
- * 
+ * <p/>
  * A {@link EyePointee} is something that is being pointed at by a picking
  * ray. {@linkplain EyePointee Eye pointees} are held by
  * {@linkplain EyePointeeHolder eye pointee holders,} which are attached to
  * {@link SceneObject scene objects.} The {@link Picker} will return a
- * {@code GVREyePointeeHolder[]}: you use
+ * {@code EyePointeeHolder[]}: you use
  * {@link EyePointeeHolder#getOwnerObject()} to retrieve the scene object.
- * 
- * <p>
+ * <p/>
  * A MeshEyePointee holds the {@link Mesh} that the picking ray will be
  * tested against.
  */
@@ -34,15 +33,12 @@ public class MeshEyePointee extends EyePointee {
 
     /**
      * Base constructor.
-     * 
+     * <p/>
      * When the mesh is complicated, it will be cheaper - though less accurate -
      * to use {@link Mesh#getBoundingBox()} instead of the raw mesh.
-     * 
-     * @param vrContext
-     *            The {@link VrContext} used by the app.
-     * 
-     * @param mesh
-     *            The {@link Mesh} that the picking ray will test against.
+     *
+     * @param vrContext The {@link VrContext} used by the app.
+     * @param mesh      The {@link Mesh} that the picking ray will test against.
      */
     public MeshEyePointee(VrContext vrContext, Mesh mesh) {
         super(vrContext, NativeMeshEyePointee.ctor(mesh.getNative()));
@@ -51,12 +47,11 @@ public class MeshEyePointee extends EyePointee {
 
     /**
      * Simple constructor.
-     * 
+     * <p/>
      * When the mesh is complicated, it will be cheaper - though less accurate -
      * to use {@link Mesh#getBoundingBox()} instead of the raw mesh.
-     * 
-     * @param mesh
-     *            The {@link Mesh} that the picking ray will test against.
+     *
+     * @param mesh The {@link Mesh} that the picking ray will test against.
      */
     public MeshEyePointee(Mesh mesh) {
         this(mesh.getVrContext(), mesh);
@@ -64,16 +59,14 @@ public class MeshEyePointee extends EyePointee {
 
     /**
      * Constructor that can use the mesh's bounding box.
-     * 
+     * <p/>
      * When the mesh is complicated, it will be cheaper - though less accurate -
      * to use {@link Mesh#getBoundingBox()} instead of the raw mesh.
-     * 
-     * @param mesh
-     *            The {@link Mesh} that the picking ray will test against.
-     * @param useBoundingBox
-     *            When {@code true}, will use {@link Mesh#getBoundingBox()
-     *            mesh.getBoundingBox()}; when {@code false} will use
-     *            {@code mesh} directly.
+     *
+     * @param mesh           The {@link Mesh} that the picking ray will test against.
+     * @param useBoundingBox When {@code true}, will use {@link Mesh#getBoundingBox()
+     *                       mesh.getBoundingBox()}; when {@code false} will use
+     *                       {@code mesh} directly.
      */
     /*
      * TODO How much accuracy do we lose with bounding boxes?
@@ -82,15 +75,13 @@ public class MeshEyePointee extends EyePointee {
      * enum: mesh, box, box-then-mesh?
      */
     public MeshEyePointee(Mesh mesh, boolean useBoundingBox) {
-        this(mesh.getVrContext(), useBoundingBox ? mesh.getBoundingBox()
-                : mesh);
+        this(mesh.getVrContext(), useBoundingBox ? mesh.getBoundingBox() : mesh);
     }
 
     /**
-     * Retrieve the mesh that is held by this GVRMeshEyePointee
-     * 
+     * Retrieve the mesh that is held by this MeshEyePointee
+     *
      * @return the {@link Mesh}
-     * 
      */
     public Mesh getMesh() {
         return mMesh;
@@ -98,10 +89,8 @@ public class MeshEyePointee extends EyePointee {
 
     /**
      * Set the mesh to be tested against.
-     * 
-     * @param mesh
-     *            The {@link Mesh} that the picking ray will test against.
-     * 
+     *
+     * @param mesh The {@link Mesh} that the picking ray will test against.
      */
     public void setMesh(Mesh mesh) {
         mMesh = mesh;

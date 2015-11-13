@@ -16,14 +16,13 @@
 package com.eje_c.meganekko;
 
 /**
- * Super class of GVRMeshEyePointee.
- * 
- * An GVREyePointee is something that is being pointed at by a picking ray.
- * GVREyePointees are held by {@linkplain EyePointeeHolder eye pointee
+ * Super class of MeshEyePointee.
+ * <p/>
+ * An EyePointee is something that is being pointed at by a picking ray.
+ * EyePointees are held by {@linkplain EyePointeeHolder eye pointee
  * holders}. Eye pointee holders are attached to {@link SceneObject}s so they
  * can be returned by the {@link Picker}.
- * 
- * <p>
+ * <p/>
  * This bizarre little class only contains a constructor and was intended as a
  * sort of interface. The only actual {@link EyePointee} is
  * {@link MeshEyePointee}.
