@@ -31,10 +31,7 @@ import android.view.View;
 import ovr.JoyButton;
 
 /**
- * A {@linkplain SceneObject scene object} that renders Android's standard
- * {@code View}. Currently {@code ViewGroup}s are not supported. You can only
- * use {@code Button}, {@code TextView},{@code ImageView} or other {@code View}s
- * which renders its contents.
+ * A {@linkplain SceneObject scene object} that renders Android's standard {@code View}.
  */
 public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener {
 
@@ -51,8 +48,8 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
 
     /**
      * Set view.
-     * 
-     * @param view
+     *
+     * @param view View which is used as {@link com.eje_c.meganekko.Texture}.
      */
     public void setView(View view) {
         this.mView = view;
@@ -68,19 +65,19 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
 
     /**
      * Set view from XML resource.
-     * 
-     * @param xmlRes
+     *
+     * @param layoutRes Layout XML resource ID
      */
-    public void setView(int xmlRes) {
+    public void setView(int layoutRes) {
         LayoutInflater layoutInflater = LayoutInflater.from(getVrContext().getContext());
-        View view = layoutInflater.inflate(xmlRes, null);
+        View view = layoutInflater.inflate(layoutRes, null);
         setView(view);
     }
 
     /**
      * Get view.
-     * 
-     * @return
+     *
+     * @return View
      */
     public View getView() {
         return mView;
@@ -197,7 +194,7 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
     /**
      * Set whether this change automatically its View's pressed state. Default is {@code true}.
      *
-     * @param enabled
+     * @param enabled whether this change automatically its View's pressed state
      */
     public void setSimulatePressingEnabled(boolean enabled) {
         this.mSimulatePressing = enabled;
