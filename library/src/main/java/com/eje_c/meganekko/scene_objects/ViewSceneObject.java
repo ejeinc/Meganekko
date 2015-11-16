@@ -166,7 +166,7 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
 
     @Override
     public boolean isDirty() {
-        return mView != null ? isDirty(mView) : false;
+        return mView != null && isDirty(mView);
     }
 
     /**
