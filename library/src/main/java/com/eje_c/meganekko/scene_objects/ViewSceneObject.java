@@ -43,6 +43,7 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
     private View mView;
     private boolean mLooking;
     private boolean mSimulatePressing = true;
+    private boolean mGenerateAutoSizedMesh = true;
 
     public ViewSceneObject(VrContext vrContext) {
         super(vrContext);
@@ -59,12 +60,6 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
         if (mView != null) {
 
             updateLayout();
-
-            // if mesh is missing, assign quad mesh
-            if (getRenderData().getMesh() == null) {
-                setAutoSizedQuadMesh();
-            }
-
             setOnDrawListener(ViewSceneObject.this);
         } else {
             clearOnDrawListener();
@@ -92,13 +87,19 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
     }
 
     /**
-     * Update view size.
+     * Update view size and recreate quad mesh.
+     * If you want to assign custom mesh, call {@linkplain #setGenerateAutoSizedMesh(boolean) setGenerateAutoSizedMesh(false)} first.
      */
     public void updateLayout() {
         View view = getView();
         view.measure(0, 0);
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
         setCanvasSize(view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        // Assign quad mesh if needed
+        if (mGenerateAutoSizedMesh || getRenderData().getMesh() == null) {
+            setAutoSizedQuadMesh();
+        }
     }
 
     /**
@@ -207,5 +208,21 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
      */
     public boolean isSimulatePressingEnabled() {
         return mSimulatePressing;
+    }
+
+    /**
+     * @return whether mesh will be generated automatically
+     */
+    public boolean getGenerateAutoSizedMesh() {
+        return mGenerateAutoSizedMesh;
+    }
+
+    /**
+     * Set whether mesh is automatically generated from view. Default is {@code true}.
+     *
+     * @param generateAutoSizedMesh whether mesh is automatically generated from view
+     */
+    public void setGenerateAutoSizedMesh(boolean generateAutoSizedMesh) {
+        this.mGenerateAutoSizedMesh = generateAutoSizedMesh;
     }
 }
