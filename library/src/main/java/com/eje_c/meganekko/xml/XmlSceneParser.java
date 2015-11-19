@@ -184,10 +184,6 @@ public class XmlSceneParser {
                 scene = createScene(parser, parser.getName());
             }
 
-        } else {
-
-            // Do nothing with first tag
-            parser.next();
         }
 
         while (parser.next() != XmlPullParser.END_DOCUMENT) {
