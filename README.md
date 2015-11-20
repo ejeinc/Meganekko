@@ -68,11 +68,15 @@ public class MainActivity extends MeganekkoActivity {
     protected void oneTimeInit(VrContext context) {
         // Do something on initial setup
         // In most cases create scene here
-    }
-
-    @Override
-    protected void frame() {
-        // Do something on frame update
+        
+        // If you want to do something on every frame, use FrameListener
+        onFrame(new FrameListener() {
+            public void onEvent(VrFrame vrFrame) {
+                // Do something on frame update
+                float deltaTime = vrFrame.getDeltaSeconds();
+                double currentTime = vrFrame.getPredictedDisplayTimeInSeconds();
+            }
+        });
     }
 }
 ```
