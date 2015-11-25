@@ -17,7 +17,9 @@
 
 package com.eje_c.meganekko.scene_objects;
 
-import java.io.IOException;
+import android.graphics.SurfaceTexture;
+import android.media.MediaPlayer;
+import android.view.Surface;
 
 import com.eje_c.meganekko.ExternalTexture;
 import com.eje_c.meganekko.Material;
@@ -29,9 +31,7 @@ import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.VrFrame;
 
-import android.graphics.SurfaceTexture;
-import android.media.MediaPlayer;
-import android.view.Surface;
+import java.io.IOException;
 
 /**
  * A {@linkplain SceneObject scene object} that shows video, using the Android
@@ -42,7 +42,9 @@ public class VideoSceneObject extends SceneObject {
     private MediaPlayer mMediaPlayer = null;
     private boolean mActive = true;
 
-    /** Video type constants, for use with {@link VideoSceneObject} */
+    /**
+     * Video type constants, for use with {@link VideoSceneObject}
+     */
     public enum VideoType {
         MONO, HORIZONTAL_STEREO, VERTICAL_STEREO
     }
@@ -52,19 +54,8 @@ public class VideoSceneObject extends SceneObject {
      * arbitrarily complex geometry, using the Android {@link MediaPlayer}. You
      * have to call {@code VideoSceneObject#setMediaPlayer(MediaPlayer)}} to
      * play video.
-     * 
-     * @param vrContext
-     *            current {@link VrContext}
-     * @param mesh
-     *            a {@link Mesh} - see
-     *            {@link VrContext#loadMesh(com.eje_c.meganekko.AndroidResource)}
-     *            and {@link VrContext#createQuad(float, float)}
-     * @param mediaPlayer
-     *            an Android {@link MediaPlayer}
-     * @param videoType
-     *            One of the {@linkplain VideoType video type constants}
-     * @throws IllegalArgumentException
-     *             on an invalid {@code videoType} parameter
+     *
+     * @param vrContext current {@link VrContext}
      */
     public VideoSceneObject(VrContext vrContext) {
         super(vrContext);
@@ -87,19 +78,14 @@ public class VideoSceneObject extends SceneObject {
     /**
      * Play a video on a {@linkplain SceneObject scene object} with an
      * arbitrarily complex geometry, using the Android {@link MediaPlayer}
-     * 
-     * @param vrContext
-     *            current {@link VrContext}
-     * @param mesh
-     *            a {@link Mesh} - see
-     *            {@link VrContext#loadMesh(com.eje_c.meganekko.AndroidResource)}
-     *            and {@link VrContext#createQuad(float, float)}
-     * @param mediaPlayer
-     *            an Android {@link MediaPlayer}
-     * @param videoType
-     *            One of the {@linkplain VideoType video type constants}
-     * @throws IllegalArgumentException
-     *             on an invalid {@code videoType} parameter
+     *
+     * @param vrContext   current {@link VrContext}
+     * @param mesh        a {@link Mesh} - see
+     *                    {@link VrContext#loadMesh(com.eje_c.meganekko.AndroidResource)}
+     *                    and {@link VrContext#createQuad(float, float)}
+     * @param mediaPlayer an Android {@link MediaPlayer}
+     * @param videoType   One of the {@linkplain VideoType video type constants}
+     * @throws IllegalArgumentException on an invalid {@code videoType} parameter
      */
     public VideoSceneObject(VrContext vrContext, Mesh mesh, MediaPlayer mediaPlayer, VideoType videoType) {
         super(vrContext, mesh);
@@ -107,22 +93,22 @@ public class VideoSceneObject extends SceneObject {
 
         MaterialShaderId materialType;
         switch (videoType) {
-        case MONO:
-            materialType = ShaderType.OES.ID;
-            break;
-        case HORIZONTAL_STEREO:
-            materialType = ShaderType.OESHorizontalStereo.ID;
-            break;
-        case VERTICAL_STEREO:
-            materialType = ShaderType.OESVerticalStereo.ID;
-            break;
-        default:
-            try {
-                texture.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            throw new IllegalArgumentException();
+            case MONO:
+                materialType = ShaderType.OES.ID;
+                break;
+            case HORIZONTAL_STEREO:
+                materialType = ShaderType.OESHorizontalStereo.ID;
+                break;
+            case VERTICAL_STEREO:
+                materialType = ShaderType.OESVerticalStereo.ID;
+                break;
+            default:
+                try {
+                    texture.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                throw new IllegalArgumentException();
         }
         Material material = new Material(vrContext, materialType);
         material.setMainTexture(texture);
@@ -135,36 +121,29 @@ public class VideoSceneObject extends SceneObject {
     /**
      * Play a video on a 2D, rectangular {@linkplain SceneObject scene object,}
      * using the Android {@link MediaPlayer}
-     * 
-     * @param vrContext
-     *            current {@link VrContext}
-     * @param width
-     *            the rectangle's width
-     * @param height
-     *            the rectangle's height
-     * @param mediaPlayer
-     *            an Android {@link MediaPlayer}
-     * @param videoType
-     *            One of the {@linkplain VideoType video type constants}
-     * @throws IllegalArgumentException
-     *             on an invalid {@code videoType} parameter
+     *
+     * @param vrContext   current {@link VrContext}
+     * @param width       the rectangle's width
+     * @param height      the rectangle's height
+     * @param mediaPlayer an Android {@link MediaPlayer}
+     * @param videoType   One of the {@linkplain VideoType video type constants}
+     * @throws IllegalArgumentException on an invalid {@code videoType} parameter
      */
     public VideoSceneObject(VrContext vrContext, float width,
-            float height, MediaPlayer mediaPlayer, VideoType videoType) {
+                            float height, MediaPlayer mediaPlayer, VideoType videoType) {
         this(vrContext, vrContext.createQuad(width, height), mediaPlayer,
                 videoType);
     }
 
     @Deprecated
     public VideoSceneObject(VrContext vrContext, float width,
-            float height, MediaPlayer mediaPlayer, int videoType) {
+                            float height, MediaPlayer mediaPlayer, int videoType) {
         this(vrContext, width, height, mediaPlayer, VideoType.values()[videoType]);
     }
 
     /**
      * Poll the {@link MediaPlayer} once per frame.
-     * 
-     * <p>
+     * <p/>
      * This call does not directly affect the {@link MediaPlayer}. In
      * particular, activation is not the same as calling
      * {@link MediaPlayer#start()}.
@@ -175,8 +154,7 @@ public class VideoSceneObject extends SceneObject {
 
     /**
      * Stop polling the {@link MediaPlayer}.
-     * 
-     * <p>
+     * <p/>
      * This call does not directly affect the {@link MediaPlayer}. In
      * particular, deactivation is not the same as calling
      * {@link MediaPlayer#pause()}.
@@ -187,10 +165,10 @@ public class VideoSceneObject extends SceneObject {
 
     /**
      * Returns the current {@link MediaPlayer} status.
-     * 
+     * <p/>
      * See {@link #activate()} and {@link #deactivate()}: polling activation is
      * not correlated with the {@code MediaPlayer} state.
-     * 
+     *
      * @return Whether or not we polling the {@code MediaPlayer} every frame.
      */
     public boolean isActive() {
@@ -199,7 +177,7 @@ public class VideoSceneObject extends SceneObject {
 
     /**
      * Returns the current {@link MediaPlayer}, if any
-     * 
+     *
      * @return current {@link MediaPlayer}
      */
     public MediaPlayer getMediaPlayer() {
@@ -208,9 +186,8 @@ public class VideoSceneObject extends SceneObject {
 
     /**
      * Sets the current {@link MediaPlayer}
-     * 
-     * @param mediaPlayer
-     *            An Android {@link MediaPlayer}
+     *
+     * @param mediaPlayer An Android {@link MediaPlayer}
      */
     public void setMediaPlayer(MediaPlayer mediaPlayer) {
         release();// any current MediaPlayer
@@ -236,7 +213,7 @@ public class VideoSceneObject extends SceneObject {
      * Returns the current time stamp, in nanoseconds. This comes from
      * {@link SurfaceTexture#getTimestamp()}: you should read the Android
      * documentation on that before you use this value.
-     * 
+     *
      * @return current time stamp, in nanoseconds
      */
     public long getTimeStamp() {
@@ -246,17 +223,17 @@ public class VideoSceneObject extends SceneObject {
     public void setVideoType(VideoType videoType) {
 
         switch (videoType) {
-        case MONO:
-            getRenderData().getMaterial().setShaderType(ShaderType.OES.ID);
-            break;
-        case HORIZONTAL_STEREO:
-            getRenderData().getMaterial().setShaderType(ShaderType.OESHorizontalStereo.ID);
-            break;
-        case VERTICAL_STEREO:
-            getRenderData().getMaterial().setShaderType(ShaderType.OESVerticalStereo.ID);
-            break;
-        default:
-            throw new IllegalArgumentException();
+            case MONO:
+                getRenderData().getMaterial().setShaderType(ShaderType.OES.ID);
+                break;
+            case HORIZONTAL_STEREO:
+                getRenderData().getMaterial().setShaderType(ShaderType.OESHorizontalStereo.ID);
+                break;
+            case VERTICAL_STEREO:
+                getRenderData().getMaterial().setShaderType(ShaderType.OESVerticalStereo.ID);
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
