@@ -30,29 +30,28 @@ namespace mgn {
 
 static const char VERTEX_SHADER[] =
         "attribute vec4 Position;\n"
-        "attribute vec4 TexCoord;\n"
+        "attribute vec2 TexCoord;\n"
         "uniform mat4 Mvpm;\n"
-        "varying vec2 TextureCoordXY;\n"
+        "varying highp vec2 oTexCoord;\n"
         "void main() {\n"
-        "  TextureCoordXY = TexCoord.xy;\n"
+        "  oTexCoord = TexCoord;\n"
         "  gl_Position = Mvpm * Position;\n"
         "}\n";
 
 static const char FRAGMENT_SHADER[] =
         "#extension GL_OES_EGL_image_external : require\n"
         "precision highp float;\n"
-        "uniform samplerExternalOES Texture;\n"
+        "uniform samplerExternalOES Texture0;\n"
         "uniform vec3 UniformColor;\n"
         "uniform float Opacity;\n"
-        "varying vec2 TextureCoordXY;\n"
+        "varying highp vec2 oTexCoord;\n"
         "void main() {\n"
-        "  vec4 color = texture2D(Texture, TextureCoordXY);"
+        "  vec4 color = texture2D(Texture0, oTexCoord);"
         "  gl_FragColor = vec4(color.r * UniformColor.r * Opacity, color.g * UniformColor.g * Opacity, color.b * UniformColor.b * Opacity, color.a * Opacity);\n"
         "}\n";
 
 OESShader::OESShader() {
     program = BuildProgram(VERTEX_SHADER, FRAGMENT_SHADER);
-    texture = glGetUniformLocation(program.program, "Texture");
     opacity = glGetUniformLocation(program.program, "Opacity");
 }
 
@@ -84,7 +83,6 @@ void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Mate
     glUniformMatrix4fv(program.uMvp, 1, GL_TRUE, mvpMatrix.M[0]);
     glActiveTexture (GL_TEXTURE0);
     glBindTexture(mainTexture->getTarget(), mainTexture->getId());
-    glUniform1i(texture, 0);
     glUniform3f(program.uColor, color.x, color.y, color.z);
     glUniform1f(opacity, material->getFloat("opacity"));
 

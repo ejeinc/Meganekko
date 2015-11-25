@@ -56,7 +56,6 @@ private:
 
 private:
     GlProgram program;
-    GLuint texture;
     GLuint opacity;
 };
 
