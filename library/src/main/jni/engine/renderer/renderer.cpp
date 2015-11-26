@@ -28,10 +28,12 @@
 #include "util/gvr_gl.h"
 #include "util/gvr_log.h"
 
+using namespace OVR;
+
 namespace mgn {
 
 void Renderer::RenderEyeView(JNIEnv * jni, Scene* scene, ShaderManager* shader_manager,
-        const OVR::Matrix4f &eyeViewMatrix, const OVR::Matrix4f &eyeProjectionMatrix, const OVR::Matrix4f &eyeViewProjection, int eye) {
+        const Matrix4f &eyeViewMatrix, const Matrix4f &eyeProjectionMatrix, const Matrix4f &eyeViewProjection, int eye) {
     // there is no need to flat and sort every frame.
     // however let's keep it as is and assume we are not changed
     // This is not right way to do data conversion. However since GVRF doesn't support
@@ -119,9 +121,9 @@ void Renderer::occlusion_cull(Scene* scene,
 #endif
 }
 
-void Renderer::frustum_cull(JNIEnv * jni, Scene* scene, const OVR::Vector3f& camera_position,
+void Renderer::frustum_cull(JNIEnv * jni, Scene* scene, const Vector3f& camera_position,
         std::vector<SceneObject*> scene_objects,
-        std::vector<RenderData*>& render_data_vector, const OVR::Matrix4f &vp_matrix,
+        std::vector<RenderData*>& render_data_vector, const Matrix4f &vp_matrix,
         ShaderManager* shader_manager) {
     for (auto it = scene_objects.begin(); it != scene_objects.end(); ++it) {
         SceneObject *scene_object = (*it);
@@ -148,8 +150,8 @@ void Renderer::frustum_cull(JNIEnv * jni, Scene* scene, const OVR::Vector3f& cam
             continue;
         }
 
-        OVR::Matrix4f model_matrix_tmp = render_data->owner_object()->transform()->getModelMatrix();
-        OVR::Matrix4f mvp_matrix_tmp(vp_matrix * model_matrix_tmp);
+        Matrix4f model_matrix_tmp = render_data->owner_object()->transform()->getModelMatrix();
+        Matrix4f mvp_matrix_tmp(vp_matrix * model_matrix_tmp);
 
         // Frustum
         float frustum[6][4];
@@ -173,13 +175,13 @@ void Renderer::frustum_cull(JNIEnv * jni, Scene* scene, const OVR::Vector3f& cam
 
         // Transform the bounding sphere
         const float *sphere_info = currentMesh->getBoundingSphereInfo();
-        OVR::Vector4f sphere_center(sphere_info[0], sphere_info[1], sphere_info[2],
+        Vector4f sphere_center(sphere_info[0], sphere_info[1], sphere_info[2],
                 1.0f);
-        OVR::Vector4f transformed_sphere_center = mvp_matrix_tmp.Transform(sphere_center);
+        Vector4f transformed_sphere_center = mvp_matrix_tmp.Transform(sphere_center);
 
         // Calculate distance from camera
-        OVR::Vector4f position(camera_position, 1.0f);
-        OVR::Vector4f difference = transformed_sphere_center - position;
+        Vector4f position(camera_position, 1.0f);
+        Vector4f difference = transformed_sphere_center - position;
         float distance = difference.Dot(difference);
 
         // this distance will be used when sorting transparent objects
@@ -376,7 +378,7 @@ bool Renderer::is_cube_in_frustum(float frustum[6][4],
 }
 
 void Renderer::renderRenderData(RenderData* render_data,
-        const OVR::Matrix4f& view_matrix, const OVR::Matrix4f& projection_matrix,
+        const Matrix4f& view_matrix, const Matrix4f& projection_matrix,
         int render_mask, ShaderManager* shader_manager) {
     if (render_mask & render_data->render_mask()) {
 
@@ -396,13 +398,12 @@ void Renderer::renderRenderData(RenderData* render_data,
                     ++curr_pass) {
 
                 set_face_culling(render_data->pass(curr_pass)->cull_face());
-                Material* curr_material =
-                        render_data->pass(curr_pass)->material();
+                Material* curr_material = render_data->pass(curr_pass)->material();
 
                 if (curr_material != nullptr) {
-                    OVR::Matrix4f model_matrix = render_data->owner_object()->transform()->getModelMatrix();
-                    OVR::Matrix4f mv_matrix(view_matrix * model_matrix);
-                    OVR::Matrix4f mvp_matrix = projection_matrix * mv_matrix;
+                    Matrix4f model_matrix = render_data->owner_object()->transform()->getModelMatrix();
+                    Matrix4f mv_matrix(view_matrix * model_matrix);
+                    Matrix4f mvp_matrix = projection_matrix * mv_matrix;
                     try {
                         bool right = render_mask
                                 & RenderData::RenderMaskBit::Right;
@@ -464,10 +465,8 @@ void Renderer::renderRenderData(RenderData* render_data,
                             break;
                         }
                     } catch (std::string error) {
-                        LOGE(
-                                "Error detected in Renderer::renderRenderData; error : %s", error.c_str());
-                        shader_manager->getErrorShader()->render(mvp_matrix,
-                                render_data);
+                        LOGE("Error detected in Renderer::renderRenderData; error : %s", error.c_str());
+                        shader_manager->getErrorShader()->render(mvp_matrix, render_data);
                     }
                 }
             }
