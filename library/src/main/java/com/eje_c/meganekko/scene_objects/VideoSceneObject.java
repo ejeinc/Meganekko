@@ -21,7 +21,7 @@ import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.view.Surface;
 
-import com.eje_c.meganekko.ExternalTexture;
+import com.eje_c.meganekko.SurfaceTextureTexture;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Material.ShaderType;
 import com.eje_c.meganekko.MaterialShaderId;
@@ -60,14 +60,17 @@ public class VideoSceneObject extends SceneObject {
     public VideoSceneObject(VrContext vrContext) {
         super(vrContext);
 
-        ExternalTexture texture = new ExternalTexture(vrContext);
+        SurfaceTextureTexture texture = new SurfaceTextureTexture(vrContext);
+
+        // Generate GL texture
+        mSurfaceTexture = texture.getSurfaceTexture();
+
+        // Setup material
         Material material = new Material(vrContext, ShaderType.OES.ID);
         material.setMainTexture(texture);
         RenderData renderData = new RenderData(vrContext);
         renderData.setMaterial(material);
         attachRenderData(renderData);
-
-        mSurfaceTexture = new SurfaceTexture(texture.getId());
     }
 
     @Deprecated
@@ -89,7 +92,11 @@ public class VideoSceneObject extends SceneObject {
      */
     public VideoSceneObject(VrContext vrContext, Mesh mesh, MediaPlayer mediaPlayer, VideoType videoType) {
         super(vrContext, mesh);
-        ExternalTexture texture = new ExternalTexture(vrContext);
+
+        SurfaceTextureTexture texture = new SurfaceTextureTexture(vrContext);
+
+        // Generate GL texture
+        mSurfaceTexture = texture.getSurfaceTexture();
 
         MaterialShaderId materialType;
         switch (videoType) {
@@ -114,7 +121,6 @@ public class VideoSceneObject extends SceneObject {
         material.setMainTexture(texture);
         getRenderData().setMaterial(material);
 
-        mSurfaceTexture = new SurfaceTexture(texture.getId());
         mMediaPlayer = mediaPlayer;
     }
 

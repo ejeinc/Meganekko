@@ -90,6 +90,9 @@ void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Mate
     glDrawElements(GL_TRIANGLES, mesh->triangles().size(), GL_UNSIGNED_SHORT, 0);
     glBindVertexArray(0);
 
+    glActiveTexture( GL_TEXTURE0 );
+    glBindTexture( GL_TEXTURE_EXTERNAL_OES, 0 );
+    
     checkGlError("OESShader::render");
 }
 
