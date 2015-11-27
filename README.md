@@ -20,15 +20,21 @@ repositories {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.eje_c:meganekko:1.0.0' // 2. Add this line
+    compile 'com.eje_c:meganekko:1.0.+' // 2. Add this line
 }
 ```
 
+`repositories` block can be put in PROJECT_ROOT/build.gradle
+
 ### AndroidManifest.xml
+
+`android.permission.ACCESS_NETWORK_STATE` permission is required from Oculus SDK Mobile.
 
 ```xml
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 ```
+
+There are some required/recommended attributes and elements. See also [Oculus developer document](https://developer.oculus.com/documentation/mobilesdk/latest/concepts/mobile-new-apps-intro/#mobile-native-manifest).
 
 ```xml
 <application
@@ -57,7 +63,7 @@ dependencies {
 </application>
 ```
 
-`MainActivity` has to extend `MeganekkoActivity`.
+`MainActivity` is your entry point. It have to extend `MeganekkoActivity`.
 
 ```java
 import com.eje_c.meganekko.MeganekkoActivity;
@@ -85,10 +91,8 @@ public class MainActivity extends MeganekkoActivity {
 
 You have to put osig file into apk to debug Gear VR app. See also https://developer.oculus.com/osig/
 
-1. Create `YourAppModuleDirectory/src/debug/assets` directory.
-2. Put your osig file into `YourAppModuleDirectory/src/debug/assets` directory.
-
-I recommend `src/debug/assets` because osig files **must not** be included in production app submited to Oculus Home.
+1. Create `app/src/main/assets` directory.
+2. Put your osig file into `app/src/main/assets` directory.
 
 ## For local development
 
