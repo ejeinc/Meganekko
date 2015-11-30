@@ -18,7 +18,9 @@ package com.eje_c.meganekko.animation;
 import com.eje_c.meganekko.HybridObject;
 import com.eje_c.meganekko.SceneObject;
 
-/** Animate the opacity. */
+/**
+ * Animate the opacity.
+ */
 @Deprecated
 public class OpacityAnimation extends Animation {
 
@@ -27,13 +29,10 @@ public class OpacityAnimation extends Animation {
 
     /**
      * Animate the {@link SceneObject#setOpacity(float) opacity} property.
-     * 
-     * @param target
-     *            {@link SceneObject} to animate.
-     * @param duration
-     *            The animation duration, in seconds.
-     * @param opacity
-     *            A value from 0 to 1
+     *
+     * @param target   {@link SceneObject} to animate.
+     * @param duration The animation duration, in seconds.
+     * @param opacity  A value from 0 to 1
      */
     public OpacityAnimation(SceneObject target, float duration, float opacity) {
         super(target, duration);

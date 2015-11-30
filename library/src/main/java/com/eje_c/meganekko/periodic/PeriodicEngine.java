@@ -15,32 +15,32 @@
 
 package com.eje_c.meganekko.periodic;
 
-import java.util.PriorityQueue;
-
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.VrFrame;
 import com.eje_c.meganekko.event.FrameListener;
 
+import java.util.PriorityQueue;
+
 /**
  * Schedule {@linkplain Runnable runnables} to run on the GL thread at a future
  * time.
- * 
+ * <p/>
  * You can schedule {@linkplain #runAfter(Runnable, float) one-shot events} and
  * you can schedule periodic events, which will either
  * {@linkplain #runEvery(Runnable, float, float) run forever,} or
  * {@linkplain #runEvery(Runnable, float, float, int) run for a fixed number of
  * times,} or {@linkplain #runEvery(Runnable, float, float, KeepRunning) until
  * your callback tells them to stop.}
- * 
- * <p>
+ * <p/>
+ * <p/>
  * The periodic engine is an optional component of Meganekko: You need to
  * {@linkplain VrContext#getPeriodicEngine() get the singleton} in order to use
  * it. For example,
- * 
+ * <p/>
  * <pre>
- * 
+ *
  * Runnable pulse = new Runnable() {
- * 
+ *
  *     public void run() {
  *         new ScaleAnimation(uiObject, 0.5f, 2f)//
  *                 .setRepeatMode(GVRRepeatMode.PINGPONG)//
@@ -49,7 +49,7 @@ import com.eje_c.meganekko.event.FrameListener;
  * };
  * vrContext.getPeriodicEngine().runEvery(pulse, 1f, 2f, 10);
  * </pre>
- * 
+ * <p/>
  * will grow and shrink the {@code uiObject} ten times, every other second,
  * starting in a second. This can be a good way to draw the user's attention to
  * something like a notification.
@@ -78,10 +78,8 @@ public class PeriodicEngine {
 
     /**
      * Get the (lazy-created) singleton.
-     * 
-     * @param context
-     *            Current GVRContext
-     * 
+     *
+     * @param context Current GVRContext
      * @return Periodic engine singleton.
      */
     public static synchronized PeriodicEngine getInstance(VrContext context) {
@@ -92,14 +90,33 @@ public class PeriodicEngine {
     }
 
     /**
+     * The periodic engine's time base.
+     * <p/>
+     * Unit is seconds.
+     */
+    private static float now() {
+        return System.nanoTime() / 1e9f;
+    }
+
+    private static void validateDelay(float delay) {
+        if (delay < 0) {
+            throw new IllegalArgumentException("delay must be >= 0");
+        }
+    }
+
+    private static void validatePeriod(float period) {
+        if (period <= 0) {
+            throw new IllegalArgumentException("period must be > 0");
+        }
+    }
+
+    /**
      * Run a task once, after a delay.
-     * 
-     * @param task
-     *            Task to run.
-     * @param delay
-     *            Unit is seconds.
+     *
+     * @param task  Task to run.
+     * @param delay Unit is seconds.
      * @return An interface that lets you query the status; cancel; or
-     *         reschedule the event.
+     * reschedule the event.
      */
     public PeriodicEvent runAfter(Runnable task, float delay) {
         validateDelay(delay);
@@ -108,16 +125,13 @@ public class PeriodicEngine {
 
     /**
      * Run a task periodically and indefinitely.
-     * 
-     * @param task
-     *            Task to run.
-     * @param delay
-     *            The first execution will happen in {@code delay} seconds.
-     * @param period
-     *            Subsequent executions will happen every {@code period} seconds
-     *            after the first.
+     *
+     * @param task   Task to run.
+     * @param delay  The first execution will happen in {@code delay} seconds.
+     * @param period Subsequent executions will happen every {@code period} seconds
+     *               after the first.
      * @return An interface that lets you query the status; cancel; or
-     *         reschedule the event.
+     * reschedule the event.
      */
     public PeriodicEvent runEvery(Runnable task, float delay, float period) {
         return runEvery(task, delay, period, null);
@@ -125,21 +139,17 @@ public class PeriodicEngine {
 
     /**
      * Run a task periodically, for a set number of times.
-     * 
-     * @param task
-     *            Task to run.
-     * @param delay
-     *            The first execution will happen in {@code delay} seconds.
-     * @param period
-     *            Subsequent executions will happen every {@code period} seconds
-     *            after the first.
-     * @param repetitions
-     *            Repeat count
+     *
+     * @param task        Task to run.
+     * @param delay       The first execution will happen in {@code delay} seconds.
+     * @param period      Subsequent executions will happen every {@code period} seconds
+     *                    after the first.
+     * @param repetitions Repeat count
      * @return {@code null} if {@code repetitions < 1}; otherwise, an interface
-     *         that lets you query the status; cancel; or reschedule the event.
+     * that lets you query the status; cancel; or reschedule the event.
      */
     public PeriodicEvent runEvery(Runnable task, float delay, float period,
-            int repetitions) {
+                                  int repetitions) {
         if (repetitions < 1) {
             return null;
         } else if (repetitions == 1) {
@@ -153,22 +163,18 @@ public class PeriodicEngine {
 
     /**
      * Run a task periodically, with a callback.
-     * 
-     * @param task
-     *            Task to run.
-     * @param delay
-     *            The first execution will happen in {@code delay} seconds.
-     * @param period
-     *            Subsequent executions will happen every {@code period} seconds
-     *            after the first.
-     * @param callback
-     *            Callback that lets you cancel the task. {@code null} means run
-     *            indefinitely.
+     *
+     * @param task     Task to run.
+     * @param delay    The first execution will happen in {@code delay} seconds.
+     * @param period   Subsequent executions will happen every {@code period} seconds
+     *                 after the first.
+     * @param callback Callback that lets you cancel the task. {@code null} means run
+     *                 indefinitely.
      * @return An interface that lets you query the status; cancel; or
-     *         reschedule the event.
+     * reschedule the event.
      */
     public PeriodicEvent runEvery(Runnable task, float delay, float period,
-            KeepRunning callback) {
+                                  KeepRunning callback) {
         validateDelay(delay);
         validatePeriod(period);
         return new Event(task, delay, period, callback);
@@ -177,28 +183,27 @@ public class PeriodicEngine {
     /**
      * Optional callback that you can supply to
      * {@link PeriodicEngine#runEvery(Runnable, float, float, KeepRunning)}.
-     * 
+     * <p/>
      * It will be called after every execution, allowing you to terminate the
      * {@linkplain PeriodicEvent periodic event.}
      */
     public interface KeepRunning {
         /**
          * Called after every execution: lets you do a run-until-state event.
-         * 
-         * @param event
-         *            Interface returned by
-         *            {@link PeriodicEngine#runEvery(Runnable, float, float, KeepRunning)}
-         *            - this lets you can use the same callback with multiple
-         *            events.
+         *
+         * @param event Interface returned by
+         *              {@link PeriodicEngine#runEvery(Runnable, float, float, KeepRunning)}
+         *              - this lets you can use the same callback with multiple
+         *              events.
          * @return {@code true} to keep running, {@code false} to cancel the
-         *         periodic event.
+         * periodic event.
          */
         boolean keepRunning(PeriodicEvent event);
     }
 
     /**
      * Represents a scheduled event.
-     * 
+     * <p/>
      * Returned by the methods that schedule a Runnable; allows you to query
      * event status; cancel; and/or reschedule the event.
      */
@@ -212,17 +217,17 @@ public class PeriodicEngine {
 
         /**
          * Number of times this event has run to completion.
-         * 
+         * <p/>
          * The count is guaranteed to be accurate within a {@link KeepRunning}
          * callback.
-         * 
+         *
          * @return Number of times this event has run to completion.
          */
         int getRunCount();
 
         /**
          * Seconds to (next) execution.
-         * 
+         * <p/>
          * May be slightly negative, if execution is overdue;
          * {@link #UNSCHEDULED} indicates that no execution is pending, either
          * because this is a one-shot event that has already fired, or because
@@ -232,7 +237,7 @@ public class PeriodicEngine {
 
         /**
          * Cancel any future executions.
-         * 
+         * <p/>
          * If called from non-GL thread, there is a chance it will be called
          * during an execution: this will not affect the current execution, but
          * <em>will</em> cancel any future executions.
@@ -241,73 +246,64 @@ public class PeriodicEngine {
 
         /**
          * Reschedule, to run-once after a specified delay.
-         * 
+         * <p/>
          * You can call this on a run-once or a repeating event; it doesn't
          * matter whether it is currently scheduled or it has already timed out.
          * Calling this after a run-once event has run will make it run it
          * again; calling this before a run-once event has run will change its
          * scheduled time; calling this on a repeating event will turn it into a
          * run-once event.
-         * 
-         * @param delay
-         *            The next execution will happen in {@code delay} seconds.
+         *
+         * @param delay The next execution will happen in {@code delay} seconds.
          */
         void runAfter(float delay);
 
         /**
          * Reschedule, to run periodically and indefinitely.
-         * 
+         * <p/>
          * You can call this on a run-once or a repeating event; it doesn't
          * matter whether it is currently scheduled or it has already timed out.
          * Calling this on a run-once event (before or after it has run) will
          * turn it into a repeating event; calling this on a repeating event
          * will change scheduling.
-         * 
-         * @param delay
-         *            The next execution will happen in {@code delay} seconds.
-         * @param period
-         *            Subsequent executions will happen every {@code period}
-         *            seconds after the first rescheduled execution.
+         *
+         * @param delay  The next execution will happen in {@code delay} seconds.
+         * @param period Subsequent executions will happen every {@code period}
+         *               seconds after the first rescheduled execution.
          */
         void runEvery(float delay, float period);
 
         /**
          * Reschedule, to run periodically, for a set number of times.
-         * 
+         * <p/>
          * You can call this on a run-once or a repeating event; it doesn't
          * matter whether it is currently scheduled or it has already timed out.
          * Calling this on a run-once event (before or after it has run) will
          * turn it into a repeating event; calling this on a repeating event
          * will change scheduling.
-         * 
-         * @param delay
-         *            The next execution will happen in {@code delay} seconds.
-         * @param period
-         *            Subsequent executions will happen every {@code period}
-         *            seconds after the first rescheduled execution.
-         * @param repetitions
-         *            Repeat count
+         *
+         * @param delay       The next execution will happen in {@code delay} seconds.
+         * @param period      Subsequent executions will happen every {@code period}
+         *                    seconds after the first rescheduled execution.
+         * @param repetitions Repeat count
          */
 
         void runEvery(float delay, float period, int repetitions);
 
         /**
          * Reschedule, to run periodically with a callback.
-         * 
+         * <p/>
          * You can call this on a run-once or a repeating event; it doesn't
          * matter whether it is currently scheduled or it has already timed out.
          * Calling this on a run-once event (before or after it has run) will
          * turn it into a repeating event; calling this on a repeating event
          * will change scheduling.
-         * 
-         * @param delay
-         *            The next execution will happen in {@code delay} seconds.
-         * @param period
-         *            Subsequent executions will happen every {@code period}
-         *            seconds after the first rescheduled execution.
-         * @param callback
-         *            Callback that lets you cancel the task. {@code null} means
-         *            run indefinitely.
+         *
+         * @param delay    The next execution will happen in {@code delay} seconds.
+         * @param period   Subsequent executions will happen every {@code period}
+         *                 seconds after the first rescheduled execution.
+         * @param callback Callback that lets you cancel the task. {@code null} means
+         *                 run indefinitely.
          */
         void runEvery(float delay, float period, KeepRunning callback);
     }
@@ -317,13 +313,23 @@ public class PeriodicEngine {
         float getScheduledTime();
     }
 
-    /**
-     * The periodic engine's time base.
-     * 
-     * Unit is seconds.
-     */
-    private static float now() {
-        return System.nanoTime() / 1e9f;
+    private static class RunFor implements KeepRunning {
+
+        private final int mTrigger;
+
+        private RunFor(int repetitions) {
+            this(0, repetitions);
+        }
+
+        private RunFor(int currentCount, int repetitions) {
+            mTrigger = currentCount + repetitions;
+        }
+
+        @Override
+        public boolean keepRunning(PeriodicEvent event) {
+            return event.getRunCount() < mTrigger;
+        }
+
     }
 
     private class DrawFrameListener implements FrameListener {
@@ -333,10 +339,10 @@ public class PeriodicEngine {
             float now = PeriodicEngine.now();
             synchronized (mQueue) {
                 for (EventImplementation//
-                first = mQueue.peek(); //
-                first != null && first.getScheduledTime() <= now; //
-                first = mQueue.peek()//
-                ) {
+                     first = mQueue.peek(); //
+                     first != null && first.getScheduledTime() <= now; //
+                     first = mQueue.peek()//
+                        ) {
 
                     mContext.runOnGlThread(mQueue.poll());
 
@@ -370,6 +376,34 @@ public class PeriodicEngine {
          * thread during execution are not rescheduled.
          */
         private boolean mCanceled = false;
+        private float mTimeBase;
+        private float mScheduledTime;
+        private float mPeriod;
+        private KeepRunning mCallback;
+
+        /*
+         * Scheduling fields.
+         *
+         * A run-once event has an mPeriod == UNSCHEDULED.
+         *
+         * We allow the user to change the scheduling at any time. To assure
+         * consistency, neither constructors nor the rescheduling methods set
+         * these fields directly: both go through setDelay() or setRepeat().
+         */
+
+        private Event(Runnable task, float delay) {
+            mTask = task;
+            setDelay(delay);
+
+            enqueue();
+        }
+        private Event(Runnable task, float delay, float period,
+                      KeepRunning callback) {
+            mTask = task;
+            setRepeat(delay, period, callback);
+
+            enqueue();
+        }
 
         private void lockedEnqueue() {
             if (mCanceled != true) {
@@ -393,21 +427,6 @@ public class PeriodicEngine {
                 lockedDequeue();
             }
         }
-
-        /*
-         * Scheduling fields.
-         * 
-         * A run-once event has an mPeriod == UNSCHEDULED.
-         * 
-         * We allow the user to change the scheduling at any time. To assure
-         * consistency, neither constructors nor the rescheduling methods set
-         * these fields directly: both go through setDelay() or setRepeat().
-         */
-
-        private float mTimeBase;
-        private float mScheduledTime;
-        private float mPeriod;
-        private KeepRunning mCallback;
 
         private void setDelay(float delay) {
             mTimeBase = now();
@@ -457,31 +476,16 @@ public class PeriodicEngine {
             return false;
         }
 
+        /*
+         * Constructors
+         */
+
         private boolean scheduled() {
             return mScheduledTime != UNSCHEDULED;
         }
 
         private boolean repeats() {
             return mPeriod != UNSCHEDULED;
-        }
-
-        /*
-         * Constructors
-         */
-
-        private Event(Runnable task, float delay) {
-            mTask = task;
-            setDelay(delay);
-
-            enqueue();
-        }
-
-        private Event(Runnable task, float delay, float period,
-                KeepRunning callback) {
-            mTask = task;
-            setRepeat(delay, period, callback);
-
-            enqueue();
         }
 
         /*
@@ -583,36 +587,5 @@ public class PeriodicEngine {
             }
         }
 
-    }
-
-    private static class RunFor implements KeepRunning {
-
-        private final int mTrigger;
-
-        private RunFor(int repetitions) {
-            this(0, repetitions);
-        }
-
-        private RunFor(int currentCount, int repetitions) {
-            mTrigger = currentCount + repetitions;
-        }
-
-        @Override
-        public boolean keepRunning(PeriodicEvent event) {
-            return event.getRunCount() < mTrigger;
-        }
-
-    }
-
-    private static void validateDelay(float delay) {
-        if (delay < 0) {
-            throw new IllegalArgumentException("delay must be >= 0");
-        }
-    }
-
-    private static void validatePeriod(float period) {
-        if (period <= 0) {
-            throw new IllegalArgumentException("period must be > 0");
-        }
     }
 }

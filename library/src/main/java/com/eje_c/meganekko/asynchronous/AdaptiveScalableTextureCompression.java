@@ -15,11 +15,26 @@
 
 package com.eje_c.meganekko.asynchronous;
 
-import static com.eje_c.meganekko.asynchronous.GLESX.*;
-
 import com.eje_c.meganekko.utility.RuntimeAssertion;
 
-/** .astc loader */
+import static com.eje_c.meganekko.asynchronous.GLESX.GL_COMPRESSED_RGBA_ASTC_10x10_KHR;
+import static com.eje_c.meganekko.asynchronous.GLESX.GL_COMPRESSED_RGBA_ASTC_10x5_KHR;
+import static com.eje_c.meganekko.asynchronous.GLESX.GL_COMPRESSED_RGBA_ASTC_10x6_KHR;
+import static com.eje_c.meganekko.asynchronous.GLESX.GL_COMPRESSED_RGBA_ASTC_10x8_KHR;
+import static com.eje_c.meganekko.asynchronous.GLESX.GL_COMPRESSED_RGBA_ASTC_12x10_KHR;
+import static com.eje_c.meganekko.asynchronous.GLESX.GL_COMPRESSED_RGBA_ASTC_12x12_KHR;
+import static com.eje_c.meganekko.asynchronous.GLESX.GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
+import static com.eje_c.meganekko.asynchronous.GLESX.GL_COMPRESSED_RGBA_ASTC_5x4_KHR;
+import static com.eje_c.meganekko.asynchronous.GLESX.GL_COMPRESSED_RGBA_ASTC_5x5_KHR;
+import static com.eje_c.meganekko.asynchronous.GLESX.GL_COMPRESSED_RGBA_ASTC_6x5_KHR;
+import static com.eje_c.meganekko.asynchronous.GLESX.GL_COMPRESSED_RGBA_ASTC_6x6_KHR;
+import static com.eje_c.meganekko.asynchronous.GLESX.GL_COMPRESSED_RGBA_ASTC_8x5_KHR;
+import static com.eje_c.meganekko.asynchronous.GLESX.GL_COMPRESSED_RGBA_ASTC_8x6_KHR;
+import static com.eje_c.meganekko.asynchronous.GLESX.GL_COMPRESSED_RGBA_ASTC_8x8_KHR;
+
+/**
+ * .astc loader
+ */
 class AdaptiveScalableTextureCompression extends CompressedTextureLoader {
 
     // struct astc_header
@@ -34,6 +49,41 @@ class AdaptiveScalableTextureCompression extends CompressedTextureLoader {
     // };
 
     private static final int MAGIC_NUMBER = 0x5CA1AB13;
+    /**
+     * Smallest entry is 4x4: subtract {@link #OFFSET} from both blockdim_x and
+     * blockdim_y to read/write {@link #formatMap}
+     */
+    private static final int OFFSET = 4;
+    /**
+     * Maps blockdim_x and blockdim_y to GL_COMPRESSED_?_ASTC_?_KHR constants.
+     */
+    private static final int[][] formatMap = new int[9][9];
+
+    static {
+        setFormat(4, 4, GL_COMPRESSED_RGBA_ASTC_4x4_KHR);
+        setFormat(5, 4, GL_COMPRESSED_RGBA_ASTC_5x4_KHR);
+        setFormat(5, 5, GL_COMPRESSED_RGBA_ASTC_5x5_KHR);
+        setFormat(6, 5, GL_COMPRESSED_RGBA_ASTC_6x5_KHR);
+        setFormat(6, 6, GL_COMPRESSED_RGBA_ASTC_6x6_KHR);
+        setFormat(8, 5, GL_COMPRESSED_RGBA_ASTC_8x5_KHR);
+        setFormat(8, 6, GL_COMPRESSED_RGBA_ASTC_8x6_KHR);
+        setFormat(8, 8, GL_COMPRESSED_RGBA_ASTC_8x8_KHR);
+        setFormat(10, 5, GL_COMPRESSED_RGBA_ASTC_10x5_KHR);
+        setFormat(10, 6, GL_COMPRESSED_RGBA_ASTC_10x6_KHR);
+        setFormat(10, 8, GL_COMPRESSED_RGBA_ASTC_10x8_KHR);
+        setFormat(10, 10, GL_COMPRESSED_RGBA_ASTC_10x10_KHR);
+        setFormat(12, 10, GL_COMPRESSED_RGBA_ASTC_12x10_KHR);
+        setFormat(12, 12, GL_COMPRESSED_RGBA_ASTC_12x12_KHR);
+    }
+
+    private static final void setFormat(int blockdim_x, int blockdim_y,
+                                        int format) {
+        formatMap[blockdim_x - OFFSET][blockdim_y - OFFSET] = format;
+    }
+
+    private static final int getFormat(int blockdim_x, int blockdim_y) {
+        return formatMap[blockdim_x - OFFSET][blockdim_y - OFFSET];
+    }
 
     @Override
     public int headerLength() {
@@ -62,41 +112,5 @@ class AdaptiveScalableTextureCompression extends CompressedTextureLoader {
 
         return CompressedTexture(format, width, height, data.length - 16, 1,
                 data, 16, data.length - 16);
-    }
-
-    /**
-     * Smallest entry is 4x4: subtract {@link #OFFSET} from both blockdim_x and
-     * blockdim_y to read/write {@link #formatMap}
-     */
-    private static final int OFFSET = 4;
-    /**
-     * Maps blockdim_x and blockdim_y to GL_COMPRESSED_?_ASTC_?_KHR constants.
-     */
-    private static final int[][] formatMap = new int[9][9];
-
-    private static final void setFormat(int blockdim_x, int blockdim_y,
-            int format) {
-        formatMap[blockdim_x - OFFSET][blockdim_y - OFFSET] = format;
-    }
-
-    private static final int getFormat(int blockdim_x, int blockdim_y) {
-        return formatMap[blockdim_x - OFFSET][blockdim_y - OFFSET];
-    }
-
-    static {
-        setFormat(4, 4, GL_COMPRESSED_RGBA_ASTC_4x4_KHR);
-        setFormat(5, 4, GL_COMPRESSED_RGBA_ASTC_5x4_KHR);
-        setFormat(5, 5, GL_COMPRESSED_RGBA_ASTC_5x5_KHR);
-        setFormat(6, 5, GL_COMPRESSED_RGBA_ASTC_6x5_KHR);
-        setFormat(6, 6, GL_COMPRESSED_RGBA_ASTC_6x6_KHR);
-        setFormat(8, 5, GL_COMPRESSED_RGBA_ASTC_8x5_KHR);
-        setFormat(8, 6, GL_COMPRESSED_RGBA_ASTC_8x6_KHR);
-        setFormat(8, 8, GL_COMPRESSED_RGBA_ASTC_8x8_KHR);
-        setFormat(10, 5, GL_COMPRESSED_RGBA_ASTC_10x5_KHR);
-        setFormat(10, 6, GL_COMPRESSED_RGBA_ASTC_10x6_KHR);
-        setFormat(10, 8, GL_COMPRESSED_RGBA_ASTC_10x8_KHR);
-        setFormat(10, 10, GL_COMPRESSED_RGBA_ASTC_10x10_KHR);
-        setFormat(12, 10, GL_COMPRESSED_RGBA_ASTC_12x10_KHR);
-        setFormat(12, 12, GL_COMPRESSED_RGBA_ASTC_12x12_KHR);
     }
 }

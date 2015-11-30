@@ -44,19 +44,26 @@ import java.nio.ByteBuffer;
 
 /**
  * Wrapper for colors.
- * <p>
- * 
+ * <p/>
+ * <p/>
  * The wrapper is writable, i.e., changes performed via the set-methods will
  * modify the underlying mesh.
  */
 public final class AiColor {
     /**
+     * Wrapped buffer.
+     */
+    private final ByteBuffer m_buffer;
+    /**
+     * Offset into m_buffer.
+     */
+    private final int m_offset;
+
+    /**
      * Constructor.
-     * 
-     * @param buffer
-     *            the buffer to wrap
-     * @param offset
-     *            offset into buffer
+     *
+     * @param buffer the buffer to wrap
+     * @param offset offset into buffer
      */
     public AiColor(ByteBuffer buffer, int offset) {
         m_buffer = buffer;
@@ -65,7 +72,7 @@ public final class AiColor {
 
     /**
      * Returns the red color component.
-     * 
+     *
      * @return the red component
      */
     public float getRed() {
@@ -73,8 +80,17 @@ public final class AiColor {
     }
 
     /**
+     * Sets the red color component.
+     *
+     * @param red the new value
+     */
+    public void setRed(float red) {
+        m_buffer.putFloat(m_offset, red);
+    }
+
+    /**
      * Returns the green color component.
-     * 
+     *
      * @return the green component
      */
     public float getGreen() {
@@ -82,8 +98,17 @@ public final class AiColor {
     }
 
     /**
+     * Sets the green color component.
+     *
+     * @param green the new value
+     */
+    public void setGreen(float green) {
+        m_buffer.putFloat(m_offset + 4, green);
+    }
+
+    /**
      * Returns the blue color component.
-     * 
+     *
      * @return the blue component
      */
     public float getBlue() {
@@ -91,8 +116,17 @@ public final class AiColor {
     }
 
     /**
+     * Sets the blue color component.
+     *
+     * @param blue the new value
+     */
+    public void setBlue(float blue) {
+        m_buffer.putFloat(m_offset + 8, blue);
+    }
+
+    /**
      * Returns the alpha color component.
-     * 
+     *
      * @return the alpha component
      */
     public float getAlpha() {
@@ -100,40 +134,9 @@ public final class AiColor {
     }
 
     /**
-     * Sets the red color component.
-     * 
-     * @param red
-     *            the new value
-     */
-    public void setRed(float red) {
-        m_buffer.putFloat(m_offset, red);
-    }
-
-    /**
-     * Sets the green color component.
-     * 
-     * @param green
-     *            the new value
-     */
-    public void setGreen(float green) {
-        m_buffer.putFloat(m_offset + 4, green);
-    }
-
-    /**
-     * Sets the blue color component.
-     * 
-     * @param blue
-     *            the new value
-     */
-    public void setBlue(float blue) {
-        m_buffer.putFloat(m_offset + 8, blue);
-    }
-
-    /**
      * Sets the alpha color component.
-     * 
-     * @param alpha
-     *            the new value
+     *
+     * @param alpha the new value
      */
     public void setAlpha(float alpha) {
         m_buffer.putFloat(m_offset + 12, alpha);
@@ -144,14 +147,4 @@ public final class AiColor {
         return "[" + getRed() + ", " + getGreen() + ", " + getBlue() + ", "
                 + getAlpha() + "]";
     }
-
-    /**
-     * Wrapped buffer.
-     */
-    private final ByteBuffer m_buffer;
-
-    /**
-     * Offset into m_buffer.
-     */
-    private final int m_offset;
 }

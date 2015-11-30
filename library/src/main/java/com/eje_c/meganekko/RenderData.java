@@ -15,93 +15,56 @@
 
 package com.eje_c.meganekko;
 
+import android.util.Log;
+
+import com.eje_c.meganekko.Material.ShaderType;
+import com.eje_c.meganekko.RenderPass.CullFaceEnum;
+import com.eje_c.meganekko.utility.Threads;
+
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import com.eje_c.meganekko.RenderPass;
-import com.eje_c.meganekko.Material.ShaderType;
-import com.eje_c.meganekko.RenderPass.GVRCullFaceEnum;
-import com.eje_c.meganekko.utility.Threads;
-
-import java.util.ArrayList;
-
-import android.util.Log;
-import static android.opengl.GLES30.*;
+import static android.opengl.GLES30.GL_LINES;
+import static android.opengl.GLES30.GL_LINE_LOOP;
+import static android.opengl.GLES30.GL_LINE_STRIP;
+import static android.opengl.GLES30.GL_POINTS;
+import static android.opengl.GLES30.GL_TRIANGLES;
+import static android.opengl.GLES30.GL_TRIANGLE_FAN;
+import static android.opengl.GLES30.GL_TRIANGLE_STRIP;
 
 /**
  * One of the key Meganekko classes: Encapsulates the data associated with rendering
  * a mesh.
- * 
+ * <p/>
  * This includes the {@link Mesh mesh} itself, the mesh's {@link Material
  * material}, camera association, rendering order, and various other parameters.
  */
 public class RenderData extends Component {
 
+    private static final String TAG = "Meganekko";
     private Mesh mMesh;
     private ArrayList<RenderPass> mRenderPassList;
-    private static final String TAG = "GearVRf";
     private Light mLight;
-    
-    /** Just for {@link #getMeshEyePointee()} */
-    private Future<Mesh> mFutureMesh;
 
     /**
-     * Rendering hints.
-     * 
-     * You might expect the rendering process to sort the scene graph, from back
-     * to front, so it can then draw translucent objects over the objects behind
-     * them. But that's not how Meganekko works. Instead, it sorts the scene graph by
-     * render order, then draws the sorted graph in traversal order. (Please
-     * don't waste your time getting angry or trying to make sense of this;
-     * please just take it as a bald statement of How Meganekko Currently Works.)
-     * 
-     * <p>
-     * The point is, to get transparency to work as you expect, you do need to
-     * explicitly call {@link RenderData#setRenderingOrder(int)
-     * setRenderingOrder():} objects are sorted from low render order to high
-     * render order, so that a {@link #GEOMETRY} object will show through a
-     * {@link #TRANSPARENT} object.
+     * Just for {@link #getMeshEyePointee()}
      */
-    public abstract static class GVRRenderingOrder {
-        /**
-         * Rendered first, below any other objects at the same distance from the
-         * camera
-         */
-        public static final int BACKGROUND = 1000;
-        /**
-         * The default render order, if you don't explicitly call
-         * {@link RenderData#setRenderingOrder(int)}
-         */
-        public static final int GEOMETRY = 2000;
-        /** The rendering order for see-through objects */
-        public static final int TRANSPARENT = 3000;
-        /** The rendering order for sprites {@literal &c.} */
-        public static final int OVERLAY = 4000;
-    };
+    private Future<Mesh> mFutureMesh;
+    private boolean isLightEnabled;
 
-    /** Items for the rendering options bit mask. */
-    public abstract static class GVRRenderMaskBit {
-        /**
-         * Render the mesh in the left {@link GVRCamera camera}.
-         */
-        public static final int Left = 0x1;
-        /**
-         * Render the mesh in the right {@link GVRCamera camera}.
-         */
-        public static final int Right = 0x2;
-    }
+    ;
 
     /**
      * Constructor.
-     * 
-     * @param vrContext
-     *            Current {@link VrContext}
+     *
+     * @param vrContext Current {@link VrContext}
      */
     public RenderData(VrContext vrContext) {
         super(vrContext, NativeRenderData.ctor());
-        
+
         RenderPass basePass = new RenderPass(vrContext);
         mRenderPassList = new ArrayList<RenderPass>();
         addPass(basePass);
@@ -110,7 +73,7 @@ public class RenderData extends Component {
 
     private RenderData(VrContext vrContext, long ptr) {
         super(vrContext, ptr);
-        
+
         RenderPass basePass = new RenderPass(vrContext);
         mRenderPassList = new ArrayList<RenderPass>();
         addPass(basePass);
@@ -124,29 +87,14 @@ public class RenderData extends Component {
     }
 
     /**
-     * Set the {@link Mesh mesh} to be rendered.
-     * 
-     * @param mesh
-     *            The mesh to be rendered.
-     */
-    public void setMesh(Mesh mesh) {
-        synchronized (this) {
-            mMesh = mesh;
-            mFutureMesh = null;
-        }
-        NativeRenderData.setMesh(getNative(), mesh.getNative());
-    }
-
-    /**
      * Asynchronously set the {@link Mesh mesh} to be rendered.
-     * 
+     * <p/>
      * Uses a background thread from the thread pool to wait for the
      * {@code Future.get()} method; unless you are loading dozens of meshes
      * asynchronously, the extra overhead should be modest compared to the cost
      * of loading a mesh.
-     * 
-     * @param mesh
-     *            The mesh to be rendered.
+     *
+     * @param mesh The mesh to be rendered.
      */
     public void setMesh(final Future<Mesh> mesh) {
         synchronized (this) {
@@ -166,8 +114,21 @@ public class RenderData extends Component {
     }
 
     /**
+     * Set the {@link Mesh mesh} to be rendered.
+     *
+     * @param mesh The mesh to be rendered.
+     */
+    public void setMesh(Mesh mesh) {
+        synchronized (this) {
+            mMesh = mesh;
+            mFutureMesh = null;
+        }
+        NativeRenderData.setMesh(getNative(), mesh.getNative());
+    }
+
+    /**
      * Return a {@code Future<GVREyePointee>} or {@code null}.
-     * 
+     * <p/>
      * If you use {@link #setMesh(Future)}, trying to create a
      * {@link MeshEyePointee} in the 'normal' (synchronous) way will fail,
      * because this {@link RenderData} won't have a mesh yet. This method
@@ -180,13 +141,12 @@ public class RenderData extends Component {
      * get a 'true' {@code Future} that waits for the {@code Future<GVRMesh>}.
      * <li>If you have neither, you will get {@code null}.
      * </ul>
-     * 
-     * <p>
+     * <p/>
      * This overload will return a {@code Future<GVREyePointee>} that uses the
      * mesh's bounding box; use the {@link #getMeshEyePointee(boolean)} overload
      * if you would prefer to use the actual mesh. With complicated meshes, it's
      * cheaper - though less accurate - to use the bounding box.
-     * 
+     *
      * @return Either a {@code Future<GVREyePointee>} or {@code null}.
      */
     public Future<EyePointee> getMeshEyePointee() {
@@ -195,7 +155,7 @@ public class RenderData extends Component {
 
     /**
      * Return a {@code Future<GVREyePointee>} or {@code null}.
-     * 
+     * <p/>
      * If you use {@link #setMesh(Future)}, trying to create a
      * {@link MeshEyePointee} in the 'normal' (synchronous) way will fail,
      * because this {@link RenderData} won't have a mesh yet. This method
@@ -208,13 +168,11 @@ public class RenderData extends Component {
      * get a 'true' {@code Future} that waits for the {@code Future<GVRMesh>}.
      * <li>If you have neither, you will get {@code null}.
      * </ul>
-     * 
-     * @param useBoundingBox
-     *            When {@code true}, will use {@link Mesh#getBoundingBox()};
-     *            when {@code false} will use {@code mesh} directly. With
-     *            complicated meshes, it's cheaper - though less accurate - to
-     *            use the bounding box.
-     * 
+     *
+     * @param useBoundingBox When {@code true}, will use {@link Mesh#getBoundingBox()};
+     *                       when {@code false} will use {@code mesh} directly. With
+     *                       complicated meshes, it's cheaper - though less accurate - to
+     *                       use the bounding box.
      * @return Either a {@code Future<GVREyePointee>} or {@code null}.
      */
     public Future<EyePointee> getMeshEyePointee(boolean useBoundingBox) {
@@ -235,59 +193,19 @@ public class RenderData extends Component {
         }
     }
 
-    private static class FutureMeshEyePointee implements Future<EyePointee> {
-
-        private final Future<Mesh> mFutureMesh;
-        private final boolean mUseBoundingBox;
-
-        private FutureMeshEyePointee(Future<Mesh> futureMesh,
-                boolean useBoundingBox) {
-            mFutureMesh = futureMesh;
-            mUseBoundingBox = useBoundingBox;
-        }
-
-        @Override
-        public boolean cancel(boolean mayInterruptIfRunning) {
-            return isDone() ? false : mFutureMesh.cancel(mayInterruptIfRunning);
-        }
-
-        @Override
-        public MeshEyePointee get() throws InterruptedException,
-                ExecutionException {
-            Mesh mesh = mFutureMesh.get();
-            return new MeshEyePointee(mesh, mUseBoundingBox);
-        }
-
-        @Override
-        public MeshEyePointee get(long timeout, TimeUnit unit)
-                throws InterruptedException, ExecutionException,
-                TimeoutException {
-            Mesh mesh = mFutureMesh.get(timeout, unit);
-            return new MeshEyePointee(mesh, mUseBoundingBox);
-        }
-
-        @Override
-        public boolean isCancelled() {
-            return mFutureMesh.isCancelled();
-        }
-
-        @Override
-        public boolean isDone() {
-            return mFutureMesh.isDone();
-        }
-    }
-
     /**
      * Add a render {@link RenderPass pass} to this RenderData.
+     *
      * @param pass
      */
     public void addPass(RenderPass pass) {
         mRenderPassList.add(pass);
         NativeRenderData.addPass(getNative(), pass.getNative());
     }
-    
+
     /**
      * Get a Rendering {@link RenderPass Pass} for this Mesh
+     *
      * @param passIndex The index of the RenderPass to get.
      * @return
      */
@@ -299,19 +217,28 @@ public class RenderData extends Component {
             return null;
         }
     }
-    
+
     /**
      * @return The {@link Material material} the {@link Mesh mesh} is
-     *         being rendered with.
+     * being rendered with.
      */
     public Material getMaterial() {
         return getMaterial(0);
     }
-    
+
+    /**
+     * Set the {@link Material material} the mesh will be rendered with.
+     *
+     * @param material The {@link Material material} for rendering.
+     */
+    public void setMaterial(Material material) {
+        setMaterial(material, 0);
+    }
+
     /**
      * @param The {@link RenderPass pass} index to retrieve material from.
      * @return The {@link Material material} the {@link Mesh mesh} is
-     *         being rendered with.
+     * being rendered with.
      */
     public Material getMaterial(int passIndex) {
         if (passIndex < mRenderPassList.size()) {
@@ -323,23 +250,10 @@ public class RenderData extends Component {
     }
 
     /**
-     * Set the {@link Material material} the mesh will be rendered with.
-     * 
-     * @param material
-     *            The {@link Material material} for rendering.
-     */
-    public void setMaterial(Material material) {
-        setMaterial(material, 0);
-    }
-
-    /**
      * Set the {@link Material material} this pass will be rendered with.
-     * 
-     * @param material
-     *            The {@link Material material} for rendering.
-     * @param passIndex
-     *            The rendering pass this material will be assigned to.
-     * 
+     *
+     * @param material  The {@link Material material} for rendering.
+     * @param passIndex The rendering pass this material will be assigned to.
      */
     public void setMaterial(Material material, int passIndex) {
         if (passIndex < mRenderPassList.size()) {
@@ -347,12 +261,11 @@ public class RenderData extends Component {
         } else {
             Log.e(TAG, "Trying to set material from invalid pass. Pass " + passIndex + " was not created.");
         }
-        
     }
 
     /**
      * @return The {@link Light light} the {@link Mesh mesh} is being lit
-     *         by.
+     * by.
      */
     public Light getLight() {
         return mLight;
@@ -360,25 +273,23 @@ public class RenderData extends Component {
 
     /**
      * Set the {@link Light light} the mesh will be lit by.
-     * 
-     * @param light
-     *            The {@link Light light} for rendering.
+     *
+     * @param light The {@link Light light} for rendering.
      */
     public void setLight(Light light) {
         boolean supportsLight = false;
-        
+
         for (int pass = 0; pass < mRenderPassList.size(); ++pass) {
             if (mRenderPassList.get(pass).getMaterial().getShaderType() == ShaderType.Texture.ID) {
                 supportsLight = true;
                 break;
             }
         }
-        
+
         if (!supportsLight) {
-            throw new UnsupportedOperationException(
-                    "Only Texture shader can has light.");
+            throw new UnsupportedOperationException("Only Texture shader can has light.");
         }
-        
+
         mLight = light;
         NativeRenderData.setLight(getNative(), light.getNative());
         isLightEnabled = true;
@@ -419,9 +330,9 @@ public class RenderData extends Component {
      * different to enable/disable status of the light. The lighting effect is
      * applied if and only if {@code mLight} is enabled (i.e. on) AND the
      * lighting effect is enabled for the render_data.
-     * 
+     *
      * @return true if lighting effect is enabled, false if lighting effect is
-     *         disabled.
+     * disabled.
      */
     public boolean isLightEnabled() {
         return isLightEnabled;
@@ -429,9 +340,9 @@ public class RenderData extends Component {
 
     /**
      * Get the rendering options bit mask.
-     * 
+     *
      * @return The rendering options bit mask.
-     * @see GVRRenderMaskBit
+     * @see RenderMaskBit
      */
     public int getRenderMask() {
         return NativeRenderData.getRenderMask(getNative());
@@ -439,10 +350,9 @@ public class RenderData extends Component {
 
     /**
      * Set the rendering options bit mask.
-     * 
-     * @param renderMask
-     *            The rendering options bit mask.
-     * @see GVRRenderMaskBit
+     *
+     * @param renderMask The rendering options bit mask.
+     * @see RenderMaskBit
      */
     public void setRenderMask(int renderMask) {
         NativeRenderData.setRenderMask(getNative(), renderMask);
@@ -450,7 +360,7 @@ public class RenderData extends Component {
 
     /**
      * @return The order in which this mesh will be rendered.
-     * @see GVRRenderingOrder
+     * @see RenderingOrder
      */
     public int getRenderingOrder() {
         return NativeRenderData.getRenderingOrder(getNative());
@@ -458,89 +368,81 @@ public class RenderData extends Component {
 
     /**
      * Set the order in which this mesh will be rendered.
-     * 
-     * @param renderingOrder
-     *            See {@link GVRRenderingOrder}
+     *
+     * @param renderingOrder See {@link RenderingOrder}
      */
     public void setRenderingOrder(int renderingOrder) {
         NativeRenderData.setRenderingOrder(getNative(), renderingOrder);
     }
 
     /**
-     * @deprecated Use {@code getCullFace() } instead.
-     * @see #getCullFace() 
      * @return {@code true} if {@code GL_CULL_FACE} is enabled, {@code false} if
-     *         not.
+     * not.
+     * @see #getCullFace()
+     * @deprecated Use {@code getCullFace() } instead.
      */
     public boolean getCullTest() {
-        return getCullFace(0) != GVRCullFaceEnum.None;
+        return getCullFace(0) != CullFaceEnum.None;
     }
 
     /**
-     * @return current face to be culled See {@link GVRCullFaceEnum}.
+     * @param cullTest {@code true} if {@code GL_CULL_FACE} should be enabled,
+     *                 {@code false} if not.
+     * @param pass
+     * @see #setCullFace(int cullFace)
+     * Set the {@code GL_CULL_FACE} option
+     * @deprecated Use {@code setCullFace(GVRCullFaceEnum cullFace)} instead.
      */
-    public GVRCullFaceEnum getCullFace() {
+    public void setCullTest(boolean cullTest) {
+        if (cullTest) {
+            setCullFace(CullFaceEnum.Back);
+        } else {
+            setCullFace(CullFaceEnum.None);
+        }
+    }
+
+    /**
+     * @return current face to be culled See {@link CullFaceEnum}.
+     */
+    public CullFaceEnum getCullFace() {
         return getCullFace(0);
     }
 
     /**
-     * @param passIndex
-     *            The rendering pass index to query cull face state.
-     * @return current face to be culled See {@link GVRCullFaceEnum}.
-     */
-    public GVRCullFaceEnum getCullFace(int passIndex) {
-        if (passIndex < mRenderPassList.size()) {
-            return mRenderPassList.get(passIndex).getCullFace();
-        } else {
-            Log.e(TAG, "Trying to get cull face from invalid pass. Pass " + passIndex + " was not created.");
-            return GVRCullFaceEnum.Back;
-        }
-    }
-
-    /**
-     * @deprecated Use {@code setCullFace(GVRCullFaceEnum cullFace)} instead.
-     * @see #setCullFace(int cullFace)
-     * Set the {@code GL_CULL_FACE} option
-     * 
-     * @param cullTest
-     *            {@code true} if {@code GL_CULL_FACE} should be enabled,
-     *            {@code false} if not.
-     * @param pass
-     */
-    public void setCullTest(boolean cullTest) {
-        if (cullTest) {
-            setCullFace(GVRCullFaceEnum.Back);
-        } else {
-            setCullFace(GVRCullFaceEnum.None);
-        }
-
-    }
-
-    /**
      * Set the face to be culled
-     * 
-     * @param cullFace
-     *            {@code GVRCullFaceEnum.Back} Tells Graphics API to discard
-     *            back faces, {@code GVRCullFaceEnum.Front} Tells Graphics API
-     *            to discard front faces, {@code GVRCullFaceEnum.None} Tells
-     *            Graphics API to not discard any face
+     *
+     * @param cullFace {@code GVRCullFaceEnum.Back} Tells Graphics API to discard
+     *                 back faces, {@code GVRCullFaceEnum.Front} Tells Graphics API
+     *                 to discard front faces, {@code GVRCullFaceEnum.None} Tells
+     *                 Graphics API to not discard any face
      */
-    public void setCullFace(GVRCullFaceEnum cullFace) {
+    public void setCullFace(CullFaceEnum cullFace) {
         setCullFace(cullFace, 0);
     }
 
     /**
-     * Set the face to be culled
-     * 
-     * @param cullFace
-     *            {@code GVRCullFaceEnum.Back} Tells Graphics API to discard
-     *            back faces, {@code GVRCullFaceEnum.Front} Tells Graphics API
-     *            to discard front faces, {@code GVRCullFaceEnum.None} Tells
-     *            Graphics API to not discard any face
-     * @param passIndex
-     *            The rendering pass to set cull face state
+     * @param passIndex The rendering pass index to query cull face state.
+     * @return current face to be culled See {@link CullFaceEnum}.
      */
-    public void setCullFace(GVRCullFaceEnum cullFace, int passIndex) {
+    public CullFaceEnum getCullFace(int passIndex) {
+        if (passIndex < mRenderPassList.size()) {
+            return mRenderPassList.get(passIndex).getCullFace();
+        } else {
+            Log.e(TAG, "Trying to get cull face from invalid pass. Pass " + passIndex + " was not created.");
+            return CullFaceEnum.Back;
+        }
+    }
+
+    /**
+     * Set the face to be culled
+     *
+     * @param cullFace  {@code GVRCullFaceEnum.Back} Tells Graphics API to discard
+     *                  back faces, {@code GVRCullFaceEnum.Front} Tells Graphics API
+     *                  to discard front faces, {@code GVRCullFaceEnum.None} Tells
+     *                  Graphics API to not discard any face
+     * @param passIndex The rendering pass to set cull face state
+     */
+    public void setCullFace(CullFaceEnum cullFace, int passIndex) {
         if (passIndex < mRenderPassList.size()) {
             mRenderPassList.get(passIndex).setCullFace(cullFace);
         } else {
@@ -550,7 +452,7 @@ public class RenderData extends Component {
 
     /**
      * @return {@code true} if {@code GL_POLYGON_OFFSET_FILL} is enabled,
-     *         {@code false} if not.
+     * {@code false} if not.
      */
     public boolean getOffset() {
         return NativeRenderData.getOffset(getNative());
@@ -558,10 +460,9 @@ public class RenderData extends Component {
 
     /**
      * Set the {@code GL_POLYGON_OFFSET_FILL} option
-     * 
-     * @param offset
-     *            {@code true} if {@code GL_POLYGON_OFFSET_FILL} should be
-     *            enabled, {@code false} if not.
+     *
+     * @param offset {@code true} if {@code GL_POLYGON_OFFSET_FILL} should be
+     *               enabled, {@code false} if not.
      */
     public void setOffset(boolean offset) {
         NativeRenderData.setOffset(getNative(), offset);
@@ -569,7 +470,7 @@ public class RenderData extends Component {
 
     /**
      * @return The {@code factor} value passed to {@code glPolygonOffset()} if
-     *         {@code GL_POLYGON_OFFSET_FILL} is enabled.
+     * {@code GL_POLYGON_OFFSET_FILL} is enabled.
      * @see #setOffset(boolean)
      */
     public float getOffsetFactor() {
@@ -579,11 +480,10 @@ public class RenderData extends Component {
     /**
      * Set the {@code factor} value passed to {@code glPolygonOffset()} if
      * {@code GL_POLYGON_OFFSET_FILL} is enabled.
-     * 
-     * @param offsetFactor
-     *            Per OpenGL docs: Specifies a scale factor that is used to
-     *            create a variable depth offset for each polygon. The initial
-     *            value is 0.
+     *
+     * @param offsetFactor Per OpenGL docs: Specifies a scale factor that is used to
+     *                     create a variable depth offset for each polygon. The initial
+     *                     value is 0.
      * @see #setOffset(boolean)
      */
     public void setOffsetFactor(float offsetFactor) {
@@ -592,7 +492,7 @@ public class RenderData extends Component {
 
     /**
      * @return The {@code units} value passed to {@code glPolygonOffset()} if
-     *         {@code GL_POLYGON_OFFSET_FILL} is enabled.
+     * {@code GL_POLYGON_OFFSET_FILL} is enabled.
      * @see #setOffset(boolean)
      */
     public float getOffsetUnits() {
@@ -602,11 +502,10 @@ public class RenderData extends Component {
     /**
      * Set the {@code units} value passed to {@code glPolygonOffset()} if
      * {@code GL_POLYGON_OFFSET_FILL} is enabled.
-     * 
-     * @param offsetUnits
-     *            Per OpenGL docs: Is multiplied by an implementation-specific
-     *            value to create a constant depth offset. The initial value is
-     *            0.
+     *
+     * @param offsetUnits Per OpenGL docs: Is multiplied by an implementation-specific
+     *                    value to create a constant depth offset. The initial value is
+     *                    0.
      * @see #setOffset(boolean)
      */
     public void setOffsetUnits(float offsetUnits) {
@@ -615,7 +514,7 @@ public class RenderData extends Component {
 
     /**
      * @return {@code true} if {@code GL_DEPTH_TEST} is enabled, {@code false}
-     *         if not.
+     * if not.
      */
     public boolean getDepthTest() {
         return NativeRenderData.getDepthTest(getNative());
@@ -623,10 +522,9 @@ public class RenderData extends Component {
 
     /**
      * Set the {@code GL_DEPTH_TEST} option
-     * 
-     * @param depthTest
-     *            {@code true} if {@code GL_DEPTH_TEST} should be enabled,
-     *            {@code false} if not.
+     *
+     * @param depthTest {@code true} if {@code GL_DEPTH_TEST} should be enabled,
+     *                  {@code false} if not.
      */
     public void setDepthTest(boolean depthTest) {
         NativeRenderData.setDepthTest(getNative(), depthTest);
@@ -634,7 +532,7 @@ public class RenderData extends Component {
 
     /**
      * @return {@code true} if {@code GL_BLEND} is enabled, {@code false} if
-     *         not.
+     * not.
      */
     public boolean getAlphaBlend() {
         return NativeRenderData.getAlphaBlend(getNative());
@@ -642,10 +540,9 @@ public class RenderData extends Component {
 
     /**
      * Set the {@code GL_BLEND} option
-     * 
-     * @param alphaBlend
-     *            {@code true} if {@code GL_BLEND} should be enabled,
-     *            {@code false} if not.
+     *
+     * @param alphaBlend {@code true} if {@code GL_BLEND} should be enabled,
+     *                   {@code false} if not.
      */
     public void setAlphaBlend(boolean alphaBlend) {
         NativeRenderData.setAlphaBlend(getNative(), alphaBlend);
@@ -660,7 +557,7 @@ public class RenderData extends Component {
 
     /**
      * Set the draw mode for this mesh. Default is GL_TRIANGLES.
-     * 
+     *
      * @param drawMode
      */
     public void setDrawMode(int drawMode) {
@@ -674,7 +571,95 @@ public class RenderData extends Component {
         NativeRenderData.setDrawMode(getNative(), drawMode);
     }
 
-    private boolean isLightEnabled;
+    /**
+     * Rendering hints.
+     * <p/>
+     * You might expect the rendering process to sort the scene graph, from back
+     * to front, so it can then draw translucent objects over the objects behind
+     * them. But that's not how Meganekko works. Instead, it sorts the scene graph by
+     * render order, then draws the sorted graph in traversal order. (Please
+     * don't waste your time getting angry or trying to make sense of this;
+     * please just take it as a bald statement of How Meganekko Currently Works.)
+     * <p/>
+     * The point is, to get transparency to work as you expect, you do need to
+     * explicitly call {@link RenderData#setRenderingOrder(int)
+     * setRenderingOrder():} objects are sorted from low render order to high
+     * render order, so that a {@link #GEOMETRY} object will show through a
+     * {@link #TRANSPARENT} object.
+     */
+    public abstract static class RenderingOrder {
+        /**
+         * Rendered first, below any other objects at the same distance from the
+         * camera
+         */
+        public static final int BACKGROUND = 1000;
+        /**
+         * The default render order, if you don't explicitly call
+         * {@link RenderData#setRenderingOrder(int)}
+         */
+        public static final int GEOMETRY = 2000;
+        /**
+         * The rendering order for see-through objects
+         */
+        public static final int TRANSPARENT = 3000;
+        /**
+         * The rendering order for sprites {@literal &c.}
+         */
+        public static final int OVERLAY = 4000;
+    }
+
+    /**
+     * Items for the rendering options bit mask.
+     */
+    public abstract static class RenderMaskBit {
+        /**
+         * Render the mesh in the left {@link Camera camera}.
+         */
+        public static final int Left = 0x1;
+        /**
+         * Render the mesh in the right {@link Camera camera}.
+         */
+        public static final int Right = 0x2;
+    }
+
+    private static class FutureMeshEyePointee implements Future<EyePointee> {
+
+        private final Future<Mesh> mFutureMesh;
+        private final boolean mUseBoundingBox;
+
+        private FutureMeshEyePointee(Future<Mesh> futureMesh,
+                                     boolean useBoundingBox) {
+            mFutureMesh = futureMesh;
+            mUseBoundingBox = useBoundingBox;
+        }
+
+        @Override
+        public boolean cancel(boolean mayInterruptIfRunning) {
+            return isDone() ? false : mFutureMesh.cancel(mayInterruptIfRunning);
+        }
+
+        @Override
+        public MeshEyePointee get() throws InterruptedException, ExecutionException {
+            Mesh mesh = mFutureMesh.get();
+            return new MeshEyePointee(mesh, mUseBoundingBox);
+        }
+
+        @Override
+        public MeshEyePointee get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+            Mesh mesh = mFutureMesh.get(timeout, unit);
+            return new MeshEyePointee(mesh, mUseBoundingBox);
+        }
+
+        @Override
+        public boolean isCancelled() {
+            return mFutureMesh.isCancelled();
+        }
+
+        @Override
+        public boolean isDone() {
+            return mFutureMesh.isDone();
+        }
+    }
 }
 
 class NativeRenderData {
@@ -697,7 +682,7 @@ class NativeRenderData {
     static native int getRenderingOrder(long renderData);
 
     static native void setRenderingOrder(long renderData, int renderingOrder);
-    
+
     static native boolean getOffset(long renderData);
 
     static native void setOffset(long renderData, boolean offset);

@@ -41,24 +41,18 @@ import java.io.InputStream;
  */
 public class AndroidResource {
 
-    private enum DebugStates {
-        OPEN, READING, CLOSED
-    }
+    private final InputStream stream;
 
     /*
      * Instance members
      */
-
-    private final InputStream stream;
-    private DebugStates debugState;
-
     // Save parameters, for hashCode() and equals()
     private final String filePath;
     private final int resourceId;
     private final String assetPath;
+    private DebugStates debugState;
     // For hint to Assimp
     private String resourceFilePath;
-
     /**
      * Open any file you have permission to read.
      *
@@ -161,12 +155,6 @@ public class AndroidResource {
         return stream;
     }
 
-    /*
-     * TODO Should we somehow expose the CLOSED state? Return null or throw an
-     * exception from getStream()? Or is it enough for the calling code to fail,
-     * reading a closed stream?
-     */
-
     /**
      * Close the open stream.
      * <p/>
@@ -183,6 +171,12 @@ public class AndroidResource {
             e.printStackTrace();
         }
     }
+
+    /*
+     * TODO Should we somehow expose the CLOSED state? Return null or throw an
+     * exception from getStream()? Or is it enough for the calling code to fail,
+     * reading a closed stream?
+     */
 
     /**
      * Save the stream position, for later use with {@link #reset()}.
@@ -239,13 +233,6 @@ public class AndroidResource {
         return null;
     }
 
-    /*
-     * Auto-generated hashCode() and equals(), for container support &c.
-     * 
-     * These check only the private 'parameter capture' fields - not the
-     * InputStream.
-     */
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -255,6 +242,13 @@ public class AndroidResource {
         result = prime * result + resourceId;
         return result;
     }
+
+    /*
+     * Auto-generated hashCode() and equals(), for container support &c.
+     * 
+     * These check only the private 'parameter capture' fields - not the
+     * InputStream.
+     */
 
     @Override
     public boolean equals(Object obj) {
@@ -288,10 +282,6 @@ public class AndroidResource {
         return true;
     }
 
-    /*
-     * toString(), for debugging.
-     */
-
     /**
      * For debugging: shows which file the instance describes, and shows the
      * OPEN / READING / CLOSED state of the input stream.
@@ -299,6 +289,14 @@ public class AndroidResource {
     @Override
     public String toString() {
         return String.format("%s{filePath=%s; resourceId=%x; assetPath=%s}", debugState, filePath, resourceId, assetPath);
+    }
+
+    /*
+     * toString(), for debugging.
+     */
+
+    private enum DebugStates {
+        OPEN, READING, CLOSED
     }
 
     /*

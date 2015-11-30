@@ -92,6 +92,15 @@ public class CanvasSceneObject extends SceneObject {
     }
 
     /**
+     * Get an {@code OnDrawListener} for rendering.
+     *
+     * @return
+     */
+    public OnDrawListener getOnDrawListener() {
+        return mOnDrawListener;
+    }
+
+    /**
      * Set an {@code OnDrawListener} for rendering. Pass null to unregister
      * listener.
      *
@@ -99,15 +108,6 @@ public class CanvasSceneObject extends SceneObject {
      */
     public void setOnDrawListener(OnDrawListener onDrawListener) {
         this.mOnDrawListener = onDrawListener;
-    }
-
-    /**
-     * Get an {@code OnDrawListener} for rendering.
-     *
-     * @return
-     */
-    public OnDrawListener getOnDrawListener() {
-        return mOnDrawListener;
     }
 
     /**

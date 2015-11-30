@@ -25,71 +25,54 @@ public abstract class Exceptions {
 
     /**
      * Generate an {@link IllegalArgumentException}
-     * 
-     * @param pattern
-     *            {@link String#format(String, Object...) String.format()}
-     *            pattern
-     * @param parameters
-     *            {@code String.format()} parameters
+     *
+     * @param pattern    {@link String#format(String, Object...) String.format()}
+     *                   pattern
+     * @param parameters {@code String.format()} parameters
      * @return A new {@code IllegalArgumentException}
      */
-    public static IllegalArgumentException IllegalArgument(String pattern,
-            Object... parameters) {
-        return strip(new IllegalArgumentException(String.format(pattern,
-                parameters)));
+    public static IllegalArgumentException IllegalArgument(String pattern, Object... parameters) {
+        return strip(new IllegalArgumentException(String.format(pattern, parameters)));
     }
 
     /**
      * Generate an {@link IllegalArgumentException}
-     * 
-     * @param cause
-     *            Existing {@link Throwable} to wrap in a new
-     *            {@code IllegalArgumentException}
-     * @param pattern
-     *            {@link String#format(String, Object...) String.format()}
-     *            pattern
-     * @param parameters
-     *            {@code String.format()} parameters
+     *
+     * @param cause      Existing {@link Throwable} to wrap in a new
+     *                   {@code IllegalArgumentException}
+     * @param pattern    {@link String#format(String, Object...) String.format()}
+     *                   pattern
+     * @param parameters {@code String.format()} parameters
      * @return A new {@code IllegalArgumentException}
      */
-    public static IllegalArgumentException IllegalArgument(Throwable cause,
-            String pattern, Object... parameters) {
-        return strip(new IllegalArgumentException(String.format(pattern,
-                parameters), cause));
+    public static IllegalArgumentException IllegalArgument(Throwable cause, String pattern, Object... parameters) {
+        return strip(new IllegalArgumentException(String.format(pattern, parameters), cause));
     }
 
     /**
      * Generate a {@link RuntimeAssertion}
-     * 
-     * @param pattern
-     *            {@link String#format(String, Object...) String.format()}
-     *            pattern
-     * @param parameters
-     *            {@code String.format()} parameters
+     *
+     * @param pattern    {@link String#format(String, Object...) String.format()}
+     *                   pattern
+     * @param parameters {@code String.format()} parameters
      * @return A new {@code IllegalArgumentException}
      */
-    public static RuntimeAssertion RuntimeAssertion(String pattern,
-            Object... parameters) {
+    public static RuntimeAssertion RuntimeAssertion(String pattern, Object... parameters) {
         return strip(new RuntimeAssertion(String.format(pattern, parameters)));
     }
 
     /**
      * Generate a {@link RuntimeAssertion}
-     * 
-     * @param cause
-     *            Existing {@link Throwable} to wrap in a new
-     *            {@code IllegalArgumentException}
-     * @param pattern
-     *            {@link String#format(String, Object...) String.format()}
-     *            pattern
-     * @param parameters
-     *            {@code String.format()} parameters
+     *
+     * @param cause      Existing {@link Throwable} to wrap in a new
+     *                   {@code IllegalArgumentException}
+     * @param pattern    {@link String#format(String, Object...) String.format()}
+     *                   pattern
+     * @param parameters {@code String.format()} parameters
      * @return A new {@code IllegalArgumentException}
      */
-    public static RuntimeAssertion RuntimeAssertion(Throwable cause,
-            String pattern, Object... parameters) {
-        return strip(new RuntimeAssertion(String.format(pattern, parameters),
-                cause));
+    public static RuntimeAssertion RuntimeAssertion(Throwable cause, String pattern, Object... parameters) {
+        return strip(new RuntimeAssertion(String.format(pattern, parameters), cause));
     }
 
     private static <T extends Exception> T strip(T e) {

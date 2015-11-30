@@ -21,13 +21,13 @@ import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.view.Surface;
 
-import com.eje_c.meganekko.SurfaceTextureTexture;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Material.ShaderType;
 import com.eje_c.meganekko.MaterialShaderId;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
+import com.eje_c.meganekko.SurfaceTextureTexture;
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.VrFrame;
 
@@ -41,13 +41,6 @@ public class VideoSceneObject extends SceneObject {
     private SurfaceTexture mSurfaceTexture = null;
     private MediaPlayer mMediaPlayer = null;
     private boolean mActive = true;
-
-    /**
-     * Video type constants, for use with {@link VideoSceneObject}
-     */
-    public enum VideoType {
-        MONO, HORIZONTAL_STEREO, VERTICAL_STEREO
-    }
 
     /**
      * Play a video on a {@linkplain SceneObject scene object} with an
@@ -249,5 +242,12 @@ public class VideoSceneObject extends SceneObject {
             mSurfaceTexture.updateTexImage();
         }
         super.onEvent(vrFrame);
+    }
+
+    /**
+     * Video type constants, for use with {@link VideoSceneObject}
+     */
+    public enum VideoType {
+        MONO, HORIZONTAL_STEREO, VERTICAL_STEREO
     }
 }

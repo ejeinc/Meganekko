@@ -15,16 +15,16 @@
 
 package com.eje_c.meganekko.asynchronous;
 
-import static android.opengl.GLES20.*;
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import android.opengl.GLES30;
 
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.utility.Log;
 import com.eje_c.meganekko.utility.RuntimeAssertion;
 
-import android.opengl.GLES30;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
+import static android.opengl.GLES20.GL_TEXTURE_2D;
 
 class KTX extends CompressedTextureLoader {
 
@@ -48,7 +48,7 @@ class KTX extends CompressedTextureLoader {
 
     private static final int[] SIGNATURE = {
             // '«', 'K', 'T', 'X', ' ', '1', '1', '»', '\r', '\n', '\x1A', '\n'
-            0xAB4B5458, 0x203131BB, 0x0D0A1A0A };
+            0xAB4B5458, 0x203131BB, 0x0D0A1A0A};
 
     @Override
     public int headerLength() {
@@ -73,14 +73,14 @@ class KTX extends CompressedTextureLoader {
         int endianness = reader.readLE(Reader.INTEGER_BYTES);
         boolean littleEndian;
         switch (endianness) {
-        case 0x01020304:
-            littleEndian = false;
-            break;
-        case 0x04030201:
-            littleEndian = true;
-            break;
-        default:
-            throw new RuntimeAssertion("Unexpected endianness %08X", endianness);
+            case 0x01020304:
+                littleEndian = false;
+                break;
+            case 0x04030201:
+                littleEndian = true;
+                break;
+            default:
+                throw new RuntimeAssertion("Unexpected endianness %08X", endianness);
         }
         Log.d(TAG, "endianness = %08x, littleEndian == %b", endianness,
                 littleEndian);
@@ -156,7 +156,7 @@ class KTX extends CompressedTextureLoader {
         private final boolean littleEndian;
 
         private KtxCompressedTexture(int internalformat, int width, int height,
-                int levels, ByteBuffer data, boolean littleEndian) {
+                                     int levels, ByteBuffer data, boolean littleEndian) {
             super(internalformat, width, height, -1, levels, data);
             this.littleEndian = littleEndian;
         }

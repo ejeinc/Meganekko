@@ -15,8 +15,6 @@
 
 package com.eje_c.meganekko;
 
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.opengl.GLES20;
 
 /**
@@ -25,21 +23,18 @@ import android.opengl.GLES20;
  */
 public class TextureParameters {
 
+    VrContext mGVRContext = null;
     private TextureFilterType minFilterType;
     private TextureFilterType magFilterType;
     private TextureWrapType wrapSType;
     private TextureWrapType wrapTType;
-
     private int anisotropicValue;
-
-    VrContext mGVRContext = null;
 
     /**
      * Constructs a texture parameter object with default values for filter and
      * warp.
-     * 
-     * @param vrContext
-     *            Current {@link VrContext}
+     *
+     * @param vrContext Current {@link VrContext}
      */
     public TextureParameters(VrContext vrContext) {
         mGVRContext = vrContext;
@@ -51,22 +46,11 @@ public class TextureParameters {
     }
 
     /**
-     * Sets the MIN filter for texture.
-     * 
-     * @param minFilterType
-     *            Basically, a GL constant that represents the type of filter
-     *            one want to apply.
-     */
-    public void setMinFilterType(TextureFilterType minFilterType) {
-        this.minFilterType = minFilterType;
-    }
-
-    /**
      * Returns the MIN filter of the {@link TextureParameters}.
-     * 
+     * <p/>
      * The returned value could be the one that was set by the calling API or
      * the default value for all the objects.
-     * 
+     *
      * @return The MIN filter type as a TextureFilterType.
      */
     public TextureFilterType getMinFilterType() {
@@ -74,22 +58,21 @@ public class TextureParameters {
     }
 
     /**
-     * Sets the MAG filter for texture.
-     * 
-     * @param magFilterType
-     *            Basically, a GL constant that represents the type of filter
-     *            one want to apply.
+     * Sets the MIN filter for texture.
+     *
+     * @param minFilterType Basically, a GL constant that represents the type of filter
+     *                      one want to apply.
      */
-    public void setMagFilterType(TextureFilterType magFilterType) {
-        this.magFilterType = magFilterType;
+    public void setMinFilterType(TextureFilterType minFilterType) {
+        this.minFilterType = minFilterType;
     }
 
     /**
      * Returns the MAG filter of the {@link TextureParameters}.
-     * 
+     * <p/>
      * The returned value could be the one that was set by the calling API or
      * the default value for all the objects.
-     * 
+     *
      * @return The MAG filter type as a TextureFilterType.
      */
     public TextureFilterType getMagFilterType() {
@@ -97,22 +80,21 @@ public class TextureParameters {
     }
 
     /**
-     * Sets the texture WRAP S type for texture.
-     * 
-     * @param wrapSType
-     *            Basically, a GL constant that represents the type of wrap type
-     *            one want to apply.
+     * Sets the MAG filter for texture.
+     *
+     * @param magFilterType Basically, a GL constant that represents the type of filter
+     *                      one want to apply.
      */
-    public void setWrapSType(TextureWrapType wrapSType) {
-        this.wrapSType = wrapSType;
+    public void setMagFilterType(TextureFilterType magFilterType) {
+        this.magFilterType = magFilterType;
     }
 
     /**
      * Returns the texture WRAP S type of the {@link TextureParameters}.
-     * 
+     * <p/>
      * The returned value could be the one that was set by the calling API or
      * the default value for all the objects.
-     * 
+     *
      * @return The texture WRAP S type as a TextureWrapType.
      */
     public TextureWrapType getWrapSType() {
@@ -120,22 +102,21 @@ public class TextureParameters {
     }
 
     /**
-     * Sets the texture WRAP T type for texture.
-     * 
-     * @param wrapTType
-     *            Basically, a GL constant that represents the type of wrap type
-     *            one want to apply.
+     * Sets the texture WRAP S type for texture.
+     *
+     * @param wrapSType Basically, a GL constant that represents the type of wrap type
+     *                  one want to apply.
      */
-    public void setWrapTType(TextureWrapType wrapTType) {
-        this.wrapTType = wrapTType;
+    public void setWrapSType(TextureWrapType wrapSType) {
+        this.wrapSType = wrapSType;
     }
 
     /**
      * Returns the texture WRAP T type of the {@link TextureParameters}.
-     * 
+     * <p/>
      * The returned value could be the one that was set by the calling API or
      * the default value for all the objects.
-     * 
+     *
      * @return The texture WRAP T type as a TextureWrapType.
      */
     public TextureWrapType getWrapTType() {
@@ -143,28 +124,46 @@ public class TextureParameters {
     }
 
     /**
+     * Sets the texture WRAP T type for texture.
+     *
+     * @param wrapTType Basically, a GL constant that represents the type of wrap type
+     *                  one want to apply.
+     */
+    public void setWrapTType(TextureWrapType wrapTType) {
+        this.wrapTType = wrapTType;
+    }
+
+    /**
      * Returns true or false based on whether anisotropic filtering is supported
      * or not.
-     * 
+     *
      * @return true or false based on whether anisotropic filtering is supported
-     *         or not.
+     * or not.
      */
     public boolean isAnisotropicSupported() {
         return mGVRContext.isAnisotropicSupported;
     }
 
     /**
+     * Returns the anisotropic value that was set by the calling API.
+     *
+     * @return the anisotropic value that was set by the calling API.
+     */
+    public int getAnisotropicValue() {
+        return anisotropicValue;
+    }
+
+    /**
      * Sets the anisotropic value. Normally the values that are set is 2, 4, 8
      * and 16.
-     * 
+     * <p/>
      * So if someone tries to set a value which is greater than the max value,
      * 16, the method sets it to the max value.
-     * 
+     * <p/>
      * Also the default value for anisotropic filter is 1, which means that it
      * is not applied when it is 1.
-     * 
-     * @param value
-     *            An integer value from the set {2, 4, 8, 16}
+     *
+     * @param value An integer value from the set {2, 4, 8, 16}
      */
     public void setAnisotropicValue(int value) {
         if (value > getMaxAnisotropicValue()) {
@@ -174,17 +173,8 @@ public class TextureParameters {
     }
 
     /**
-     * Returns the anisotropic value that was set by the calling API.
-     * 
-     * @return the anisotropic value that was set by the calling API.
-     */
-    public int getAnisotropicValue() {
-        return anisotropicValue;
-    }
-
-    /**
      * Returns the maximum anisotropic value.
-     * 
+     *
      * @return the maximum anisotropic value.
      */
     public int getMaxAnisotropicValue() {
@@ -197,9 +187,9 @@ public class TextureParameters {
     /**
      * Returns an integer array that contains the default values for all the
      * texture parameters.
-     * 
+     *
      * @return an integer array that contains the default values for all the
-     *         texture parameters.
+     * texture parameters.
      */
     public int[] getDefalutValuesArray() {
         int[] defaultValues = new int[5];
@@ -216,9 +206,9 @@ public class TextureParameters {
     /**
      * Returns an integer array that contains the current values for all the
      * texture parameters.
-     * 
+     *
      * @return an integer array that contains the current values for all the
-     *         texture parameters.
+     * texture parameters.
      */
     public int[] getCurrentValuesArray() {
         int[] currentValues = new int[5];

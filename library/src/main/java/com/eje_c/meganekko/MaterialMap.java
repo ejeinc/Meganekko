@@ -17,8 +17,8 @@ package com.eje_c.meganekko;
 
 /**
  * Name map for material shaders.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * A {@link Mesh} specifies a {@linkplain SceneObject scene object's}
  * surface geometry; a {@link Material} specifies a scene object's surface
  * appearance. A {@link Material} specifies a shader by
@@ -38,11 +38,9 @@ public class MaterialMap extends HybridObject implements ShaderMaps {
 
     /**
      * Link a float in a material to this GL program.
-     * 
-     * @param variableName
-     *            The variable name in the GL program.
-     * @param key
-     *            The float key in the material.
+     *
+     * @param variableName The variable name in the GL program.
+     * @param key          The float key in the material.
      */
     public void addAttributeFloatKey(String variableName, String key) {
         NativeCustomShader.addAttributeFloatKey(getNative(), variableName, key);
@@ -50,11 +48,9 @@ public class MaterialMap extends HybridObject implements ShaderMaps {
 
     /**
      * Link a vec2 in a material to this GL program.
-     * 
-     * @param variableName
-     *            The variable name in the GL program.
-     * @param key
-     *            The vec2 key in the material.
+     *
+     * @param variableName The variable name in the GL program.
+     * @param key          The vec2 key in the material.
      */
     public void addAttributeVec2Key(String variableName, String key) {
         NativeCustomShader.addAttributeVec2Key(getNative(), variableName, key);
@@ -62,11 +58,9 @@ public class MaterialMap extends HybridObject implements ShaderMaps {
 
     /**
      * Link a vec3 in a material to this GL program.
-     * 
-     * @param variableName
-     *            The variable name in the GL program.
-     * @param key
-     *            The vec3 key in the material.
+     *
+     * @param variableName The variable name in the GL program.
+     * @param key          The vec3 key in the material.
      */
     public void addAttributeVec3Key(String variableName, String key) {
         NativeCustomShader.addAttributeVec3Key(getNative(), variableName, key);
@@ -74,11 +68,9 @@ public class MaterialMap extends HybridObject implements ShaderMaps {
 
     /**
      * Link a vec4 in a material to this GL program.
-     * 
-     * @param variableName
-     *            The variable name in the GL program.
-     * @param key
-     *            The vec4 key in the material.
+     *
+     * @param variableName The variable name in the GL program.
+     * @param key          The vec4 key in the material.
      */
     public void addAttributeVec4Key(String variableName, String key) {
         NativeCustomShader.addAttributeVec4Key(getNative(), variableName, key);
@@ -102,11 +94,9 @@ public class MaterialMap extends HybridObject implements ShaderMaps {
 
     /**
      * Link a mat4 in a material to this GL program.
-     * 
-     * @param variableName
-     *            The variable name in the GL program.
-     * @param key
-     *            The mat4 key in the material.
+     *
+     * @param variableName The variable name in the GL program.
+     * @param key          The mat4 key in the material.
      */
     public void addUniformMat4Key(String variableName, String key) {
         NativeCustomShader.addUniformMat4Key(getNative(), variableName, key);
@@ -114,33 +104,23 @@ public class MaterialMap extends HybridObject implements ShaderMaps {
 }
 
 class NativeCustomShader {
-    static native void addTextureKey(long customShader, String variableName,
-            String key);
+    static native void addTextureKey(long customShader, String variableName, String key);
 
-    static native void addAttributeFloatKey(long customShader,
-            String variableName, String key);
+    static native void addAttributeFloatKey(long customShader, String variableName, String key);
 
-    static native void addAttributeVec2Key(long customShader,
-            String variableName, String key);
+    static native void addAttributeVec2Key(long customShader, String variableName, String key);
 
-    static native void addAttributeVec3Key(long customShader,
-            String variableName, String key);
+    static native void addAttributeVec3Key(long customShader, String variableName, String key);
 
-    static native void addAttributeVec4Key(long customShader,
-            String variableName, String key);
+    static native void addAttributeVec4Key(long customShader, String variableName, String key);
 
-    static native void addUniformFloatKey(long customShader,
-            String variableName, String key);
+    static native void addUniformFloatKey(long customShader, String variableName, String key);
 
-    static native void addUniformVec2Key(long customShader,
-            String variableName, String key);
+    static native void addUniformVec2Key(long customShader, String variableName, String key);
 
-    static native void addUniformVec3Key(long customShader,
-            String variableName, String key);
+    static native void addUniformVec3Key(long customShader, String variableName, String key);
 
-    static native void addUniformVec4Key(long customShader,
-            String variableName, String key);
+    static native void addUniformVec4Key(long customShader, String variableName, String key);
 
-    static native void addUniformMat4Key(long customShader,
-            String variableName, String key);
+    static native void addUniformMat4Key(long customShader, String variableName, String key);
 }

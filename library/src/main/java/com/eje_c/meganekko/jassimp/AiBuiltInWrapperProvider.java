@@ -50,7 +50,7 @@ public final class AiBuiltInWrapperProvider implements
 
     @Override
     public AiVector wrapVector3f(ByteBuffer buffer, int offset,
-            int numComponents) {
+                                 int numComponents) {
 
         return new AiVector(buffer, offset, numComponents);
     }
@@ -67,7 +67,7 @@ public final class AiBuiltInWrapperProvider implements
 
     @Override
     public AiNode wrapSceneNode(Object parent, Object matrix,
-            int[] meshReferences, String name) {
+                                int[] meshReferences, String name) {
 
         return new AiNode((AiNode) parent, matrix, meshReferences, name);
     }

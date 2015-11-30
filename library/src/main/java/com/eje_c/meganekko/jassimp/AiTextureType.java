@@ -42,16 +42,16 @@ package com.eje_c.meganekko.jassimp;
 
 /**
  * Defines the purpose of a texture.
- * <p>
- * 
+ * <p/>
+ * <p/>
  * This is a very difficult topic. Different 3D packages support different kinds
  * of textures. For very common texture types, such as bumpmaps, the rendering
  * results depend on implementation details in the rendering pipelines of these
  * applications. Assimp loads all texture references from the model file and
  * tries to determine which of the predefined texture types below is the best
  * choice to match the original use of the texture as closely as possible.
- * <p>
- * 
+ * <p/>
+ * <p/>
  * In content pipelines you'll usually define how textures have to be handled,
  * and the artists working on models have to conform to this specification,
  * regardless which 3D tool they're using.
@@ -81,8 +81,8 @@ public enum AiTextureType {
 
     /**
      * The texture is a height map.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * By convention, higher gray-scale values stand for higher elevations from
      * the base height.
      */
@@ -90,8 +90,8 @@ public enum AiTextureType {
 
     /**
      * The texture is a (tangent space) normal-map.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Again, there are several conventions for tangent-space normal maps.
      * Assimp does (intentionally) not distinguish here.
      */
@@ -99,8 +99,8 @@ public enum AiTextureType {
 
     /**
      * The texture defines the glossiness of the material.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * The glossiness is in fact the exponent of the specular (phong) lighting
      * equation. Usually there is a conversion function defined to map the
      * linear color values in the texture to a suitable exponent. Have fun.
@@ -109,8 +109,8 @@ public enum AiTextureType {
 
     /**
      * The texture defines per-pixel opacity.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Usually 'white' means opaque and 'black' means 'transparency'. Or quite
      * the opposite. Have fun.
      */
@@ -118,8 +118,8 @@ public enum AiTextureType {
 
     /**
      * Displacement texture.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * The exact purpose and format is application-dependent. Higher color
      * values stand for higher vertex displacements.
      */
@@ -127,8 +127,8 @@ public enum AiTextureType {
 
     /**
      * Lightmap texture (aka Ambient Occlusion).
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Both 'Lightmaps' and dedicated 'ambient occlusion maps' are covered by
      * this material property. The texture contains a scaling value for the
      * final color value of a pixel. Its intensity is not affected by incoming
@@ -138,8 +138,8 @@ public enum AiTextureType {
 
     /**
      * Reflection texture.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Contains the color of a perfect mirror reflection. Rarely used, almost
      * never for real-time applications.
      */
@@ -147,8 +147,8 @@ public enum AiTextureType {
 
     /**
      * Unknown texture.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * A texture reference that does not match any of the definitions above is
      * considered to be 'unknown'. It is still imported, but is excluded from
      * any further postprocessing.
@@ -156,15 +156,28 @@ public enum AiTextureType {
     UNKNOWN(0xC);
 
     /**
+     * The mapped c/c++ integer enum value.
+     */
+    private final int m_rawValue;
+
+    /**
+     * Constructor.
+     *
+     * @param rawValue maps java enum to c/c++ integer enum values
+     */
+    private AiTextureType(int rawValue) {
+        m_rawValue = rawValue;
+    }
+
+    /**
      * Utility method for converting from c/c++ based integer enums to java
      * enums.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * This method is intended to be used from JNI and my change based on
      * implementation needs.
-     * 
-     * @param rawValue
-     *            an integer based enum value (as defined by assimp)
+     *
+     * @param rawValue an integer based enum value (as defined by assimp)
      * @return the enum value corresponding to rawValue
      */
     static AiTextureType fromRawValue(int rawValue) {
@@ -180,28 +193,12 @@ public enum AiTextureType {
     /**
      * Utility method for converting from java enums to c/c++ based integer
      * enums.
-     * <p>
-     * 
-     * @param type
-     *            the type to convert, may not be null
+     * <p/>
+     *
+     * @param type the type to convert, may not be null
      * @return the rawValue corresponding to type
      */
     static int toRawValue(AiTextureType type) {
         return type.m_rawValue;
     }
-
-    /**
-     * Constructor.
-     * 
-     * @param rawValue
-     *            maps java enum to c/c++ integer enum values
-     */
-    private AiTextureType(int rawValue) {
-        m_rawValue = rawValue;
-    }
-
-    /**
-     * The mapped c/c++ integer enum value.
-     */
-    private final int m_rawValue;
 }

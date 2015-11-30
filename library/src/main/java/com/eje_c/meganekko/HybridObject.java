@@ -41,6 +41,25 @@ public abstract class HybridObject implements Closeable {
     /*
      * Instance fields
      */
+    /**
+     * Our {@linkplain Reference references} are placed on this queue, once
+     * they've been finalized
+     */
+    private static final ReferenceQueue<HybridObject> sReferenceQueue = new ReferenceQueue<>();
+    /**
+     * We need hard references to {@linkplain Reference our references} -
+     * otherwise, the references get garbage collected (usually before their
+     * objects) and never get enqueued.
+     */
+    private static final Set<Reference> sReferenceSet = new HashSet<Reference>();
+
+    /*
+     * Constructors
+     */
+
+    static {
+        new FinalizeThread();
+    }
 
     private final VrContext mVrContext;
     /**
@@ -49,10 +68,6 @@ public abstract class HybridObject implements Closeable {
      * called multiple times.
      */
     private long mNativePointer;
-
-    /*
-     * Constructors
-     */
 
     /**
      * Normal constructor
@@ -66,6 +81,10 @@ public abstract class HybridObject implements Closeable {
     protected HybridObject(VrContext vrContext, long nativePointer) {
         this(vrContext, nativePointer, null);
     }
+
+    /*
+     * Instance methods
+     */
 
     /**
      * Special constructor, for descendants like {#link MeshEyePointee} that
@@ -108,6 +127,22 @@ public abstract class HybridObject implements Closeable {
     }
 
     /**
+     * Explicitly close()ing an object is going to be relatively rare - most
+     * native memory will be freed when the owner-objects are garbage collected.
+     * Doing a lookup in these rare cases means that we can avoid giving every @link
+     * {@link HybridObject} a hard reference to its {@link Reference}.
+     */
+    private static Reference findReference(long nativePointer) {
+        for (Reference reference : sReferenceSet) {
+            if (reference.mNativePointer == nativePointer) {
+                return reference;
+            }
+        }
+        // else
+        return null;
+    }
+
+    /**
      * You must override this method if you use constructor that don't take
      * nativePointer.
      *
@@ -118,7 +153,7 @@ public abstract class HybridObject implements Closeable {
     }
 
     /*
-     * Instance methods
+     * Native memory management
      */
 
     /**
@@ -169,24 +204,25 @@ public abstract class HybridObject implements Closeable {
         return nativePointer.hashCode();
     }
 
-    /*
-     * Native memory management
-     */
-
     /**
-     * Our {@linkplain Reference references} are placed on this queue, once
-     * they've been finalized
+     * Close this object, releasing any native resources.
+     * <p/>
+     * Most objects will be automatically closed when Java's garbage collector
+     * detects that they are no longer being used: Explicitly closing an object
+     * that's still linked into the scene graph will almost certainly crash your
+     * Meganekko app. You should only {@code close()} transient objects (especially
+     * those that use lots of memory, like large textures) that you
+     * <em>know</em> are no longer being used.
      */
-    private static final ReferenceQueue<HybridObject> sReferenceQueue = new ReferenceQueue<>();
-    /**
-     * We need hard references to {@linkplain Reference our references} -
-     * otherwise, the references get garbage collected (usually before their
-     * objects) and never get enqueued.
-     */
-    private static final Set<Reference> sReferenceSet = new HashSet<Reference>();
-
-    static {
-        new FinalizeThread();
+    @Override
+    public final void close() throws IOException {
+        if (mNativePointer != 0L) {
+            Reference reference = findReference(mNativePointer);
+            if (reference != null) {
+                reference.close();
+                mNativePointer = 0L;
+            }
+        }
     }
 
     /**
@@ -260,8 +296,8 @@ public abstract class HybridObject implements Closeable {
 
         // private static final String TAG = Log.tag(Reference.class);
 
-        private long mNativePointer;
         private final List<NativeCleanupHandler> mCleanupHandlers;
+        private long mNativePointer;
 
         private Reference(HybridObject object, long nativePointer, List<NativeCleanupHandler> cleanupHandlers) {
             super(object, sReferenceQueue);
@@ -305,43 +341,6 @@ public abstract class HybridObject implements Closeable {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * Close this object, releasing any native resources.
-     * <p/>
-     * Most objects will be automatically closed when Java's garbage collector
-     * detects that they are no longer being used: Explicitly closing an object
-     * that's still linked into the scene graph will almost certainly crash your
-     * Meganekko app. You should only {@code close()} transient objects (especially
-     * those that use lots of memory, like large textures) that you
-     * <em>know</em> are no longer being used.
-     */
-    @Override
-    public final void close() throws IOException {
-        if (mNativePointer != 0L) {
-            Reference reference = findReference(mNativePointer);
-            if (reference != null) {
-                reference.close();
-                mNativePointer = 0L;
-            }
-        }
-    }
-
-    /**
-     * Explicitly close()ing an object is going to be relatively rare - most
-     * native memory will be freed when the owner-objects are garbage collected.
-     * Doing a lookup in these rare cases means that we can avoid giving every @link
-     * {@link HybridObject} a hard reference to its {@link Reference}.
-     */
-    private static Reference findReference(long nativePointer) {
-        for (Reference reference : sReferenceSet) {
-            if (reference.mNativePointer == nativePointer) {
-                return reference;
-            }
-        }
-        // else
-        return null;
     }
 }
 

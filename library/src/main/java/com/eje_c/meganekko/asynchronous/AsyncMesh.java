@@ -16,10 +16,10 @@
 package com.eje_c.meganekko.asynchronous;
 
 import com.eje_c.meganekko.AndroidResource;
-import com.eje_c.meganekko.VrContext;
+import com.eje_c.meganekko.AndroidResource.CancelableCallback;
 import com.eje_c.meganekko.HybridObject;
 import com.eje_c.meganekko.Mesh;
-import com.eje_c.meganekko.AndroidResource.CancelableCallback;
+import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.asynchronous.Throttler.AsyncLoader;
 import com.eje_c.meganekko.asynchronous.Throttler.AsyncLoaderFactory;
 import com.eje_c.meganekko.asynchronous.Throttler.GlConverter;
@@ -36,39 +36,11 @@ abstract class AsyncMesh {
     /*
      * The API
      */
-
-    static void loadMesh(VrContext vrContext,
-            CancelableCallback<Mesh> callback, AndroidResource resource,
-            int priority) {
-        Throttler.registerCallback(vrContext, MESH_CLASS, callback, resource,
-                priority);
-    }
+    private static final Class<? extends HybridObject> MESH_CLASS = Mesh.class;
 
     /*
      * The implementation
      */
-
-    private static class AsyncLoadMesh extends AsyncLoader<Mesh, Mesh> {
-        static final GlConverter<Mesh, Mesh> sConverter = new GlConverter<Mesh, Mesh>() {
-
-            @Override
-            public Mesh convert(VrContext vrContext, Mesh mesh) {
-                return mesh;
-            }
-        };
-
-        AsyncLoadMesh(VrContext vrContext, AndroidResource request,
-                CancelableCallback<HybridObject> callback, int priority) {
-            super(vrContext, sConverter, request, callback);
-        }
-
-        @Override
-        protected Mesh loadResource() throws InterruptedException {
-            return vrContext.loadMesh(resource);
-        }
-    }
-
-    private static final Class<? extends HybridObject> MESH_CLASS = Mesh.class;
 
     static {
         Throttler.registerDatatype(MESH_CLASS,
@@ -83,6 +55,33 @@ abstract class AsyncMesh {
                                 priority);
                     }
                 });
+    }
+
+    static void loadMesh(VrContext vrContext,
+                         CancelableCallback<Mesh> callback, AndroidResource resource,
+                         int priority) {
+        Throttler.registerCallback(vrContext, MESH_CLASS, callback, resource,
+                priority);
+    }
+
+    private static class AsyncLoadMesh extends AsyncLoader<Mesh, Mesh> {
+        static final GlConverter<Mesh, Mesh> sConverter = new GlConverter<Mesh, Mesh>() {
+
+            @Override
+            public Mesh convert(VrContext vrContext, Mesh mesh) {
+                return mesh;
+            }
+        };
+
+        AsyncLoadMesh(VrContext vrContext, AndroidResource request,
+                      CancelableCallback<HybridObject> callback, int priority) {
+            super(vrContext, sConverter, request, callback);
+        }
+
+        @Override
+        protected Mesh loadResource() throws InterruptedException {
+            return vrContext.loadMesh(resource);
+        }
     }
 
 }

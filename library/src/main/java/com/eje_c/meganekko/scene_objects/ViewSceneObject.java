@@ -16,7 +16,12 @@
 
 package com.eje_c.meganekko.scene_objects;
 
+import android.graphics.Canvas;
+import android.graphics.PorterDuff.Mode;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.Picker;
 import com.eje_c.meganekko.SceneObject;
@@ -24,10 +29,6 @@ import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.VrFrame;
 import com.eje_c.meganekko.scene_objects.CanvasSceneObject.OnDrawListener;
 
-import android.graphics.Canvas;
-import android.graphics.PorterDuff.Mode;
-import android.view.LayoutInflater;
-import android.view.View;
 import ovr.JoyButton;
 
 /**
@@ -36,14 +37,47 @@ import ovr.JoyButton;
 public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener {
 
     public static final float AUTO_SIZE_SCALE = 0.006f;
-    
+
     private View mView;
     private boolean mLooking;
+    private final Runnable updateViewState = new Runnable() {
+        @Override
+        public void run() {
+
+            if (mView == null)
+                return;
+
+            mView.setPressed(mLooking);
+            mView.invalidate();
+        }
+    };
     private boolean mSimulatePressing = true;
     private boolean mGenerateAutoSizedMesh = true;
 
     public ViewSceneObject(VrContext vrContext) {
         super(vrContext);
+    }
+
+    /**
+     * Check dirty state of view recursively.
+     *
+     * @param view Checked View.
+     * @return Returns true if at least one View is dirty in hierarchy.
+     */
+    private static boolean isDirty(View view) {
+
+        if (view.isDirty()) return true;
+
+        // Apply this method to all children of view if view is ViewGroup
+        if (view instanceof ViewGroup) {
+            final ViewGroup viewGroup = (ViewGroup) view;
+
+            for (int i = 0, count = viewGroup.getChildCount(); i < count; ++i) {
+                if (isDirty(viewGroup.getChildAt(i))) return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -64,6 +98,15 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
     }
 
     /**
+     * Get view.
+     *
+     * @return View
+     */
+    public View getView() {
+        return mView;
+    }
+
+    /**
      * Set view from XML resource.
      *
      * @param layoutRes Layout XML resource ID
@@ -72,15 +115,6 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
         LayoutInflater layoutInflater = LayoutInflater.from(getVrContext().getContext());
         View view = layoutInflater.inflate(layoutRes, null);
         setView(view);
-    }
-
-    /**
-     * Get view.
-     *
-     * @return View
-     */
-    public View getView() {
-        return mView;
     }
 
     /**
@@ -152,43 +186,16 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
         }
     }
 
-    private final Runnable updateViewState = new Runnable() {
-        @Override
-        public void run() {
-
-            if (mView == null)
-                return;
-
-            mView.setPressed(mLooking);
-            mView.invalidate();
-        }
-    };
-
     @Override
     public boolean isDirty() {
         return mView != null && isDirty(mView);
     }
 
     /**
-     * Check dirty state of view recursively.
-     *
-     * @param view Checked View.
-     * @return Returns true if at least one View is dirty in hierarchy.
+     * @return whether simulate pressing is enabled
      */
-    private static boolean isDirty(View view) {
-
-        if (view.isDirty()) return true;
-
-        // Apply this method to all children of view if view is ViewGroup
-        if (view instanceof ViewGroup) {
-            final ViewGroup viewGroup = (ViewGroup) view;
-
-            for (int i = 0, count = viewGroup.getChildCount(); i < count; ++i) {
-                if (isDirty(viewGroup.getChildAt(i))) return true;
-            }
-        }
-
-        return false;
+    public boolean isSimulatePressingEnabled() {
+        return mSimulatePressing;
     }
 
     /**
@@ -198,13 +205,6 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
      */
     public void setSimulatePressingEnabled(boolean enabled) {
         this.mSimulatePressing = enabled;
-    }
-
-    /**
-     * @return whether simulate pressing is enabled
-     */
-    public boolean isSimulatePressingEnabled() {
-        return mSimulatePressing;
     }
 
     /**

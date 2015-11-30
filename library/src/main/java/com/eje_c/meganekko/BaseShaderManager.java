@@ -16,31 +16,39 @@
 
 package com.eje_c.meganekko;
 
+import android.content.res.AssetManager;
+import android.content.res.Resources;
+
+import com.eje_c.meganekko.utility.TextFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.eje_c.meganekko.utility.TextFile;
-
-import android.content.res.AssetManager;
-import android.content.res.Resources;
-
-public abstract class BaseShaderManager<MAP, ID> extends HybridObject
-        implements ShaderManagers<MAP, ID> {
+public abstract class BaseShaderManager<MAP, ID> extends HybridObject implements ShaderManagers<MAP, ID> {
 
     protected BaseShaderManager(VrContext vrContext, long pointer) {
         super(vrContext, pointer);
     }
 
+    protected static InputStream open(Resources resources, String pathPrefix, String assetRelativeFilename) throws IOException {
+        AssetManager assets = resources.getAssets();
+        if (pathPrefix != null) {
+            assetRelativeFilename = pathPrefix + File.separator + assetRelativeFilename;
+        }
+        return assets.open(assetRelativeFilename);
+    }
+
+    protected static InputStream open(Resources resources, int resRawId) {
+        return resources.openRawResource(resRawId);
+    }
+
     @Override
-    public ID addShader(String pathPrefix, String vertexShader_asset,
-            String fragmentShader_asset) {
+    public ID addShader(String pathPrefix, String vertexShader_asset, String fragmentShader_asset) {
         Resources resources = getResources();
         try {
-            InputStream vertexShader = open(resources, pathPrefix,
-                    vertexShader_asset);
-            InputStream fragmentShader = open(resources, pathPrefix,
-                    fragmentShader_asset);
+            InputStream vertexShader = open(resources, pathPrefix, vertexShader_asset);
+            InputStream fragmentShader = open(resources, pathPrefix, fragmentShader_asset);
             return addShader(vertexShader, fragmentShader);
         } catch (IOException e) {
             e.printStackTrace(); // give user a clue
@@ -57,8 +65,7 @@ public abstract class BaseShaderManager<MAP, ID> extends HybridObject
     }
 
     @Override
-    public ID addShader(InputStream vertexShader_stream,
-            InputStream fragmentShader_stream) {
+    public ID addShader(InputStream vertexShader_stream, InputStream fragmentShader_stream) {
         String vertexShader = TextFile.readTextFile(vertexShader_stream);
         String fragmentShader = TextFile.readTextFile(fragmentShader_stream);
         return addShader(vertexShader, fragmentShader);
@@ -66,19 +73,5 @@ public abstract class BaseShaderManager<MAP, ID> extends HybridObject
 
     protected Resources getResources() {
         return getVrContext().getContext().getResources();
-    }
-
-    protected static InputStream open(Resources resources, String pathPrefix,
-            String assetRelativeFilename) throws IOException {
-        AssetManager assets = resources.getAssets();
-        if (pathPrefix != null) {
-            assetRelativeFilename = pathPrefix + File.separator
-                    + assetRelativeFilename;
-        }
-        return assets.open(assetRelativeFilename);
-    }
-
-    protected static InputStream open(Resources resources, int resRawId) {
-        return resources.openRawResource(resRawId);
     }
 }

@@ -46,30 +46,58 @@ package com.eje_c.meganekko.jassimp;
 public final class AiTextureInfo {
 
     /**
+     * Type.
+     */
+    private final AiTextureType m_type;
+    /**
+     * Index.
+     */
+    private final int m_index;
+    /**
+     * Path.
+     */
+    private final String m_file;
+    /**
+     * UV index.
+     */
+    private final int m_uvIndex;
+    /**
+     * Blend factor.
+     */
+    private final float m_blend;
+    /**
+     * Texture operation.
+     */
+    private final AiTextureOp m_textureOp;
+    /**
+     * Map mode U axis.
+     */
+    private final AiTextureMapMode m_textureMapModeU;
+    /**
+     * Map mode V axis.
+     */
+    private final AiTextureMapMode m_textureMapModeV;
+    /**
+     * Map mode W axis.
+     */
+    private final AiTextureMapMode m_textureMapModeW;
+
+    /**
      * Constructor.
-     * 
-     * @param type
-     *            type
-     * @param index
-     *            index
-     * @param file
-     *            file
-     * @param uvIndex
-     *            uv index
-     * @param blend
-     *            blend factor
-     * @param texOp
-     *            texture operation
-     * @param mmU
-     *            map mode for u axis
-     * @param mmV
-     *            map mode for v axis
-     * @param mmW
-     *            map mode for w axis
+     *
+     * @param type    type
+     * @param index   index
+     * @param file    file
+     * @param uvIndex uv index
+     * @param blend   blend factor
+     * @param texOp   texture operation
+     * @param mmU     map mode for u axis
+     * @param mmV     map mode for v axis
+     * @param mmW     map mode for w axis
      */
     AiTextureInfo(AiTextureType type, int index, String file, int uvIndex,
-            float blend, AiTextureOp texOp, AiTextureMapMode mmU,
-            AiTextureMapMode mmV, AiTextureMapMode mmW) {
+                  float blend, AiTextureOp texOp, AiTextureMapMode mmU,
+                  AiTextureMapMode mmV, AiTextureMapMode mmW) {
 
         m_type = type;
         m_index = index;
@@ -84,7 +112,7 @@ public final class AiTextureInfo {
 
     /**
      * Specifies the type of the texture (e.g. diffuse, specular, ...).
-     * 
+     *
      * @return the type.
      */
     public AiTextureType getType() {
@@ -93,11 +121,11 @@ public final class AiTextureInfo {
 
     /**
      * Index of the texture in the texture stack.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Each type maintains a stack of textures, i.e., there may be a diffuse.0,
      * a diffuse.1, etc
-     * 
+     *
      * @return the index
      */
     public int getIndex() {
@@ -106,7 +134,7 @@ public final class AiTextureInfo {
 
     /**
      * Returns the path to the texture file.
-     * 
+     *
      * @return the path
      */
     public String getFile() {
@@ -115,7 +143,7 @@ public final class AiTextureInfo {
 
     /**
      * Returns the index of the UV coordinate set.
-     * 
+     *
      * @return the uv index
      */
     public int getUVIndex() {
@@ -124,7 +152,7 @@ public final class AiTextureInfo {
 
     /**
      * Returns the blend factor.
-     * 
+     *
      * @return the blend factor
      */
     public float getBlend() {
@@ -134,7 +162,7 @@ public final class AiTextureInfo {
     /**
      * Returns the texture operation used to combine this texture and the
      * preceding texture in the stack.
-     * 
+     *
      * @return the texture operation
      */
     public AiTextureOp getTextureOp() {
@@ -143,7 +171,7 @@ public final class AiTextureInfo {
 
     /**
      * Returns the texture map mode for U texture axis.
-     * 
+     *
      * @return the texture map mode
      */
     public AiTextureMapMode getTextureMapModeU() {
@@ -152,7 +180,7 @@ public final class AiTextureInfo {
 
     /**
      * Returns the texture map mode for V texture axis.
-     * 
+     *
      * @return the texture map mode
      */
     public AiTextureMapMode getTextureMapModeV() {
@@ -161,55 +189,10 @@ public final class AiTextureInfo {
 
     /**
      * Returns the texture map mode for W texture axis.
-     * 
+     *
      * @return the texture map mode
      */
     public AiTextureMapMode getTextureMapModeW() {
         return m_textureMapModeW;
     }
-
-    /**
-     * Type.
-     */
-    private final AiTextureType m_type;
-
-    /**
-     * Index.
-     */
-    private final int m_index;
-
-    /**
-     * Path.
-     */
-    private final String m_file;
-
-    /**
-     * UV index.
-     */
-    private final int m_uvIndex;
-
-    /**
-     * Blend factor.
-     */
-    private final float m_blend;
-
-    /**
-     * Texture operation.
-     */
-    private final AiTextureOp m_textureOp;
-
-    /**
-     * Map mode U axis.
-     */
-    private final AiTextureMapMode m_textureMapModeU;
-
-    /**
-     * Map mode V axis.
-     */
-    private final AiTextureMapMode m_textureMapModeV;
-
-    /**
-     * Map mode W axis.
-     */
-    private final AiTextureMapMode m_textureMapModeW;
 }

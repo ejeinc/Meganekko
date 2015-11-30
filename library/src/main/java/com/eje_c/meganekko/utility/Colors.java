@@ -19,8 +19,7 @@ import android.graphics.Color;
 
 /**
  * RGB <--> GL utilities.
- * 
- * <p>
+ * <p/>
  * Please note that the {@code org.gearvrf.utility} package contains low-level
  * utility code used in multiple Meganekko packages. We can't keep you from using
  * this code in a Meganekko application, but we <em>can</em> urge you not to:
@@ -51,7 +50,6 @@ public abstract class Colors {
         final float red = byteToGl(Color.red(color));
         final float green = byteToGl(Color.green(color));
         final float blue = byteToGl(Color.blue(color));
-        return new float[] { red, green, blue };
+        return new float[]{red, green, blue};
     }
-
 }

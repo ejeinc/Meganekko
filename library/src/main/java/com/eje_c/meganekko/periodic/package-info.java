@@ -13,25 +13,26 @@
  * limitations under the License.
  */
 
-/** Schedule Runnables to run on the GL thread, in the future.
- * 
- * This is an optional component of Meganekko: You need to {@linkplain 
+/**
+ * Schedule Runnables to run on the GL thread, in the future.
+ * <p/>
+ * This is an optional component of Meganekko: You need to {@linkplain
  * com.eje_c.meganekko.periodic.PeriodicEngine#getInstance(com.eje_c.meganekko.VRContext)
  * get an instance} to use it.
- * 
- * <p>
- * You can then schedule {@linkplain 
- * com.eje_c.meganekko.periodic.PeriodicEngine#runAfter(Runnable, float) 
- * run-once events} and periodic events. Periodic events {@linkplain 
+ * <p/>
+ * <p/>
+ * You can then schedule {@linkplain
+ * com.eje_c.meganekko.periodic.PeriodicEngine#runAfter(Runnable, float)
+ * run-once events} and periodic events. Periodic events {@linkplain
  * com.eje_c.meganekko.periodic.PeriodicEngine#runEvery(Runnable, float, float, com.eje_c.meganekko.periodic.PeriodicEngine.KeepRunning)
- * may} or {@linkplain 
- * com.eje_c.meganekko.periodic.PeriodicEngine#runEvery(Runnable, float, float) 
- * may not} have a {@linkplain 
+ * may} or {@linkplain
+ * com.eje_c.meganekko.periodic.PeriodicEngine#runEvery(Runnable, float, float)
+ * may not} have a {@linkplain
  * com.eje_c.meganekko.periodic.PeriodicEngine.KeepRunning callback.}
- * 
- * <p>
- * Scheduling an event gives you {@linkplain 
- * com.eje_c.meganekko.periodic.PeriodicEngine.PeriodicEvent 
+ * <p/>
+ * <p/>
+ * Scheduling an event gives you {@linkplain
+ * com.eje_c.meganekko.periodic.PeriodicEngine.PeriodicEvent
  * an interface} you can use to check on the event's status and/or to change its
  * scheduling.
  */

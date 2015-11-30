@@ -43,11 +43,13 @@ class InternalSensorManager {
         this.mAppPtr = appPtr;
 
         if (mAppPtr == 0l)
-            throw new IllegalArgumentException("You must call GVRActivity.setAppPtr fist.");
+            throw new IllegalArgumentException("You must call MeganekkoActivity.setAppPtr first.");
 
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GAME_ROTATION_VECTOR);
     }
+
+    private static native void setSensorValues(long appPtr, float x, float y, float z, float w);
 
     public void start() {
         mSensorManager.registerListener(mSensorEventListener, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
@@ -56,6 +58,4 @@ class InternalSensorManager {
     public void stop() {
         mSensorManager.unregisterListener(mSensorEventListener, mSensor);
     }
-
-    private static native void setSensorValues(long appPtr, float x, float y, float z, float w);
 }

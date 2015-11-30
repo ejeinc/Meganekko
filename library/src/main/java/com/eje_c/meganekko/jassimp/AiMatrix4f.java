@@ -49,14 +49,18 @@ import java.nio.FloatBuffer;
  */
 public final class AiMatrix4f {
     /**
+     * Data buffer.
+     */
+    public float[] m_data;
+
+    /**
      * Wraps the given array of floats as matrix.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * The array must have exactly 16 entries. The data in the array must be in
      * row-major order.
-     * 
-     * @param data
-     *            the array to wrap, may not be null
+     *
+     * @param data the array to wrap, may not be null
      */
     public AiMatrix4f(float[] data) {
         if (data == null) {
@@ -71,11 +75,9 @@ public final class AiMatrix4f {
 
     /**
      * Gets an element of the matrix.
-     * 
-     * @param row
-     *            the row
-     * @param col
-     *            the column
+     *
+     * @param row the row
+     * @param col the column
      * @return the element at the given position
      */
     public float get(int row, int col) {
@@ -91,13 +93,13 @@ public final class AiMatrix4f {
 
     /**
      * Stores the matrix in a new direct ByteBuffer with native byte order.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * The returned buffer can be passed to rendering APIs such as LWJGL, e.g.,
      * as parameter for <code>GL20.glUniformMatrix4()</code>. Be sure to set
      * <code>transpose</code> to <code>true</code> in this case, as OpenGL
      * expects the matrix in column order.
-     * 
+     *
      * @return a new native order, direct ByteBuffer
      */
     public FloatBuffer toByteBuffer() {
@@ -123,9 +125,4 @@ public final class AiMatrix4f {
 
         return buf.toString();
     }
-
-    /**
-     * Data buffer.
-     */
-    public float[] m_data;
 }

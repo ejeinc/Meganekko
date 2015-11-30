@@ -19,7 +19,9 @@ import com.eje_c.meganekko.HybridObject;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.Transform;
 
-/** Size animation. */
+/**
+ * Size animation.
+ */
 @Deprecated
 public class PositionAnimation extends TransformAnimation {
 
@@ -28,20 +30,15 @@ public class PositionAnimation extends TransformAnimation {
 
     /**
      * Position the transform, by potentially different amounts in each direction.
-     * 
-     * @param target
-     *            {@link Transform} to animate.
-     * @param duration
-     *            The animation duration, in seconds.
-     * @param positionX
-     *            Target x position
-     * @param positionY
-     *            Target y position
-     * @param positionZ
-     *            Target z position
+     *
+     * @param target    {@link Transform} to animate.
+     * @param duration  The animation duration, in seconds.
+     * @param positionX Target x position
+     * @param positionY Target y position
+     * @param positionZ Target z position
      */
     public PositionAnimation(Transform target, float duration, float positionX,
-            float positionY, float positionZ) {
+                             float positionY, float positionZ) {
         super(target, duration);
 
         mStartX = mTransform.getPositionX();
@@ -55,20 +52,15 @@ public class PositionAnimation extends TransformAnimation {
 
     /**
      * Position the transform, by potentially different amounts in each direction.
-     * 
-     * @param target
-     *            {@link SceneObject} containing a {@link Transform}
-     * @param duration
-     *            The animation duration, in seconds.
-     * @param positionX
-     *            Target x position
-     * @param positionY
-     *            Target y position
-     * @param positionZ
-     *            Target z position
+     *
+     * @param target    {@link SceneObject} containing a {@link Transform}
+     * @param duration  The animation duration, in seconds.
+     * @param positionX Target x position
+     * @param positionY Target y position
+     * @param positionZ Target z position
      */
     public PositionAnimation(SceneObject target, float duration,
-            float positionX, float positionY, float positionZ) {
+                             float positionX, float positionY, float positionZ) {
         this(getTransform(target), duration, positionX, positionY, positionZ);
     }
 

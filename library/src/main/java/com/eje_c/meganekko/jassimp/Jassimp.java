@@ -45,10 +45,10 @@ import java.util.Set;
 
 /**
  * Entry point to the jassimp library.
- * <p>
- * 
+ * <p/>
+ * <p/>
  * Use {@link #importFile(String, Set)} to load a file.
- * 
+ * <p/>
  * <h3>General Notes and Pitfalls</h3>
  * Due to the loading via JNI, strings (for example as returned by the
  * <code>getName()</code> methods) are not interned. You should therefore
@@ -65,6 +65,14 @@ class Jassimp {
     public static final int NATIVE_UINT_SIZE;
     public static final int NATIVE_DOUBLE_SIZE;
     public static final int NATIVE_LONG_SIZE;
+    /**
+     * The default wrapper provider using built in types.
+     */
+    public static final AiWrapperProvider<?, ?, ?, ?, ?> BUILTIN = new AiBuiltInWrapperProvider();
+    /**
+     * The active wrapper provider.
+     */
+    private static AiWrapperProvider<?, ?, ?, ?, ?> s_wrapperProvider = new AiBuiltInWrapperProvider();
 
     static {
         NATIVE_AIVEKTORKEY_SIZE = getVKeysize();
@@ -78,14 +86,9 @@ class Jassimp {
     }
 
     /**
-     * The default wrapper provider using built in types.
-     */
-    public static final AiWrapperProvider<?, ?, ?, ?, ?> BUILTIN = new AiBuiltInWrapperProvider();
-
-    /**
      * Returns the size of a struct or ptimitive.
-     * <p>
-     * 
+     * <p/>
+     *
      * @return the result of sizeof call
      */
     public static native int getVKeysize();
@@ -127,22 +130,22 @@ class Jassimp {
 
     /**
      * Returns a human readable error description.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * This method can be called when one of the import methods fails, i.e.,
      * throws an exception, to get a human readable error description.
-     * 
+     *
      * @return the error string
      */
     public static native String getErrorString();
 
     /**
      * Returns the active wrapper provider.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * This method is part of the wrapped API (see {@link AiWrapperProvider} for
      * details on wrappers).
-     * 
+     *
      * @return the active wrapper provider
      */
     public static AiWrapperProvider<?, ?, ?, ?, ?> getWrapperProvider() {
@@ -151,13 +154,12 @@ class Jassimp {
 
     /**
      * Sets a new wrapper provider.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * This method is part of the wrapped API (see {@link AiWrapperProvider} for
      * details on wrappers).
-     * 
-     * @param wrapperProvider
-     *            the new wrapper provider
+     *
+     * @param wrapperProvider the new wrapper provider
      */
     public static void setWrapperProvider(
             AiWrapperProvider<?, ?, ?, ?, ?> wrapperProvider) {
@@ -167,12 +169,11 @@ class Jassimp {
 
     /**
      * Helper method for wrapping a matrix.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Used by JNI, do not modify!
-     * 
-     * @param data
-     *            the matrix data
+     *
+     * @param data the matrix data
      * @return the wrapped matrix
      */
     static Object wrapMatrix(float[] data) {
@@ -181,16 +182,13 @@ class Jassimp {
 
     /**
      * Helper method for wrapping a color (rgb).
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Used by JNI, do not modify!
-     * 
-     * @param red
-     *            red component
-     * @param green
-     *            green component
-     * @param blue
-     *            blue component
+     *
+     * @param red   red component
+     * @param green green component
+     * @param blue  blue component
      * @return the wrapped color
      */
     static Object wrapColor3(float red, float green, float blue) {
@@ -199,18 +197,14 @@ class Jassimp {
 
     /**
      * Helper method for wrapping a color (rgba).
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Used by JNI, do not modify!
-     * 
-     * @param red
-     *            red component
-     * @param green
-     *            green component
-     * @param blue
-     *            blue component
-     * @param alpha
-     *            alpha component
+     *
+     * @param red   red component
+     * @param green green component
+     * @param blue  blue component
+     * @param alpha alpha component
      * @return the wrapped color
      */
     static Object wrapColor4(float red, float green, float blue, float alpha) {
@@ -225,16 +219,13 @@ class Jassimp {
 
     /**
      * Helper method for wrapping a vector.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Used by JNI, do not modify!
-     * 
-     * @param x
-     *            x component
-     * @param y
-     *            y component
-     * @param z
-     *            z component
+     *
+     * @param x x component
+     * @param y y component
+     * @param z z component
      * @return the wrapped vector
      */
     static Object wrapVec3(float x, float y, float z) {
@@ -248,28 +239,19 @@ class Jassimp {
 
     /**
      * Helper method for wrapping a scene graph node.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Used by JNI, do not modify!
-     * 
-     * @param parent
-     *            the parent node
-     * @param matrix
-     *            the transformation matrix
-     * @param meshRefs
-     *            array of matrix references
-     * @param name
-     *            the name of the node
+     *
+     * @param parent   the parent node
+     * @param matrix   the transformation matrix
+     * @param meshRefs array of matrix references
+     * @param name     the name of the node
      * @return the wrapped matrix
      */
     static Object wrapSceneNode(Object parent, Object matrix, int[] meshRefs,
-            String name) {
+                                String name) {
 
         return s_wrapperProvider.wrapSceneNode(parent, matrix, meshRefs, name);
     }
-
-    /**
-     * The active wrapper provider.
-     */
-    private static AiWrapperProvider<?, ?, ?, ?, ?> s_wrapperProvider = new AiBuiltInWrapperProvider();
 }

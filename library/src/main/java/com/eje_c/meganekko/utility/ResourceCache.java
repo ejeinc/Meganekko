@@ -15,21 +15,21 @@
 
 package com.eje_c.meganekko.utility;
 
-import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.eje_c.meganekko.AndroidResource;
-import com.eje_c.meganekko.HybridObject;
-import com.eje_c.meganekko.Texture;
 import com.eje_c.meganekko.AndroidResource.BitmapTextureCallback;
 import com.eje_c.meganekko.AndroidResource.Callback;
 import com.eje_c.meganekko.AndroidResource.CancelableCallback;
 import com.eje_c.meganekko.AndroidResource.CompressedTextureCallback;
+import com.eje_c.meganekko.HybridObject;
+import com.eje_c.meganekko.Texture;
+
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Basic cache-by-resource-description.
- * 
+ * <p/>
  * Keeps system from reloading resources, so long as a previous copy is still in
  * memory. Generic, so there can be separate caches for meshes and textures: a
  * 'unified cache' (mapping resource to hybrid-object) with hooks in
@@ -41,16 +41,40 @@ public class ResourceCache<T extends HybridObject> {
     // private static final String TAG = Log.tag(ResourceCache.class);
 
     private final Map<AndroidResource, WeakReference<T>> cache //
-    = new HashMap<AndroidResource, WeakReference<T>>();
+            = new HashMap<AndroidResource, WeakReference<T>>();
 
-    /** Save a weak reference to the resource */
+    /**
+     * Wrap the callback, to cache the
+     * {@link CompressedTextureCallback#loaded(HybridObject, AndroidResource)
+     * loaded()} resource
+     */
+    public static CompressedTextureCallback wrapCallback(
+            ResourceCache<Texture> cache, CompressedTextureCallback callback) {
+        return new CompressedTextureCallbackWrapper(cache, callback);
+    }
+
+    /**
+     * Wrap the callback, to cache the
+     * {@link BitmapTextureCallback#loaded(HybridObject, AndroidResource)
+     * loaded()} resource
+     */
+    public static BitmapTextureCallback wrapCallback(
+            ResourceCache<Texture> cache, BitmapTextureCallback callback) {
+        return new BitmapTextureCallbackWrapper(cache, callback);
+    }
+
+    /**
+     * Save a weak reference to the resource
+     */
     public void put(AndroidResource androidResource, T resource) {
         // Log.d(TAG, "put(%s) saving %s", androidResource, resource);
 
         cache.put(androidResource, new WeakReference<T>(resource));
     }
 
-    /** Get the cached resource, or {@code null} */
+    /**
+     * Get the cached resource, or {@code null}
+     */
     public T get(AndroidResource androidResource) {
         WeakReference<T> reference = cache.get(androidResource);
         if (reference == null) {
@@ -88,26 +112,6 @@ public class ResourceCache<T extends HybridObject> {
         return new CancelableCallbackWrapper<T>(this, callback);
     }
 
-    /**
-     * Wrap the callback, to cache the
-     * {@link CompressedTextureCallback#loaded(HybridObject, AndroidResource)
-     * loaded()} resource
-     */
-    public static CompressedTextureCallback wrapCallback(
-            ResourceCache<Texture> cache, CompressedTextureCallback callback) {
-        return new CompressedTextureCallbackWrapper(cache, callback);
-    }
-
-    /**
-     * Wrap the callback, to cache the
-     * {@link BitmapTextureCallback#loaded(HybridObject, AndroidResource)
-     * loaded()} resource
-     */
-    public static BitmapTextureCallback wrapCallback(
-            ResourceCache<Texture> cache, BitmapTextureCallback callback) {
-        return new BitmapTextureCallbackWrapper(cache, callback);
-    }
-
     private static class CallbackWrapper<T extends HybridObject> implements
             Callback<T> {
 
@@ -138,7 +142,7 @@ public class ResourceCache<T extends HybridObject> {
             extends CallbackWrapper<T> implements CancelableCallback<T> {
 
         private CancelableCallbackWrapper(ResourceCache<T> cache,
-                CancelableCallback<T> cancelableCallback) {
+                                          CancelableCallback<T> cancelableCallback) {
             super(cache, cancelableCallback);
         }
 
@@ -154,7 +158,7 @@ public class ResourceCache<T extends HybridObject> {
             CallbackWrapper<Texture> implements CompressedTextureCallback {
 
         CompressedTextureCallbackWrapper(ResourceCache<Texture> cache,
-                CompressedTextureCallback callback) {
+                                         CompressedTextureCallback callback) {
             super(cache, callback);
         }
     }
@@ -163,7 +167,7 @@ public class ResourceCache<T extends HybridObject> {
             CancelableCallbackWrapper<Texture> implements
             BitmapTextureCallback {
         BitmapTextureCallbackWrapper(ResourceCache<Texture> cache,
-                BitmapTextureCallback callback) {
+                                     BitmapTextureCallback callback) {
             super(cache, callback);
         }
     }

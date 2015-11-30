@@ -19,7 +19,9 @@ import com.eje_c.meganekko.HybridObject;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.Transform;
 
-/** Animate an object's position. */
+/**
+ * Animate an object's position.
+ */
 @Deprecated
 public class RelativeMotionAnimation extends TransformAnimation {
 
@@ -27,20 +29,15 @@ public class RelativeMotionAnimation extends TransformAnimation {
 
     /**
      * Animate a move by delta x/y/z.
-     * 
-     * @param target
-     *            {@link Transform} to animate
-     * @param duration
-     *            The animation duration, in seconds.
-     * @param deltaX
-     *            The value to add to x
-     * @param deltaY
-     *            The value to add to y
-     * @param deltaZ
-     *            The value to add to z
+     *
+     * @param target   {@link Transform} to animate
+     * @param duration The animation duration, in seconds.
+     * @param deltaX   The value to add to x
+     * @param deltaY   The value to add to y
+     * @param deltaZ   The value to add to z
      */
     public RelativeMotionAnimation(Transform target, float duration,
-            float deltaX, float deltaY, float deltaZ) {
+                                   float deltaX, float deltaY, float deltaZ) {
         super(target, duration);
 
         mStartX = mTransform.getPositionX();
@@ -54,20 +51,15 @@ public class RelativeMotionAnimation extends TransformAnimation {
 
     /**
      * Animate a move by delta x/y/z.
-     * 
-     * @param target
-     *            {@link SceneObject} containing a {@link Transform}
-     * @param duration
-     *            The animation duration, in seconds.
-     * @param deltaX
-     *            The value to add to x
-     * @param deltaY
-     *            The value to add to y
-     * @param deltaZ
-     *            The value to add to z
+     *
+     * @param target   {@link SceneObject} containing a {@link Transform}
+     * @param duration The animation duration, in seconds.
+     * @param deltaX   The value to add to x
+     * @param deltaY   The value to add to y
+     * @param deltaZ   The value to add to z
      */
     public RelativeMotionAnimation(SceneObject target, float duration,
-            float deltaX, float deltaY, float deltaZ) {
+                                   float deltaX, float deltaY, float deltaZ) {
         this(getTransform(target), duration, deltaX, deltaY, deltaZ);
     }
 

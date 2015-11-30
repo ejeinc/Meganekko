@@ -15,34 +15,46 @@
 
 package com.eje_c.meganekko.utility;
 
-/** {@link android.util.Log} with String.format() pattern */
+/**
+ * {@link android.util.Log} with String.format() pattern
+ */
 public abstract class Log {
 
     /*
      * Log wrappers
      */
 
-    /** {@link android.util.Log#d(String, String)}, with String.format() pattern */
+    /**
+     * {@link android.util.Log#d(String, String)}, with String.format() pattern
+     */
     public static void d(String TAG, String pattern, Object... parameters) {
         android.util.Log.d(TAG, format(pattern, parameters));
     }
 
-    /** {@link android.util.Log#e(String, String)}, with String.format() pattern */
+    /**
+     * {@link android.util.Log#e(String, String)}, with String.format() pattern
+     */
     public static void e(String TAG, String pattern, Object... parameters) {
         android.util.Log.e(TAG, format(pattern, parameters));
     }
 
-    /** {@link android.util.Log#i(String, String)}, with String.format() pattern */
+    /**
+     * {@link android.util.Log#i(String, String)}, with String.format() pattern
+     */
     public static void i(String TAG, String pattern, Object... parameters) {
         android.util.Log.i(TAG, format(pattern, parameters));
     }
 
-    /** {@link android.util.Log#v(String, String)}, with String.format() pattern */
+    /**
+     * {@link android.util.Log#v(String, String)}, with String.format() pattern
+     */
     public static void v(String TAG, String pattern, Object... parameters) {
         android.util.Log.v(TAG, format(pattern, parameters));
     }
 
-    /** {@link android.util.Log#w(String, String)}, with String.format() pattern */
+    /**
+     * {@link android.util.Log#w(String, String)}, with String.format() pattern
+     */
     public static void w(String TAG, String pattern, Object... parameters) {
         android.util.Log.w(TAG, format(pattern, parameters));
     }
@@ -60,30 +72,28 @@ public abstract class Log {
      * Constructs debug {@code TAG} strings using a {@link Class}, so that
      * rename refactorings will keep the {@code TAG} up-to-date. Also handles
      * constructing fully-qualified {@code TAG} strings for nested classes.
-     * <p>
+     * <p/>
      * Note that this involves a small amount of runtime overhead at start-up,
      * so if your code is particularly performance-sensitive, you may want to
      * stick to a manually constructed {@code TAG} string.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * How you use it:
-     * 
+     * <p/>
      * <pre>
      * class MyClass {
      *     ...
      *     private static final String TAG = Utility.tag(MyClass.class);
      * }
      * </pre>
-     * 
-     * @param clazz
-     *            The {@link Class} of the class to build a {@code TAG} string
-     *            for
+     *
+     * @param clazz The {@link Class} of the class to build a {@code TAG} string
+     *              for
      * @return Fully-qualified {@code TAG} string
      */
     public static String tag(Class<?> clazz) {
         String result = clazz.getSimpleName();
-        for (Class<?> outer = clazz.getEnclosingClass(); outer != null; outer = outer
-                .getEnclosingClass()) {
+        for (Class<?> outer = clazz.getEnclosingClass(); outer != null; outer = outer.getEnclosingClass()) {
             result = outer.getSimpleName() + "." + result;
         }
         return result;

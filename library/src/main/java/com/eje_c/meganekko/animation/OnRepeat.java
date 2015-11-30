@@ -15,18 +15,20 @@
 
 package com.eje_c.meganekko.animation;
 
-/** Optional on-finish callback, with options for controlling repetition */
+/**
+ * Optional on-finish callback, with options for controlling repetition
+ */
 @Deprecated
 public interface OnRepeat extends OnFinish {
     /**
      * Optional callback, that lets you stop an animation when your app reaches
      * a desired state.
-     * 
+     * <p/>
      * When you {@linkplain Animation#setOnFinish(OnFinish) set} a
      * {@code OnRepeat} callback, {@code iteration} will be called after each
      * iteration: returning {@code false} will stop the animation.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * The repeat count {@linkplain Animation#DEFAULT_REPEAT_COUNT defaults
      * to 2,} but setting a {@code OnRepeat} callback also sets the repeat
      * count to a negative number, so that the animation is under your
@@ -34,17 +36,15 @@ public interface OnRepeat extends OnFinish {
      * setting a positive repeat count} <em>after</em> setting the
      * {@code OnRepeat} callback will override this: {@code iteration} is not
      * called when the repeat count is {@literal >=} 0.
-     * 
-     * @param animation
-     *            The animation that just finished, so you can use the same
-     *            callback with multiple animations.
-     * @param count
-     *            The number of repetitions since the animation started
+     *
+     * @param animation The animation that just finished, so you can use the same
+     *                  callback with multiple animations.
+     * @param count     The number of repetitions since the animation started
      * @return {@code true} to allow the animation to repeat. {@code false} will
-     *         stop the animation: the engine will
-     *         {@linkplain AnimationEngine#stop(Animation) unregister the
-     *         animation} <em>and</em> call
-     *         {@link OnFinish#finished(Animation)}.
+     * stop the animation: the engine will
+     * {@linkplain AnimationEngine#stop(Animation) unregister the
+     * animation} <em>and</em> call
+     * {@link OnFinish#finished(Animation)}.
      */
     boolean iteration(Animation animation, int count);
 }

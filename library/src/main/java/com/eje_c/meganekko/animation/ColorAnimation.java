@@ -20,7 +20,9 @@ import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.utility.Colors;
 
-/** Animate the overlay color. */
+/**
+ * Animate the overlay color.
+ */
 @Deprecated
 public class ColorAnimation extends MaterialAnimation {
 
@@ -30,14 +32,11 @@ public class ColorAnimation extends MaterialAnimation {
     /**
      * Animate the {@linkplain Material#setColor(float, float, float) overlay
      * color.}
-     * 
-     * @param target
-     *            {@link Material} to animate
-     * @param duration
-     *            The animation duration, in seconds.
-     * @param rgb
-     *            A float[3] array, containing rgb values in GL format, from 0
-     *            to 1
+     *
+     * @param target   {@link Material} to animate
+     * @param duration The animation duration, in seconds.
+     * @param rgb      A float[3] array, containing rgb values in GL format, from 0
+     *                 to 1
      */
     public ColorAnimation(Material target, float duration, float[] rgb) {
         super(target, duration);
@@ -55,13 +54,10 @@ public class ColorAnimation extends MaterialAnimation {
     /**
      * Animate the {@linkplain Material#setColor(float, float, float) overlay
      * color.}
-     * 
-     * @param target
-     *            {@link Material} to animate
-     * @param duration
-     *            The animation duration, in seconds.
-     * @param color
-     *            An Android {@link Color} value
+     *
+     * @param target   {@link Material} to animate
+     * @param duration The animation duration, in seconds.
+     * @param color    An Android {@link Color} value
      */
     public ColorAnimation(Material target, float duration, int color) {
         this(target, duration, Colors.toColors(color));
@@ -70,15 +66,12 @@ public class ColorAnimation extends MaterialAnimation {
     /**
      * Animate the {@linkplain Material#setColor(float, float, float) overlay
      * color.}
-     * 
-     * @param target
-     *            {@link SceneObject} containing a {@link Material} to
-     *            animate
-     * @param duration
-     *            The animation duration, in seconds.
-     * @param rgb
-     *            A float[3] array, containing rgb values in GL format, from 0
-     *            to 1
+     *
+     * @param target   {@link SceneObject} containing a {@link Material} to
+     *                 animate
+     * @param duration The animation duration, in seconds.
+     * @param rgb      A float[3] array, containing rgb values in GL format, from 0
+     *                 to 1
      */
     public ColorAnimation(SceneObject target, float duration, float[] rgb) {
         this(getMaterial(target), duration, rgb);
@@ -87,14 +80,11 @@ public class ColorAnimation extends MaterialAnimation {
     /**
      * Animate the {@linkplain Material#setColor(float, float, float) overlay
      * color.}
-     * 
-     * @param target
-     *            {@link SceneObject} containing a {@link Material} to
-     *            animate
-     * @param duration
-     *            The animation duration, in seconds.
-     * @param color
-     *            An Android {@link Color} value
+     *
+     * @param target   {@link SceneObject} containing a {@link Material} to
+     *                 animate
+     * @param duration The animation duration, in seconds.
+     * @param color    An Android {@link Color} value
      */
     public ColorAnimation(SceneObject target, float duration, int color) {
         this(target, duration, Colors.toColors(color));

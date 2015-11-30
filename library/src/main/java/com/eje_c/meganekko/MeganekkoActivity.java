@@ -67,19 +67,33 @@ public class MeganekkoActivity extends VrActivity {
 
     private static final String TAG = Log.tag(MeganekkoActivity.class);
 
+    static {
+        System.loadLibrary("meganekko");
+    }
+
     private final Queue<Runnable> mRunnables = new LinkedBlockingQueue<Runnable>();
     private InternalSensorManager mInternalSensorManager;
     private VrContext mVrContext = null;
     private boolean mDocked;
+    private final Runnable mRunOnDock = new Runnable() {
+        @Override
+        public void run() {
+            mDocked = true;
+            mInternalSensorManager.stop();
+        }
+    };
+    private final Runnable mRunOnUndock = new Runnable() {
+        @Override
+        public void run() {
+            mDocked = false;
+        }
+    };
     private VrFrame vrFrame;
     private EventBus mEventBus = EventBus.builder().logNoSubscriberMessages(false).build();
     private Scene mScene;
     private MaterialShaderManager mMaterialShaderManager;
     private App mApp;
-
-    static {
-        System.loadLibrary("meganekko");
-    }
+    private DockEventReceiver mDockEventReceiver;
 
     private static native long nativeSetAppInterface(VrActivity act, String fromPackageName, String commandString, String uriString);
 
@@ -215,19 +229,19 @@ public class MeganekkoActivity extends VrActivity {
     }
 
     /**
-     * @param vsyncs
-     * @deprecated This method will be deleted in future. Use {@link App#setMinimumVsyncs(int)}.
-     */
-    public void setMinimumVsyncs(int vsyncs) {
-        mApp.setMinimumVsyncs(vsyncs);
-    }
-
-    /**
      * @return Minimum Vsyncs value
      * @deprecated This method will be deleted in future. Use {@link App#setMinimumVsyncs(int)}.
      */
     public int getMinimumVsyncs() {
         return mApp.getMinimumVsyncs();
+    }
+
+    /**
+     * @param vsyncs
+     * @deprecated This method will be deleted in future. Use {@link App#setMinimumVsyncs(int)}.
+     */
+    public void setMinimumVsyncs(int vsyncs) {
+        mApp.setMinimumVsyncs(vsyncs);
     }
 
     @Override
@@ -342,23 +356,6 @@ public class MeganekkoActivity extends VrActivity {
         mEventBus.post(new TouchDoubleEvent());
     }
 
-    private final Runnable mRunOnDock = new Runnable() {
-        @Override
-        public void run() {
-            mDocked = true;
-            mInternalSensorManager.stop();
-        }
-    };
-
-    private final Runnable mRunOnUndock = new Runnable() {
-        @Override
-        public void run() {
-            mDocked = false;
-        }
-    };
-
-    private DockEventReceiver mDockEventReceiver;
-
     /**
      * Enqueues a callback to be run in the GL thread.
      * This is how you take data generated on a background thread (or the main
@@ -447,6 +444,15 @@ public class MeganekkoActivity extends VrActivity {
     }
 
     /**
+     * Get current rendering scene.
+     *
+     * @return Current rendering scene.
+     */
+    public Scene getScene() {
+        return mScene;
+    }
+
+    /**
      * Set current rendering scene.
      *
      * @param scene
@@ -466,15 +472,6 @@ public class MeganekkoActivity extends VrActivity {
 
         mScene = scene;
         setScene(getAppPtr(), scene.getNative());
-    }
-
-    /**
-     * Get current rendering scene.
-     *
-     * @return Current rendering scene.
-     */
-    public Scene getScene() {
-        return mScene;
     }
 
     /**

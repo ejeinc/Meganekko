@@ -15,32 +15,32 @@
 
 package com.eje_c.meganekko.animation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.VrFrame;
 import com.eje_c.meganekko.event.FrameListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This class runs {@linkplain Animation animations}.
- * 
+ * <p/>
  * You can animate changes in just about any property of a
  * {@linkplain SceneObject scene object}.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * The animation engine is an optional part of Meganekko: to use it, you must
  * call {@link #getInstance(VrContext)} to lazy-create the singleton.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * You can {@link #stop(Animation)} a running animation at any time, but usually
  * you will either
  * <ul>
- * 
+ * <p/>
  * <li>Use {@link Animation#setRepeatCount(int) setRepeatCount(0)} to 'schedule'
  * termination at the end of the current repetition, or
- *
+ * <p/>
  * <li>{@linkplain Animation#setOnFinish(OnFinish) Set} a
  * {@linkplain OnRepeat callback,} which allows you to terminate the animation
  * before the next loop.
@@ -71,9 +71,8 @@ public class AnimationEngine {
     /**
      * The animation engine is an optional part of Meganekko: You do have to
      * call {@code getInstance()} to lazy-create the singleton.
-     * 
-     * @param vrContext
-     *            current  context
+     *
+     * @param vrContext current  context
      */
     public static synchronized AnimationEngine getInstance(
             VrContext vrContext) {
@@ -86,29 +85,28 @@ public class AnimationEngine {
     /**
      * Registers an animation with the engine: It will start running
      * immediately.
-     * 
+     * <p/>
      * You will usually use {@link Animation#start(AnimationEngine)} instead of
      * this method:
-     * 
+     * <p/>
      * <pre>
      *
      * new SomeAnimation(object, duration, parameter)//
      *         .setOnFinish(handler)//
      *         .start(animationEngine);
      * </pre>
-     * 
+     * <p/>
      * reads better than
-     * 
+     * <p/>
      * <pre>
-     * 
+     *
      * animationEngine.start(//
      *         new SomeAnimation(object, duration, parameter)//
      *                 .setOnFinish(handler)//
      * );
      * </pre>
-     * 
-     * @param animation
-     *            an animation
+     *
+     * @param animation an animation
      * @return The animation that was passed in.
      */
     public Animation start(Animation animation) {
@@ -123,7 +121,7 @@ public class AnimationEngine {
     /**
      * Stop the animation, even if it is still running: the animated object will
      * be left in its current state, not reset to the start or end values.
-     * 
+     * <p/>
      * This is probably not what you want to do! Usually you will either
      * <ul>
      * <li>Use {@link Animation#setRepeatCount(int) setRepeatCount(0)} to
@@ -136,9 +134,8 @@ public class AnimationEngine {
      * removing the animated object the same time. For example, you may be
      * spinning some sort of In Progress object. In a case like this, stopping
      * in mid-animation is harmless.
-     * 
-     * @param animation
-     *            an animation
+     *
+     * @param animation an animation
      */
     public void stop(Animation animation) {
         synchronized (mAnimations) {

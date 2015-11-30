@@ -15,6 +15,8 @@
 
 package com.eje_c.meganekko.utility;
 
+import android.content.Context;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,12 +25,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import android.content.Context;
-
 /**
  * Text file utilities.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * Please note that the {@code org.gearvrf.utility} package contains low-level
  * utility code used in multiple Meganekko packages. We can't keep you from using
  * this code in a Meganekko application, but we <em>can</em> urge you not to:
@@ -42,9 +42,8 @@ public abstract class TextFile {
 
     /**
      * Read a text file into a single string
-     * 
-     * @param filename
-     *            The file to read
+     *
+     * @param filename The file to read
      * @return The contents, or null on error.
      */
     public static String readTextFile(String filename) {
@@ -53,9 +52,8 @@ public abstract class TextFile {
 
     /**
      * Read a text file into a single string
-     * 
-     * @param file
-     *            The file to read
+     *
+     * @param file The file to read
      * @return The contents, or null on error.
      */
     public static String readTextFile(File file) {
@@ -69,11 +67,9 @@ public abstract class TextFile {
 
     /**
      * Read a text file resource into a single string
-     * 
-     * @param context
-     *            A non-null Android Context
-     * @param resourceId
-     *            An Android resource id
+     *
+     * @param context    A non-null Android Context
+     * @param resourceId An Android resource id
      * @return The contents, or null on error.
      */
     public static String readTextFile(Context context, int resourceId) {
@@ -84,9 +80,8 @@ public abstract class TextFile {
 
     /**
      * Read a text stream into a single string.
-     * 
-     * @param inputStream
-     *            Stream containing text. Will be closed on exit.
+     *
+     * @param inputStream Stream containing text. Will be closed on exit.
      * @return The contents, or null on error.
      */
     public static String readTextFile(InputStream inputStream) {

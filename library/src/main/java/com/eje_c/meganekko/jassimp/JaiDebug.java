@@ -56,9 +56,8 @@ public final class JaiDebug {
 
     /**
      * Dumps a single material property to stdout.
-     * 
-     * @param property
-     *            the property
+     *
+     * @param property the property
      */
     public static void dumpMaterialProperty(AiMaterial.Property property) {
         System.out.print(property.getKey() + " " + property.getSemantic() + " "
@@ -79,9 +78,8 @@ public final class JaiDebug {
 
     /**
      * Dumps all properties of a material to stdout.
-     * 
-     * @param material
-     *            the material
+     *
+     * @param material the material
      */
     public static void dumpMaterial(AiMaterial material) {
         for (AiMaterial.Property prop : material.getProperties()) {

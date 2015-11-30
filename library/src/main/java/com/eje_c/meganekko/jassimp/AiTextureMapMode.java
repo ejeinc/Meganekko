@@ -42,8 +42,8 @@ package com.eje_c.meganekko.jassimp;
 
 /**
  * Defines how UV coordinates outside the [0...1] range are handled.
- * <p>
- * 
+ * <p/>
+ * <p/>
  * Commonly refered to as 'wrapping mode'.
  */
 public enum AiTextureMapMode {
@@ -71,15 +71,28 @@ public enum AiTextureMapMode {
     DECAL(0x3);
 
     /**
+     * The mapped c/c++ integer enum value.
+     */
+    private final int m_rawValue;
+
+    /**
+     * Constructor.
+     *
+     * @param rawValue maps java enum to c/c++ integer enum values
+     */
+    private AiTextureMapMode(int rawValue) {
+        m_rawValue = rawValue;
+    }
+
+    /**
      * Utility method for converting from c/c++ based integer enums to java
      * enums.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * This method is intended to be used from JNI and my change based on
      * implementation needs.
-     * 
-     * @param rawValue
-     *            an integer based enum value (as defined by assimp)
+     *
+     * @param rawValue an integer based enum value (as defined by assimp)
      * @return the enum value corresponding to rawValue
      */
     static AiTextureMapMode fromRawValue(int rawValue) {
@@ -91,19 +104,4 @@ public enum AiTextureMapMode {
 
         throw new IllegalArgumentException("unexptected raw value: " + rawValue);
     }
-
-    /**
-     * Constructor.
-     * 
-     * @param rawValue
-     *            maps java enum to c/c++ integer enum values
-     */
-    private AiTextureMapMode(int rawValue) {
-        m_rawValue = rawValue;
-    }
-
-    /**
-     * The mapped c/c++ integer enum value.
-     */
-    private final int m_rawValue;
 }

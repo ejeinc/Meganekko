@@ -42,10 +42,10 @@ package com.eje_c.meganekko.jassimp;
 
 /**
  * The root structure of the imported data.
- * <p>
- * 
+ * <p/>
+ * <p/>
  * Everything that was imported from the given file can be accessed from here.
- * <p>
+ * <p/>
  * Jassimp copies all data into "java memory" during import and frees resources
  * allocated by native code after scene loading is completed. No special care
  * has to be taken for freeing resources, unreferenced jassimp objects
@@ -53,6 +53,11 @@ package com.eje_c.meganekko.jassimp;
  * other java object.
  */
 public final class AiScene {
+    /**
+     * Scene graph root.
+     */
+    private Object m_sceneRoot;
+
     /**
      * Constructor.
      */
@@ -62,15 +67,14 @@ public final class AiScene {
 
     /**
      * Returns the scene graph root.
-     * 
+     * <p/>
      * This method is part of the wrapped API (see {@link AiWrapperProvider} for
      * details on wrappers).
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * The built-in behavior is to return a {@link AiVector}.
-     * 
-     * @param wrapperProvider
-     *            the wrapper provider (used for type inference)
+     *
+     * @param wrapperProvider the wrapper provider (used for type inference)
      * @return the scene graph root
      */
     @SuppressWarnings("unchecked")
@@ -79,9 +83,4 @@ public final class AiScene {
 
         return (N) m_sceneRoot;
     }
-
-    /**
-     * Scene graph root.
-     */
-    private Object m_sceneRoot;
 }

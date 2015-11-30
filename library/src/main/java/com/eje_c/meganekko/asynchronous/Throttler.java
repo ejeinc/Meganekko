@@ -15,21 +15,15 @@
 
 package com.eje_c.meganekko.asynchronous;
 
-import static com.eje_c.meganekko.utility.Threads.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.concurrent.ConcurrentHashMap;
+import android.graphics.Bitmap;
+import android.util.SparseArray;
 
 import com.eje_c.meganekko.AndroidResource;
-import com.eje_c.meganekko.VrContext;
-import com.eje_c.meganekko.HybridObject;
-import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.AndroidResource.Callback;
 import com.eje_c.meganekko.AndroidResource.CancelableCallback;
+import com.eje_c.meganekko.HybridObject;
+import com.eje_c.meganekko.Mesh;
+import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.utility.Exceptions;
 import com.eje_c.meganekko.utility.Log;
 import com.eje_c.meganekko.utility.RuntimeAssertion;
@@ -38,8 +32,15 @@ import com.eje_c.meganekko.utility.Threads.Cancelable;
 import com.eje_c.meganekko.utility.Threads.ThreadLimiter;
 import com.eje_c.meganekko.utility.Threads.ThreadPolicyProvider;
 
-import android.graphics.Bitmap;
-import android.util.SparseArray;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static com.eje_c.meganekko.utility.Threads.VERBOSE_SCHEDULING;
+import static com.eje_c.meganekko.utility.Threads.threadId;
 
 /**
  * Asynchronous, heterogeneous resource loading with integrated thread
@@ -51,38 +52,18 @@ abstract class Throttler {
      * The API
      */
 
-    static void registerDatatype(Class<? extends HybridObject> targetClass,
-            AsyncLoaderFactory<? extends HybridObject, ?> factory) {
-        requests.registerDatatype(targetClass, factory);
-    }
-
-    static void registerCallback(VrContext vrContext,
-            Class<? extends HybridObject> outClass,
-            CancelableCallback<? extends HybridObject> callback,
-            AndroidResource request, int priority) {
-        requests.registerCallback(vrContext, outClass, callback, request,
-                priority);
-    }
-
-    /*
-     * Static constants
-     */
-
-    private static final String TAG = Log.tag(Throttler.class);
-
     protected static final boolean RUNTIME_ASSERTIONS = Threads.RUNTIME_ASSERTIONS;
     protected static final boolean CHECK_ARGUMENTS = Threads.RUNTIME_ASSERTIONS;
 
     /*
-     * static fields
+     * Static constants
      */
-
+    private static final String TAG = Log.tag(Throttler.class);
     private static final int CORE_COUNT = Runtime.getRuntime()
             .availableProcessors();
-
     /**
      * Max threads doing resource loads at any one time.
-     * 
+     * <p/>
      * Set to CORE_COUNT-1 on the theory that we can't peg the CPU with decodes;
      * even though the GL thread is higher priority than our decode threads, it
      * could still have to wait for a long-running decode to time-out and be
@@ -91,12 +72,32 @@ abstract class Throttler {
     private static final int DECODE_THREAD_LIMIT = Math.max(CORE_COUNT - 1, 1);
 
     /*
+     * static fields
+     */
+    // TODO I don't THINK we need to reset PendingRequests on restart, but I may
+    // be wrong ....
+    private static final PendingRequests requests = new PendingRequests();
+
+    static void registerDatatype(Class<? extends HybridObject> targetClass,
+                                 AsyncLoaderFactory<? extends HybridObject, ?> factory) {
+        requests.registerDatatype(targetClass, factory);
+    }
+
+    /*
      * Extension points
      */
 
+    static void registerCallback(VrContext vrContext,
+                                 Class<? extends HybridObject> outClass,
+                                 CancelableCallback<? extends HybridObject> callback,
+                                 AndroidResource request, int priority) {
+        requests.registerCallback(vrContext, outClass, callback, request,
+                priority);
+    }
+
     /**
      * The GL part of async resource loading.
-     * 
+     * <p/>
      * Two main things happen once an async resource load has started running.
      * The expensive part happens on a CPU background thread (<i>i.e.</i> not
      * the GUI thread and not the GL thread): we convert the stream to a Java
@@ -105,25 +106,50 @@ abstract class Throttler {
      * {@link Mesh}. When we have an intermediate data type, we need to do a
      * (cheap) conversion on the GL thread before we can pass the Meganekko type to
      * the app's callback.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This interface represents that conversion, if any. (When
      * {@code OUTPUT == INPUT}, the {@code convert()} function just returns its
      * {@code input} parameter.)
-     * 
-     * @param <OUTPUT>
-     *            The Meganekko type that we will pass to the app's callback
-     * @param <INTERMEDIATE>
-     *            The possibly different type that we got from the background
-     *            thread
+     *
+     * @param <OUTPUT>       The Meganekko type that we will pass to the app's callback
+     * @param <INTERMEDIATE> The possibly different type that we got from the background
+     *                       thread
      */
     interface GlConverter<OUTPUT extends HybridObject, INTERMEDIATE> {
         OUTPUT convert(VrContext vrContext, INTERMEDIATE input);
     }
 
+    private interface PriorityCancelable extends Cancelable {
+
+        /**
+         * The value that {@link #getPriority()} returns may be random until
+         * {@link #updatePriority()} is called; once {@link #updatePriority()}
+         * has been called the value that {@link #getPriority()} returns should
+         * not change until {@link #updatePriority()} is called again.
+         * <p/>
+         * This allows {@link ThreadPolicyProvider#reschedule(Cancelable)} to
+         * detect that a group's priority has changed because another request
+         * has been added.
+         */
+        void updatePriority();
+
+        /**
+         * Every request has a priority: the larger the number, the higher
+         * priority. That is, {@link Throttler#LOWEST_PRIORITY} is a negative
+         * number, while {@link Throttler#HIGHEST_PRIORITY} is a positive
+         * number.
+         */
+        int getPriority();
+    }
+
+    /*
+     * Pending requests
+     */
+
     /**
      * This is the base class for the background resource loaders.
-     * 
+     * <p/>
      * An {@link AsyncLoader} is-a {@link Runnable}, which runs on a background
      * thread. The {@link #run()} method calls {@link #loadResource()} which
      * does the actual work of reading the {@link AndroidResource} stream and
@@ -136,17 +162,15 @@ abstract class Throttler {
      * {@code null}, {@code run()} calls the app's
      * {@link Callback#failed(Throwable, AndroidResource) failed()} callback,
      * from the background thread.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * Descendants must implement {@link #loadResource()}.
-     * 
-     * @param <OUTPUT>
-     *            The Meganekko type, delivered to the app's
-     *            {@link Callback#loaded(HybridObject, AndroidResource)
-     *            loaded()} callback
-     * @param <INTERMEDIATE>
-     *            The type generated on the background thread by the
-     *            {@link #loadResource()} method
+     *
+     * @param <OUTPUT>       The Meganekko type, delivered to the app's
+     *                       {@link Callback#loaded(HybridObject, AndroidResource)
+     *                       loaded()} callback
+     * @param <INTERMEDIATE> The type generated on the background thread by the
+     *                       {@link #loadResource()} method
      */
     static abstract class AsyncLoader<OUTPUT extends HybridObject, INTERMEDIATE>
             implements Cancelable {
@@ -157,9 +181,9 @@ abstract class Throttler {
         protected final CancelableCallback<HybridObject> callback;
 
         protected AsyncLoader(VrContext vrContext,
-                GlConverter<OUTPUT, INTERMEDIATE> converter,
-                AndroidResource request,
-                CancelableCallback<HybridObject> callback) {
+                              GlConverter<OUTPUT, INTERMEDIATE> converter,
+                              AndroidResource request,
+                              CancelableCallback<HybridObject> callback) {
             this.vrContext = vrContext;
             this.converter = converter;
             this.resource = request;
@@ -204,7 +228,7 @@ abstract class Throttler {
          * conversion before being passed to the app's
          * {@link Callback#loaded(HybridObject, AndroidResource) loaded()}
          * callback
-         * 
+         *
          * @return An Android or Meganekko resource type
          * @throws InterruptedException
          */
@@ -214,7 +238,7 @@ abstract class Throttler {
 
     /**
      * Generates actual {@link AsyncLoader} instances.
-     * 
+     * <p/>
      * 'Type experts' ({@link AsyncBitmapTexture} and {@link AsyncMesh} call
      * {@link Throttler#registerDatatype(Class, AsyncLoaderFactory)} to
      * associate an {@link AsyncLoaderFactory} with a target {@code .class}
@@ -224,38 +248,30 @@ abstract class Throttler {
      * {@link AsyncLoaderFactory} when it's time to actually run a request; it
      * creates an {@link AsyncLoaderFactory} and runs it on a
      * {@link Threads#spawn(Runnable) background thread.}
-     * 
-     * @param <OUTPUT>
-     *            The Meganekko type, delivered to the app's
-     *            {@link Callback#loaded(HybridObject, AndroidResource)
-     *            loaded()} callback
-     * @param <INTERMEDIATE>
-     *            The type generated on the background thread by the
-     *            {@link AsyncLoader#loadResource()} method
+     *
+     * @param <OUTPUT>       The Meganekko type, delivered to the app's
+     *                       {@link Callback#loaded(HybridObject, AndroidResource)
+     *                       loaded()} callback
+     * @param <INTERMEDIATE> The type generated on the background thread by the
+     *                       {@link AsyncLoader#loadResource()} method
      */
     static abstract class AsyncLoaderFactory<OUTPUT extends HybridObject, INTERMEDIATE> {
-        /** Create an AsyncLoader of the right type */
+        /**
+         * Create an AsyncLoader of the right type
+         */
         abstract AsyncLoader<OUTPUT, INTERMEDIATE> threadProc(
                 VrContext vrContext, AndroidResource request,
                 CancelableCallback<HybridObject> callback, int priority);
     }
 
-    /*
-     * Pending requests
-     */
-
-    // TODO I don't THINK we need to reset PendingRequests on restart, but I may
-    // be wrong ....
-    private static final PendingRequests requests = new PendingRequests();
-
     /**
      * This is the 'heart' of the throttler.
-     * 
+     * <p/>
      * It prevents redundant loads by maintaining a set of pending requests,
      * each of which has a list of callbacks. If a request comes in for a
      * pending load, the callback is simply added to the list. When a resource
      * is loaded, the object is passed to each callback on the list.
-     * 
+     * <p/>
      * TODO No longer *needs* to be a nested class ... not clear the change is
      * worth the effort, though.
      */
@@ -267,15 +283,15 @@ abstract class Throttler {
 
         private final Map< //
 
-        Class<? extends HybridObject>, //
-        AsyncLoaderFactory<? extends HybridObject, ?>
+                Class<? extends HybridObject>, //
+                AsyncLoaderFactory<? extends HybridObject, ?>
 
-        > threadFactories = new HashMap< //
+                > threadFactories = new HashMap< //
 
-        Class<? extends HybridObject>, //
-        AsyncLoaderFactory<? extends HybridObject, ?> //
+                Class<? extends HybridObject>, //
+                AsyncLoaderFactory<? extends HybridObject, ?> //
 
-        >();
+                >();
 
         private final ThreadLimiter<PriorityCancelable> deviceThreadLimiter = new ThreadLimiter<PriorityCancelable>(
                 DECODE_THREAD_LIMIT,
@@ -284,14 +300,14 @@ abstract class Throttler {
                 Integer.MAX_VALUE);
 
         void registerDatatype(Class<? extends HybridObject> targetClass,
-                AsyncLoaderFactory<? extends HybridObject, ?> factory) {
+                              AsyncLoaderFactory<? extends HybridObject, ?> factory) {
             threadFactories.put(targetClass, factory);
         }
 
         void registerCallback(VrContext vrContext,
-                Class<? extends HybridObject> outClass,
-                CancelableCallback<? extends HybridObject> callback,
-                AndroidResource request, int priority) {
+                              Class<? extends HybridObject> outClass,
+                              CancelableCallback<? extends HybridObject> callback,
+                              AndroidResource request, int priority) {
             if (VERBOSE_SCHEDULING) {
                 Log.d(TAG, "registerCallback(%s, %s)", request, callback);
             }
@@ -362,9 +378,9 @@ abstract class Throttler {
             private int highestPriority = priority;
 
             public PendingRequest(VrContext vrContext,
-                    AndroidResource request,
-                    CancelableCallback<? extends HybridObject> callback,
-                    int priority, Class<? extends HybridObject> outClass) {
+                                  AndroidResource request,
+                                  CancelableCallback<? extends HybridObject> callback,
+                                  int priority, Class<? extends HybridObject> outClass) {
                 this.request = request;
                 addCallback(callback, priority);
                 updatePriority();
@@ -387,7 +403,7 @@ abstract class Throttler {
             @SuppressWarnings("unchecked" /* shameful ... */)
             @Override
             public void loaded(HybridObject gvrResource,
-                    AndroidResource androidResource) {
+                               AndroidResource androidResource) {
                 if (VERBOSE_SCHEDULING) {
                     Log.d(TAG, "%s loaded(%s, %s), thread %d: request %s",
                             this, gvrResource, androidResource, threadId(),
@@ -423,20 +439,20 @@ abstract class Throttler {
                         for (CancelableCallback<? extends HybridObject> callback : listeners) {
                             /*
                              * Each callback in its own exception frame,
-                             * 
+                             *
                              * to minimize the damage.
                              */
                             try {
                                 /*
                                  * FIXME And now for something completely ugly.
-                                 * 
+                                 *
                                  * Actual callbacks are defined to take specific
                                  * GVRHybridObject descendants; the gvrResource
                                  * here is-a base GVRHybridObject. The compiler
                                  * quite rightly refuses to do this on its own:
                                  * we might be passing a GVRMesh to a callback
                                  * that expects a GVRTexture!
-                                 * 
+                                 *
                                  * The cast is telling the compiler that we
                                  * really do know what we're doing, and are
                                  * always passing the right resource type to the
@@ -537,32 +553,9 @@ abstract class Throttler {
         }
     }
 
-    private interface PriorityCancelable extends Cancelable {
-
-        /**
-         * The value that {@link #getPriority()} returns may be random until
-         * {@link #updatePriority()} is called; once {@link #updatePriority()}
-         * has been called the value that {@link #getPriority()} returns should
-         * not change until {@link #updatePriority()} is called again.
-         * 
-         * This allows {@link ThreadPolicyProvider#reschedule(Cancelable)} to
-         * detect that a group's priority has changed because another request
-         * has been added.
-         */
-        void updatePriority();
-
-        /**
-         * Every request has a priority: the larger the number, the higher
-         * priority. That is, {@link Throttler#LOWEST_PRIORITY} is a negative
-         * number, while {@link Throttler#HIGHEST_PRIORITY} is a positive
-         * number.
-         */
-        int getPriority();
-    }
-
     private static class PriorityGroup implements Comparable<PriorityGroup> {
-        private int priority;
         final List<PriorityCancelable> content = new ArrayList<PriorityCancelable>();
+        private int priority;
 
         public PriorityGroup(int priority) {
             this.priority = priority;

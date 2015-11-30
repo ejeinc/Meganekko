@@ -27,7 +27,6 @@ package com.eje_c.meganekko;
  * sort of interface. The only actual {@link EyePointee} is
  * {@link MeshEyePointee}.
  */
-
 public class EyePointee extends HybridObject {
     EyePointee(VrContext vrContext, long ptr) {
         super(vrContext, ptr);

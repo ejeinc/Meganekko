@@ -15,16 +15,16 @@
 
 /**
  * Implementation of asynch resource loading.
- * 
- * Most classes are hidden, implementation details. You need to implement 
+ * <p/>
+ * Most classes are hidden, implementation details. You need to implement
  * {@link com.eje_c.meganekko.asynchronous.CompressedTextureLoader}
- * to use compressed texture formats that Meganekko does not support; you may find 
+ * to use compressed texture formats that Meganekko does not support; you may find
  * {@link com.eje_c.meganekko.asynchronous.GVRCompressedTexture}
- * useful for debugging. 
- * 
- * {@link com.eje_c.meganekko.asynchronous.AsynchronousResourceLoader} 
+ * useful for debugging.
+ * <p/>
+ * {@link com.eje_c.meganekko.asynchronous.AsynchronousResourceLoader}
  * is public only so that {@link com.eje_c.meganekko.VrContext} can make cross-package
- * calls: It <em>is</em> an official part of the API, but we suggest you avoid 
+ * calls: It <em>is</em> an official part of the API, but we suggest you avoid
  * using it directly.
  */
 package com.eje_c.meganekko.asynchronous;

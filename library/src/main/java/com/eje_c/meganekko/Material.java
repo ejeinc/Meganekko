@@ -15,149 +15,70 @@
 
 package com.eje_c.meganekko;
 
-import static com.eje_c.meganekko.utility.Assert.*;
+import android.graphics.Color;
+
+import com.eje_c.meganekko.utility.Colors;
+import com.eje_c.meganekko.utility.Threads;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
 
-import com.eje_c.meganekko.utility.Colors;
-import com.eje_c.meganekko.utility.Threads;
-
-import android.graphics.Color;
+import static com.eje_c.meganekko.utility.Assert.checkFloatNotNaNOrInfinity;
+import static com.eje_c.meganekko.utility.Assert.checkNotNull;
+import static com.eje_c.meganekko.utility.Assert.checkStringNotNullOrEmpty;
 
 /**
  * This is one of the key Meganekko classes: it holds shaders with textures.
- * 
+ * <p/>
  * You can have invisible {@linkplain SceneObject scene objects:} these have
  * a location and a set of child objects. This can be useful, to move a set of
  * scene objects as a unit, preserving their relative geometry. Invisible scene
  * objects don't need any {@linkplain SceneObject#getRenderData() render
  * data.}
- * 
- * <p>
+ * <p/>
+ * <p/>
  * Visible scene objects must have render data
  * {@linkplain SceneObject#attachRenderData(RenderData) attached.} Each
  * {@link RenderData} has a {@link Mesh GL mesh} that defines its
  * geometry, and a {@link Material} that defines its surface.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * Each {@link Material} contains two main things:
  * <ul>
  * <li>The id of a (stock or custom) shader, which is used to draw the mesh. See
  * {@link ShaderType} and {@link VrContext#getMaterialShaderManager()}.
- * 
+ * <p/>
  * <li>Data to pass to the shader. This usually - but not always - means a
  * {@link Texture} and can include other named values to pass to the shader.
  * </ul>
- * 
- * <p>
+ * <p/>
+ * <p/>
  * The simplest way to create a {@link Material} is to call the
- * {@linkplain Material#GVRMaterial(VrContext) constructor that takes only a
+ * {@linkplain Material#Material(VrContext) constructor that takes only a
  * GVRContext.} Then you just {@link Material#setMainTexture(Texture)
  * setMainTexture()} and you're ready to draw with the default shader, which is
  * called 'unlit' because it simply drapes the texture over the mesh, without
  * any lighting or reflection effects.
- * 
+ * <p/>
  * <pre>
  * // for example
  * GVRMaterial material = new GVRMaterial(vrContext);
  * material.setMainTexture(texture);
  * </pre>
  */
-public class Material extends HybridObject implements
-        Shaders<MaterialShaderId> {
+public class Material extends HybridObject implements Shaders<MaterialShaderId> {
 
+    final private Map<String, Texture> textures = new HashMap<String, Texture>();
     private int mShaderFeatureSet;
     private MaterialShaderId shaderId;
-    final private Map<String, Texture> textures = new HashMap<String, Texture>();
-
-    /** Pre-built shader ids. */
-    public abstract static class ShaderType {
-
-        public abstract static class UnlitHorizontalStereo {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(
-                    0);
-        }
-
-        public abstract static class UnlitVerticalStereo {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(
-                    1);
-        }
-
-        public abstract static class OES {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(
-                    2);
-        }
-
-        public abstract static class OESHorizontalStereo {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(
-                    3);
-        }
-
-        public abstract static class OESVerticalStereo {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(
-                    4);
-        }
-
-        public abstract static class Cubemap {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(
-                    5);
-        }
-
-        public abstract static class CubemapReflection {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(
-                    6);
-        }
-
-        public abstract static class Texture {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(
-                    7);
-        }
-
-        public abstract static class ExternalRenderer {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(
-                    8);
-        }
-
-        public abstract static class Assimp {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(
-                    9);
-
-            /*
-             * Set this feature enum if diffuse texture is present in Assimp
-             * material Diffuse texture maps to main_texture in GearVRf
-             */
-            public static int AS_DIFFUSE_TEXTURE = 0x00000000;
-
-            /*
-             * Set this feature enum if specular texture is present in Assimp
-             * material
-             */
-            public static int AS_SPECULAR_TEXTURE = 0x00000001;
-
-            public static int setBit(int number, int index) {
-                return (number |= 1 << index);
-            }
-
-            public static boolean isSet(int number, int index) {
-                return ((number & (1 << index)) != 0);
-            }
-
-            public static int clearBit(int number, int index) {
-                return (number &= ~(1 << index));
-            }
-        }
-    };
 
     /**
      * A new holder for a shader's uniforms.
-     * 
-     * @param vrContext
-     *            Current {@link VrContext}
-     * @param shaderId
-     *            Id of a {@linkplain ShaderType stock} or
-     *            {@linkplain MaterialShaderManager custom} shader.
+     *
+     * @param vrContext Current {@link VrContext}
+     * @param shaderId  Id of a {@linkplain ShaderType stock} or
+     *                  {@linkplain MaterialShaderManager custom} shader.
      */
     public Material(VrContext vrContext, MaterialShaderId shaderId) {
         super(vrContext, NativeMaterial.ctor(shaderId.ID));
@@ -173,12 +94,13 @@ public class Material extends HybridObject implements
         this.mShaderFeatureSet = 0;
     }
 
+    ;
+
     /**
      * A convenience overload: builds a {@link Material} that uses the most
      * common stock shader, the {@linkplain ShaderType.Texture 'texture'} shader.
-     * 
-     * @param vrContext
-     *            Current {@link VrContext}
+     *
+     * @param vrContext Current {@link VrContext}
      */
     public Material(VrContext vrContext) {
         this(vrContext, ShaderType.Texture.ID);
@@ -194,9 +116,8 @@ public class Material extends HybridObject implements
 
     /**
      * Set shader id
-     * 
-     * @param shaderId
-     *            The new shader id.
+     *
+     * @param shaderId The new shader id.
      */
     public void setShaderType(MaterialShaderId shaderId) {
         this.shaderId = shaderId;
@@ -207,21 +128,21 @@ public class Material extends HybridObject implements
         return getTexture(MAIN_TEXTURE);
     }
 
-    public void setMainTexture(Texture texture) {
+    public void setMainTexture(Future<Texture> texture) {
         setTexture(MAIN_TEXTURE, texture);
     }
 
-    public void setMainTexture(Future<Texture> texture) {
+    public void setMainTexture(Texture texture) {
         setTexture(MAIN_TEXTURE, texture);
     }
 
     /**
      * Get the {@code color} uniform.
-     * 
+     * <p/>
      * By convention, Meganekko shaders can use a {@code vec3} uniform named
      * {@code color}. With the default {@linkplain ShaderType.Unlit 'unlit'
      * shader,} this allows you to add an overlay color on top of the texture.
-     * 
+     *
      * @return The current {@code vec3 color} as a three-element array
      */
     public float[] getColor() {
@@ -229,40 +150,10 @@ public class Material extends HybridObject implements
     }
 
     /**
-     * A convenience method that wraps {@link #getColor()} and returns an
-     * Android {@link Color}
-     * 
-     * @return An Android {@link Color}
-     */
-    public int getRgbColor() {
-        return Colors.toColor(getColor());
-    }
-
-    /**
-     * Set the {@code color} uniform.
-     * 
-     * By convention, Meganekko shaders can use a {@code vec3} uniform named
-     * {@code color}. With the default {@linkplain ShaderType.Unlit 'unlit'
-     * shader,} this allows you to add an overlay color on top of the texture.
-     * Values are between {@code 0.0f} and {@code 1.0f}, inclusive.
-     * 
-     * @param r
-     *            Red
-     * @param g
-     *            Green
-     * @param b
-     *            Blue
-     */
-    public void setColor(float r, float g, float b) {
-        setVec3("color", r, g, b);
-    }
-
-    /**
      * A convenience overload of {@link #setColor(float, float, float)} that
      * lets you use familiar Android {@link Color} values.
-     * 
-     * @param color
-     *            Any Android {@link Color}; the alpha byte is ignored.
+     *
+     * @param color Any Android {@link Color}; the alpha byte is ignored.
      */
     public void setColor(int color) {
         setColor(Colors.byteToGl(Color.red(color)), //
@@ -271,15 +162,41 @@ public class Material extends HybridObject implements
     }
 
     /**
+     * A convenience method that wraps {@link #getColor()} and returns an
+     * Android {@link Color}
+     *
+     * @return An Android {@link Color}
+     */
+    public int getRgbColor() {
+        return Colors.toColor(getColor());
+    }
+
+    /**
+     * Set the {@code color} uniform.
+     * <p/>
+     * By convention, Meganekko shaders can use a {@code vec3} uniform named
+     * {@code color}. With the default {@linkplain ShaderType.Unlit 'unlit'
+     * shader,} this allows you to add an overlay color on top of the texture.
+     * Values are between {@code 0.0f} and {@code 1.0f}, inclusive.
+     *
+     * @param r Red
+     * @param g Green
+     * @param b Blue
+     */
+    public void setColor(float r, float g, float b) {
+        setVec3("color", r, g, b);
+    }
+
+    /**
      * Get the {@code materialAmbientColor} uniform.
-     * 
+     * <p/>
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code materialAmbientColor}. With the {@linkplain ShaderType.Lit 
+     * {@code materialAmbientColor}. With the {@linkplain ShaderType.Lit
      * 'lit' shader,} this allows you to add an overlay color on top of the
      * texture.
-     * 
+     *
      * @return The current {@code vec4 materialAmbientColor} as a four-element
-     *         array
+     * array
      */
     public float[] getAmbientColor() {
         return getVec4("ambient_color");
@@ -287,21 +204,17 @@ public class Material extends HybridObject implements
 
     /**
      * Set the {@code materialAmbientColor} uniform for lighting.
-     * 
+     * <p/>
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code materialAmbientColor}. With the {@linkplain ShaderType.Lit 
+     * {@code materialAmbientColor}. With the {@linkplain ShaderType.Lit
      * 'lit' shader,} this allows you to add an overlay ambient light color on
      * top of the texture. Values are between {@code 0.0f} and {@code 1.0f},
      * inclusive.
-     * 
-     * @param r
-     *            Red
-     * @param g
-     *            Green
-     * @param b
-     *            Blue
-     * @param a
-     *            Alpha
+     *
+     * @param r Red
+     * @param g Green
+     * @param b Blue
+     * @param a Alpha
      */
     public void setAmbientColor(float r, float g, float b, float a) {
         setVec4("ambient_color", r, g, b, a);
@@ -309,14 +222,14 @@ public class Material extends HybridObject implements
 
     /**
      * Get the {@code materialDiffuseColor} uniform.
-     * 
+     * <p/>
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code materialDiffuseColor}. With the {@linkplain ShaderType.Lit 
+     * {@code materialDiffuseColor}. With the {@linkplain ShaderType.Lit
      * 'lit' shader,} this allows you to add an overlay color on top of the
      * texture.
-     * 
+     *
      * @return The current {@code vec4 materialDiffuseColor} as a four-element
-     *         array
+     * array
      */
     public float[] getDiffuseColor() {
         return getVec4("diffuse_color");
@@ -324,21 +237,17 @@ public class Material extends HybridObject implements
 
     /**
      * Set the {@code materialDiffuseColor} uniform for lighting.
-     * 
+     * <p/>
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code materialDiffuseColor}. With the {@linkplain ShaderType.Lit 
+     * {@code materialDiffuseColor}. With the {@linkplain ShaderType.Lit
      * 'lit' shader,} this allows you to add an overlay diffuse light color on
      * top of the texture. Values are between {@code 0.0f} and {@code 1.0f},
      * inclusive.
-     * 
-     * @param r
-     *            Red
-     * @param g
-     *            Green
-     * @param b
-     *            Blue
-     * @param a
-     *            Alpha
+     *
+     * @param r Red
+     * @param g Green
+     * @param b Blue
+     * @param a Alpha
      */
     public void setDiffuseColor(float r, float g, float b, float a) {
         setVec4("diffuse_color", r, g, b, a);
@@ -346,14 +255,14 @@ public class Material extends HybridObject implements
 
     /**
      * Get the {@code materialSpecularColor} uniform.
-     * 
+     * <p/>
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code materialSpecularColor}. With the {@linkplain ShaderType.Lit 
+     * {@code materialSpecularColor}. With the {@linkplain ShaderType.Lit
      * 'lit' shader,} this allows you to add an overlay color on top of the
      * texture.
-     * 
+     *
      * @return The current {@code vec4 materialSpecularColor} as a four-element
-     *         array
+     * array
      */
     public float[] getSpecularColor() {
         return getVec4("specular_color");
@@ -361,21 +270,17 @@ public class Material extends HybridObject implements
 
     /**
      * Set the {@code materialSpecularColor} uniform for lighting.
-     * 
+     * <p/>
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code materialSpecularColor}. With the {@linkplain ShaderType.Lit 
+     * {@code materialSpecularColor}. With the {@linkplain ShaderType.Lit
      * 'lit' shader,} this allows you to add an overlay specular light color on
      * top of the texture. Values are between {@code 0.0f} and {@code 1.0f},
      * inclusive.
-     * 
-     * @param r
-     *            Red
-     * @param g
-     *            Green
-     * @param b
-     *            Blue
-     * @param a
-     *            Alpha
+     *
+     * @param r Red
+     * @param g Green
+     * @param b Blue
+     * @param a Alpha
      */
     public void setSpecularColor(float r, float g, float b, float a) {
         setVec4("specular_color", r, g, b, a);
@@ -383,14 +288,14 @@ public class Material extends HybridObject implements
 
     /**
      * Get the {@code materialSpecularExponent} uniform.
-     * 
+     * <p/>
      * By convention, Meganekko shaders can use a {@code float} uniform named
      * {@code materialSpecularExponent}. With the {@linkplain ShaderType.Lit
      * 'lit' shader,} this allows you to add an overlay color on top of the
      * texture.
-     * 
+     *
      * @return The current {@code vec4 materialSpecularExponent} as a float
-     *         value.
+     * value.
      */
     public float getSpecularExponent() {
         return getFloat("specular_exponent");
@@ -398,15 +303,14 @@ public class Material extends HybridObject implements
 
     /**
      * Set the {@code materialSpecularExponent} uniform for lighting.
-     * 
+     * <p/>
      * By convention, Meganekko shaders can use a {@code float} uniform named
      * {@code materialSpecularExponent}. With the {@linkplain ShaderType.Lit
      * 'lit' shader,} this allows you to add an overlay specular light color on
      * top of the texture. Values are between {@code 0.0f} and {@code 128.0f},
      * inclusive.
-     * 
-     * @param exp
-     *            Specular exponent
+     *
+     * @param exp Specular exponent
      */
     public void setSpecularExponent(float exp) {
         setFloat("specular_exponent", exp);
@@ -414,12 +318,12 @@ public class Material extends HybridObject implements
 
     /**
      * Get the opacity.
-     * 
+     * <p/>
      * This method returns the {@code opacity} uniform.
-     * 
+     * <p/>
      * The {@linkplain #setOpacity(float) setOpacity() documentation} explains
      * what the {@code opacity} uniform does.
-     * 
+     *
      * @return The {@code opacity} uniform used to render this material
      */
     public float getOpacity() {
@@ -428,11 +332,11 @@ public class Material extends HybridObject implements
 
     /**
      * Set the opacity, in a complicated way.
-     * 
+     * <p/>
      * There are two things you need to know, how opacity is applied, and how
      * opacity is implemented.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * First, Meganekko does not sort by distance every object it can see, then draw
      * from back to front. Rather, it sorts every object by
      * {@linkplain RenderData#getRenderingOrder() render order,} then draws
@@ -441,11 +345,11 @@ public class Material extends HybridObject implements
      * explicitly {@linkplain RenderData#setRenderingOrder(int) set the
      * rendering order} so that the translucent object draws after the opaque
      * object. You can use any integer values you like, but Meganekko supplies
-     * {@linkplain RenderData.GVRRenderingOrder four standard values;} the
+     * {@linkplain RenderData.RenderingOrder four standard values;} the
      * {@linkplain RenderData#getRenderingOrder() default value} is
-     * {@linkplain RenderData.GVRRenderingOrder#GEOMETRY GEOMETRY.}
-     * 
-     * <p>
+     * {@linkplain RenderData.RenderingOrder#GEOMETRY GEOMETRY.}
+     * <p/>
+     * <p/>
      * Second, technically all this method does is set the {@code opacity}
      * uniform. What this does depends on the actual shader. If you don't
      * specify a shader (or you specify the
@@ -453,9 +357,8 @@ public class Material extends HybridObject implements
      * {@code opacity} does exactly what you expect; you only have to worry
      * about the render order. However, it is totally up to a custom shader
      * whether or how it will handle opacity.
-     * 
-     * @param opacity
-     *            Value between {@code 0.0f} and {@code 1.0f}, inclusive.
+     *
+     * @param opacity Value between {@code 0.0f} and {@code 1.0f}, inclusive.
      */
     public void setOpacity(float opacity) {
         setFloat("opacity", opacity);
@@ -525,41 +428,108 @@ public class Material extends HybridObject implements
 
     /**
      * Bind a {@code mat4} to the shader uniform {@code key}.
-     * 
-     * @param key
-     *            Name of the shader uniform
+     *
+     * @param key Name of the shader uniform
      */
     public void setMat4(String key, float x1, float y1, float z1, float w1,
-            float x2, float y2, float z2, float w2, float x3, float y3,
-            float z3, float w3, float x4, float y4, float z4, float w4) {
+                        float x2, float y2, float z2, float w2, float x3, float y3,
+                        float z3, float w3, float x4, float y4, float z4, float w4) {
         checkStringNotNullOrEmpty("key", key);
         NativeMaterial.setMat4(getNative(), key, x1, y1, z1, w1, x2, y2, z2,
                 w2, x3, y3, z3, w3, x4, y4, z4, w4);
     }
-    
+
+    /**
+     * Get the feature set associated with this material.
+     *
+     * @return An integer representing the feature set.
+     */
+    public int getShaderFeatureSet() {
+        return mShaderFeatureSet;
+    }
+
     /**
      * Set the feature set for pre-built shader's. Pre-built shader could be
      * written to support all the properties of a material system with
      * preprocessor macro to On/Off features. feature set would determine which
      * properties are available for current model. Currently only Assimp shader
      * has support for feature set.
-     * 
-     * @param featureSet
-     *            Feature set for this material.
+     *
+     * @param featureSet Feature set for this material.
      */
     public void setShaderFeatureSet(int featureSet) {
         this.mShaderFeatureSet = featureSet;
         NativeMaterial.setShaderFeatureSet(getNative(), featureSet);
     }
-    
+
     /**
-     * Get the feature set associated with this material.
-     * 
-     * @return An integer representing the feature set.
-     * 
+     * Pre-built shader ids.
      */
-    public int getShaderFeatureSet() {
-        return mShaderFeatureSet;
+    public abstract static class ShaderType {
+
+        public abstract static class UnlitHorizontalStereo {
+            public static final MaterialShaderId ID = new StockMaterialShaderId(0);
+        }
+
+        public abstract static class UnlitVerticalStereo {
+            public static final MaterialShaderId ID = new StockMaterialShaderId(1);
+        }
+
+        public abstract static class OES {
+            public static final MaterialShaderId ID = new StockMaterialShaderId(2);
+        }
+
+        public abstract static class OESHorizontalStereo {
+            public static final MaterialShaderId ID = new StockMaterialShaderId(3);
+        }
+
+        public abstract static class OESVerticalStereo {
+            public static final MaterialShaderId ID = new StockMaterialShaderId(4);
+        }
+
+        public abstract static class Cubemap {
+            public static final MaterialShaderId ID = new StockMaterialShaderId(5);
+        }
+
+        public abstract static class CubemapReflection {
+            public static final MaterialShaderId ID = new StockMaterialShaderId(6);
+        }
+
+        public abstract static class Texture {
+            public static final MaterialShaderId ID = new StockMaterialShaderId(7);
+        }
+
+        public abstract static class ExternalRenderer {
+            public static final MaterialShaderId ID = new StockMaterialShaderId(8);
+        }
+
+        public abstract static class Assimp {
+            public static final MaterialShaderId ID = new StockMaterialShaderId(9);
+
+            /*
+             * Set this feature enum if diffuse texture is present in Assimp
+             * material Diffuse texture maps to main_texture in GearVRf
+             */
+            public static int AS_DIFFUSE_TEXTURE = 0x00000000;
+
+            /*
+             * Set this feature enum if specular texture is present in Assimp
+             * material
+             */
+            public static int AS_SPECULAR_TEXTURE = 0x00000001;
+
+            public static int setBit(int number, int index) {
+                return (number |= 1 << index);
+            }
+
+            public static boolean isSet(int number, int index) {
+                return ((number & (1 << index)) != 0);
+            }
+
+            public static int clearBit(int number, int index) {
+                return (number &= ~(1 << index));
+            }
+        }
     }
 
 }
@@ -581,18 +551,16 @@ class NativeMaterial {
 
     static native float[] getVec3(long material, String key);
 
-    static native void setVec3(long material, String key, float x, float y,
-            float z);
+    static native void setVec3(long material, String key, float x, float y, float z);
 
     static native float[] getVec4(long material, String key);
 
-    static native void setVec4(long material, String key, float x, float y,
-            float z, float w);
+    static native void setVec4(long material, String key, float x, float y, float z, float w);
 
     static native void setMat4(long material, String key, float x1, float y1,
-            float z1, float w1, float x2, float y2, float z2, float w2,
-            float x3, float y3, float z3, float w3, float x4, float y4,
-            float z4, float w4);
+                               float z1, float w1, float x2, float y2, float z2, float w2,
+                               float x3, float y3, float z3, float w3, float x4, float y4,
+                               float z4, float w4);
 
     static native void setShaderFeatureSet(long material, int featureSet);
 }

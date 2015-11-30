@@ -19,7 +19,9 @@ import com.eje_c.meganekko.HybridObject;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.Transform;
 
-/** Rotation animation. */
+/**
+ * Rotation animation.
+ */
 @Deprecated
 public class RotationByAxisAnimation extends TransformAnimation {
 
@@ -29,22 +31,16 @@ public class RotationByAxisAnimation extends TransformAnimation {
     /**
      * Use {@link Transform#rotateByAxis(float, float, float, float)} to do
      * an animated rotation about a specific axis.
-     * 
-     * @param target
-     *            {@link Transform} to animate.
-     * @param duration
-     *            The animation duration, in seconds.
-     * @param angle
-     *            the rotation angle, in degrees
-     * @param x
-     *            the normalized axis x component
-     * @param y
-     *            the normalized axis y component
-     * @param z
-     *            the normalized axis z component
+     *
+     * @param target   {@link Transform} to animate.
+     * @param duration The animation duration, in seconds.
+     * @param angle    the rotation angle, in degrees
+     * @param x        the normalized axis x component
+     * @param y        the normalized axis y component
+     * @param z        the normalized axis z component
      */
     public RotationByAxisAnimation(Transform target, float duration,
-            float angle, float x, float y, float z) {
+                                   float angle, float x, float y, float z) {
         super(target, duration);
 
         mOrientation = new Orientation();
@@ -58,22 +54,16 @@ public class RotationByAxisAnimation extends TransformAnimation {
     /**
      * Use {@link Transform#rotateByAxis(float, float, float, float)} to do
      * an animated rotation about a specific axis.
-     * 
-     * @param target
-     *            {@link SceneObject} containing a {@link Transform}
-     * @param duration
-     *            The animation duration, in seconds.
-     * @param angle
-     *            the rotation angle, in degrees
-     * @param x
-     *            the normalized axis x component
-     * @param y
-     *            the normalized axis y component
-     * @param z
-     *            the normalized axis z component
+     *
+     * @param target   {@link SceneObject} containing a {@link Transform}
+     * @param duration The animation duration, in seconds.
+     * @param angle    the rotation angle, in degrees
+     * @param x        the normalized axis x component
+     * @param y        the normalized axis y component
+     * @param z        the normalized axis z component
      */
     public RotationByAxisAnimation(SceneObject target, float duration,
-            float angle, float x, float y, float z) {
+                                   float angle, float x, float y, float z) {
         this(getTransform(target), duration, angle, x, y, z);
     }
 

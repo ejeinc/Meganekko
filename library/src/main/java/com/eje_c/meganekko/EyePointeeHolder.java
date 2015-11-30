@@ -47,14 +47,23 @@ public class EyePointeeHolder extends Component {
     // private static final String TAG = Log.tag(EyePointeeHolder.class);
 
     private static final LongSparseArray<WeakReference<EyePointeeHolder>> sEyePointeeHolders = new LongSparseArray<WeakReference<EyePointeeHolder>>();
+    private final static List<NativeCleanupHandler> sCleanup;
+    private final static CleanupHandlerListManager sConcatenations;
+
+    static {
+        sCleanup = new ArrayList<NativeCleanupHandler>(1);
+        sCleanup.add(new NativeCleanupHandler() {
+
+            @Override
+            public void nativeCleanup(long nativePointer) {
+                sEyePointeeHolders.remove(nativePointer);
+            }
+        });
+
+        sConcatenations = new CleanupHandlerListManager(sCleanup);
+    }
 
     private final List<EyePointee> pointees = new ArrayList<EyePointee>();
-
-    static EyePointeeHolder lookup(VrContext vrContext, long nativePointer) {
-        WeakReference<EyePointeeHolder> weakReference = sEyePointeeHolders
-                .get(nativePointer);
-        return weakReference == null ? null : weakReference.get();
-    }
 
     /**
      * Constructor
@@ -93,25 +102,15 @@ public class EyePointeeHolder extends Component {
         registerNativePointer(nativePointer);
     }
 
+    static EyePointeeHolder lookup(VrContext vrContext, long nativePointer) {
+        WeakReference<EyePointeeHolder> weakReference = sEyePointeeHolders
+                .get(nativePointer);
+        return weakReference == null ? null : weakReference.get();
+    }
+
     private void registerNativePointer(long nativePointer) {
         sEyePointeeHolders.put(nativePointer,
                 new WeakReference<EyePointeeHolder>(this));
-    }
-
-    private final static List<NativeCleanupHandler> sCleanup;
-    private final static CleanupHandlerListManager sConcatenations;
-
-    static {
-        sCleanup = new ArrayList<NativeCleanupHandler>(1);
-        sCleanup.add(new NativeCleanupHandler() {
-
-            @Override
-            public void nativeCleanup(long nativePointer) {
-                sEyePointeeHolders.remove(nativePointer);
-            }
-        });
-
-        sConcatenations = new CleanupHandlerListManager(sCleanup);
     }
 
     public SceneObject getOwnerObject() {

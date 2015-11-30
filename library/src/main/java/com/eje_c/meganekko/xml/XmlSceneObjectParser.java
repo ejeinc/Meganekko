@@ -32,7 +32,7 @@ import com.eje_c.meganekko.FutureWrapper;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
-import com.eje_c.meganekko.RenderData.GVRRenderingOrder;
+import com.eje_c.meganekko.RenderData.RenderingOrder;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.Texture;
 import com.eje_c.meganekko.Transform;
@@ -64,6 +64,131 @@ public class XmlSceneObjectParser {
 
     public XmlSceneObjectParser(VrContext context) {
         this.mContext = context;
+    }
+
+    private static Bitmap drawableToBitmap(Drawable drawable) {
+
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        } else {
+            Bitmap bitmap = null;
+
+            int width = drawable.getIntrinsicWidth();
+            int height = drawable.getIntrinsicHeight();
+
+            if (width <= 0 || height <= 0) {
+                bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+            } else {
+                bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            }
+
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+
+            return bitmap;
+        }
+    }
+
+    private static void parsePosition(Transform transform, String value) {
+
+        String[] arr = value.split("\\s+");
+
+        if (arr.length == 3) {
+            float x = Float.parseFloat(arr[0]);
+            float y = Float.parseFloat(arr[1]);
+            float z = Float.parseFloat(arr[2]);
+            transform.setPosition(x, y, z);
+        }
+    }
+
+    private static void parseScale(Transform transform, String value) {
+
+        String[] arr = value.split("\\s+");
+
+        if (arr.length == 3) {
+            float x = Float.parseFloat(arr[0]);
+            float y = Float.parseFloat(arr[1]);
+            float z = Float.parseFloat(arr[2]);
+            transform.setScale(x, y, z);
+        } else if (arr.length == 1) {
+            float val = Float.parseFloat(arr[0]);
+            transform.setScale(val, val, val);
+        }
+    }
+
+    private static void parseRotationAngleAxis(Transform transform, String value) {
+
+        String[] arr = value.split("\\s+");
+
+        if (arr.length == 4) {
+            float angle = Float.parseFloat(arr[0]);
+            float axisX = Float.parseFloat(arr[1]);
+            float axisY = Float.parseFloat(arr[2]);
+            float axisZ = Float.parseFloat(arr[3]);
+            transform.setRotationByAxis(angle, axisX, axisY, axisZ);
+        }
+    }
+
+    private static void parseCanvasSize(CanvasSceneObject canvasSceneObject, String value) {
+
+        String[] arr = value.split("\\s+");
+
+        if (arr.length == 2) {
+            int width = Integer.parseInt(arr[0]);
+            int height = Integer.parseInt(arr[1]);
+            canvasSceneObject.setCanvasSize(width, height);
+        }
+    }
+
+    private static Bitmap textAsBitmap(String text, float textSize, int textColor, Align align) {
+
+        Paint paint = new Paint();
+
+        paint.setTextAlign(align);
+        paint.setTextSize(textSize);
+        paint.setColor(textColor);
+
+        int width = 1;
+        int height = 1;
+        String[] lines = text.split("\n");
+        int lineCount = lines.length;
+        int[] heights = new int[lineCount];
+        float[] baselines = new float[lineCount];
+
+        for (int i = 0; i < lineCount; i++) {
+
+            int w = (int) (paint.measureText(lines[i]) + 0.5f);// round
+            width = Math.max(w, width);
+
+            baselines[i] = (int) (-paint.ascent() + 0.5f);// ascent() is
+            // negative
+            int h = (int) (baselines[i] + paint.descent() + 0.5f);
+
+            height += h;
+            heights[i] = h;
+        }
+
+        Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(image);
+
+        float x = 0.0f;
+
+        if (align == Paint.Align.CENTER) {
+            x = width * 0.5f;
+        } else if (align == Paint.Align.RIGHT) {
+            x = width;
+        }
+
+        float y = 0;
+        for (int i = 0; i < lineCount; i++) {
+            String line = lines[i];
+
+            canvas.drawText(line, x, y + baselines[i], paint);
+            y += heights[i];
+        }
+
+        return image;
     }
 
     public SceneObject parse(XmlPullParser parser) throws XmlPullParserException, IOException {
@@ -287,7 +412,7 @@ public class XmlSceneObjectParser {
 
             // Set renderingOrder to TRANSPARENT if not specified
             if (renderingOrder < 0) {
-                renderingOrder = GVRRenderingOrder.TRANSPARENT;
+                renderingOrder = RenderingOrder.TRANSPARENT;
             }
 
             texture = new FutureWrapper<Texture>(new BitmapTexture(mContext, bitmap));
@@ -355,30 +480,6 @@ public class XmlSceneObjectParser {
         return new BitmapTexture(mContext, bitmap);
     }
 
-    private static Bitmap drawableToBitmap(Drawable drawable) {
-
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable) drawable).getBitmap();
-        } else {
-            Bitmap bitmap = null;
-
-            int width = drawable.getIntrinsicWidth();
-            int height = drawable.getIntrinsicHeight();
-
-            if (width <= 0 || height <= 0) {
-                bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
-            } else {
-                bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-            }
-
-            Canvas canvas = new Canvas(bitmap);
-            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawable.draw(canvas);
-
-            return bitmap;
-        }
-    }
-
     private SceneObject createSceneObject(XmlPullParser parser) {
 
         String name = parser.getName();
@@ -444,106 +545,5 @@ public class XmlSceneObjectParser {
     @Deprecated
     public void setAsyncTextureLoading(boolean useAsyncLoading) {
         // NOOP
-    }
-
-    private static void parsePosition(Transform transform, String value) {
-
-        String[] arr = value.split("\\s+");
-
-        if (arr.length == 3) {
-            float x = Float.parseFloat(arr[0]);
-            float y = Float.parseFloat(arr[1]);
-            float z = Float.parseFloat(arr[2]);
-            transform.setPosition(x, y, z);
-        }
-    }
-
-    private static void parseScale(Transform transform, String value) {
-
-        String[] arr = value.split("\\s+");
-
-        if (arr.length == 3) {
-            float x = Float.parseFloat(arr[0]);
-            float y = Float.parseFloat(arr[1]);
-            float z = Float.parseFloat(arr[2]);
-            transform.setScale(x, y, z);
-        } else if (arr.length == 1) {
-            float val = Float.parseFloat(arr[0]);
-            transform.setScale(val, val, val);
-        }
-    }
-
-    private static void parseRotationAngleAxis(Transform transform, String value) {
-
-        String[] arr = value.split("\\s+");
-
-        if (arr.length == 4) {
-            float angle = Float.parseFloat(arr[0]);
-            float axisX = Float.parseFloat(arr[1]);
-            float axisY = Float.parseFloat(arr[2]);
-            float axisZ = Float.parseFloat(arr[3]);
-            transform.setRotationByAxis(angle, axisX, axisY, axisZ);
-        }
-    }
-
-    private static void parseCanvasSize(CanvasSceneObject canvasSceneObject, String value) {
-
-        String[] arr = value.split("\\s+");
-
-        if (arr.length == 2) {
-            int width = Integer.parseInt(arr[0]);
-            int height = Integer.parseInt(arr[1]);
-            canvasSceneObject.setCanvasSize(width, height);
-        }
-    }
-
-    private static Bitmap textAsBitmap(String text, float textSize, int textColor, Align align) {
-
-        Paint paint = new Paint();
-
-        paint.setTextAlign(align);
-        paint.setTextSize(textSize);
-        paint.setColor(textColor);
-
-        int width = 1;
-        int height = 1;
-        String[] lines = text.split("\n");
-        int lineCount = lines.length;
-        int[] heights = new int[lineCount];
-        float[] baselines = new float[lineCount];
-
-        for (int i = 0; i < lineCount; i++) {
-
-            int w = (int) (paint.measureText(lines[i]) + 0.5f);// round
-            width = Math.max(w, width);
-
-            baselines[i] = (int) (-paint.ascent() + 0.5f);// ascent() is
-            // negative
-            int h = (int) (baselines[i] + paint.descent() + 0.5f);
-
-            height += h;
-            heights[i] = h;
-        }
-
-        Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(image);
-
-        float x = 0.0f;
-
-        if (align == Paint.Align.CENTER) {
-            x = width * 0.5f;
-        } else if (align == Paint.Align.RIGHT) {
-            x = width;
-        }
-
-        float y = 0;
-        for (int i = 0; i < lineCount; i++) {
-            String line = lines[i];
-
-            canvas.drawText(line, x, y + baselines[i], paint);
-            y += heights[i];
-        }
-
-        return image;
     }
 }

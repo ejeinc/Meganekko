@@ -15,29 +15,29 @@
 
 package com.eje_c.meganekko.asynchronous;
 
+import android.opengl.GLES20;
+
+import com.eje_c.meganekko.TextureParameters;
+import com.eje_c.meganekko.VrContext;
+import com.eje_c.meganekko.asynchronous.CompressedTextureLoader.Reader;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 
-import com.eje_c.meganekko.VrContext;
-import com.eje_c.meganekko.TextureParameters;
-import com.eje_c.meganekko.asynchronous.CompressedTextureLoader.Reader;
-
-import android.opengl.GLES20;
-
 /**
  * Represents a texture file, loaded into memory. Pass to EGL by calling
  * {@link #toTexture(VrContext, int)}. Instances of this class hold the texture
  * file contents in memory: don't hold onto them any longer than necessary.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * Get an instance by calling one of the {@code load()} overloads; register a
  * new loader by calling
  * {@link CompressedTextureLoader#register(CompressedTextureLoader)}.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * Note that {@link #toTexture(VrContext, int)} <em>must</em> be called from
  * the GL thread; other methods may be called from any thread.
  */
@@ -45,6 +45,8 @@ class CompressedTexture {
 
     // Field names from
     // https://www.khronos.org/opengles/sdk/docs/man/xhtml/glCompressedTexImage2D.xml
+    private static final int INITIAL_CAPACITY = 4 * 1024;
+    private static final int BUFFER_SIZE = 4 * 1024;
     /**
      * The
      * {@link GLES20#glCompressedTexImage2D(int, int, int, int, int, int, int, java.nio.Buffer)
@@ -69,10 +71,10 @@ class CompressedTexture {
      * glCompressedTexImage2D()} <code>imageSize</code> parameter.
      */
     protected final int imageSize;
-
-    /** The number of mipmap levels in the data */
+    /**
+     * The number of mipmap levels in the data
+     */
     protected final int levels;
-
     /*
      * Currently only support containers with mipmap chains - not containers
      * with unrelated textures.
@@ -80,7 +82,7 @@ class CompressedTexture {
     protected final ByteBuffer data;
 
     protected CompressedTexture(int internalformat, int width, int height,
-            int imageSize, int levels, ByteBuffer data) {
+                                int imageSize, int levels, ByteBuffer data) {
         this.internalformat = internalformat;
         this.width = width;
         this.height = height;
@@ -89,34 +91,19 @@ class CompressedTexture {
         this.data = data;
     }
 
-    GVRCompressedTexture toTexture(VrContext vrContext, int quality) {
-        return new GVRCompressedTexture(vrContext, internalformat, width,
-                height, imageSize, data.array(), levels, quality);
-    }
-
-    // Texture parameters
-    GVRCompressedTexture toTexture(VrContext vrContext, int quality,
-            TextureParameters textureParameters) {
-        return new GVRCompressedTexture(vrContext, internalformat, width,
-                height, imageSize, data.array(), levels, quality, textureParameters);
-    }
-
     /**
      * Loads a file into memory; detects type, and calls the appropriate
      * {@link CompressedTextureLoader#parse(byte[], Reader)} method.
-     * 
-     * @param stream
-     *            InputStream containing a compressed texture file
-     * @param closeStream
-     *            Close {@code stream} on exit?
+     *
+     * @param stream      InputStream containing a compressed texture file
+     * @param closeStream Close {@code stream} on exit?
      * @return Normally, one and only one {@link CompressedTextureLoader}
-     *         will recognize the file, and this method will return a
-     *         {@link CompressedTexture}, ready to be passed to EGL via
-     *         {@link CompressedTexture#glCompressedTexImage2D(int, int)}. If no
-     *         loaders recognize the file, or if multiple loaders recognize the
-     *         file, this method will return <code>null</null>.
-     * @throws IOException
-     *             Does not catch any internal exceptions
+     * will recognize the file, and this method will return a
+     * {@link CompressedTexture}, ready to be passed to EGL via
+     * {@link CompressedTexture#glCompressedTexImage2D(int, int)}. If no
+     * loaders recognize the file, or if multiple loaders recognize the
+     * file, this method will return <code>null</null>.
+     * @throws IOException Does not catch any internal exceptions
      */
     static CompressedTexture load(InputStream stream, boolean closeStream)
             throws IOException {
@@ -179,7 +166,7 @@ class CompressedTexture {
     }
 
     static CompressedTexture parse(InputStream stream, boolean closeStream,
-            CompressedTextureLoader loader) throws IOException {
+                                   CompressedTextureLoader loader) throws IOException {
         byte[] data;
         try {
             data = readBytes(stream);
@@ -200,7 +187,7 @@ class CompressedTexture {
         for (int read = 0; read >= 0 && length < bytes; read = stream
                 .read(buffer)) {
             if (read > 0) {
-                for (int index = 0; index < read && length < bytes;) {
+                for (int index = 0; index < read && length < bytes; ) {
                     result[length++] = buffer[index++];
                 }
             }
@@ -233,6 +220,15 @@ class CompressedTexture {
         return capacity == length ? result : Arrays.copyOf(result, length);
     }
 
-    private static final int INITIAL_CAPACITY = 4 * 1024;
-    private static final int BUFFER_SIZE = 4 * 1024;
+    GVRCompressedTexture toTexture(VrContext vrContext, int quality) {
+        return new GVRCompressedTexture(vrContext, internalformat, width,
+                height, imageSize, data.array(), levels, quality);
+    }
+
+    // Texture parameters
+    GVRCompressedTexture toTexture(VrContext vrContext, int quality,
+                                   TextureParameters textureParameters) {
+        return new GVRCompressedTexture(vrContext, internalformat, width,
+                height, imageSize, data.array(), levels, quality, textureParameters);
+    }
 }

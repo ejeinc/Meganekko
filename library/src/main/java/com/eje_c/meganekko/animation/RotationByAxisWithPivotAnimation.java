@@ -38,29 +38,20 @@ public class RotationByAxisWithPivotAnimation extends TransformAnimation {
      * Use
      * {@link Transform#rotateByAxisWithPivot(float, float, float, float, float, float, float)}
      * to do an animated rotation about a specific axis with a specific pivot.
-     * 
-     * @param target
-     *            {@link Transform} to animate.
-     * @param duration
-     *            The animation duration, in seconds.
-     * @param angle
-     *            the rotation angle, in degrees
-     * @param axisX
-     *            the normalized axis x component
-     * @param axisY
-     *            the normalized axis y component
-     * @param axisZ
-     *            the normalized axis z component
-     * @param pivotX
-     *            The x-coordinate of the pivot point
-     * @param pivotY
-     *            The y-coordinate of the pivot point
-     * @param pivotZ
-     *            The z-coordinate of the pivot point
+     *
+     * @param target   {@link Transform} to animate.
+     * @param duration The animation duration, in seconds.
+     * @param angle    the rotation angle, in degrees
+     * @param axisX    the normalized axis x component
+     * @param axisY    the normalized axis y component
+     * @param axisZ    the normalized axis z component
+     * @param pivotX   The x-coordinate of the pivot point
+     * @param pivotY   The y-coordinate of the pivot point
+     * @param pivotZ   The z-coordinate of the pivot point
      */
     public RotationByAxisWithPivotAnimation(Transform target,
-            float duration, float angle, float axisX, float axisY, float axisZ,
-            float pivotX, float pivotY, float pivotZ) {
+                                            float duration, float angle, float axisX, float axisY, float axisZ,
+                                            float pivotX, float pivotY, float pivotZ) {
         super(target, duration);
 
         mOrientation = new Orientation();
@@ -79,29 +70,20 @@ public class RotationByAxisWithPivotAnimation extends TransformAnimation {
      * Use
      * {@link Transform#rotateByAxisWithPivot(float, float, float, float, float, float, float)}
      * to do an animated rotation about a specific axis with a specific pivot.
-     * 
-     * @param target
-     *            {@link SceneObject} containing a {@link Transform}
-     * @param duration
-     *            The animation duration, in seconds.
-     * @param angle
-     *            the rotation angle, in degrees
-     * @param axisX
-     *            the normalized axis x component
-     * @param axisY
-     *            the normalized axis y component
-     * @param axisZ
-     *            the normalized axis z component
-     * @param pivotX
-     *            The x-coordinate of the pivot point
-     * @param pivotY
-     *            The y-coordinate of the pivot point
-     * @param pivotZ
-     *            The z-coordinate of the pivot point
+     *
+     * @param target   {@link SceneObject} containing a {@link Transform}
+     * @param duration The animation duration, in seconds.
+     * @param angle    the rotation angle, in degrees
+     * @param axisX    the normalized axis x component
+     * @param axisY    the normalized axis y component
+     * @param axisZ    the normalized axis z component
+     * @param pivotX   The x-coordinate of the pivot point
+     * @param pivotY   The y-coordinate of the pivot point
+     * @param pivotZ   The z-coordinate of the pivot point
      */
     public RotationByAxisWithPivotAnimation(SceneObject target,
-            float duration, float angle, float axisX, float axisY, float axisZ,
-            float pivotX, float pivotY, float pivotZ) {
+                                            float duration, float angle, float axisX, float axisY, float axisZ,
+                                            float pivotX, float pivotY, float pivotZ) {
         this(getTransform(target), duration, angle, axisX, axisY, axisZ,
                 pivotX, pivotY, pivotZ);
     }

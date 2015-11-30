@@ -20,26 +20,23 @@ import java.util.Map;
 
 /**
  * Manages custom shaders, for rendering scene objects.
- * 
+ * <p/>
  * Get the singleton from {@link VrContext#getMaterialShaderManager()}.
  */
 public class MaterialShaderManager extends
         BaseShaderManager<MaterialMap, CustomMaterialShaderId>
         implements ShaderManagers<MaterialMap, CustomMaterialShaderId> {
 
-    private final Map<CustomMaterialShaderId, MaterialMap> materialMaps = new HashMap<CustomMaterialShaderId, MaterialMap>();
+    private final Map<CustomMaterialShaderId, MaterialMap> materialMaps = new HashMap<>();
 
     MaterialShaderManager(VrContext vrContext) {
         super(vrContext, NativeShaderManager.ctor());
     }
 
     @Override
-    public CustomMaterialShaderId addShader(String vertexShader,
-            String fragmentShader) {
-        final int shaderId = NativeShaderManager.addCustomShader(getNative(),
-                vertexShader, fragmentShader);
-        CustomMaterialShaderId result = new CustomMaterialShaderId(
-                shaderId);
+    public CustomMaterialShaderId addShader(String vertexShader, String fragmentShader) {
+        final int shaderId = NativeShaderManager.addCustomShader(getNative(), vertexShader, fragmentShader);
+        CustomMaterialShaderId result = new CustomMaterialShaderId(shaderId);
         materialMaps.put(result, retrieveShaderMap(result));
         return result;
     }
@@ -59,8 +56,7 @@ public class MaterialShaderManager extends
 class NativeShaderManager {
     static native long ctor();
 
-    static native int addCustomShader(long shaderManager, String vertexShader,
-            String fragmentShader);
+    static native int addCustomShader(long shaderManager, String vertexShader, String fragmentShader);
 
     static native long getCustomShader(long shaderManager, int id);
 }

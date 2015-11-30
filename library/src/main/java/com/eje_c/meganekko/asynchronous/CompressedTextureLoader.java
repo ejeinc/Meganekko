@@ -15,18 +15,18 @@
 
 package com.eje_c.meganekko.asynchronous;
 
+import android.graphics.BitmapFactory;
+import android.opengl.GLES20;
+
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.graphics.BitmapFactory;
-import android.opengl.GLES20;
-
 /**
  * Implement this class to use compressed texture formats that Meganekko does not
  * support.
- * 
+ * <p/>
  * A {@link CompressedTextureLoader} contains the logic to detect a
  * particular file type, and to parse the header. It is an abstract class (not
  * an interface) so that it can contain a protected method (
@@ -34,8 +34,8 @@ import android.opengl.GLES20;
  * constructor: this limits the chances that someone will create an instance
  * with invalid value, while still allowing apps to add new loaders without
  * having to add them to this package.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * The general data flow is
  * <ul>
  * <li>The internal load method loads the file into memory
@@ -52,13 +52,33 @@ import android.opengl.GLES20;
  * </ul>
  */
 public abstract class CompressedTextureLoader {
+    private static final List<CompressedTextureLoader> loaders = new ArrayList<CompressedTextureLoader>();
+    static int maximumHeaderLength = 0;
+
+    /*
+     * We can (and do) expect apps to register any custom loaders before calling
+     * one of the load() methods, but we can't have the 'factory loaders'
+     * register themselves in their own static initializers: If the only
+     * reference to a loader is in its own class, Java may never call its
+     * initializer.
+     */
+    static {
+        new AdaptiveScalableTextureCompression().register();
+        new EricssonTextureCompression2().register();
+        new KTX().register();
+    }
+
     protected CompressedTextureLoader() {
+    }
+
+    static List<CompressedTextureLoader> getLoaders() {
+        return loaders;
     }
 
     /**
      * Bytes of header data that we need to
      * {@link #sniff(byte[], Reader)} or {@link #parse(byte[], Reader)}.
-     * 
+     * <p/>
      * When we <em>know</em> that a file contains a compressed texture, we can
      * simply load the whole thing into a {@code byte[]}, and pass the offset of
      * the actual data to
@@ -67,9 +87,9 @@ public abstract class CompressedTextureLoader {
      * compressed texture, we don't want to load the whole file into memory:
      * {@link BitmapFactory#decodeStream(InputStream)} is more memory-efficient
      * than {@link BitmapFactory#decodeByteArray(byte[], int, int)}.
-     * 
+     *
      * @return Number of bytes of header data needed to successfully sniff or
-     *         parse the file format.
+     * parse the file format.
      */
     public abstract int headerLength();
 
@@ -78,17 +98,15 @@ public abstract class CompressedTextureLoader {
      * {@link CompressedTexture#load(InputStream) load()} methods will call all
      * registered Loader's sniffers: if one and only one returns {@code true},
      * the load() method will return a {@code CompressedTexture}.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * <em>Note:</em> This routine needs to be very fast! The
      * {@link CompressedTexture#load(InputStream) load()} routine will call all
      * registered sniffers, rather than looking at (possibly invalid) file
      * extensions, or asking the user for a (possibly invalid) hint.
-     * 
-     * @param data
-     *            A compressed texture file's contents
-     * @param reader
-     *            A data reader, pointing to data[0]
+     *
+     * @param data   A compressed texture file's contents
+     * @param reader A data reader, pointing to data[0]
      * @return Whether or not this data is in 'my' format
      */
     public abstract boolean sniff(byte[] data, Reader reader);
@@ -97,64 +115,54 @@ public abstract class CompressedTextureLoader {
      * Parse the header, and return a {@link CompressedTexture}. This will only
      * be called if the loader's {@link #sniff(byte[], Reader)} function
      * returned {@code true}.
-     * 
-     * @param data
-     *            A compressed texture file's contents: this loader's
-     *            {@link #sniff(byte[], Reader)} function has already returned
-     *            {@code true}.
-     * @param reader
-     *            A data reader, pointing to data[0]
+     *
+     * @param data   A compressed texture file's contents: this loader's
+     *               {@link #sniff(byte[], Reader)} function has already returned
+     *               {@code true}.
+     * @param reader A data reader, pointing to data[0]
      * @return A {@code CompressedTexture}, from
-     *         {@link #CompressedTexture(int, int, int, int, int, byte[], int, int)}
+     * {@link #CompressedTexture(int, int, int, int, int, byte[], int, int)}
      */
     public abstract CompressedTexture parse(byte[] data, Reader reader);
 
     /**
      * Provides external parsers access to the internal
      * {@code CompressedTexture} constructor.
-     * 
+     * <p/>
      * The {@code CompressedTexture} class represents a texture file, loaded
      * into memory; it's what your {@link #parse(byte[], Reader)} method needs
      * to return.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * The first four parameters are passed directly to
      * {@code glCompressedTexImage2D}; the names are from <a href=
      * "https://www.khronos.org/opengles/sdk/docs/man/xhtml/glCompressedTexImage2D.xml"
      * >https://www.khronos.org/opengles/sdk/docs/man/xhtml/
      * glCompressedTexImage2D.xml</a>
-     * 
-     * @param internalformat
-     *            The
-     *            {@link GLES20#glCompressedTexImage2D(int, int, int, int, int, int, int, java.nio.Buffer)
-     *            glCompressedTexImage2D()} <code>internalformat</code>
-     *            parameter.
-     * @param width
-     *            The
-     *            {@link GLES20#glCompressedTexImage2D(int, int, int, int, int, int, int, java.nio.Buffer)
-     *            glCompressedTexImage2D()} <code>width</code> parameter.
-     * @param height
-     *            The
-     *            {@link GLES20#glCompressedTexImage2D(int, int, int, int, int, int, int, java.nio.Buffer)
-     *            glCompressedTexImage2D()} <code>height</code> parameter.
-     * @param imageSize
-     *            The
-     *            {@link GLES20#glCompressedTexImage2D(int, int, int, int, int, int, int, java.nio.Buffer)
-     *            glCompressedTexImage2D()} <code>imageSize</code> parameter.
-     * @param levels
-     *            The number of mipmap levels
-     * @param data
-     *            The {@code byte[]} passed to {@link #parse(byte[], Reader)}
-     * @param dataOffset
-     *            Header length - offset of first byte of texture data
-     * @param dataBytes
-     *            Number of bytes of texture data
+     *
+     * @param internalformat The
+     *                       {@link GLES20#glCompressedTexImage2D(int, int, int, int, int, int, int, java.nio.Buffer)
+     *                       glCompressedTexImage2D()} <code>internalformat</code>
+     *                       parameter.
+     * @param width          The
+     *                       {@link GLES20#glCompressedTexImage2D(int, int, int, int, int, int, int, java.nio.Buffer)
+     *                       glCompressedTexImage2D()} <code>width</code> parameter.
+     * @param height         The
+     *                       {@link GLES20#glCompressedTexImage2D(int, int, int, int, int, int, int, java.nio.Buffer)
+     *                       glCompressedTexImage2D()} <code>height</code> parameter.
+     * @param imageSize      The
+     *                       {@link GLES20#glCompressedTexImage2D(int, int, int, int, int, int, int, java.nio.Buffer)
+     *                       glCompressedTexImage2D()} <code>imageSize</code> parameter.
+     * @param levels         The number of mipmap levels
+     * @param data           The {@code byte[]} passed to {@link #parse(byte[], Reader)}
+     * @param dataOffset     Header length - offset of first byte of texture data
+     * @param dataBytes      Number of bytes of texture data
      * @return An internal buffer that the GL thread can use to create a
-     *         {@link GVRCompressedTexture}
+     * {@link GVRCompressedTexture}
      */
     protected CompressedTexture CompressedTexture(int internalformat,
-            int width, int height, int imageSize, int levels, byte[] data,
-            int dataOffset, int dataBytes) {
+                                                  int width, int height, int imageSize, int levels, byte[] data,
+                                                  int dataOffset, int dataBytes) {
         ByteBuffer buffer = ByteBuffer.wrap(data, dataOffset, dataBytes);
         return new CompressedTexture(internalformat, width, height, imageSize,
                 levels, buffer);
@@ -162,14 +170,14 @@ public abstract class CompressedTextureLoader {
 
     /**
      * Register a loader with the 'sniffer'.
-     * 
+     * <p/>
      * 'Factory loaders' are pre-registered. To load a format we don't support,
      * create a {@link CompressedTextureLoader} descendant. Then, before
      * trying to load any files in that format, create an instance and call
      * {@link #register()}:
-     * 
+     * <p/>
      * <pre>
-     * 
+     *
      * new MyCompressedFormat().register();
      * </pre>
      */
@@ -187,33 +195,19 @@ public abstract class CompressedTextureLoader {
         }
     }
 
-    static List<CompressedTextureLoader> getLoaders() {
-        return loaders;
-    }
-
-    private static final List<CompressedTextureLoader> loaders = new ArrayList<CompressedTextureLoader>();
-    static int maximumHeaderLength = 0;
-
-    /*
-     * We can (and do) expect apps to register any custom loaders before calling
-     * one of the load() methods, but we can't have the 'factory loaders'
-     * register themselves in their own static initializers: If the only
-     * reference to a loader is in its own class, Java may never call its
-     * initializer.
+    /**
+     * Utility class for reading big- and little-endian numbers from a header
      */
-    static {
-        new AdaptiveScalableTextureCompression().register();
-        new EricssonTextureCompression2().register();
-        new KTX().register();
-    }
-
-    /** Utility class for reading big- and little-endian numbers from a header */
     protected static final class Reader {
+        protected static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
+        protected static final int SHORT_BYTES = Short.SIZE / Byte.SIZE;
         private final byte[] data;
         // private final int length;
         private int readPointer;
 
-        /** Wrap a Reader around a byte array */
+        /**
+         * Wrap a Reader around a byte array
+         */
         protected Reader(byte[] data) {
             this.data = data;
             // this.length = data.length;
@@ -224,15 +218,11 @@ public abstract class CompressedTextureLoader {
             return data[readPointer++];
         }
 
-        protected static final int INTEGER_BYTES = Integer.SIZE / Byte.SIZE;
-        protected static final int SHORT_BYTES = Short.SIZE / Byte.SIZE;
-
         /**
          * Read an int
-         * 
-         * @param bytes
-         *            Should be in range 1..4. Not checked, and bad things can
-         *            happen if you pass invalid values!
+         *
+         * @param bytes Should be in range 1..4. Not checked, and bad things can
+         *              happen if you pass invalid values!
          * @return A little-endian number from the byte array
          */
         protected int read(int bytes) {
@@ -241,10 +231,9 @@ public abstract class CompressedTextureLoader {
 
         /**
          * Read a little-endian int
-         * 
-         * @param bytes
-         *            Should be in range 1..4. Not checked, and bad things can
-         *            happen if you pass invalid values!
+         *
+         * @param bytes Should be in range 1..4. Not checked, and bad things can
+         *              happen if you pass invalid values!
          * @return A little-endian number from the byte array
          */
         protected int readLE(int bytes) {
@@ -268,10 +257,9 @@ public abstract class CompressedTextureLoader {
 
         /**
          * Read a big-endian int
-         * 
-         * @param bytes
-         *            Should be in range 1..4. Not checked, and bad things can
-         *            happen if you pass invalid values!
+         *
+         * @param bytes Should be in range 1..4. Not checked, and bad things can
+         *              happen if you pass invalid values!
          * @return A big-endian number from the byte array
          */
         protected int readBE(int bytes) {
@@ -284,10 +272,9 @@ public abstract class CompressedTextureLoader {
 
         /**
          * Read a long
-         * 
-         * @param bytes
-         *            Should be in range 1..8. Not checked, and bad things can
-         *            happen if you pass invalid values!
+         *
+         * @param bytes Should be in range 1..8. Not checked, and bad things can
+         *              happen if you pass invalid values!
          * @return A little-endian number from the byte array
          * @deprecated Sniffers need to be very fast!
          */
@@ -299,12 +286,16 @@ public abstract class CompressedTextureLoader {
             return result;
         }
 
-        /** Advance the read pointer */
+        /**
+         * Advance the read pointer
+         */
         protected void skip(int bytes) {
             readPointer += bytes;
         }
 
-        /** Set the read pointer to the start of the stream */
+        /**
+         * Set the read pointer to the start of the stream
+         */
         protected void reset() {
             readPointer = 0;
         }

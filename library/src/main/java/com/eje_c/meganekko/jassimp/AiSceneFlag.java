@@ -49,8 +49,8 @@ public enum AiSceneFlag {
     /**
      * Specifies that the scene data structure that was imported is not
      * complete.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * This flag bypasses some internal validations and allows the import of
      * animation skeletons, material libraries or camera animation paths using
      * Assimp. Most applications won't support such data.
@@ -62,8 +62,8 @@ public enum AiSceneFlag {
      * {@link AiPostProcessSteps#VALIDATE_DATA_STRUCTURE
      * VALIDATE_DATA_STRUCTURE}) postprocess-step if the validation is
      * successful.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * In a validated scene you can be sure that any cross references in the
      * data structure (e.g. vertex indices) are valid.
      */
@@ -74,8 +74,8 @@ public enum AiSceneFlag {
      * {@link AiPostProcessSteps#VALIDATE_DATA_STRUCTURE
      * VALIDATE_DATA_STRUCTURE}) postprocess-step if the validation is
      * successful but some issues have been found.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * This can for example mean that a texture that does not exist is
      * referenced by a material or that the bone weights for a vertex don't sum
      * to 1.0 ... . In most cases you should still be able to use the import.
@@ -88,8 +88,8 @@ public enum AiSceneFlag {
      * This flag is currently only set by the
      * {@link jassimp.AiPostProcessSteps#JOIN_IDENTICAL_VERTICES
      * JOIN_IDENTICAL_VERTICES}.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * It indicates that the vertices of the output meshes aren't in the
      * internal verbose format anymore. In the verbose format all vertices are
      * unique, no vertex is ever referenced by more than one face.
@@ -98,16 +98,16 @@ public enum AiSceneFlag {
 
     /**
      * Denotes pure height-map terrain data.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Pure terrains usually consist of quads, sometimes triangles, in a regular
      * grid. The x,y coordinates of all vertex positions refer to the x,y
      * coordinates on the terrain height map, the z-axis stores the elevation at
      * a specific point.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * TER (Terragen) and HMP (3D Game Studio) are height map formats.
-     * <p>
+     * <p/>
      * Assimp is probably not the best choice for loading *huge* terrains -
      * fully triangulated data takes extremely much free store and should be
      * avoided as long as possible (typically you'll do the triangulation when
@@ -116,17 +116,29 @@ public enum AiSceneFlag {
     TERRAIN(0x10);
 
     /**
+     * The mapped c/c++ integer enum value.
+     */
+    private final int m_rawValue;
+
+    /**
+     * Constructor.
+     *
+     * @param rawValue maps java enum to c/c++ integer enum values
+     */
+    private AiSceneFlag(int rawValue) {
+        m_rawValue = rawValue;
+    }
+
+    /**
      * Utility method for converting from c/c++ based integer enums to java
      * enums.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * This method is intended to be used from JNI and my change based on
      * implementation needs.
-     * 
-     * @param set
-     *            the target set to fill
-     * @param rawValue
-     *            an integer based enum value (as defined by assimp)
+     *
+     * @param set      the target set to fill
+     * @param rawValue an integer based enum value (as defined by assimp)
      */
     static void fromRawValue(Set<AiSceneFlag> set, int rawValue) {
 
@@ -136,19 +148,4 @@ public enum AiSceneFlag {
             }
         }
     }
-
-    /**
-     * Constructor.
-     * 
-     * @param rawValue
-     *            maps java enum to c/c++ integer enum values
-     */
-    private AiSceneFlag(int rawValue) {
-        m_rawValue = rawValue;
-    }
-
-    /**
-     * The mapped c/c++ integer enum value.
-     */
-    private final int m_rawValue;
 }

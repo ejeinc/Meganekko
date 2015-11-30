@@ -17,15 +17,11 @@ package com.eje_c.meganekko;
 
 /**
  * Opaque type that specifies a custom material shader.
- * 
+ * <p/>
  * You get these from {@link MaterialShaderManager#addShader(String, String)}
  * ; you can pass these to
- * {@link Material#GVRMaterial(GVRContext, MaterialShaderId)},
- * {@link Material#setShaderType(MaterialShaderId)}, and
- * {@link MaterialShaderManager#getShaderMap(GVRCustomMaterialShaderId)}.
  */
 public class CustomMaterialShaderId extends MaterialShaderId {
-
     CustomMaterialShaderId(int id) {
         super(id);
     }

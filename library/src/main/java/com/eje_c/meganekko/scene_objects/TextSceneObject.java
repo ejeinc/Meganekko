@@ -14,19 +14,19 @@
  */
 package com.eje_c.meganekko.scene_objects;
 
-import com.eje_c.meganekko.BitmapTexture;
-import com.eje_c.meganekko.VrContext;
-import com.eje_c.meganekko.Material;
-import com.eje_c.meganekko.Mesh;
-import com.eje_c.meganekko.RenderData;
-import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.Texture;
-
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+
+import com.eje_c.meganekko.BitmapTexture;
+import com.eje_c.meganekko.Material;
+import com.eje_c.meganekko.Mesh;
+import com.eje_c.meganekko.RenderData;
+import com.eje_c.meganekko.SceneObject;
+import com.eje_c.meganekko.Texture;
+import com.eje_c.meganekko.VrContext;
 
 /**
  * A {@linkplain SceneObject scene object} for rendering simple text.
@@ -46,6 +46,52 @@ public class TextSceneObject extends SceneObject {
     public TextSceneObject(VrContext vrContext) {
         super(vrContext);
         mPaint.setTextSize(20.0f);
+    }
+
+    /**
+     * String to Bitmap based on
+     * http://stackoverflow.com/questions/8799290/convert-string-text-to-bitmap
+     *
+     * @param text  String
+     * @param paint Paint
+     * @return Text image Bitmap
+     */
+    private static Bitmap textAsBitmap(String text, Paint paint) {
+
+        paint.setTextAlign(Paint.Align.LEFT);
+
+        int width = 1;
+        int height = 1;
+        String[] lines = text.split("\n");
+        int lineCount = lines.length;
+        int[] heights = new int[lineCount];
+        float[] baselines = new float[lineCount];
+
+        for (int i = 0; i < lineCount; i++) {
+
+            int w = (int) (paint.measureText(lines[i]) + 0.5f); // round
+            width = Math.max(w, width);
+
+            baselines[i] = (int) (-paint.ascent() + 0.5f); // ascent() is
+            // negative
+            int h = (int) (baselines[i] + paint.descent() + 0.5f);
+
+            height += h;
+            heights[i] = h;
+        }
+
+        Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(image);
+
+        int y = 0;
+        for (int i = 0; i < lineCount; i++) {
+            String line = lines[i];
+
+            canvas.drawText(line, 0, y + baselines[i], paint);
+            y += heights[i];
+        }
+
+        return image;
     }
 
     public void update() {
@@ -132,29 +178,6 @@ public class TextSceneObject extends SceneObject {
         material.setMainTexture(texture);
     }
 
-    public void setText(String text) {
-
-        // Do nothing if same text is passed twice for performance.
-        if (mText != null && mText.equals(text))
-            return;
-
-        this.mText = text;
-
-        if (mAutoUpdate)
-            update();
-    }
-
-    public void setPaint(Paint paint) {
-
-        if (mPaint == paint)
-            return;
-
-        this.mPaint = paint;
-
-        if (mAutoUpdate)
-            update();
-    }
-
     public void setFixedHeight(float fixedHeight) {
 
         if (mFixedHeight == fixedHeight)
@@ -188,6 +211,41 @@ public class TextSceneObject extends SceneObject {
             update();
     }
 
+    public String getText() {
+        return mText;
+    }
+
+    public void setText(String text) {
+
+        // Do nothing if same text is passed twice for performance.
+        if (mText != null && mText.equals(text))
+            return;
+
+        this.mText = text;
+
+        if (mAutoUpdate)
+            update();
+    }
+
+    public Paint getPaint() {
+        return mPaint;
+    }
+
+    public void setPaint(Paint paint) {
+
+        if (mPaint == paint)
+            return;
+
+        this.mPaint = paint;
+
+        if (mAutoUpdate)
+            update();
+    }
+
+    public float getTextScale() {
+        return mTextScale;
+    }
+
     public void setTextScale(float scale) {
 
         if (mTextScale == scale)
@@ -199,6 +257,10 @@ public class TextSceneObject extends SceneObject {
             update();
     }
 
+    public boolean isAutoUpdate() {
+        return mAutoUpdate;
+    }
+
     public void setAutoUpdate(boolean autoUpdate) {
         this.mAutoUpdate = autoUpdate;
 
@@ -206,33 +268,21 @@ public class TextSceneObject extends SceneObject {
             update();
     }
 
-    public String getText() {
-        return mText;
-    }
-
-    public Paint getPaint() {
-        return mPaint;
-    }
-
-    public float getTextScale() {
-        return mTextScale;
-    }
-
-    public boolean isAutoUpdate() {
-        return mAutoUpdate;
-    }
-
     public float getWidth() {
         return mWidth;
-    }
-
-    public float getHeight() {
-        return mHeight;
     }
 
     /*
      * Handy methods for text appearance.
      */
+
+    public float getHeight() {
+        return mHeight;
+    }
+
+    public float getTextSize() {
+        return mPaint.getTextSize();
+    }
 
     public void setTextSize(float textSize) {
         mPaint.setTextSize(textSize);
@@ -241,66 +291,14 @@ public class TextSceneObject extends SceneObject {
             update();
     }
 
+    public float getColor() {
+        return mPaint.getColor();
+    }
+
     public void setColor(int color) {
         mPaint.setColor(color);
 
         if (mAutoUpdate)
             update();
-    }
-
-    public float getTextSize() {
-        return mPaint.getTextSize();
-    }
-
-    public float getColor() {
-        return mPaint.getColor();
-    }
-
-    /**
-     * String to Bitmap based on
-     * http://stackoverflow.com/questions/8799290/convert-string-text-to-bitmap
-     *
-     * @param text
-     *            String
-     * @param paint
-     *            Paint
-     * @return Text image Bitmap
-     */
-    private static Bitmap textAsBitmap(String text, Paint paint) {
-
-        paint.setTextAlign(Paint.Align.LEFT);
-
-        int width = 1;
-        int height = 1;
-        String[] lines = text.split("\n");
-        int lineCount = lines.length;
-        int[] heights = new int[lineCount];
-        float[] baselines = new float[lineCount];
-
-        for (int i = 0; i < lineCount; i++) {
-
-            int w = (int) (paint.measureText(lines[i]) + 0.5f); // round
-            width = Math.max(w, width);
-
-            baselines[i] = (int) (-paint.ascent() + 0.5f); // ascent() is
-                                                           // negative
-            int h = (int) (baselines[i] + paint.descent() + 0.5f);
-
-            height += h;
-            heights[i] = h;
-        }
-
-        Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(image);
-
-        int y = 0;
-        for (int i = 0; i < lineCount; i++) {
-            String line = lines[i];
-
-            canvas.drawText(line, 0, y + baselines[i], paint);
-            y += heights[i];
-        }
-
-        return image;
     }
 }

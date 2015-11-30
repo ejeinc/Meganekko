@@ -39,18 +39,15 @@ public class CameraSceneObject extends SceneObject {
     /**
      * Create a {@linkplain SceneObject scene object} (with arbitrarily complex
      * geometry) that shows live video from one of the device's cameras
-     * 
-     * @param vrContext
-     *            current {@link VrContext}
-     * @param mesh
-     *            an arbitrarily complex {@link Mesh} object - see
-     *            {@link VrContext#loadMesh(com.eje_c.meganekko.AndroidResource)}
-     *            and {@link VrContext#createQuad(float, float)}
-     * @param camera
-     *            an Android {@link Camera}. <em>Note</em>: this constructor
-     *            calls {@link Camera#setPreviewTexture(SurfaceTexture)} so you
-     *            should be sure to call it before you call
-     *            {@link Camera#startPreview()}.
+     *
+     * @param vrContext current {@link VrContext}
+     * @param mesh      an arbitrarily complex {@link Mesh} object - see
+     *                  {@link VrContext#loadMesh(com.eje_c.meganekko.AndroidResource)}
+     *                  and {@link VrContext#createQuad(float, float)}
+     * @param camera    an Android {@link Camera}. <em>Note</em>: this constructor
+     *                  calls {@link Camera#setPreviewTexture(SurfaceTexture)} so you
+     *                  should be sure to call it before you call
+     *                  {@link Camera#startPreview()}.
      */
     public CameraSceneObject(VrContext vrContext, Mesh mesh, Camera camera) {
         super(vrContext, mesh);
@@ -72,28 +69,24 @@ public class CameraSceneObject extends SceneObject {
     /**
      * Create a 2D, rectangular {@linkplain SceneObject scene object} that shows
      * live video from one of the device's cameras
-     * 
-     * @param vrContext
-     *            current {@link VrContext}
-     * @param width
-     *            the scene rectangle's width
-     * @param height
-     *            the rectangle's height
-     * @param camera
-     *            an Android {@link Camera}. <em>Note</em>: this constructor
-     *            calls {@link Camera#setPreviewTexture(SurfaceTexture)} so you
-     *            should be sure to call it before you call
-     *            {@link Camera#startPreview()}.
+     *
+     * @param vrContext current {@link VrContext}
+     * @param width     the scene rectangle's width
+     * @param height    the rectangle's height
+     * @param camera    an Android {@link Camera}. <em>Note</em>: this constructor
+     *                  calls {@link Camera#setPreviewTexture(SurfaceTexture)} so you
+     *                  should be sure to call it before you call
+     *                  {@link Camera#startPreview()}.
      */
     public CameraSceneObject(VrContext vrContext, float width,
-            float height, Camera camera) {
+                             float height, Camera camera) {
         this(vrContext, vrContext.createQuad(width, height), camera);
     }
 
     /**
      * Resumes camera preview
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * Note: {@link #pause()} and {@code resume()} only affect the polling that
      * links the Android {@link Camera} to this {@linkplain SceneObject
      * Meganekko scene object:} they have <em>no affect</em> on the underlying
@@ -105,8 +98,8 @@ public class CameraSceneObject extends SceneObject {
 
     /**
      * Pauses camera preview
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * Note: {@code pause()} and {@link #resume()} only affect the polling that
      * links the Android {@link Camera} to this {@linkplain SceneObject
      * Meganekko scene object:} they have <em>no affect</em> on the underlying

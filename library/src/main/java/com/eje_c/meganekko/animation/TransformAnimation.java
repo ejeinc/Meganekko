@@ -22,34 +22,31 @@ import com.eje_c.meganekko.Transform;
 
 /**
  * Animate a {@link Transform}.
- * 
+ * <p/>
  * The constructors cast their {@code target} parameter to a
  * {@code protected final Transform mTransform} field.
  */
 @Deprecated
 public abstract class TransformAnimation extends Animation {
 
-    private final static Class<?>[] SUPPORTED = { Transform.class,
-            SceneObject.class };
+    private final static Class<?>[] SUPPORTED = {Transform.class,
+            SceneObject.class};
 
     protected final Transform mTransform;
 
     /**
      * Sets the {@code protected final Transform mTransform} field.
-     * 
-     * @param target
-     *            May be a {@link Transform} or a {@link SceneObject} -
-     *            does runtime checks.
-     * @param duration
-     *            The animation duration, in seconds.
-     * @throws IllegalArgumentException
-     *             If {@code target} is neither a {@link Transform} nor a
-     *             {@link SceneObject}
+     *
+     * @param target   May be a {@link Transform} or a {@link SceneObject} -
+     *                 does runtime checks.
+     * @param duration The animation duration, in seconds.
+     * @throws IllegalArgumentException If {@code target} is neither a {@link Transform} nor a
+     *                                  {@link SceneObject}
      * @deprecated Using this overload reduces 'constructor fan-out' and thus
-     *             makes your life a bit easier - but at the cost of replacing
-     *             compile-time type checking with run-time type checking, which
-     *             is more expensive <em>and</em> can miss errors in code if you
-     *             don't test every path through your code.
+     * makes your life a bit easier - but at the cost of replacing
+     * compile-time type checking with run-time type checking, which
+     * is more expensive <em>and</em> can miss errors in code if you
+     * don't test every path through your code.
      */
     protected TransformAnimation(HybridObject target, float duration) {
         super(target, duration);
@@ -63,21 +60,11 @@ public abstract class TransformAnimation extends Animation {
     }
 
     /**
-     * 'Knows how' to get a transform from a scene object - protects you from
-     * any changes (however unlikely) in the object hierarchy.
-     */
-    protected static Transform getTransform(SceneObject sceneObject) {
-        return sceneObject.getTransform();
-    }
-
-    /**
      * Sets the {@code protected final Transform mTransform} field without
      * doing any runtime checks.
-     * 
-     * @param target
-     *            {@link Transform} to animate.
-     * @param duration
-     *            The animation duration, in seconds.
+     *
+     * @param target   {@link Transform} to animate.
+     * @param duration The animation duration, in seconds.
      */
     protected TransformAnimation(Transform target, float duration) {
         super(target, duration);
@@ -87,8 +74,8 @@ public abstract class TransformAnimation extends Animation {
     /**
      * Sets the {@code protected final Transform mTransform} field without
      * doing any runtime checks.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This constructor is included to be orthogonal ;-) but you probably won't
      * use it, as most derived classes will have final fields of their own to
      * set. Rather than replicate the final field setting code, the best pattern
@@ -96,18 +83,26 @@ public abstract class TransformAnimation extends Animation {
      * {@code this(getTransform(target), duration), ...);} - see
      * {@link RotationByAxisAnimation#RotationByAxisAnimation(SceneObject, float, float, float, float, float)}
      * for an example.
-     * 
-     * @param target
-     *            {@link SceneObject} containing a {@link Transform}
-     * @param duration
-     *            The animation duration, in seconds.
+     *
+     * @param target   {@link SceneObject} containing a {@link Transform}
+     * @param duration The animation duration, in seconds.
      */
     protected TransformAnimation(SceneObject target, float duration) {
         super(target, duration);
         mTransform = getTransform(target);
     }
 
-    /** Latch/restore starting orientation */
+    /**
+     * 'Knows how' to get a transform from a scene object - protects you from
+     * any changes (however unlikely) in the object hierarchy.
+     */
+    protected static Transform getTransform(SceneObject sceneObject) {
+        return sceneObject.getTransform();
+    }
+
+    /**
+     * Latch/restore starting orientation
+     */
     protected class Orientation {
         private final float w, x, y, z;
 
@@ -118,7 +113,9 @@ public abstract class TransformAnimation extends Animation {
             this.z = z;
         }
 
-        /** Copies {@link #mTransform}'s orientation */
+        /**
+         * Copies {@link #mTransform}'s orientation
+         */
         protected Orientation() {
             this( //
                     mTransform.getRotationW(), //
@@ -127,13 +124,17 @@ public abstract class TransformAnimation extends Animation {
                     mTransform.getRotationZ());
         }
 
-        /** Restores {@link #mTransform}'s starting orientation */
+        /**
+         * Restores {@link #mTransform}'s starting orientation
+         */
         protected void setOrientation() {
             mTransform.setRotation(w, x, y, z);
         }
     }
 
-    /** Latch/restore starting position */
+    /**
+     * Latch/restore starting position
+     */
     protected class Position {
         private final float x, y, z;
 
@@ -143,7 +144,9 @@ public abstract class TransformAnimation extends Animation {
             this.z = z;
         }
 
-        /** Copies {@link #mTransform}'s position */
+        /**
+         * Copies {@link #mTransform}'s position
+         */
         protected Position() {
             this( //
                     mTransform.getPositionX(), //
@@ -152,7 +155,9 @@ public abstract class TransformAnimation extends Animation {
             );
         }
 
-        /** Restores {@link #mTransform}'s starting position */
+        /**
+         * Restores {@link #mTransform}'s starting position
+         */
         protected void setPosition() {
             mTransform.setPosition(x, y, z);
         }

@@ -15,25 +15,36 @@
 
 package com.eje_c.meganekko;
 
+import android.graphics.Bitmap;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import android.graphics.Bitmap;
-
-/** Cube map texture. */
+/**
+ * Cube map texture.
+ */
 public class CubemapTexture extends Texture {
+    final static Map<String, Integer> faceIndexMap = new HashMap<>(6);
+
+    static {
+        faceIndexMap.put("posx.png", 0);
+        faceIndexMap.put("negx.png", 1);
+        faceIndexMap.put("posy.png", 2);
+        faceIndexMap.put("negy.png", 3);
+        faceIndexMap.put("posz.png", 4);
+        faceIndexMap.put("negz.png", 5);
+    }
+
     /**
      * Constructs a cube map texture using six pre-existing {@link Bitmap}s.
-     * 
-     * @param vrContext
-     *            Current {@link VrContext}
-     * @param bitmapArray
-     *            A {@link Bitmap} array which contains six {@link Bitmap}s. The
-     *            six bitmaps correspond to +x, -x, +y, -y, +z, and -z faces of
-     *            the cube map texture respectively. The default names of the
-     *            six images are "posx.png", "negx.png", "posy.png", "negx.png",
-     *            "posz.png", and "negz.png", which can be changed by calling
-     *            {@link CubemapTexture#setFaceNames(String[])}.
+     *
+     * @param vrContext   Current {@link VrContext}
+     * @param bitmapArray A {@link Bitmap} array which contains six {@link Bitmap}s. The
+     *                    six bitmaps correspond to +x, -x, +y, -y, +z, and -z faces of
+     *                    the cube map texture respectively. The default names of the
+     *                    six images are "posx.png", "negx.png", "posy.png", "negx.png",
+     *                    "posz.png", and "negz.png", which can be changed by calling
+     *                    {@link CubemapTexture#setFaceNames(String[])}.
      */
     public CubemapTexture(VrContext vrContext, Bitmap[] bitmapArray) {
         this(vrContext, bitmapArray, vrContext.DEFAULT_TEXTURE_PARAMETERS);
@@ -42,22 +53,18 @@ public class CubemapTexture extends Texture {
     /**
      * Constructs a cube map texture using six pre-existing {@link Bitmap}s and
      * the user defined filters {@link TextureParameters}.
-     * 
-     * @param vrContext
-     *            Current {@link VrContext}
-     * @param bitmapArray
-     *            A {@link Bitmap} array which contains six {@link Bitmap}s. The
-     *            six bitmaps correspond to +x, -x, +y, -y, +z, and -z faces of
-     *            the cube map texture respectively. The default names of the
-     *            six images are "posx.png", "negx.png", "posy.png", "negx.png",
-     *            "posz.png", and "negz.png", which can be changed by calling
-     *            {@link CubemapTexture#setFaceNames(String[])}.
-     * @param textureParameters
-     *            User defined object for {@link TextureParameters} which may
-     *            also contain default values.
+     *
+     * @param vrContext         Current {@link VrContext}
+     * @param bitmapArray       A {@link Bitmap} array which contains six {@link Bitmap}s. The
+     *                          six bitmaps correspond to +x, -x, +y, -y, +z, and -z faces of
+     *                          the cube map texture respectively. The default names of the
+     *                          six images are "posx.png", "negx.png", "posy.png", "negx.png",
+     *                          "posz.png", and "negz.png", which can be changed by calling
+     *                          {@link CubemapTexture#setFaceNames(String[])}.
+     * @param textureParameters User defined object for {@link TextureParameters} which may
+     *                          also contain default values.
      */
-    public CubemapTexture(VrContext vrContext, Bitmap[] bitmapArray,
-            TextureParameters textureParameters) {
+    public CubemapTexture(VrContext vrContext, Bitmap[] bitmapArray, TextureParameters textureParameters) {
         super(vrContext, NativeCubemapTexture.bitmapArrayConstructor(
                 bitmapArray, textureParameters.getCurrentValuesArray()));
     }
@@ -68,11 +75,10 @@ public class CubemapTexture extends Texture {
      * and "negz.png". If the names of the six images in the zip file are
      * different to the default ones, this function must be called before load
      * the zip file.
-     * 
-     * @param nameArray
-     *            An array containing six strings which are names of images
-     *            corresponding to +x, -x, +y, -y, +z, and -z faces of the cube
-     *            map texture respectively.
+     *
+     * @param nameArray An array containing six strings which are names of images
+     *                  corresponding to +x, -x, +y, -y, +z, and -z faces of the cube
+     *                  map texture respectively.
      */
     public static void setFaceNames(String[] nameArray) {
         if (nameArray.length != 6) {
@@ -83,20 +89,8 @@ public class CubemapTexture extends Texture {
             faceIndexMap.put(nameArray[i], i);
         }
     }
-
-    final static Map<String, Integer> faceIndexMap = new HashMap<String, Integer>(
-            6);
-    static {
-        faceIndexMap.put("posx.png", 0);
-        faceIndexMap.put("negx.png", 1);
-        faceIndexMap.put("posy.png", 2);
-        faceIndexMap.put("negy.png", 3);
-        faceIndexMap.put("posz.png", 4);
-        faceIndexMap.put("negz.png", 5);
-    }
 }
 
 class NativeCubemapTexture {
-    static native long bitmapArrayConstructor(Bitmap[] bitmapArray,
-            int[] textureParameterValues);
+    static native long bitmapArrayConstructor(Bitmap[] bitmapArray, int[] textureParameterValues);
 }

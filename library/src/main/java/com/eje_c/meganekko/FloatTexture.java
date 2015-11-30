@@ -17,7 +17,7 @@ package com.eje_c.meganekko;
 
 /**
  * A specialized texture, for doing computation on the GPU.
- * 
+ * <p/>
  * Loads an array of float pairs into a texture; you can access the individual
  * components of each 'pixel' as the {@code .r} and {code .g} swizzles.
  */
@@ -25,29 +25,23 @@ public class FloatTexture extends Texture {
 
     /**
      * Create a float-point texture.
-     * 
-     * @param vrContext
-     *            Current {@link VrContext}
-     * @param width
-     *            Texture width, in pixels
-     * @param height
-     *            Texture height, in pixels
-     * @param data
-     *            A linear array of float pairs.
-     * @throws IllegalArgumentException
-     *             If {@code width} or {@code height} is {@literal <= 0,} or if
-     *             {@code data} is {@code null}, or if
-     *             {@code data.length < height * width * 2}
+     *
+     * @param vrContext Current {@link VrContext}
+     * @param width     Texture width, in pixels
+     * @param height    Texture height, in pixels
+     * @param data      A linear array of float pairs.
+     * @throws IllegalArgumentException If {@code width} or {@code height} is {@literal <= 0,} or if
+     *                                  {@code data} is {@code null}, or if
+     *                                  {@code data.length < height * width * 2}
      */
-    public FloatTexture(VrContext vrContext, int width, int height,
-            float[] data) throws IllegalArgumentException {
+    public FloatTexture(VrContext vrContext, int width, int height, float[] data) throws IllegalArgumentException {
         super(vrContext, NativeFloatTexture.ctor());
         update(width, height, data);
     }
 
     /**
      * Copy new data to an existing float-point texture.
-     * 
+     * <p/>
      * Creating a new {@link FloatTexture} is pretty cheap, but it's still
      * not a totally trivial operation: it does involve some memory management
      * and some GL hardware handshaking. Reusing the texture reduces this
@@ -55,26 +49,20 @@ public class FloatTexture extends Texture {
      * updating a texture will affect any and all {@linkplain Material
      * materials} (and/or {@link GVRPostEffect post effects)} that use the
      * texture!
-     * 
-     * @param width
-     *            Texture width, in pixels
-     * @param height
-     *            Texture height, in pixels
-     * @param data
-     *            A linear array of float pairs.
+     *
+     * @param width  Texture width, in pixels
+     * @param height Texture height, in pixels
+     * @param data   A linear array of float pairs.
      * @return {@code true} if the update succeeded, and {@code false} if it
-     *         failed. Updating a texture requires that the new data parameter
-     *         has the exact same {@code width} and {@code height} and pixel
-     *         format as the original data.
-     * @throws IllegalArgumentException
-     *             If {@code width} or {@code height} is {@literal <= 0,} or if
-     *             {@code data} is {@code null}, or if
-     *             {@code data.length < height * width * 2}
+     * failed. Updating a texture requires that the new data parameter
+     * has the exact same {@code width} and {@code height} and pixel
+     * format as the original data.
+     * @throws IllegalArgumentException If {@code width} or {@code height} is {@literal <= 0,} or if
+     *                                  {@code data} is {@code null}, or if
+     *                                  {@code data.length < height * width * 2}
      */
-    public boolean update(int width, int height, float[] data)
-            throws IllegalArgumentException {
-        if (width <= 0 || height <= 0 || data == null
-                || data.length < height * width * 2) {
+    public boolean update(int width, int height, float[] data) throws IllegalArgumentException {
+        if (width <= 0 || height <= 0 || data == null || data.length < height * width * 2) {
             throw new IllegalArgumentException();
         }
         return NativeFloatTexture.update(getNative(), width, height, data);
@@ -84,6 +72,5 @@ public class FloatTexture extends Texture {
 class NativeFloatTexture {
     static native long ctor();
 
-    static native boolean update(long pointer, int width, int height,
-            float[] data);
+    static native boolean update(long pointer, int width, int height, float[] data);
 }

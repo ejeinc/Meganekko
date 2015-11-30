@@ -36,6 +36,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * pointee holder to a scene object.
  */
 public class Picker {
+    static final ReentrantLock sFindObjectsLock = new ReentrantLock();
     private static final String TAG = Log.tag(Picker.class);
 
     private Picker() {
@@ -297,8 +298,6 @@ public class Picker {
             return hitLocation[2];
         }
     }
-
-    static final ReentrantLock sFindObjectsLock = new ReentrantLock();
 }
 
 final class NativePicker {

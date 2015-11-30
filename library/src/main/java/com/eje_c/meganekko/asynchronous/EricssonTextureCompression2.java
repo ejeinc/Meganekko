@@ -15,17 +15,54 @@
 
 package com.eje_c.meganekko.asynchronous;
 
-import static android.opengl.GLES30.*;
+import android.util.SparseArray;
+import android.util.SparseIntArray;
 
 import com.eje_c.meganekko.utility.RuntimeAssertion;
 
-import android.util.SparseArray;
-import android.util.SparseIntArray;
+import static android.opengl.GLES30.GL_COMPRESSED_R11_EAC;
+import static android.opengl.GLES30.GL_COMPRESSED_RG11_EAC;
+import static android.opengl.GLES30.GL_COMPRESSED_RGB8_ETC2;
+import static android.opengl.GLES30.GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2;
+import static android.opengl.GLES30.GL_COMPRESSED_RGBA8_ETC2_EAC;
+import static android.opengl.GLES30.GL_COMPRESSED_SIGNED_R11_EAC;
+import static android.opengl.GLES30.GL_COMPRESSED_SIGNED_RG11_EAC;
+import static android.opengl.GLES30.GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC;
 
 class EricssonTextureCompression2 extends CompressedTextureLoader {
 
     private static final int PKM_SIGNATURE = 0x204d4b50; // "PKM "
     private static final int VERSION_SIGNATURE = 0x00003032; // "20\u0000\u0000"
+    private final static SparseArray<String> formatNames = new SparseArray<String>(
+            8);
+    private final static SparseIntArray formatMap = new SparseIntArray(8);
+
+    static {
+        formatNames.put(GL_COMPRESSED_RGB8_ETC2, "GL_COMPRESSED_RGB8_ETC2");
+        formatNames.put(GL_COMPRESSED_RGB8_ETC2, "GL_COMPRESSED_RGB8_ETC2");
+        formatNames.put(GL_COMPRESSED_RGBA8_ETC2_EAC,
+                "GL_COMPRESSED_RGBA8_ETC2_EAC");
+        formatNames.put(GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2,
+                "GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2");
+        formatNames.put(GL_COMPRESSED_R11_EAC, "GL_COMPRESSED_R11_EAC");
+        formatNames.put(GL_COMPRESSED_RG11_EAC, "GL_COMPRESSED_RG11_EAC");
+        formatNames.put(GL_COMPRESSED_SIGNED_R11_EAC,
+                "GL_COMPRESSED_SIGNED_R11_EAC");
+        formatNames.put(GL_COMPRESSED_SIGNED_RG11_EAC,
+                "GL_COMPRESSED_SIGNED_RG11_EAC");
+    }
+
+    static {
+        // https://github.com/paulvortex/RwgTex/blob/master/libs/etcpack/source/etcpack.cxx
+        formatMap.put(0x00, GL_COMPRESSED_RGB8_ETC2);
+        formatMap.put(0x01, GL_COMPRESSED_RGB8_ETC2);
+        formatMap.put(0x03, GL_COMPRESSED_RGBA8_ETC2_EAC);
+        formatMap.put(0x04, GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2);
+        formatMap.put(0x05, GL_COMPRESSED_R11_EAC);
+        formatMap.put(0x06, GL_COMPRESSED_RG11_EAC);
+        formatMap.put(0x07, GL_COMPRESSED_SIGNED_R11_EAC);
+        formatMap.put(0x08, GL_COMPRESSED_SIGNED_RG11_EAC);
+    }
 
     @Override
     public int headerLength() {
@@ -72,14 +109,14 @@ class EricssonTextureCompression2 extends CompressedTextureLoader {
         // http://malideveloper.arm.com/downloads/deved/tutorial/SDK/android/1.6/etc_texture.html
         int multiplier;
         switch (internalformat) {
-        case GL_COMPRESSED_RG11_EAC:
-        case GL_COMPRESSED_SIGNED_RG11_EAC:
-        case GL_COMPRESSED_RGBA8_ETC2_EAC:
-        case GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC:
-            multiplier = 16;
-            break;
-        default:
-            multiplier = 8;
+            case GL_COMPRESSED_RG11_EAC:
+            case GL_COMPRESSED_SIGNED_RG11_EAC:
+            case GL_COMPRESSED_RGBA8_ETC2_EAC:
+            case GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC:
+                multiplier = 16;
+                break;
+            default:
+                multiplier = 8;
         }
         int imageSize = etc2(width) * etc2(height) * multiplier;
 
@@ -89,36 +126,6 @@ class EricssonTextureCompression2 extends CompressedTextureLoader {
 
     private int etc2(int dimension) {
         return (dimension >> 2) + ((dimension & 0x3) == 0 ? 0 : 1);
-    }
-
-    private final static SparseArray<String> formatNames = new SparseArray<String>(
-            8);
-    static {
-        formatNames.put(GL_COMPRESSED_RGB8_ETC2, "GL_COMPRESSED_RGB8_ETC2");
-        formatNames.put(GL_COMPRESSED_RGB8_ETC2, "GL_COMPRESSED_RGB8_ETC2");
-        formatNames.put(GL_COMPRESSED_RGBA8_ETC2_EAC,
-                "GL_COMPRESSED_RGBA8_ETC2_EAC");
-        formatNames.put(GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2,
-                "GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2");
-        formatNames.put(GL_COMPRESSED_R11_EAC, "GL_COMPRESSED_R11_EAC");
-        formatNames.put(GL_COMPRESSED_RG11_EAC, "GL_COMPRESSED_RG11_EAC");
-        formatNames.put(GL_COMPRESSED_SIGNED_R11_EAC,
-                "GL_COMPRESSED_SIGNED_R11_EAC");
-        formatNames.put(GL_COMPRESSED_SIGNED_RG11_EAC,
-                "GL_COMPRESSED_SIGNED_RG11_EAC");
-    }
-
-    private final static SparseIntArray formatMap = new SparseIntArray(8);
-    static {
-        // https://github.com/paulvortex/RwgTex/blob/master/libs/etcpack/source/etcpack.cxx
-        formatMap.put(0x00, GL_COMPRESSED_RGB8_ETC2);
-        formatMap.put(0x01, GL_COMPRESSED_RGB8_ETC2);
-        formatMap.put(0x03, GL_COMPRESSED_RGBA8_ETC2_EAC);
-        formatMap.put(0x04, GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2);
-        formatMap.put(0x05, GL_COMPRESSED_R11_EAC);
-        formatMap.put(0x06, GL_COMPRESSED_RG11_EAC);
-        formatMap.put(0x07, GL_COMPRESSED_SIGNED_R11_EAC);
-        formatMap.put(0x08, GL_COMPRESSED_SIGNED_RG11_EAC);
     }
 
 }

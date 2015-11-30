@@ -15,27 +15,27 @@
 
 package com.eje_c.meganekko.asynchronous;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import com.eje_c.meganekko.AndroidResource;
+import com.eje_c.meganekko.AndroidResource.CancelableCallback;
+import com.eje_c.meganekko.CubemapTexture;
+import com.eje_c.meganekko.HybridObject;
+import com.eje_c.meganekko.Texture;
+import com.eje_c.meganekko.VrContext;
+import com.eje_c.meganekko.asynchronous.Throttler.AsyncLoader;
+import com.eje_c.meganekko.asynchronous.Throttler.AsyncLoaderFactory;
+import com.eje_c.meganekko.asynchronous.Throttler.GlConverter;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import com.eje_c.meganekko.AndroidResource;
-import com.eje_c.meganekko.VrContext;
-import com.eje_c.meganekko.CubemapTexture;
-import com.eje_c.meganekko.HybridObject;
-import com.eje_c.meganekko.Texture;
-import com.eje_c.meganekko.AndroidResource.CancelableCallback;
-import com.eje_c.meganekko.asynchronous.Throttler.AsyncLoader;
-import com.eje_c.meganekko.asynchronous.Throttler.AsyncLoaderFactory;
-import com.eje_c.meganekko.asynchronous.Throttler.GlConverter;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
 /**
  * Async resource loading: cube map textures.
- * 
+ * <p/>
  * Since ZipInputStream does not support mark() and reset(), we directly use
  * BitmapFactory .decodeStream() in loadResource().
  */
@@ -45,25 +45,41 @@ abstract class AsyncCubemapTexture {
      * The API
      */
 
-    static void loadTexture(VrContext vrContext,
-            CancelableCallback<Texture> callback,
-            AndroidResource resource, int priority, Map<String, Integer> map) {
-        faceIndexMap = map;
-        Throttler.registerCallback(vrContext, TEXTURE_CLASS, callback,
-                resource, priority);
-    }
+    private static final Class<? extends HybridObject> TEXTURE_CLASS = CubemapTexture.class;
 
     /*
      * Static constants
      */
 
     // private static final String TAG = Log.tag(AsyncCubemapTexture.class);
-
-    private static final Class<? extends HybridObject> TEXTURE_CLASS = CubemapTexture.class;
+    private static Map<String, Integer> faceIndexMap;
 
     /*
      * Asynchronous loader
      */
+
+    static {
+        Throttler.registerDatatype(TEXTURE_CLASS,
+                new AsyncLoaderFactory<CubemapTexture, Bitmap[]>() {
+
+                    @Override
+                    AsyncLoadCubemapTextureResource threadProc(
+                            VrContext vrContext, AndroidResource request,
+                            CancelableCallback<HybridObject> callback,
+                            int priority) {
+                        return new AsyncLoadCubemapTextureResource(vrContext,
+                                request, callback, priority);
+                    }
+                });
+    }
+
+    static void loadTexture(VrContext vrContext,
+                            CancelableCallback<Texture> callback,
+                            AndroidResource resource, int priority, Map<String, Integer> map) {
+        faceIndexMap = map;
+        Throttler.registerCallback(vrContext, TEXTURE_CLASS, callback,
+                resource, priority);
+    }
 
     private static class AsyncLoadCubemapTextureResource extends
             AsyncLoader<CubemapTexture, Bitmap[]> {
@@ -72,14 +88,14 @@ abstract class AsyncCubemapTexture {
 
             @Override
             public CubemapTexture convert(VrContext vrContext,
-                    Bitmap[] bitmapArray) {
+                                          Bitmap[] bitmapArray) {
                 return new CubemapTexture(vrContext, bitmapArray);
             }
         };
 
         protected AsyncLoadCubemapTextureResource(VrContext vrContext,
-                AndroidResource request,
-                CancelableCallback<HybridObject> callback, int priority) {
+                                                  AndroidResource request,
+                                                  CancelableCallback<HybridObject> callback, int priority) {
             super(vrContext, sConverter, request, callback);
         }
 
@@ -114,21 +130,4 @@ abstract class AsyncCubemapTexture {
             return bitmapArray;
         }
     }
-
-    static {
-        Throttler.registerDatatype(TEXTURE_CLASS,
-                new AsyncLoaderFactory<CubemapTexture, Bitmap[]>() {
-
-                    @Override
-                    AsyncLoadCubemapTextureResource threadProc(
-                            VrContext vrContext, AndroidResource request,
-                            CancelableCallback<HybridObject> callback,
-                            int priority) {
-                        return new AsyncLoadCubemapTextureResource(vrContext,
-                                request, callback, priority);
-                    }
-                });
-    }
-
-    private static Map<String, Integer> faceIndexMap;
 }

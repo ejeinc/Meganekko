@@ -15,15 +15,15 @@
 
 package com.eje_c.meganekko.scene_objects;
 
-import java.util.concurrent.Future;
-
-import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.Texture;
+import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.utility.Log;
+
+import java.util.concurrent.Future;
 
 public class SphereSceneObject extends SceneObject {
 
@@ -46,12 +46,11 @@ public class SphereSceneObject extends SceneObject {
     /**
      * Constructs a sphere scene object with a radius of 1 and 18 stacks, and 36
      * slices.
-     * 
+     * <p/>
      * The sphere's triangles and normals are facing out and the same texture
      * will be applied to each side of the sphere.
-     * 
-     * @param vrContext
-     *            current {@link VrContext}
+     *
+     * @param vrContext current {@link VrContext}
      */
     public SphereSceneObject(VrContext vrContext) {
         super(vrContext);
@@ -63,16 +62,13 @@ public class SphereSceneObject extends SceneObject {
     /**
      * Constructs a sphere scene object with a radius of 1 and 18 stacks, and 36
      * slices.
-     * 
+     * <p/>
      * The sphere's triangles and normals are facing either in or out and the
      * same texture will be applied to each side of the sphere.
-     * 
-     * @param vrContext
-     *            current {@link VrContext}
-     * 
-     * @param facingOut
-     *            whether the triangles and normals should be facing in or
-     *            facing out.
+     *
+     * @param vrContext current {@link VrContext}
+     * @param facingOut whether the triangles and normals should be facing in or
+     *                  facing out.
      */
     public SphereSceneObject(VrContext vrContext, boolean facingOut) {
         super(vrContext);
@@ -84,23 +80,18 @@ public class SphereSceneObject extends SceneObject {
     /**
      * Constructs a sphere scene object with a radius of 1 and 18 stacks, and 36
      * slices.
-     * 
+     * <p/>
      * The sphere's triangles and normals are facing either in or out and the
      * same texture will be applied to each side of the sphere.
-     * 
-     * @param vrContext
-     *            current {@link VrContext}
-     * 
-     * @param facingOut
-     *            whether the triangles and normals should be facing in or
-     *            facing out.
-     * 
-     * @param futureTexture
-     *            the texture for the sphere. {@code Future<Texture>} is used
-     *            here for asynchronously loading the texture.
+     *
+     * @param vrContext     current {@link VrContext}
+     * @param facingOut     whether the triangles and normals should be facing in or
+     *                      facing out.
+     * @param futureTexture the texture for the sphere. {@code Future<Texture>} is used
+     *                      here for asynchronously loading the texture.
      */
     public SphereSceneObject(VrContext vrContext, boolean facingOut,
-            Future<Texture> futureTexture) {
+                             Future<Texture> futureTexture) {
         super(vrContext);
 
         Material material = new Material(vrContext);
@@ -112,22 +103,17 @@ public class SphereSceneObject extends SceneObject {
     /**
      * Constructs a sphere scene object with a radius of 1 and 18 stacks, and 36
      * slices.
-     * 
+     * <p/>
      * The sphere's triangles and normals are facing either in or out and the
      * same material will be applied to each side of the sphere.
-     * 
-     * @param vrContext
-     *            current {@link VrContext}
-     * 
-     * @param facingOut
-     *            whether the triangles and normals should be facing in or
-     *            facing out.
-     * 
-     * @param material
-     *            the material for the sphere.
+     *
+     * @param vrContext current {@link VrContext}
+     * @param facingOut whether the triangles and normals should be facing in or
+     *                  facing out.
+     * @param material  the material for the sphere.
      */
     public SphereSceneObject(VrContext vrContext, boolean facingOut,
-            Material material) {
+                             Material material) {
         super(vrContext);
 
         generateSphereObject(vrContext, STACK_NUMBER, SLICE_NUMBER, facingOut,
@@ -137,30 +123,21 @@ public class SphereSceneObject extends SceneObject {
     /**
      * Constructs a sphere scene object with a radius of 1 and user specified
      * stack and slice numbers.
-     * 
+     * <p/>
      * The sphere's triangles and normals are facing either in or out and the
      * same material will be applied to each side of the sphere.
-     * 
-     * @param vrContext
-     *            current {@link VrContext}
-     * 
-     * @param stackNumber
-     *            the number of stacks for the sphere. It should be equal or
-     *            greater than 3.
-     * 
-     * @param sliceNumber
-     *            the number of slices for the sphere. It should be equal or
-     *            greater than 4.
-     * 
-     * @param facingOut
-     *            whether the triangles and normals should be facing in or
-     *            facing out.
-     * 
-     * @param material
-     *            the material for the sphere.
+     *
+     * @param vrContext   current {@link VrContext}
+     * @param stackNumber the number of stacks for the sphere. It should be equal or
+     *                    greater than 3.
+     * @param sliceNumber the number of slices for the sphere. It should be equal or
+     *                    greater than 4.
+     * @param facingOut   whether the triangles and normals should be facing in or
+     *                    facing out.
+     * @param material    the material for the sphere.
      */
     public SphereSceneObject(VrContext vrContext, int stackNumber,
-            int sliceNumber, boolean facingOut, Material material) {
+                             int sliceNumber, boolean facingOut, Material material) {
         super(vrContext);
 
         // assert sliceNumber>=4
@@ -182,42 +159,29 @@ public class SphereSceneObject extends SceneObject {
     /**
      * Constructs a sphere scene object with a radius of 1 and user specified
      * stack and slice numbers. The sphere is subdivided into MxN meshes, where M=sliceSegmengNumber and N=(stackSegmentNumber+2) are specified by user.
-     * 
+     * <p/>
      * The sphere's triangles and normals are facing either in or out and the
      * same material will be applied to each side of the sphere.
-     * 
-     * @param vrContext
-     *            current {@link VrContext}
-     * 
-     * @param stackNumber
-     *            the number of stacks for the sphere. It should be equal or
-     *            greater than 3.
-     * 
-     * @param sliceNumber
-     *            the number of slices for the sphere. It should be equal or
-     *            greater than 4.
-     * 
-     * @param facingOut
-     *            whether the triangles and normals should be facing in or
-     *            facing out.
-     * 
-     * @param material
-     *            the material for the sphere.
-     * 
-     * @param stackSegmentNumber
-     *            the segment number along vertical direction (i.e. stacks).
-     *            Note neither top cap nor bottom cap are subdivided along
-     *            vertical direction. So number of stacks in body part (i.e.
-     *            stackNumber-2) should be divisible by stackSegmentNumber.
-     * 
-     * @param sliceSegmentNumber
-     *            the segment number along horizontal direction (i.e. slices).
-     *            Number of slices (i.e. sliceNumber) should be divisible by
-     *            sliceSegmentNumber.
+     *
+     * @param vrContext          current {@link VrContext}
+     * @param stackNumber        the number of stacks for the sphere. It should be equal or
+     *                           greater than 3.
+     * @param sliceNumber        the number of slices for the sphere. It should be equal or
+     *                           greater than 4.
+     * @param facingOut          whether the triangles and normals should be facing in or
+     *                           facing out.
+     * @param material           the material for the sphere.
+     * @param stackSegmentNumber the segment number along vertical direction (i.e. stacks).
+     *                           Note neither top cap nor bottom cap are subdivided along
+     *                           vertical direction. So number of stacks in body part (i.e.
+     *                           stackNumber-2) should be divisible by stackSegmentNumber.
+     * @param sliceSegmentNumber the segment number along horizontal direction (i.e. slices).
+     *                           Number of slices (i.e. sliceNumber) should be divisible by
+     *                           sliceSegmentNumber.
      */
     public SphereSceneObject(VrContext vrContext, int stackNumber,
-            int sliceNumber, boolean facingOut, Material material,
-            int stackSegmentNumber, int sliceSegmentNumber) {
+                             int sliceNumber, boolean facingOut, Material material,
+                             int stackSegmentNumber, int sliceSegmentNumber) {
         super(vrContext);
 
         // assert stackNumber>=3
@@ -249,7 +213,7 @@ public class SphereSceneObject extends SceneObject {
     }
 
     private void generateSphereObject(VrContext vrContext, int stackNumber,
-            int sliceNumber, boolean facingOut, Material material) {
+                                      int sliceNumber, boolean facingOut, Material material) {
         generateSphere(stackNumber, sliceNumber, facingOut);
 
         Mesh mesh = new Mesh(vrContext);
@@ -265,7 +229,7 @@ public class SphereSceneObject extends SceneObject {
     }
 
     private void generateSphere(int stackNumber, int sliceNumber,
-            boolean facingOut) {
+                                boolean facingOut) {
         int capVertexNumber = 3 * sliceNumber;
         int bodyVertexNumber = 4 * sliceNumber * (stackNumber - 2);
         int vertexNumber = (2 * capVertexNumber) + bodyVertexNumber;
@@ -288,7 +252,7 @@ public class SphereSceneObject extends SceneObject {
     }
 
     private void createCap(int stackNumber, int sliceNumber, boolean top,
-            boolean facingOut) {
+                           boolean facingOut) {
 
         float stackPercentage0;
         float stackPercentage1;
@@ -556,8 +520,8 @@ public class SphereSceneObject extends SceneObject {
     }
 
     private void generateComplexSphereObject(VrContext vrContext,
-            int stackNumber, int sliceNumber, boolean facingOut,
-            Material material, int stackSegmentNumber, int sliceSegmentNumber) {
+                                             int stackNumber, int sliceNumber, boolean facingOut,
+                                             Material material, int stackSegmentNumber, int sliceSegmentNumber) {
         // bottom cap
         createComplexCap(vrContext, stackNumber, sliceNumber, false,
                 facingOut, material, sliceSegmentNumber);
@@ -578,8 +542,8 @@ public class SphereSceneObject extends SceneObject {
     }
 
     private void createComplexCap(VrContext vrContext, int stackNumber,
-            int sliceNumber, boolean top, boolean facingOut,
-            Material material, int sliceSegmentNumber) {
+                                  int sliceNumber, boolean top, boolean facingOut,
+                                  Material material, int sliceSegmentNumber) {
         int slicePerSegment = sliceNumber / sliceSegmentNumber;
         int vertexNumber = 3 * slicePerSegment;
         vertices = new float[3 * vertexNumber];
@@ -729,8 +693,8 @@ public class SphereSceneObject extends SceneObject {
     }
 
     private void createComplexBody(VrContext vrContext, int stackNumber,
-            int sliceNumber, boolean facingOut, Material material,
-            int stackSegmentNumber, int sliceSegmentNumber) {
+                                   int sliceNumber, boolean facingOut, Material material,
+                                   int stackSegmentNumber, int sliceSegmentNumber) {
         int stackPerSegment = (stackNumber - 2) / stackSegmentNumber;
         int slicePerSegment = sliceNumber / sliceSegmentNumber;
 
@@ -748,22 +712,22 @@ public class SphereSceneObject extends SceneObject {
 
         for (int stackSegment = 0; stackSegment < stackSegmentNumber; stackSegment++) {
             for (int sliceSegment = 0; sliceSegment < sliceSegmentNumber; sliceSegment++) {
-                for (int stack = stackSegment * stackPerSegment + 1; stack < (stackSegment+1) * stackPerSegment + 1; stack++) {
-    
+                for (int stack = stackSegment * stackPerSegment + 1; stack < (stackSegment + 1) * stackPerSegment + 1; stack++) {
+
                     float stackPercentage0 = ((float) (stack) / stackNumber);
                     float stackPercentage1 = ((float) (stack + 1) / stackNumber);
-        
+
                     float t0 = stackPercentage0;
                     float t1 = stackPercentage1;
-        
+
                     double theta0 = stackPercentage0 * Math.PI;
                     double theta1 = stackPercentage1 * Math.PI;
                     double cosTheta0 = Math.cos(theta0);
                     double sinTheta0 = Math.sin(theta0);
                     double cosTheta1 = Math.cos(theta1);
                     double sinTheta1 = Math.sin(theta1);
-        
-                    for (int slice = sliceSegment * slicePerSegment; slice < (sliceSegment+1) * slicePerSegment; slice++) {
+
+                    for (int slice = sliceSegment * slicePerSegment; slice < (sliceSegment + 1) * slicePerSegment; slice++) {
                         float slicePercentage0 = ((float) (slice) / sliceNumber);
                         float slicePercentage1 = ((float) (slice + 1) / sliceNumber);
                         double phi0 = slicePercentage0 * 2.0 * Math.PI;
@@ -780,52 +744,52 @@ public class SphereSceneObject extends SceneObject {
                         double sinPhi0 = Math.sin(phi0);
                         double cosPhi1 = Math.cos(phi1);
                         double sinPhi1 = Math.sin(phi1);
-        
+
                         float x0 = (float) (sinTheta0 * cosPhi0);
                         float y0 = (float) cosTheta0;
                         float z0 = (float) (sinTheta0 * sinPhi0);
-        
+
                         float x1 = (float) (sinTheta0 * cosPhi1);
                         float y1 = (float) cosTheta0;
                         float z1 = (float) (sinTheta0 * sinPhi1);
-        
+
                         float x2 = (float) (sinTheta1 * cosPhi0);
                         float y2 = (float) cosTheta1;
                         float z2 = (float) (sinTheta1 * sinPhi0);
-        
+
                         float x3 = (float) (sinTheta1 * cosPhi1);
                         float y3 = (float) cosTheta1;
                         float z3 = (float) (sinTheta1 * sinPhi1);
-        
+
                         vertices[vertexCount + 0] = x0;
                         vertices[vertexCount + 1] = y0;
                         vertices[vertexCount + 2] = z0;
-        
+
                         vertices[vertexCount + 3] = x1;
                         vertices[vertexCount + 4] = y1;
                         vertices[vertexCount + 5] = z1;
-        
+
                         vertices[vertexCount + 6] = x2;
                         vertices[vertexCount + 7] = y2;
                         vertices[vertexCount + 8] = z2;
-        
+
                         vertices[vertexCount + 9] = x3;
                         vertices[vertexCount + 10] = y3;
                         vertices[vertexCount + 11] = z3;
-        
+
                         if (facingOut) {
                             normals[vertexCount + 0] = x0;
                             normals[vertexCount + 1] = y0;
                             normals[vertexCount + 2] = z0;
-        
+
                             normals[vertexCount + 3] = x1;
                             normals[vertexCount + 4] = y1;
                             normals[vertexCount + 5] = z1;
-        
+
                             normals[vertexCount + 6] = x2;
                             normals[vertexCount + 7] = y2;
                             normals[vertexCount + 8] = z2;
-        
+
                             normals[vertexCount + 9] = x3;
                             normals[vertexCount + 10] = y3;
                             normals[vertexCount + 11] = z3;
@@ -833,20 +797,20 @@ public class SphereSceneObject extends SceneObject {
                             normals[vertexCount + 0] = -x0;
                             normals[vertexCount + 1] = -y0;
                             normals[vertexCount + 2] = -z0;
-        
+
                             normals[vertexCount + 3] = -x1;
                             normals[vertexCount + 4] = -y1;
                             normals[vertexCount + 5] = -z1;
-        
+
                             normals[vertexCount + 6] = -x2;
                             normals[vertexCount + 7] = -y2;
                             normals[vertexCount + 8] = -z2;
-        
+
                             normals[vertexCount + 9] = -x3;
                             normals[vertexCount + 10] = -y3;
                             normals[vertexCount + 11] = -z3;
                         }
-        
+
                         texCoords[texCoordCount + 0] = s0;
                         texCoords[texCoordCount + 1] = t0;
                         texCoords[texCoordCount + 2] = s1;
@@ -855,7 +819,7 @@ public class SphereSceneObject extends SceneObject {
                         texCoords[texCoordCount + 5] = t1;
                         texCoords[texCoordCount + 6] = s1;
                         texCoords[texCoordCount + 7] = t1;
-        
+
                         // one quad looking from outside toward center
                         //
                         // @formatter:off
@@ -875,7 +839,7 @@ public class SphereSceneObject extends SceneObject {
                             indices[indexCount + 0] = (char) (triangleCount + 0);
                             indices[indexCount + 1] = (char) (triangleCount + 1);
                             indices[indexCount + 2] = (char) (triangleCount + 2);
-        
+
                             indices[indexCount + 3] = (char) (triangleCount + 2);
                             indices[indexCount + 4] = (char) (triangleCount + 1);
                             indices[indexCount + 5] = (char) (triangleCount + 3);
@@ -883,12 +847,12 @@ public class SphereSceneObject extends SceneObject {
                             indices[indexCount + 0] = (char) (triangleCount + 0);
                             indices[indexCount + 1] = (char) (triangleCount + 2);
                             indices[indexCount + 2] = (char) (triangleCount + 1);
-        
+
                             indices[indexCount + 3] = (char) (triangleCount + 2);
                             indices[indexCount + 4] = (char) (triangleCount + 3);
                             indices[indexCount + 5] = (char) (triangleCount + 1);
                         }
-        
+
                         vertexCount += 12;
                         texCoordCount += 8;
                         indexCount += 6;

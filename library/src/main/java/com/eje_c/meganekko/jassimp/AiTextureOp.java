@@ -43,8 +43,8 @@ package com.eje_c.meganekko.jassimp;
 /**
  * Defines how the Nth texture of a specific type is combined with the result of
  * all previous layers.
- * <p>
- * 
+ * <p/>
+ * <p/>
  * Example (left: key, right: value): <br>
  * <code><pre>
  *  DiffColor0     - gray
@@ -53,10 +53,10 @@ package com.eje_c.meganekko.jassimp;
  *  DiffTextureOp0 - aiTextureOpAdd
  *  DiffTexture1   - tex2.png
  * </pre></code>
- * 
+ * <p/>
  * Written as equation, the final diffuse term for a specific pixel would be:
  * <code><pre>
- *  diffFinal = DiffColor0 * sampleTex(DiffTexture0,UV0) + 
+ *  diffFinal = DiffColor0 * sampleTex(DiffTexture0,UV0) +
  *     sampleTex(DiffTexture1,UV0) * diffContrib;
  * </pre></code> where 'diffContrib' is the intensity of the incoming light for
  * that pixel.
@@ -93,15 +93,28 @@ public enum AiTextureOp {
     SIGNED_ADD(0x5);
 
     /**
+     * The mapped c/c++ integer enum value.
+     */
+    private final int m_rawValue;
+
+    /**
+     * Constructor.
+     *
+     * @param rawValue maps java enum to c/c++ integer enum values
+     */
+    private AiTextureOp(int rawValue) {
+        m_rawValue = rawValue;
+    }
+
+    /**
      * Utility method for converting from c/c++ based integer enums to java
      * enums.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * This method is intended to be used from JNI and my change based on
      * implementation needs.
-     * 
-     * @param rawValue
-     *            an integer based enum value (as defined by assimp)
+     *
+     * @param rawValue an integer based enum value (as defined by assimp)
      * @return the enum value corresponding to rawValue
      */
     static AiTextureOp fromRawValue(int rawValue) {
@@ -113,19 +126,4 @@ public enum AiTextureOp {
 
         throw new IllegalArgumentException("unexptected raw value: " + rawValue);
     }
-
-    /**
-     * Constructor.
-     * 
-     * @param rawValue
-     *            maps java enum to c/c++ integer enum values
-     */
-    private AiTextureOp(int rawValue) {
-        m_rawValue = rawValue;
-    }
-
-    /**
-     * The mapped c/c++ integer enum value.
-     */
-    private final int m_rawValue;
 }

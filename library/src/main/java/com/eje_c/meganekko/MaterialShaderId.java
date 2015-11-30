@@ -19,12 +19,12 @@ import android.util.SparseArray;
 
 /**
  * Opaque type that specifies a material shader.
- * 
+ * <p/>
  * The inheritance tree represents the fact that stock shaders do not use
  * {@link MaterialMap name maps.}
  */
 public abstract class MaterialShaderId {
-    private final static SparseArray<MaterialShaderId> sIds = new SparseArray<MaterialShaderId>();
+    private final static SparseArray<MaterialShaderId> sIds = new SparseArray<>();
 
     static {
         VrContext.addResetOnRestartHandler(new Runnable() {
@@ -45,7 +45,14 @@ public abstract class MaterialShaderId {
 
     final int ID;
 
-    /** @deprecated Probably unnecessary ... */
+    protected MaterialShaderId(int id) {
+        ID = id;
+        put(id, this);
+    }
+
+    /**
+     * @deprecated Probably unnecessary ...
+     */
     @SuppressWarnings("unchecked")
     protected final static <T extends MaterialShaderId> T get(int id) {
         return (T) sIds.get(id);
@@ -53,10 +60,5 @@ public abstract class MaterialShaderId {
 
     protected final static void put(int id, MaterialShaderId wrapper) {
         sIds.put(id, wrapper);
-    }
-
-    protected MaterialShaderId(int id) {
-        ID = id;
-        put(id, this);
     }
 }

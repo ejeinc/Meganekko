@@ -15,42 +15,44 @@
 
 package com.eje_c.meganekko.animation;
 
-/** Optional on-finish callback */
+/**
+ * Optional on-finish callback
+ */
 @Deprecated
 public interface OnFinish {
 
     /**
      * Optional callback: called when the animation is complete, and has stopped
      * running.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * With the default, {@linkplain RepeatMode#ONCE run-once} animation,
      * this is pretty straight forward: the animation will run to completion and
      * {@code finished()} will be called. Note that repeat mode {@code ONCE}
      * overrides any {@linkplain Animation#setRepeatCount(int) repeat count.}
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * The repetitive types {@link RepeatMode#REPEATED REPEATED} and
      * {@link RepeatMode#PINGPONG PINGPONG} <em>do</em> pay attention to the
      * repeat count. With a positive repeat count, the animation will run for
      * the specified number of times, and then call {@code finished()}. Note
      * that the {@link Animation#DEFAULT_REPEAT_COUNT} is 2.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * If the repeat count is negative, the animation will run until you stop
      * it. There are three ways you can do this:
-     * 
+     * <p/>
      * <ul>
      * <li>You can call {@link AnimationEngine#stop(Animation)}. This will
      * stop the animation immediately, regardless of the current state of the
      * animated property, so this is generally appropriate only for pop-up
      * objects like Please Wait spinners that are about to disappear. Calling
      * {@code stop()} will <em>not</em> trigger the {@code finished()} callback.
-     * 
+     * <p/>
      * <li>You can call {@link Animation#setRepeatCount(int)
      * setRepeatCount(0)} to schedule a graceful termination, at the end of the
      * current animation cycle: this will also call {@code finished()}.
-     * 
+     * <p/>
      * <li>If the callback is also a {@link OnRepeat}, the
      * {@link OnRepeat#iteration(Animation, int)} method will be called at
      * the end of each animation cycle. (This is the best way to terminate a
@@ -58,12 +60,11 @@ public interface OnFinish {
      * property in its start state.) When {@code iteration} returns
      * {@code false}, the animation will be stopped, and {@code finish} will be
      * called.
-     * 
+     * <p/>
      * </ul>
-     * 
-     * @param animation
-     *            The animation that just finished, so you can use the same
-     *            callback with multiple animations.
+     *
+     * @param animation The animation that just finished, so you can use the same
+     *                  callback with multiple animations.
      */
     void finished(Animation animation);
 

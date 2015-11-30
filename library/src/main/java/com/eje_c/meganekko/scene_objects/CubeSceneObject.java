@@ -15,16 +15,16 @@
 
 package com.eje_c.meganekko.scene_objects;
 
-import java.util.ArrayList;
-import java.util.concurrent.Future;
-
 import com.eje_c.meganekko.FutureWrapper;
-import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.Texture;
+import com.eje_c.meganekko.VrContext;
+
+import java.util.ArrayList;
+import java.util.concurrent.Future;
 
 public class CubeSceneObject extends SceneObject {
 
@@ -62,7 +62,7 @@ public class CubeSceneObject extends SceneObject {
     // (Note that these name are for outward facing. When looking from inside,
     // "back" face is in front of you, and "front" face is behind you.)
 
-    private static final float[] SIMPLE_VERTICES = { -SIZE, -SIZE, SIZE, // 0
+    private static final float[] SIMPLE_VERTICES = {-SIZE, -SIZE, SIZE, // 0
             SIZE, -SIZE, SIZE, // 1
             -SIZE, SIZE, SIZE, // 2
             SIZE, SIZE, SIZE, // 3
@@ -93,7 +93,7 @@ public class CubeSceneObject extends SceneObject {
             SIZE, -SIZE, SIZE, // 23
     };
 
-    private static final float[] SIMPLE_OUTWARD_NORMALS = { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+    private static final float[] SIMPLE_OUTWARD_NORMALS = {0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
             1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
 
             1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
@@ -109,9 +109,9 @@ public class CubeSceneObject extends SceneObject {
             0.0f,
 
             0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
-            -1.0f, 0.0f };
+            -1.0f, 0.0f};
 
-    private static final float[] SIMPLE_INWARD_NORMALS = { 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+    private static final float[] SIMPLE_INWARD_NORMALS = {0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
             -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f,
 
             -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f,
@@ -127,9 +127,9 @@ public class CubeSceneObject extends SceneObject {
             -1.0f, 0.0f,
 
             0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-            0.0f };
+            0.0f};
 
-    private static final float[] SIMPLE_OUTWARD_TEXCOORDS = { 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+    private static final float[] SIMPLE_OUTWARD_TEXCOORDS = {0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
             1.0f, 0.0f, // front
             0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // right
             0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // back
@@ -138,7 +138,7 @@ public class CubeSceneObject extends SceneObject {
             0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f  // bottom
     };
 
-    private static final float[] SIMPLE_INWARD_TEXCOORDS = { 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+    private static final float[] SIMPLE_INWARD_TEXCOORDS = {1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
             0.0f, 0.0f, // front
             1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, // right
             1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, // back
@@ -147,7 +147,7 @@ public class CubeSceneObject extends SceneObject {
             0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f  // bottom
     };
 
-    private static final char[] SIMPLE_OUTWARD_INDICES = { 0, 1, 2, // front
+    private static final char[] SIMPLE_OUTWARD_INDICES = {0, 1, 2, // front
             2, 1, 3,
 
             4, 5, 6, // right
@@ -166,7 +166,7 @@ public class CubeSceneObject extends SceneObject {
             22, 21, 23 //
     };
 
-    private static final char[] SIMPLE_INWARD_INDICES = { 0, 2, 1, // front
+    private static final char[] SIMPLE_INWARD_INDICES = {0, 2, 1, // front
             1, 2, 3,
 
             4, 6, 5, // right
@@ -184,61 +184,77 @@ public class CubeSceneObject extends SceneObject {
             20, 22, 21, // bottom
             21, 22, 23 //
     };
-
+    private static final char[] SIMPLE_OUTWARD_FRONT_INDICES = {0, 1, 2, // front
+            2, 1, 3};
+    private static final char[] SIMPLE_OUTWARD_RIGHT_INDICES = {4, 5, 6, // right
+            6, 5, 7};
+    private static final char[] SIMPLE_OUTWARD_BACK_INDICES = {8, 9, 10, // back
+            10, 9, 11};
+    private static final char[] SIMPLE_OUTWARD_LEFT_INDICES = {12, 13, 14, // left
+            14, 13, 15};
+    private static final char[] SIMPLE_OUTWARD_TOP_INDICES = {16, 17, 18, // top
+            18, 17, 19};
+    private static final char[] SIMPLE_OUTWARD_BOTTOM_INDICES = {20, 21, 22, // bottom
+            22, 21, 23};
+    private static final char[] SIMPLE_INWARD_FRONT_INDICES = {0, 2, 1, // front
+            1, 2, 3};
+    private static final char[] SIMPLE_INWARD_RIGHT_INDICES = {4, 6, 5, // right
+            5, 6, 7};
+    private static final char[] SIMPLE_INWARD_BACK_INDICES = {8, 10, 9, // back
+            9, 10, 11};
+    private static final char[] SIMPLE_INWARD_LEFT_INDICES = {12, 14, 13, // left
+            13, 14, 15};
+    private static final char[] SIMPLE_INWARD_TOP_INDICES = {16, 18, 17, // top
+            17, 18, 19};
+    private static final char[] SIMPLE_INWARD_BOTTOM_INDICES = {20, 22, 21, // bottom
+            21, 22, 23};
+    private float[] vertices;
+    private float[] normals;
+    private float[] texCoords;
+    private char[] indices;
     /**
      * Constructs a cube scene object with each side of length 1.
-     * 
+     * <p/>
      * The cube's triangles and normals are facing out and the same texture will
      * be applied to each side of the cube.
-     * 
-     * @param vrContext
-     *            current {@link VrContext}
+     *
+     * @param vrContext current {@link VrContext}
      */
     public CubeSceneObject(VrContext vrContext) {
         super(vrContext);
 
         createSimpleCube(vrContext, true, new Material(vrContext));
     }
-
     /**
      * Constructs a cube scene object with each side of length 1.
-     * 
+     * <p/>
      * The cube's triangles and normals are facing either in or out and the same
      * texture will be applied to each side of the cube.
-     * 
-     * @param vrContext
-     *            current {@link VrContext}
-     * 
-     * @param facingOut
-     *            whether the triangles and normals should be facing in or
-     *            facing out.
+     *
+     * @param vrContext current {@link VrContext}
+     * @param facingOut whether the triangles and normals should be facing in or
+     *                  facing out.
      */
     public CubeSceneObject(VrContext vrContext, boolean facingOut) {
         super(vrContext);
 
         createSimpleCube(vrContext, facingOut, new Material(vrContext));
     }
-
     /**
      * Constructs a cube scene object with each side of length 1.
-     * 
+     * <p/>
      * The cube's triangles and normals are facing either in or out and the same
      * texture will be applied to each side of the cube. All six faces share the
      * same texture.
-     * 
-     * @param vrContext
-     *            current {@link VrContext}
-     * 
-     * @param facingOut
-     *            whether the triangles and normals should be facing in or
-     *            facing out.
-     * 
-     * @param futureTexture
-     *            the texture for six faces. {@code Future<Texture>}
-     *            is used here for asynchronously loading the texture.
+     *
+     * @param vrContext     current {@link VrContext}
+     * @param facingOut     whether the triangles and normals should be facing in or
+     *                      facing out.
+     * @param futureTexture the texture for six faces. {@code Future<Texture>}
+     *                      is used here for asynchronously loading the texture.
      */
     public CubeSceneObject(VrContext vrContext, boolean facingOut,
-            Future<Texture> futureTexture) {
+                           Future<Texture> futureTexture) {
         super(vrContext);
 
         Material material = new Material(vrContext);
@@ -248,23 +264,18 @@ public class CubeSceneObject extends SceneObject {
 
     /**
      * Constructs a cube scene object with each side of length 1.
-     * 
+     * <p/>
      * The cube's triangles and normals are facing either in or out and the same
      * texture will be applied to each side of the cube. All six faces share the
      * same material (i.e. same texture and same shader).
-     * 
-     * @param vrContext
-     *            current {@link VrContext}
-     * 
-     * @param facingOut
-     *            whether the triangles and normals should be facing in or
-     *            facing out.
-     * 
-     * @param material
-     *            the material for six faces.
+     *
+     * @param vrContext current {@link VrContext}
+     * @param facingOut whether the triangles and normals should be facing in or
+     *                  facing out.
+     * @param material  the material for six faces.
      */
     public CubeSceneObject(VrContext vrContext, boolean facingOut,
-            Material material) {
+                           Material material) {
         super(vrContext);
 
         createSimpleCube(vrContext, facingOut, material);
@@ -272,25 +283,20 @@ public class CubeSceneObject extends SceneObject {
 
     /**
      * Constructs a cube scene object with each side of length 1.
-     * 
+     * <p/>
      * The cube's triangles and normals are facing either in or out. Each face
      * has its own texture.
-     * 
-     * @param vrContext
-     *            current {@link VrContext}
-     * 
-     * @param facingOut
-     *            whether the triangles and normals should be facing in or
-     *            facing out.
-     * 
-     * @param futureTextureList
-     *            the list of six textures for six faces.
-     *            {@code Future<Texture>} is used here for asynchronously
-     *            loading the texture. The six textures are for front, right,
-     *            back, left, top, and bottom faces respectively.
+     *
+     * @param vrContext         current {@link VrContext}
+     * @param facingOut         whether the triangles and normals should be facing in or
+     *                          facing out.
+     * @param futureTextureList the list of six textures for six faces.
+     *                          {@code Future<Texture>} is used here for asynchronously
+     *                          loading the texture. The six textures are for front, right,
+     *                          back, left, top, and bottom faces respectively.
      */
     public CubeSceneObject(VrContext vrContext, boolean facingOut,
-            ArrayList<Future<Texture>> futureTextureList) {
+                           ArrayList<Future<Texture>> futureTextureList) {
         super(vrContext);
 
         // assert length of futureTextureList is 6
@@ -301,33 +307,24 @@ public class CubeSceneObject extends SceneObject {
 
         createSimpleCubeSixMeshes(vrContext, facingOut, futureTextureList);
     }
-
     /**
      * Constructs a cube scene object with each side of length 1.
-     * 
-     * Each face is subdivided into NxN quads, where N = segmentNumber is given by user.  
-     * 
+     * <p/>
+     * Each face is subdivided into NxN quads, where N = segmentNumber is given by user.
+     * <p/>
      * The cube's triangles and normals are facing either in or out. Each face has its own
      * texture.
-     * 
-     * @param vrContext
-     *            current {@link VrContext}
-     * 
-     * @param facingOut
-     *            whether the triangles and normals should be facing in or
-     *            facing out.
-     * 
-     * @param futureTextureList
-     *            the list of six textures for six faces. {@code Future<Texture>} is used here for asynchronously loading
-     *            the texture. The six textures are for front, right, back,
-     *            left, top, and bottom faces respectively.
-     *            
-     * @param segmetnNumber
-     *            the segment number along each axis. 
-     *            
+     *
+     * @param vrContext         current {@link VrContext}
+     * @param facingOut         whether the triangles and normals should be facing in or
+     *                          facing out.
+     * @param futureTextureList the list of six textures for six faces. {@code Future<Texture>} is used here for asynchronously loading
+     *                          the texture. The six textures are for front, right, back,
+     *                          left, top, and bottom faces respectively.
+     * @param segmetnNumber     the segment number along each axis.
      */
     public CubeSceneObject(VrContext vrContext, boolean facingOut,
-            ArrayList<Future<Texture>> futureTextureList, int segmentNumber) {
+                           ArrayList<Future<Texture>> futureTextureList, int segmentNumber) {
         super(vrContext);
 
         // assert length of futureTextureList is 6
@@ -340,7 +337,7 @@ public class CubeSceneObject extends SceneObject {
     }
 
     private void createSimpleCube(VrContext vrContext, boolean facingOut,
-            Material material) {
+                                  Material material) {
 
         Mesh mesh = new Mesh(vrContext);
 
@@ -362,34 +359,8 @@ public class CubeSceneObject extends SceneObject {
         renderData.setMesh(mesh);
     }
 
-    private static final char[] SIMPLE_OUTWARD_FRONT_INDICES = { 0, 1, 2, // front
-            2, 1, 3 };
-    private static final char[] SIMPLE_OUTWARD_RIGHT_INDICES = { 4, 5, 6, // right
-            6, 5, 7 };
-    private static final char[] SIMPLE_OUTWARD_BACK_INDICES = { 8, 9, 10, // back
-            10, 9, 11 };
-    private static final char[] SIMPLE_OUTWARD_LEFT_INDICES = { 12, 13, 14, // left
-            14, 13, 15 };
-    private static final char[] SIMPLE_OUTWARD_TOP_INDICES = { 16, 17, 18, // top
-            18, 17, 19 };
-    private static final char[] SIMPLE_OUTWARD_BOTTOM_INDICES = { 20, 21, 22, // bottom
-            22, 21, 23 };
-
-    private static final char[] SIMPLE_INWARD_FRONT_INDICES = { 0, 2, 1, // front
-            1, 2, 3 };
-    private static final char[] SIMPLE_INWARD_RIGHT_INDICES = { 4, 6, 5, // right
-            5, 6, 7 };
-    private static final char[] SIMPLE_INWARD_BACK_INDICES = { 8, 10, 9, // back
-            9, 10, 11 };
-    private static final char[] SIMPLE_INWARD_LEFT_INDICES = { 12, 14, 13, // left
-            13, 14, 15 };
-    private static final char[] SIMPLE_INWARD_TOP_INDICES = { 16, 18, 17, // top
-            17, 18, 19 };
-    private static final char[] SIMPLE_INWARD_BOTTOM_INDICES = { 20, 22, 21, // bottom
-            21, 22, 23 };
-
     private void createSimpleCubeSixMeshes(VrContext vrContext,
-            boolean facingOut, ArrayList<Future<Texture>> futureTextureList) {
+                                           boolean facingOut, ArrayList<Future<Texture>> futureTextureList) {
 
         SceneObject[] children = new SceneObject[6];
         Mesh[] meshes = new Mesh[6];
@@ -430,36 +401,31 @@ public class CubeSceneObject extends SceneObject {
                 addChildObject(children[i]);
             }
         }
-        
+
         // attached an empty renderData for parent object, so that we can set some common properties
         RenderData renderData = new RenderData(vrContext);
         attachRenderData(renderData);
     }
 
-    private float[] vertices;
-    private float[] normals;
-    private float[] texCoords;
-    private char[] indices;
-
     private void createComplexCube(VrContext vrContext,
-            boolean facingOut, ArrayList<Future<Texture>> futureTextureList, int segmentNumber) {
+                                   boolean facingOut, ArrayList<Future<Texture>> futureTextureList, int segmentNumber) {
 
         SceneObject[] children = new SceneObject[6];
         for (int i = 0; i < 6; i++) {
             children[i] = new SceneObject(vrContext);
             addChildObject(children[i]);
         }
-        
-        int numPerFace = segmentNumber*segmentNumber;
+
+        int numPerFace = segmentNumber * segmentNumber;
         SceneObject[] grandchildren = new SceneObject[numPerFace];
         Mesh[] subMeshes = new Mesh[numPerFace];
-        
+
         // 4 vertices (2 triangles) per mesh
         vertices = new float[12];
         normals = new float[12];
         texCoords = new float[8];
         indices = new char[6];
-        
+
         if (facingOut) {
             indices[0] = 0;
             indices[1] = 1;
@@ -477,10 +443,10 @@ public class CubeSceneObject extends SceneObject {
             indices[4] = 2;
             indices[5] = 3;
         }
-        
+
         float segmentLength = 2.0f * SIZE / segmentNumber;
         float segmentTexCoordLength = 1.0f / segmentNumber;
-        
+
         // front face
         normals[0] = normals[3] = normals[6] = normals[9] = 0.0f;
         normals[1] = normals[4] = normals[7] = normals[10] = 0.0f;
@@ -489,11 +455,11 @@ public class CubeSceneObject extends SceneObject {
         } else {
             normals[2] = normals[5] = normals[8] = normals[11] = -1.0f;
         }
-        for (int col = 0; col<segmentNumber; col++) {
-            for (int row = 0; row<segmentNumber; row++) {
+        for (int col = 0; col < segmentNumber; col++) {
+            for (int row = 0; row < segmentNumber; row++) {
                 // sub-mesh (col, row)
-                int index = row*segmentNumber+col;
-                
+                int index = row * segmentNumber + col;
+
                 float x0 = -SIZE + segmentLength * col;
                 float y0 = -SIZE + segmentLength * row;
                 float x1 = x0 + segmentLength;
@@ -511,7 +477,7 @@ public class CubeSceneObject extends SceneObject {
                 vertices[9] = x1;
                 vertices[10] = y1;
                 vertices[11] = z;
-                
+
                 float s0, s1;
                 if (facingOut) {
                     s0 = col * segmentTexCoordLength;
@@ -522,15 +488,15 @@ public class CubeSceneObject extends SceneObject {
                 }
                 float t0 = 1.0f - (row + 1) * segmentTexCoordLength;
                 float t1 = 1.0f - row * segmentTexCoordLength;
-                texCoords[0] = s0; 
-                texCoords[1] = t1; 
-                texCoords[2] = s1; 
-                texCoords[3] = t1; 
-                texCoords[4] = s0; 
-                texCoords[5] = t0; 
-                texCoords[6] = s1; 
+                texCoords[0] = s0;
+                texCoords[1] = t1;
+                texCoords[2] = s1;
+                texCoords[3] = t1;
+                texCoords[4] = s0;
+                texCoords[5] = t0;
+                texCoords[6] = s1;
                 texCoords[7] = t0;
-                
+
                 subMeshes[index] = new Mesh(vrContext);
                 subMeshes[index].setVertices(vertices);
                 subMeshes[index].setNormals(normals);
@@ -551,11 +517,11 @@ public class CubeSceneObject extends SceneObject {
         }
         normals[1] = normals[4] = normals[7] = normals[10] = 0.0f;
         normals[2] = normals[5] = normals[8] = normals[11] = 0.0f;
-        for (int col = 0; col<segmentNumber; col++) {
-            for (int row = 0; row<segmentNumber; row++) {
+        for (int col = 0; col < segmentNumber; col++) {
+            for (int row = 0; row < segmentNumber; row++) {
                 // sub-mesh (col, row)
-                int index = row*segmentNumber+col;
-                
+                int index = row * segmentNumber + col;
+
                 float x = SIZE;
                 float y0 = -SIZE + segmentLength * row;
                 float z0 = SIZE - segmentLength * col;
@@ -573,7 +539,7 @@ public class CubeSceneObject extends SceneObject {
                 vertices[9] = x;
                 vertices[10] = y1;
                 vertices[11] = z1;
-                
+
                 float s0, s1;
                 if (facingOut) {
                     s0 = col * segmentTexCoordLength;
@@ -584,15 +550,15 @@ public class CubeSceneObject extends SceneObject {
                 }
                 float t0 = 1.0f - (row + 1) * segmentTexCoordLength;
                 float t1 = 1.0f - row * segmentTexCoordLength;
-                texCoords[0] = s0; 
-                texCoords[1] = t1; 
-                texCoords[2] = s1; 
-                texCoords[3] = t1; 
-                texCoords[4] = s0; 
-                texCoords[5] = t0; 
-                texCoords[6] = s1; 
+                texCoords[0] = s0;
+                texCoords[1] = t1;
+                texCoords[2] = s1;
+                texCoords[3] = t1;
+                texCoords[4] = s0;
+                texCoords[5] = t0;
+                texCoords[6] = s1;
                 texCoords[7] = t0;
-                
+
                 subMeshes[index] = new Mesh(vrContext);
                 subMeshes[index].setVertices(vertices);
                 subMeshes[index].setNormals(normals);
@@ -613,11 +579,11 @@ public class CubeSceneObject extends SceneObject {
         } else {
             normals[2] = normals[5] = normals[8] = normals[11] = 1.0f;
         }
-        for (int col = 0; col<segmentNumber; col++) {
-            for (int row = 0; row<segmentNumber; row++) {
+        for (int col = 0; col < segmentNumber; col++) {
+            for (int row = 0; row < segmentNumber; row++) {
                 // sub-mesh (col, row)
-                int index = row*segmentNumber+col;
-                
+                int index = row * segmentNumber + col;
+
                 float x0 = SIZE - segmentLength * col;
                 float y0 = -SIZE + segmentLength * row;
                 float x1 = x0 - segmentLength;
@@ -635,7 +601,7 @@ public class CubeSceneObject extends SceneObject {
                 vertices[9] = x1;
                 vertices[10] = y1;
                 vertices[11] = z;
-                
+
                 float s0, s1;
                 if (facingOut) {
                     s0 = col * segmentTexCoordLength;
@@ -646,15 +612,15 @@ public class CubeSceneObject extends SceneObject {
                 }
                 float t0 = 1.0f - (row + 1) * segmentTexCoordLength;
                 float t1 = 1.0f - row * segmentTexCoordLength;
-                texCoords[0] = s0; 
-                texCoords[1] = t1; 
-                texCoords[2] = s1; 
-                texCoords[3] = t1; 
-                texCoords[4] = s0; 
-                texCoords[5] = t0; 
-                texCoords[6] = s1; 
+                texCoords[0] = s0;
+                texCoords[1] = t1;
+                texCoords[2] = s1;
+                texCoords[3] = t1;
+                texCoords[4] = s0;
+                texCoords[5] = t0;
+                texCoords[6] = s1;
                 texCoords[7] = t0;
-                
+
                 subMeshes[index] = new Mesh(vrContext);
                 subMeshes[index].setVertices(vertices);
                 subMeshes[index].setNormals(normals);
@@ -675,11 +641,11 @@ public class CubeSceneObject extends SceneObject {
         }
         normals[1] = normals[4] = normals[7] = normals[10] = 0.0f;
         normals[2] = normals[5] = normals[8] = normals[11] = 0.0f;
-        for (int col = 0; col<segmentNumber; col++) {
-            for (int row = 0; row<segmentNumber; row++) {
+        for (int col = 0; col < segmentNumber; col++) {
+            for (int row = 0; row < segmentNumber; row++) {
                 // sub-mesh (col, row)
-                int index = row*segmentNumber+col;
-                
+                int index = row * segmentNumber + col;
+
                 float x = -SIZE;
                 float y0 = -SIZE + segmentLength * row;
                 float z0 = -SIZE + segmentLength * col;
@@ -697,7 +663,7 @@ public class CubeSceneObject extends SceneObject {
                 vertices[9] = x;
                 vertices[10] = y1;
                 vertices[11] = z1;
-                
+
                 float s0, s1;
                 if (facingOut) {
                     s0 = col * segmentTexCoordLength;
@@ -708,15 +674,15 @@ public class CubeSceneObject extends SceneObject {
                 }
                 float t0 = 1.0f - (row + 1) * segmentTexCoordLength;
                 float t1 = 1.0f - row * segmentTexCoordLength;
-                texCoords[0] = s0; 
-                texCoords[1] = t1; 
-                texCoords[2] = s1; 
-                texCoords[3] = t1; 
-                texCoords[4] = s0; 
-                texCoords[5] = t0; 
-                texCoords[6] = s1; 
+                texCoords[0] = s0;
+                texCoords[1] = t1;
+                texCoords[2] = s1;
+                texCoords[3] = t1;
+                texCoords[4] = s0;
+                texCoords[5] = t0;
+                texCoords[6] = s1;
                 texCoords[7] = t0;
-                
+
                 subMeshes[index] = new Mesh(vrContext);
                 subMeshes[index].setVertices(vertices);
                 subMeshes[index].setNormals(normals);
@@ -737,11 +703,11 @@ public class CubeSceneObject extends SceneObject {
             normals[1] = normals[4] = normals[7] = normals[10] = -1.0f;
         }
         normals[2] = normals[5] = normals[8] = normals[11] = 0.0f;
-        for (int col = 0; col<segmentNumber; col++) {
-            for (int row = 0; row<segmentNumber; row++) {
+        for (int col = 0; col < segmentNumber; col++) {
+            for (int row = 0; row < segmentNumber; row++) {
                 // sub-mesh (col, row)
-                int index = row*segmentNumber+col;
-                
+                int index = row * segmentNumber + col;
+
                 float y = SIZE;
                 float x0 = -SIZE + segmentLength * col;
                 float z0 = SIZE - segmentLength * row;
@@ -759,21 +725,21 @@ public class CubeSceneObject extends SceneObject {
                 vertices[9] = x1;
                 vertices[10] = y;
                 vertices[11] = z1;
-                
+
                 float s0, s1;
                 s0 = col * segmentTexCoordLength;
                 s1 = (col + 1) * segmentTexCoordLength;
                 float t0 = (row + 1) * segmentTexCoordLength;
                 float t1 = row * segmentTexCoordLength;
-                texCoords[0] = s0; 
-                texCoords[1] = t1; 
-                texCoords[2] = s1; 
-                texCoords[3] = t1; 
-                texCoords[4] = s0; 
-                texCoords[5] = t0; 
-                texCoords[6] = s1; 
+                texCoords[0] = s0;
+                texCoords[1] = t1;
+                texCoords[2] = s1;
+                texCoords[3] = t1;
+                texCoords[4] = s0;
+                texCoords[5] = t0;
+                texCoords[6] = s1;
                 texCoords[7] = t0;
-                
+
                 subMeshes[index] = new Mesh(vrContext);
                 subMeshes[index].setVertices(vertices);
                 subMeshes[index].setNormals(normals);
@@ -794,11 +760,11 @@ public class CubeSceneObject extends SceneObject {
             normals[1] = normals[4] = normals[7] = normals[10] = 1.0f;
         }
         normals[2] = normals[5] = normals[8] = normals[11] = 0.0f;
-        for (int col = 0; col<segmentNumber; col++) {
-            for (int row = 0; row<segmentNumber; row++) {
+        for (int col = 0; col < segmentNumber; col++) {
+            for (int row = 0; row < segmentNumber; row++) {
                 // sub-mesh (col, row)
-                int index = row*segmentNumber+col;
-                
+                int index = row * segmentNumber + col;
+
                 float y = -SIZE;
                 float x0 = -SIZE + segmentLength * col;
                 float z0 = -SIZE + segmentLength * row;
@@ -816,21 +782,21 @@ public class CubeSceneObject extends SceneObject {
                 vertices[9] = x1;
                 vertices[10] = y;
                 vertices[11] = z1;
-                
+
                 float s0, s1;
                 s0 = col * segmentTexCoordLength;
                 s1 = (col + 1) * segmentTexCoordLength;
                 float t0 = 1.0f - (row + 1) * segmentTexCoordLength;
                 float t1 = 1.0f - row * segmentTexCoordLength;
-                texCoords[0] = s0; 
-                texCoords[1] = t1; 
-                texCoords[2] = s1; 
-                texCoords[3] = t1; 
-                texCoords[4] = s0; 
-                texCoords[5] = t0; 
-                texCoords[6] = s1; 
+                texCoords[0] = s0;
+                texCoords[1] = t1;
+                texCoords[2] = s1;
+                texCoords[3] = t1;
+                texCoords[4] = s0;
+                texCoords[5] = t0;
+                texCoords[6] = s1;
                 texCoords[7] = t0;
-                
+
                 subMeshes[index] = new Mesh(vrContext);
                 subMeshes[index].setVertices(vertices);
                 subMeshes[index].setNormals(normals);

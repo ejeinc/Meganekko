@@ -44,7 +44,7 @@ import java.util.Set;
 
 /**
  * Enumerates the types of geometric primitives supported by Assimp.
- * <p>
+ * <p/>
  */
 public enum AiPrimitiveType {
     /**
@@ -64,8 +64,8 @@ public enum AiPrimitiveType {
 
     /**
      * A higher-level polygon with more than 3 edges.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * A triangle is a polygon, but polygon in this context means
      * "all polygons that are not triangles". The "Triangulate"-Step is provided
      * for your convenience, it splits all polygons in triangles (which are much
@@ -74,17 +74,29 @@ public enum AiPrimitiveType {
     POLYGON(0x8);
 
     /**
+     * The mapped c/c++ integer enum value.
+     */
+    private final int m_rawValue;
+
+    /**
+     * Constructor.
+     *
+     * @param rawValue maps java enum to c/c++ integer enum values
+     */
+    private AiPrimitiveType(int rawValue) {
+        m_rawValue = rawValue;
+    }
+
+    /**
      * Utility method for converting from c/c++ based integer enums to java
      * enums.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * This method is intended to be used from JNI and my change based on
      * implementation needs.
-     * 
-     * @param set
-     *            the target set to fill
-     * @param rawValue
-     *            an integer based enum value (as defined by assimp)
+     *
+     * @param set      the target set to fill
+     * @param rawValue an integer based enum value (as defined by assimp)
      */
     static void fromRawValue(Set<AiPrimitiveType> set, int rawValue) {
 
@@ -94,19 +106,4 @@ public enum AiPrimitiveType {
             }
         }
     }
-
-    /**
-     * Constructor.
-     * 
-     * @param rawValue
-     *            maps java enum to c/c++ integer enum values
-     */
-    private AiPrimitiveType(int rawValue) {
-        m_rawValue = rawValue;
-    }
-
-    /**
-     * The mapped c/c++ integer enum value.
-     */
-    private final int m_rawValue;
 }

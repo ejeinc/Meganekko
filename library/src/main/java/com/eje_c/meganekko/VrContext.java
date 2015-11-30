@@ -60,16 +60,6 @@ import java.util.concurrent.Future;
  * {@linkplain #loadTexture(AndroidResource) GL textures.}
  */
 public class VrContext {
-    private static final String TAG = Log.tag(VrContext.class);
-
-    private final MeganekkoActivity mContext;
-
-    /*
-     * Fields and constants
-     */
-
-    // Priorities constants, for asynchronous loading
-
     /**
      * Meganekko can't use every {@code int} as a priority - it needs some
      * sentinel values. It will probably never need anywhere near this many, but
@@ -79,7 +69,6 @@ public class VrContext {
      * change app behavior in subtle ways that seem best avoided.
      */
     public static final int RESERVED_PRIORITIES = 1024;
-
     /**
      * Meganekko can't use every {@code int} as a priority - it needs some
      * sentinel values. A simple approach to generating priorities is to score
@@ -89,6 +78,11 @@ public class VrContext {
     public static final int LOWEST_PRIORITY = Integer.MIN_VALUE
             + RESERVED_PRIORITIES;
 
+    /*
+     * Fields and constants
+     */
+
+    // Priorities constants, for asynchronous loading
     /**
      * Meganekko can't use every {@code int} as a priority - it needs some
      * sentinel values. A simple approach to generating priorities is to score
@@ -96,35 +90,35 @@ public class VrContext {
      * {@link #LOWEST_PRIORITY} to {@link #HIGHEST_PRIORITY}.
      */
     public static final int HIGHEST_PRIORITY = Integer.MAX_VALUE;
-
     /**
      * The priority used by
      * {@link #loadBitmapTexture(AndroidResource.BitmapTextureCallback, AndroidResource)}
      * and {@link #loadMesh(AndroidResource.MeshCallback, AndroidResource)}
      */
     public static final int DEFAULT_PRIORITY = 0;
-
-    /**
-     * The ID of the GLthread. We use this ID to prevent non-GL thread from
-     * calling GL functions.
-     */
-    protected long mGLThreadID;
-
+    private static final String TAG = Log.tag(VrContext.class);
+    private final static ResourceCache<Mesh> sMeshCache = new ResourceCache<Mesh>();
+    private final static ResourceCache<Texture> sTextureCache = new ResourceCache<Texture>();
+    private static final List<Runnable> sHandlers = new ArrayList<Runnable>();
     /**
      * The default texture parameter instance for overloading texture methods
      */
     public final TextureParameters DEFAULT_TEXTURE_PARAMETERS = new TextureParameters(
             this);
-
-    // true or false based on the support for anisotropy
-    public boolean isAnisotropicSupported;
-
-    // Max anisotropic value if supported and -1 otherwise
-    public int maxAnisotropicValue = -1;
+    private final MeganekkoActivity mContext;
 
     /*
      * Methods
      */
+    // true or false based on the support for anisotropy
+    public boolean isAnisotropicSupported;
+    // Max anisotropic value if supported and -1 otherwise
+    public int maxAnisotropicValue = -1;
+    /**
+     * The ID of the GLthread. We use this ID to prevent non-GL thread from
+     * calling GL functions.
+     */
+    protected long mGLThreadID;
 
     VrContext(MeganekkoActivity context) {
         mContext = context;
@@ -133,6 +127,63 @@ public class VrContext {
         resetOnRestart();
 
         AsynchronousResourceLoader.setup(this);
+    }
+
+    /**
+     * Register a method that is called every time Meganekko creates a new
+     * {@link VrContext}.
+     * <p/>
+     * Android apps aren't mapped 1:1 to Linux processes; the system may keep a
+     * process loaded even after normal complete shutdown, and call Android
+     * lifecycle methods to reinitialize it. This causes problems for (in
+     * particular) lazy-created singletons that are tied to a particular
+     * {@code VRContext}. This method lets you register a handler that will be
+     * called on restart, which can reset your {@code static} variables to the
+     * compiled-in start state.
+     * <p/>
+     * <p/>
+     * For example,
+     * <p/>
+     * <pre>
+     *
+     * static YourSingletonClass sInstance;
+     *
+     * static {
+     *     VRContext.addResetOnRestartHandler(new Runnable() {
+     *
+     *         &#064;Override
+     *         public void run() {
+     *             sInstance = null;
+     *         }
+     *     });
+     * }
+     *
+     * </pre>
+     * <p/>
+     * <p/>
+     * Meganekko will force an Android garbage collection after running any
+     * handlers, which will free any remaining native objects from the previous
+     * run.
+     *
+     * @param handler Callback to run on restart.
+     */
+    public synchronized static void addResetOnRestartHandler(Runnable handler) {
+        sHandlers.add(handler);
+    }
+
+    protected synchronized static void resetOnRestart() {
+        for (Runnable handler : sHandlers) {
+            Log.d(TAG, "Running on-restart handler %s", handler);
+            handler.run();
+        }
+
+        // We've probably just nulled-out a bunch of references, but many Meganekko
+        // apps do relatively little Java memory allocation, so it may actually
+        // be a longish while before the recyclable references go stale.
+        System.gc();
+
+        // We do NOT want to clear sHandlers - the static initializers won't be
+        // run again, even if the new run does recreate singletons.
     }
 
     /**
@@ -209,8 +260,6 @@ public class VrContext {
         }
         return mesh;
     }
-
-    private final static ResourceCache<Mesh> sMeshCache = new ResourceCache<Mesh>();
 
     /**
      * Loads a mesh file, asynchronously, at a default priority.
@@ -1007,8 +1056,6 @@ public class VrContext {
         }
         return texture;
     }
-
-    private final static ResourceCache<Texture> sTextureCache = new ResourceCache<Texture>();
 
     /**
      * Loads a cube map texture synchronously.
@@ -1861,65 +1908,6 @@ public class VrContext {
     public PeriodicEngine getPeriodicEngine() {
         return PeriodicEngine.getInstance(this);
     }
-
-    /**
-     * Register a method that is called every time Meganekko creates a new
-     * {@link VrContext}.
-     * <p/>
-     * Android apps aren't mapped 1:1 to Linux processes; the system may keep a
-     * process loaded even after normal complete shutdown, and call Android
-     * lifecycle methods to reinitialize it. This causes problems for (in
-     * particular) lazy-created singletons that are tied to a particular
-     * {@code VRContext}. This method lets you register a handler that will be
-     * called on restart, which can reset your {@code static} variables to the
-     * compiled-in start state.
-     * <p/>
-     * <p/>
-     * For example,
-     * <p/>
-     * <pre>
-     *
-     * static YourSingletonClass sInstance;
-     *
-     * static {
-     *     VRContext.addResetOnRestartHandler(new Runnable() {
-     *
-     *         &#064;Override
-     *         public void run() {
-     *             sInstance = null;
-     *         }
-     *     });
-     * }
-     *
-     * </pre>
-     * <p/>
-     * <p/>
-     * Meganekko will force an Android garbage collection after running any
-     * handlers, which will free any remaining native objects from the previous
-     * run.
-     *
-     * @param handler Callback to run on restart.
-     */
-    public synchronized static void addResetOnRestartHandler(Runnable handler) {
-        sHandlers.add(handler);
-    }
-
-    protected synchronized static void resetOnRestart() {
-        for (Runnable handler : sHandlers) {
-            Log.d(TAG, "Running on-restart handler %s", handler);
-            handler.run();
-        }
-
-        // We've probably just nulled-out a bunch of references, but many Meganekko
-        // apps do relatively little Java memory allocation, so it may actually
-        // be a longish while before the recyclable references go stale.
-        System.gc();
-
-        // We do NOT want to clear sHandlers - the static initializers won't be
-        // run again, even if the new run does recreate singletons.
-    }
-
-    private static final List<Runnable> sHandlers = new ArrayList<Runnable>();
 
     /**
      * Called when the surface changed size. When

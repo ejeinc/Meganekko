@@ -21,7 +21,6 @@ import java.io.InputStream;
 /**
  * The API shared by {@link MaterialShaderManager} and
  * {@link GVRPostEffectShaderManager}.
- * 
  * <p>
  * <table border="1">
  * <tr>
@@ -38,49 +37,45 @@ import java.io.InputStream;
  * </tr>
  * </table>
  * </p>
- * 
- * @param <MAP>
- *            The name mapping object, {@link MaterialMap} or
- *            {@link GVRPostEffectMap}.
- * @param <ID>
- *            The opaque types {@link CustomMaterialShaderId} and
- *            {@link GVRCustomPostEffectShaderId} that keep the 'object' and
- *            'scene' shader's namespaces separate, and eliminate the
- *            possibility that you could use an object shader id where you mean
- *            to use a scene shader id, and vice versa. You can pass an
- *            {@code ID} instance to {@link #getShaderMap(Object)
- *            getShaderMap(ID)}; additionally
- *            <ul>
- *            <li>You can pass an object shader {@code ID} to
- *            {@link Material#GVRMaterial(GVRContext, GVRMaterialShaderId)}
- *            or {@link Material#setShaderType(GVRMaterialShaderId)}.
- * 
- *            <li>You can pass an scene shader {@code ID} to
- *            {@link GVRPostEffect#GVRPostEffect(GVRContext, GVRPostEffectShaderId)}
- *            or {@link GVRPostEffect#setShaderType(GVRPostEffectShaderId)}.
- * 
- *            </ul>
+ *
+ * @param <MAP> The name mapping object, {@link MaterialMap} or
+ *              {@link GVRPostEffectMap}.
+ * @param <ID>  The opaque types {@link CustomMaterialShaderId} and
+ *              {@link GVRCustomPostEffectShaderId} that keep the 'object' and
+ *              'scene' shader's namespaces separate, and eliminate the
+ *              possibility that you could use an object shader id where you mean
+ *              to use a scene shader id, and vice versa. You can pass an
+ *              {@code ID} instance to {@link #getShaderMap(Object)
+ *              getShaderMap(ID)}; additionally
+ *              <ul>
+ *              <li>You can pass an object shader {@code ID} to
+ *              {@link Material#GVRMaterial(GVRContext, GVRMaterialShaderId)}
+ *              or {@link Material#setShaderType(GVRMaterialShaderId)}.
+ *              <p/>
+ *              <li>You can pass an scene shader {@code ID} to
+ *              {@link GVRPostEffect#GVRPostEffect(GVRContext, GVRPostEffectShaderId)}
+ *              or {@link GVRPostEffect#setShaderType(GVRPostEffectShaderId)}.
+ *              <p/>
+ *              </ul>
  */
 public interface ShaderManagers<MAP, ID> {
 
     /**
      * Builds a shader program from the supplied vertex and fragment shader
      * code.
-     * 
-     * @param vertexShader
-     *            GLSL source code for a vertex shader.
-     * @param fragmentShader
-     *            GLSL source code for a fragment shader.
+     *
+     * @param vertexShader   GLSL source code for a vertex shader.
+     * @param fragmentShader GLSL source code for a fragment shader.
      * @return An opaque type that you can pass to {@link #getShaderMap(Object)
-     *         getShaderMap(ID)}, or to the {@link Material} and
-     *         {@link GVRPostEffect} constructors and {@code setShader} methods.
+     * getShaderMap(ID)}, or to the {@link Material} and
+     * {@link GVRPostEffect} constructors and {@code setShader} methods.
      */
     public ID addShader(String vertexShader, String fragmentShader);
 
     /**
      * Builds a shader program from the supplied vertex and fragment shader
      * code.
-     * 
+     * <p/>
      * The main point of this API is 'discovery,' where you scan the asset
      * directory (or, more typically, some particular subdirectory) looking for
      * shader pairs that you didn't know about at compile time. Secondarily,
@@ -91,38 +86,35 @@ public interface ShaderManagers<MAP, ID> {
      * points applies to you, you should use {@code res/raw} and the
      * {@link #addShader(int, int)} overload, as that presents no dangers of
      * {@link FileNotFoundException file not found exceptions}.
-     * 
-     * @param pathPrefix
-     *            Optional (may be {@code null}) prefix for shader filenames. If
-     *            present, will be prepended to {@code vertexShader} and
-     *            {@code fragmentShader}, thus allowing you to build a tree of
-     *            shaders in your assets directory, where each node contains
-     *            vertex and fragment shaders with the same filename. If
-     *            {@code null}, {@code vertexShader} and {@code fragmentShader}
-     *            are the path names of files in the assets directory.
-     * 
-     *            <p>
-     *            To be clear: the path names can contain '/' characters,
-     *            whether or not {@code pathPrefix} is {@code null}.
-     * 
-     *            <pre>
-     * 
-     * pathPrefix = "foo"; fragmentShader = "bar/fragment.fsh"
-     * // Asset-relative name is "foo/bar/fragment.fsh" 
-     * 
-     * pathPrefix = null; fragmentShader = "bar/fragment.fsh"
-     * // Asset-relative name is "bar/fragment.fsh"
-     * </pre>
-     * @param vertexShader_asset
-     *            Filename of a vertex shader, relative to the assets directory
-     * @param fragmentShader_asset
-     *            Filename of a fragment shader, relative to the assets
-     *            directory
+     *
+     * @param pathPrefix           Optional (may be {@code null}) prefix for shader filenames. If
+     *                             present, will be prepended to {@code vertexShader} and
+     *                             {@code fragmentShader}, thus allowing you to build a tree of
+     *                             shaders in your assets directory, where each node contains
+     *                             vertex and fragment shaders with the same filename. If
+     *                             {@code null}, {@code vertexShader} and {@code fragmentShader}
+     *                             are the path names of files in the assets directory.
+     *                             <p/>
+     *                             <p/>
+     *                             To be clear: the path names can contain '/' characters,
+     *                             whether or not {@code pathPrefix} is {@code null}.
+     *                             <p/>
+     *                             <pre>
+     *
+     *                                                         pathPrefix = "foo"; fragmentShader = "bar/fragment.fsh"
+     *                                                         // Asset-relative name is "foo/bar/fragment.fsh"
+     *
+     *                                                         pathPrefix = null; fragmentShader = "bar/fragment.fsh"
+     *                                                         // Asset-relative name is "bar/fragment.fsh"
+     *                                                         </pre>
+     * @param vertexShader_asset   Filename of a vertex shader, relative to the assets directory
+     * @param fragmentShader_asset Filename of a fragment shader, relative to the assets
+     *                             directory
      * @return An opaque type that you can pass to {@link #getShaderMap(Object)
-     *         getShaderMap(ID)}, or to the {@link Material} and
-     *         {@link GVRPostEffect} constructors and {@code setShader} methods
-     *         ... or {@code null} on any exception, which typically would mean
-     *         that one or both of the files does not exist or is not readable.
+     * getShaderMap(ID)}, or to the {@link Material} and
+     * {@link GVRPostEffect} constructors and {@code setShader} methods
+     * ... or {@code null} on any exception, which typically would mean
+     * that one or both of the files does not exist or is not readable.
      */
     /*
      * Realistically, the pathPrefix is mostly here to distinguish this from the
@@ -130,54 +122,49 @@ public interface ShaderManagers<MAP, ID> {
      * worthless.
      */
     public ID addShader(String pathPrefix, String vertexShader_asset,
-            String fragmentShader_asset);
+                        String fragmentShader_asset);
 
     /**
      * Builds a shader program from the supplied vertex and fragment shader
      * code.
-     * 
+     * <p/>
      * If you are not doing 'discovery' (scanning the asset directory for shader
      * pairs that you don't know about at compile time) this API is preferable
      * to {@link #addShader(String, String, String)}, as Android tools can
      * guarantee that the res/raw file exists.
-     * 
-     * @param vertexShader_resRaw
-     *            R.raw id, for a file containing a vertex shader
-     * @param fragmentShader_resRaw
-     *            R.raw id, for a file containing a fragment shader
+     *
+     * @param vertexShader_resRaw   R.raw id, for a file containing a vertex shader
+     * @param fragmentShader_resRaw R.raw id, for a file containing a fragment shader
      * @return An opaque type that you can pass to {@link #getShaderMap(Object)
-     *         getShaderMap(ID)}, or to the {@link Material} and
-     *         {@link GVRPostEffect} constructors and {@code setShader} methods.
+     * getShaderMap(ID)}, or to the {@link Material} and
+     * {@link GVRPostEffect} constructors and {@code setShader} methods.
      */
     public ID addShader(int vertexShader_resRaw, int fragmentShader_resRaw);
 
     /**
      * Builds a shader program from the supplied vertex and fragment shader
      * code.
-     * 
+     * <p/>
      * This overload is used inside of {@link #addShader(int, int)} and
      * {@link #addShader(String, String)}. It may not be incredibly useful to
      * application code, but has been exposed because there's no real reason to
      * keep it hidden.
-     * 
-     * @param vertexShader_stream
-     *            GLSL source code for a vertex shader. Stream will be closed
-     *            when method returns.
-     * @param fragmentShader_stream
-     *            GLSL source code for a fragment shader. Stream will be closed
-     *            when method returns.
+     *
+     * @param vertexShader_stream   GLSL source code for a vertex shader. Stream will be closed
+     *                              when method returns.
+     * @param fragmentShader_stream GLSL source code for a fragment shader. Stream will be closed
+     *                              when method returns.
      * @return An opaque type that you can pass to {@link #getShaderMap(Object)
-     *         getShaderMap(ID)}, or to the {@link Material} and
-     *         {@link GVRPostEffect} constructors and {@code setShader} methods.
+     * getShaderMap(ID)}, or to the {@link Material} and
+     * {@link GVRPostEffect} constructors and {@code setShader} methods.
      */
     public ID addShader(InputStream vertexShader_stream,
-            InputStream fragmentShader_stream);
+                        InputStream fragmentShader_stream);
 
     /**
      * Get a name mapping object for the custom shader program.
-     * 
-     * @param id
-     *            Opaque type from {@link #addShader(String, String)}
+     *
+     * @param id Opaque type from {@link #addShader(String, String)}
      * @return A name mapping object
      */
     public MAP getShaderMap(ID id);

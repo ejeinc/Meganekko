@@ -15,12 +15,14 @@
 
 package com.eje_c.meganekko.animation;
 
-/** The three supported repeat modes. */
+/**
+ * The three supported repeat modes.
+ */
 @Deprecated
 public abstract class RepeatMode {
     /**
      * Run once.
-     * 
+     * <p/>
      * This is the default: {@link Animation#setRepeatMode(int)
      * setRepeatMode()} lets you specify either of the alternatives. Run-once
      * will leave the animated property in the 'new' state, which is normally
@@ -29,7 +31,7 @@ public abstract class RepeatMode {
     public static final int ONCE = 0;
     /**
      * Run repeatedly: start to finish; start to finish; and so on.
-     * 
+     * <p/>
      * This will leave the animated property in the 'start' state. In some
      * cases, this will be visually jarring; in others (like when you are doing
      * a full 360 degree rotation) this will be exactly what you want.
@@ -38,7 +40,7 @@ public abstract class RepeatMode {
     /**
      * Run repeatedly: start to finish, finish to start; start to finish, finish
      * to start; and so on.
-     * 
+     * <p/>
      * This is perfect for 'wiggle' or grow-shrink animations. Note that an odd
      * {@linkplain Animation#setRepeatCount(int) repeat count} will leave the
      * animated property in the 'new' state, just like {@linkplain #ONCE
@@ -51,12 +53,12 @@ public abstract class RepeatMode {
 
     static boolean invalidRepeatMode(int typeCode) {
         switch (typeCode) {
-        case ONCE:
-        case REPEATED:
-        case PINGPONG:
-            return false;
-        default:
-            return true;
+            case ONCE:
+            case REPEATED:
+            case PINGPONG:
+                return false;
+            default:
+                return true;
         }
     }
 }

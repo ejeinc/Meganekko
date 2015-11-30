@@ -15,21 +15,29 @@
 
 package com.eje_c.meganekko.asynchronous;
 
-import static android.opengl.GLES20.*;
-import static com.eje_c.meganekko.utility.Threads.*;
-
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
+import android.graphics.BitmapRegionDecoder;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.view.Display;
+import android.view.WindowManager;
 
 import com.eje_c.meganekko.AndroidResource;
-import com.eje_c.meganekko.BitmapTexture;
-import com.eje_c.meganekko.VrContext;
-import com.eje_c.meganekko.HybridObject;
-import com.eje_c.meganekko.Texture;
 import com.eje_c.meganekko.AndroidResource.BitmapTextureCallback;
 import com.eje_c.meganekko.AndroidResource.CancelableCallback;
+import com.eje_c.meganekko.BitmapTexture;
+import com.eje_c.meganekko.HybridObject;
+import com.eje_c.meganekko.Texture;
+import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.asynchronous.Throttler.AsyncLoader;
 import com.eje_c.meganekko.asynchronous.Throttler.AsyncLoaderFactory;
 import com.eje_c.meganekko.asynchronous.Throttler.GlConverter;
@@ -38,19 +46,21 @@ import com.eje_c.meganekko.utility.Log;
 import com.eje_c.meganekko.utility.RecycleBin;
 import com.eje_c.meganekko.utility.Threads;
 
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.Context;
-import android.graphics.*;
-import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory.Options;
-import android.view.Display;
-import android.view.WindowManager;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import static android.opengl.GLES20.GL_MAX_TEXTURE_SIZE;
+import static android.opengl.GLES20.GL_NO_ERROR;
+import static android.opengl.GLES20.glGetError;
+import static android.opengl.GLES20.glGetIntegerv;
+import static com.eje_c.meganekko.utility.Threads.threadId;
 
 /**
  * Async resource loading: bitmap textures.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * Should always call either {@link #setup(Context)} or
  * {@link #setup(Context, ImageSizePolicy)} before first use; the default
  * settings are very conservative, and will usually give much smaller textures
@@ -62,71 +72,87 @@ abstract class AsyncBitmapTexture {
      * The API
      */
 
-    static void loadTexture(VrContext vrContext,
-            BitmapTextureCallback callback, AndroidResource resource,
-            int priority) {
-        Throttler.registerCallback(vrContext, TEXTURE_CLASS, callback,
-                resource, priority);
-    }
-
-    static void loadTexture(VrContext vrContext,
-            CancelableCallback<Texture> callback,
-            AndroidResource resource, int priority) {
-        Throttler.registerCallback(vrContext, TEXTURE_CLASS, callback,
-                resource, priority);
-    }
+    /**
+     * Ridiculous amounts of detail about decodeFile()
+     */
+    protected static final boolean VERBOSE_DECODE = false;
+    protected static final boolean RUNTIME_ASSERTIONS = Threads.RUNTIME_ASSERTIONS;
 
     /*
      * Static constants
      */
-
-    private static final String TAG = Log.tag(AsyncBitmapTexture.class);
-
-    private static final Class<? extends HybridObject> TEXTURE_CLASS = Texture.class;
-
-    /** Ridiculous amounts of detail about decodeFile() */
-    protected static final boolean VERBOSE_DECODE = false;
-
-    private static final int DECODE_BUFFER_SIZE = 1024 * 16;
-
-    protected static final boolean RUNTIME_ASSERTIONS = Threads.RUNTIME_ASSERTIONS;
     protected static final boolean CHECK_ARGUMENTS = Threads.RUNTIME_ASSERTIONS;
-
-    /** A very low value, for testing */
-    private static final int DEFAULT_GL_MAX_TEXTURE_SIZE = 1024;
-
+    private static final String TAG = Log.tag(AsyncBitmapTexture.class);
+    private static final Class<? extends HybridObject> TEXTURE_CLASS = Texture.class;
+    private static final int DECODE_BUFFER_SIZE = 1024 * 16;
     /**
-     * Can only load textures whose width and height are both less than
-     * {@link #glMaxTextureSize}. The default value is almost certainly too
-     * small; the actual value is set by {@link #onGlInitialization()}
+     * A very low value, for testing
      */
-    static int glMaxTextureSize = DEFAULT_GL_MAX_TEXTURE_SIZE;
-
+    private static final int DEFAULT_GL_MAX_TEXTURE_SIZE = 1024;
     /**
      * Largest image that we will load into memory.
-     * 
+     * <p/>
      * A multiple of the "memory class" - <i>e.g.</i> 7.5% of a 32M heap is a
      * 2.4M image; 6% is 1.92M
      */
     private static final float MAXIMUM_IMAGE_FACTOR = 0.125f;
-
     /**
      * When {@link #fractionalDecode(FractionalDecodeShim, Options, int, int)}
      * reads large bitmaps one 'stripe' at a time, this is the maximum number of
      * pixels in a stripe.
      */
     private static final int SLICE_SIZE = 1024 * 1024;
-
-    /*
-     * static field(s) and setup
-     */
-
     /**
      * After {@link #setup(Context)} has been called, the computed maximum image
      * size, in bytes. Compiled in value allows image loading to work (albeit
      * with very conservative default settings) if setup() is not called.
      */
     protected static int maxImageSize = 1024 * 1024; // bytes
+    /**
+     * Can only load textures whose width and height are both less than
+     * {@link #glMaxTextureSize}. The default value is almost certainly too
+     * small; the actual value is set by {@link #onGlInitialization()}
+     */
+    static int glMaxTextureSize = DEFAULT_GL_MAX_TEXTURE_SIZE;
+    private static boolean glUninitialized = true;
+
+    /*
+     * static field(s) and setup
+     */
+    /**
+     * A soft referenced set of <code>byte[DECODE_BUFFER_SIZE]</code> arrays.)
+     */
+    private static RecycleBin<byte[]> bufferBin = RecycleBin.<byte[]>soft()
+            .synchronize();
+
+    static {
+        Throttler.registerDatatype(TEXTURE_CLASS,
+                new AsyncLoaderFactory<Texture, Bitmap>() {
+
+                    @Override
+                    AsyncLoadTextureResource threadProc(VrContext vrContext,
+                                                        AndroidResource request,
+                                                        CancelableCallback<HybridObject> callback,
+                                                        int priority) {
+                        return new AsyncLoadTextureResource(vrContext,
+                                request, callback, priority);
+                    }
+                });
+    }
+
+    static void loadTexture(VrContext vrContext,
+                            BitmapTextureCallback callback, AndroidResource resource,
+                            int priority) {
+        Throttler.registerCallback(vrContext, TEXTURE_CLASS, callback,
+                resource, priority);
+    }
+
+    static void loadTexture(VrContext vrContext,
+                            CancelableCallback<Texture> callback,
+                            AndroidResource resource, int priority) {
+        Throttler.registerCallback(vrContext, TEXTURE_CLASS, callback,
+                resource, priority);
+    }
 
     /**
      * Either {@link #setup(Context)} or
@@ -176,9 +202,8 @@ abstract class AsyncBitmapTexture {
 
     /**
      * Returns screen height and width
-     * 
-     * @param context
-     *            Any non-null Android Context
+     *
+     * @param context Any non-null Android Context
      * @return .x is screen width; .y is screen height.
      */
     private static Point getScreenSize(Context context) {
@@ -187,11 +212,9 @@ abstract class AsyncBitmapTexture {
 
     /**
      * Returns screen height and width
-     * 
-     * @param context
-     *            Any non-null Android Context
-     * @param p
-     *            Optional Point to reuse. If null, a new Point will be created.
+     *
+     * @param context Any non-null Android Context
+     * @param p       Optional Point to reuse. If null, a new Point will be created.
      * @return .x is screen width; .y is screen height.
      */
     private static Point getScreenSize(Context context, Point p) {
@@ -208,13 +231,13 @@ abstract class AsyncBitmapTexture {
     /**
      * This method must be called, on the GL thread, at least once after
      * initialization: it is safe to call it more than once.
-     * 
+     * <p/>
      * Not calling this method leaves {@link #glMaxTextureSize} set to a default
      * value, which may be smaller than necessary.
      */
     private static void onGlInitialization() {
         if (glUninitialized) {
-            int[] size = new int[] { -1 };
+            int[] size = new int[]{-1};
             glGetIntegerv(GL_MAX_TEXTURE_SIZE, size, 0);
 
             int errorCode = glGetError();
@@ -236,101 +259,8 @@ abstract class AsyncBitmapTexture {
         }
     }
 
-    private static boolean glUninitialized = true;
-
-    private static class DefaultImageSizePolicy implements ImageSizePolicy {
-
-        @Override
-        public float getMaximumImageFactor() {
-            return MAXIMUM_IMAGE_FACTOR;
-        }
-    }
-
-    private static class Memory {
-        private static final String TAG = Log.tag(Memory.class);
-
-        private static int memoryClass = 0;
-
-        /**
-         * Unit tests may create mainActivity several times in the same process.
-         * We don't want to run setup more than once.
-         */
-        private static boolean initialized = false;
-
-        /**
-         * {@link #getMemoryClass()} will not be accurate until you call
-         * {@link #setup(Context)}
-         */
-        static synchronized void setup(Context context) {
-            if (initialized) {
-                return;
-            }
-
-            getMemoryClass(context);
-
-            initialized = true;
-        }
-
-        private static void getMemoryClass(Context context) {
-            ActivityManager activityManager = (ActivityManager) context
-                    .getSystemService(Activity.ACTIVITY_SERVICE);
-            memoryClass = activityManager.getMemoryClass() * 1024 * 1024;
-            Log.d(TAG, "MemoryClass = %dM", memoryClass / (1024 * 1024));
-        }
-
-        /** Heap size, in bytes */
-        static int getMemoryClass() {
-            return memoryClass;
-        }
-    }
-
     /*
      * Asynchronous loader
-     */
-
-    private static class AsyncLoadTextureResource extends
-            AsyncLoader<Texture, Bitmap> {
-
-        private static final GlConverter<Texture, Bitmap> sConverter = new GlConverter<Texture, Bitmap>() {
-
-            @Override
-            public Texture convert(VrContext vrContext, Bitmap bitmap) {
-                return new BitmapTexture(vrContext, bitmap);
-            }
-        };
-
-        protected AsyncLoadTextureResource(VrContext vrContext,
-                AndroidResource request,
-                CancelableCallback<HybridObject> callback, int priority) {
-            super(vrContext, sConverter, request, callback);
-        }
-
-        @Override
-        protected Bitmap loadResource() {
-            Bitmap bitmap = decodeStream(resource.getStream(),
-                    glMaxTextureSize, glMaxTextureSize, true, null, false);
-            resource.closeStream();
-            return bitmap;
-        }
-    }
-
-    static {
-        Throttler.registerDatatype(TEXTURE_CLASS,
-                new AsyncLoaderFactory<Texture, Bitmap>() {
-
-                    @Override
-                    AsyncLoadTextureResource threadProc(VrContext vrContext,
-                            AndroidResource request,
-                            CancelableCallback<HybridObject> callback,
-                            int priority) {
-                        return new AsyncLoadTextureResource(vrContext,
-                                request, callback, priority);
-                    }
-                });
-    }
-
-    /*
-     * decodeStream
      */
 
     /**
@@ -340,40 +270,34 @@ abstract class AsyncBitmapTexture {
      * {@link android.graphics.BitmapFactory.Options} <code>inTempStorage</code>
      * decode buffer. On low memory, returns half (quarter, eighth, ...) size
      * images.
-     * <p>
+     * <p/>
      * If {@code stream} is a {@link FileInputStream} and is at offset 0 (zero),
      * uses
      * {@link android.graphics.BitmapFactory#decodeFileDescriptor(FileDescriptor)
      * BitmapFactory.decodeFileDescriptor()} instead of
      * {@link android.graphics.BitmapFactory#decodeStream(InputStream)
      * BitmapFactory.decodeStream()}.
-     * 
-     * @param stream
-     *            Bitmap stream
-     * @param requestedWidth
-     *            If >= 0, specifies a target width; returned Bitmap will be at
-     *            least this wide (unless we run out of memory) while preserving
-     *            the original aspect ratio. Image may be a good deal wider than
-     *            requestedWidth, as we only shrink by powers of two.
-     * @param requestedHeight
-     *            If >= 0, specifies a target height; returned Bitmap will be at
-     *            least this high (unless we run out of memory) while preserving
-     *            the original aspect ratio. Image may be a good deal taller
-     *            than requestedHeight, as we only shrink by powers of two.
-     * @param canShrink
-     *            On low memory, can we return half (quarter, eighth, ...) size
-     *            image? If false, return null on any OutOfMemoryError
-     * @param possibleAlternative
-     *            We may have a cached copy that's at least as big as the
-     *            largest possible decode: Passing in the cached bitmap (if any)
-     *            allows us to detect this before doing the second decode.
-     * @param closeStream
-     *            If {@code true}, closes {@code stream}
+     *
+     * @param stream              Bitmap stream
+     * @param requestedWidth      If >= 0, specifies a target width; returned Bitmap will be at
+     *                            least this wide (unless we run out of memory) while preserving
+     *                            the original aspect ratio. Image may be a good deal wider than
+     *                            requestedWidth, as we only shrink by powers of two.
+     * @param requestedHeight     If >= 0, specifies a target height; returned Bitmap will be at
+     *                            least this high (unless we run out of memory) while preserving
+     *                            the original aspect ratio. Image may be a good deal taller
+     *                            than requestedHeight, as we only shrink by powers of two.
+     * @param canShrink           On low memory, can we return half (quarter, eighth, ...) size
+     *                            image? If false, return null on any OutOfMemoryError
+     * @param possibleAlternative We may have a cached copy that's at least as big as the
+     *                            largest possible decode: Passing in the cached bitmap (if any)
+     *                            allows us to detect this before doing the second decode.
+     * @param closeStream         If {@code true}, closes {@code stream}
      * @return Bitmap, or null if cannot be decoded into a bitmap
      */
     static Bitmap decodeStream(InputStream stream, int requestedWidth,
-            int requestedHeight, final boolean canShrink,
-            Bitmap possibleAlternative, boolean closeStream) {
+                               int requestedHeight, final boolean canShrink,
+                               Bitmap possibleAlternative, boolean closeStream) {
         BitmapFactory.Options options = standardBitmapFactoryOptions();
 
         try {
@@ -420,12 +344,12 @@ abstract class AsyncBitmapTexture {
     }
 
     private static boolean useAlternativeBitmap(Bitmap possibleAlternative,
-            BitmapFactory.Options options) {
+                                                BitmapFactory.Options options) {
         boolean result = possibleAlternative != null
                 && possibleAlternative.getWidth() >= options.outWidth
-                        / options.inSampleSize
+                / options.inSampleSize
                 && possibleAlternative.getHeight() >= options.outHeight
-                        / options.inSampleSize;
+                / options.inSampleSize;
         if (VERBOSE_DECODE) { // Condition split to silence warning
             if (result) {
                 Log.d(TAG,
@@ -436,6 +360,10 @@ abstract class AsyncBitmapTexture {
         }
         return result;
     }
+
+    /*
+     * decodeStream
+     */
 
     private static Options standardBitmapFactoryOptions() {
         Options options = new Options();
@@ -449,30 +377,8 @@ abstract class AsyncBitmapTexture {
         return options;
     }
 
-    private interface GetBounds {
-        /**
-         * Should just do the decodeX - may assume that
-         * <code>options.inJustDecodeBounds == true;</code>
-         */
-        void getBounds(Options options);
-    }
-
-    private static class GetStreamBounds implements GetBounds {
-
-        private final InputStream stream;
-
-        private GetStreamBounds(InputStream stream) {
-            this.stream = stream;
-        }
-
-        @Override
-        public void getBounds(Options options) {
-            BitmapFactory.decodeStream(stream, null, options);
-        }
-    }
-
     private static void setInSampleSize(Options options, int requestedWidth,
-            int requestedHeight, GetBounds get) {
+                                        int requestedHeight, GetBounds get) {
         try {
             // Get the dimensions
             options.inJustDecodeBounds = true;
@@ -547,46 +453,13 @@ abstract class AsyncBitmapTexture {
         return scale(requestedSize, (int) (outSize + 0.5f));
     }
 
-    private interface DecodeHelper {
-        public void setInSampleSize(BitmapFactory.Options options,
-                int requestedWidth, int requestedHeight) throws IOException;
-
-        public Bitmap decode(BitmapFactory.Options options, int requestedWidth,
-                int requestedHeight) throws IOException;
-
-        public void rewind() throws IOException;
-    }
-
-    /**
-     * Shim that lets
-     * {@link AsyncBitmapTexture#fractionalDecode(FractionalDecodeShim, Options, int, int)}
-     * work with either InputStream or FileDescriptor.
-     */
-    private interface FractionalDecodeShim {
-        /**
-         * We don't need to (or can't) use a {@link BitmapRegionDecoder}: just
-         * call a BitmapFactory decode method directly
-         * 
-         */
-        Bitmap decode(Options options);
-
-        /**
-         * Call the appropriate {@link BitmapRegionDecoder} newInstance()
-         * overload
-         * 
-         * @return A new {@code BitmapRegionDecoder}, or {@code null}
-         *         "if the image format is not supported or can not be decoded."
-         */
-        BitmapRegionDecoder newRegionDecoder();
-    }
-
     /**
      * Use {@link BitmapRegionDecoder} to read the bitmap in smallish slices,
      * and resize each slice so that the target bitmap matches requestedWidth or
      * requestedHeight in at least one dimension.
      */
     private static Bitmap fractionalDecode(FractionalDecodeShim shim,
-            Options options, int requestedWidth, int requestedHeight) {
+                                           Options options, int requestedWidth, int requestedHeight) {
         final int rawWidth = options.outWidth;
         final int rawHeight = options.outHeight;
         final float sampledWidth = (float) rawWidth / options.inSampleSize;
@@ -633,8 +506,8 @@ abstract class AsyncBitmapTexture {
             boolean hasAlpha = false;
             for (int index = 0; index < slices; ++index) {
                 slice = options.inBitmap = //
-                (decoder == null) ? shim.decode(options) : //
-                        decoder.decodeRegion(decode, options);
+                        (decoder == null) ? shim.decode(options) : //
+                                decoder.decodeRegion(decode, options);
 
                 hasAlpha |= slice.hasAlpha();
 
@@ -662,6 +535,152 @@ abstract class AsyncBitmapTexture {
         // The (int) cast rounds towards 0
         // http://docs.oracle.com/javase/specs/jls/se7/html/jls-5.html#jls-5.1.3
         return (int) (f + 1.0 - Float.MIN_VALUE);
+    }
+
+    private interface GetBounds {
+        /**
+         * Should just do the decodeX - may assume that
+         * <code>options.inJustDecodeBounds == true;</code>
+         */
+        void getBounds(Options options);
+    }
+
+    private interface DecodeHelper {
+        public void setInSampleSize(BitmapFactory.Options options,
+                                    int requestedWidth, int requestedHeight) throws IOException;
+
+        public Bitmap decode(BitmapFactory.Options options, int requestedWidth,
+                             int requestedHeight) throws IOException;
+
+        public void rewind() throws IOException;
+    }
+
+    /**
+     * Shim that lets
+     * {@link AsyncBitmapTexture#fractionalDecode(FractionalDecodeShim, Options, int, int)}
+     * work with either InputStream or FileDescriptor.
+     */
+    private interface FractionalDecodeShim {
+        /**
+         * We don't need to (or can't) use a {@link BitmapRegionDecoder}: just
+         * call a BitmapFactory decode method directly
+         */
+        Bitmap decode(Options options);
+
+        /**
+         * Call the appropriate {@link BitmapRegionDecoder} newInstance()
+         * overload
+         *
+         * @return A new {@code BitmapRegionDecoder}, or {@code null}
+         * "if the image format is not supported or can not be decoded."
+         */
+        BitmapRegionDecoder newRegionDecoder();
+    }
+
+    /**
+     * {@link AsyncBitmapTexture#setup(Context)} creates a default version of
+     * this to set the {@link AsyncBitmapTexture#maxImageSize}; call
+     * {@link AsyncBitmapTexture#setup(Context, ImageSizePolicy)} with your own
+     * {@link ImageSizePolicy} to specify a different ratio of heap size to
+     * maximum image size.
+     */
+    interface ImageSizePolicy {
+
+        /**
+         * Largest image that we will load into memory.
+         * <p/>
+         * A multiple of the "memory class" - <i>e.g.</i> 7.5% of a 32M heap is
+         * a 2.4M image; 6% is 1.92M
+         */
+        float getMaximumImageFactor();
+    }
+
+    private static class DefaultImageSizePolicy implements ImageSizePolicy {
+
+        @Override
+        public float getMaximumImageFactor() {
+            return MAXIMUM_IMAGE_FACTOR;
+        }
+    }
+
+    private static class Memory {
+        private static final String TAG = Log.tag(Memory.class);
+
+        private static int memoryClass = 0;
+
+        /**
+         * Unit tests may create mainActivity several times in the same process.
+         * We don't want to run setup more than once.
+         */
+        private static boolean initialized = false;
+
+        /**
+         * {@link #getMemoryClass()} will not be accurate until you call
+         * {@link #setup(Context)}
+         */
+        static synchronized void setup(Context context) {
+            if (initialized) {
+                return;
+            }
+
+            getMemoryClass(context);
+
+            initialized = true;
+        }
+
+        private static void getMemoryClass(Context context) {
+            ActivityManager activityManager = (ActivityManager) context
+                    .getSystemService(Activity.ACTIVITY_SERVICE);
+            memoryClass = activityManager.getMemoryClass() * 1024 * 1024;
+            Log.d(TAG, "MemoryClass = %dM", memoryClass / (1024 * 1024));
+        }
+
+        /**
+         * Heap size, in bytes
+         */
+        static int getMemoryClass() {
+            return memoryClass;
+        }
+    }
+
+    private static class AsyncLoadTextureResource extends
+            AsyncLoader<Texture, Bitmap> {
+
+        private static final GlConverter<Texture, Bitmap> sConverter = new GlConverter<Texture, Bitmap>() {
+
+            @Override
+            public Texture convert(VrContext vrContext, Bitmap bitmap) {
+                return new BitmapTexture(vrContext, bitmap);
+            }
+        };
+
+        protected AsyncLoadTextureResource(VrContext vrContext,
+                                           AndroidResource request,
+                                           CancelableCallback<HybridObject> callback, int priority) {
+            super(vrContext, sConverter, request, callback);
+        }
+
+        @Override
+        protected Bitmap loadResource() {
+            Bitmap bitmap = decodeStream(resource.getStream(),
+                    glMaxTextureSize, glMaxTextureSize, true, null, false);
+            resource.closeStream();
+            return bitmap;
+        }
+    }
+
+    private static class GetStreamBounds implements GetBounds {
+
+        private final InputStream stream;
+
+        private GetStreamBounds(InputStream stream) {
+            this.stream = stream;
+        }
+
+        @Override
+        public void getBounds(Options options) {
+            BitmapFactory.decodeStream(stream, null, options);
+        }
     }
 
     private static class FractionalDecodeStreamShim implements
@@ -713,6 +732,8 @@ abstract class AsyncBitmapTexture {
 
     private static class DecodeStreamHelper implements DecodeHelper {
 
+        private final InputStream mStream;
+
         DecodeStreamHelper(InputStream stream) {
             mStream = stream;
             if (mStream.markSupported()) {
@@ -722,7 +743,7 @@ abstract class AsyncBitmapTexture {
 
         @Override
         public void setInSampleSize(Options options, int requestedWidth,
-                int requestedHeight) {
+                                    int requestedHeight) {
             AsyncBitmapTexture.setInSampleSize(options, requestedWidth,
                     requestedHeight, new GetStreamBounds(mStream));
             rewind();
@@ -730,7 +751,7 @@ abstract class AsyncBitmapTexture {
 
         @Override
         public Bitmap decode(Options options, int requestedWidth,
-                int requestedHeight) {
+                             int requestedHeight) {
             return fractionalDecode(new FractionalDecodeStreamShim(mStream),
                     options, requestedWidth, requestedHeight);
         }
@@ -745,11 +766,16 @@ abstract class AsyncBitmapTexture {
                 }
             }
         }
-
-        private final InputStream mStream;
     }
 
+    /*
+     * Image size policy
+     */
+
     private static class DecodeFileStreamHelper implements DecodeHelper {
+
+        private final long mOffset;
+        private final FileInputStream mStream;
 
         DecodeFileStreamHelper(FileInputStream stream) throws IOException {
             mStream = stream;
@@ -758,7 +784,7 @@ abstract class AsyncBitmapTexture {
 
         @Override
         public void setInSampleSize(Options options, int requestedWidth,
-                int requestedHeight) throws IOException {
+                                    int requestedHeight) throws IOException {
             // We'll need our original offset into the stream in order to rewind
             // for subsequent decode attempts. Also, getting the bitmap bounds
             // from the stream involves reading the stream, which moves our
@@ -770,12 +796,12 @@ abstract class AsyncBitmapTexture {
 
         @Override
         public Bitmap decode(Options options, int requestedWidth,
-                int requestedHeight) throws IOException {
+                             int requestedHeight) throws IOException {
 
             FractionalDecodeShim shim = (mOffset > 0)
-            // Apparently if the file descriptor has been offset at
-            // all, decodeFileDescriptor() doesn't work.
-            ? new FractionalDecodeStreamShim(mStream)
+                    // Apparently if the file descriptor has been offset at
+                    // all, decodeFileDescriptor() doesn't work.
+                    ? new FractionalDecodeStreamShim(mStream)
                     // When the stream is at position zero, we can use a
                     // more optimal decode()
                     : new FractionalDecodeDescriptorShim(mStream.getFD());
@@ -789,37 +815,6 @@ abstract class AsyncBitmapTexture {
             // Rewind stream to read again
             mStream.getChannel().position(mOffset);
         }
-
-        private final long mOffset;
-        private final FileInputStream mStream;
-    }
-
-    /**
-     * A soft referenced set of <code>byte[DECODE_BUFFER_SIZE]</code> arrays.)
-     */
-    private static RecycleBin<byte[]> bufferBin = RecycleBin.<byte[]> soft()
-            .synchronize();
-
-    /*
-     * Image size policy
-     */
-
-    /**
-     * {@link AsyncBitmapTexture#setup(Context)} creates a default version of
-     * this to set the {@link AsyncBitmapTexture#maxImageSize}; call
-     * {@link AsyncBitmapTexture#setup(Context, ImageSizePolicy)} with your own
-     * {@link ImageSizePolicy} to specify a different ratio of heap size to
-     * maximum image size.
-     */
-    interface ImageSizePolicy {
-
-        /**
-         * Largest image that we will load into memory.
-         * 
-         * A multiple of the "memory class" - <i>e.g.</i> 7.5% of a 32M heap is
-         * a 2.4M image; 6% is 1.92M
-         */
-        float getMaximumImageFactor();
     }
 
 }

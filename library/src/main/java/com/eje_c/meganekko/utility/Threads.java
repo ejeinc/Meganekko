@@ -25,15 +25,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-/** Threading utilities: thread pool, thread limiter, and some miscellany. */
+/**
+ * Threading utilities: thread pool, thread limiter, and some miscellany.
+ */
 public abstract class Threads {
-    private static final String TAG = Log.tag(Threads.class);
-
-    /** Lots of info to debug scheduling issues */
+    /**
+     * Lots of info to debug scheduling issues
+     */
     public static final boolean VERBOSE_SCHEDULING = false;
-
     public static final boolean RUNTIME_ASSERTIONS = true;
-
+    private static final String TAG = Log.tag(Threads.class);
     /**
      * {@link #spawn(Runnable)} priority: A normal background thread, running at
      * a lower priority than the GUI.
@@ -46,7 +47,9 @@ public abstract class Threads {
      */
     private static final int LOW_BACKGROUND_THREAD_PRIORITY = BACKGROUND_THREAD_PRIORITY - 1;
 
-    /** {@link #spawnIdle(Runnable) priority: Lowest priority background task */
+    /**
+     * {@link #spawnIdle(Runnable) priority: Lowest priority background task
+     */
     private static final int IDLE_THREAD_PRIORITY = Thread.MIN_PRIORITY;
 
     /**
@@ -67,23 +70,21 @@ public abstract class Threads {
     /*
      * Thread pool
      */
+    private static ExecutorService threadPool = Executors.newCachedThreadPool();
 
     /**
      * Execute a Runnable on a thread pool thread
-     * 
-     * @param priority
-     *            The thread priority. Be careful with this! <blockquote>
-     *            <b>Note:</b> Use Thread.MIN_PRIORITY..Thread.MAX_PRIORITY
-     *            (1..10), <b>not</b> the Process/Linux -20..19 range!
-     *            </blockquote>
-     * @param threadProc
-     *            The code to run. It doesn't matter if this code never returns
-     *            - by using spawn (and, hence the thread pool) there is at
-     *            least a chance that you will be reusing a thread, thus saving
-     *            teardown/startup costs.
-     * 
+     *
+     * @param priority   The thread priority. Be careful with this! <blockquote>
+     *                   <b>Note:</b> Use Thread.MIN_PRIORITY..Thread.MAX_PRIORITY
+     *                   (1..10), <b>not</b> the Process/Linux -20..19 range!
+     *                   </blockquote>
+     * @param threadProc The code to run. It doesn't matter if this code never returns
+     *                   - by using spawn (and, hence the thread pool) there is at
+     *                   least a chance that you will be reusing a thread, thus saving
+     *                   teardown/startup costs.
      * @return A Future<?> that lets you wait for thread completion, if
-     *         necessary
+     * necessary
      */
     private static Future<?> spawn(final int priority, final Runnable threadProc) {
         return threadPool.submit(new Runnable() {
@@ -127,15 +128,13 @@ public abstract class Threads {
      * Additionally, spawnHigh() - which should be used very sparingly - starts
      * a background task that runs at a higher priority than other background
      * tasks, though still lower than the GUI.)
-     * 
-     * @param threadProc
-     *            The code to run. It doesn't matter if this code never returns
-     *            - by using spawn (and, hence the thread pool) there is at
-     *            least a chance that you will be reusing a thread, thus saving
-     *            teardown/startup costs.
-     * 
+     *
+     * @param threadProc The code to run. It doesn't matter if this code never returns
+     *                   - by using spawn (and, hence the thread pool) there is at
+     *                   least a chance that you will be reusing a thread, thus saving
+     *                   teardown/startup costs.
      * @return A Future<?> that lets you wait for thread completion, if
-     *         necessary
+     * necessary
      */
     public static Future<?> spawn(final Runnable threadProc) {
         return spawn(BACKGROUND_THREAD_PRIORITY, threadProc);
@@ -150,15 +149,13 @@ public abstract class Threads {
      * the lowest possible priority. Additionally, spawnHigh() - which should be
      * used very sparingly - starts a background task that runs at a higher
      * priority than other background tasks, though still lower than the GUI.)
-     * 
-     * @param threadProc
-     *            The code to run. It doesn't matter if this code never returns
-     *            - by using spawn (and, hence the thread pool) there is at
-     *            least a chance that you will be reusing a thread, thus saving
-     *            teardown/startup costs.
-     * 
+     *
+     * @param threadProc The code to run. It doesn't matter if this code never returns
+     *                   - by using spawn (and, hence the thread pool) there is at
+     *                   least a chance that you will be reusing a thread, thus saving
+     *                   teardown/startup costs.
      * @return A Future<?> that lets you wait for thread completion, if
-     *         necessary
+     * necessary
      */
     public static Future<?> spawnLow(final Runnable threadProc) {
         return spawn(LOW_BACKGROUND_THREAD_PRIORITY, threadProc);
@@ -173,15 +170,13 @@ public abstract class Threads {
      * priority. Additionally, spawnHigh() - which should be used very sparingly
      * - starts a background task that runs at a higher priority than other
      * background tasks, though still lower than the GUI.)
-     * 
-     * @param threadProc
-     *            The code to run. It doesn't matter if this code never returns
-     *            - by using spawn (and, hence the thread pool) there is at
-     *            least a chance that you will be reusing a thread, thus saving
-     *            teardown/startup costs.
-     * 
+     *
+     * @param threadProc The code to run. It doesn't matter if this code never returns
+     *                   - by using spawn (and, hence the thread pool) there is at
+     *                   least a chance that you will be reusing a thread, thus saving
+     *                   teardown/startup costs.
      * @return A Future<?> that lets you wait for thread completion, if
-     *         necessary
+     * necessary
      */
     public static Future<?> spawnIdle(final Runnable threadProc) {
         return spawn(IDLE_THREAD_PRIORITY, threadProc);
@@ -201,15 +196,13 @@ public abstract class Threads {
      * to write the downsized Bitmap to cache. Meanwhile, the new save thread
      * has higher priority than other load threads, so the new Bitmap doesn't
      * stay in memory for a long time.
-     * 
-     * @param threadProc
-     *            The code to run. It doesn't matter if this code never returns
-     *            - by using spawn (and, hence the thread pool) there is at
-     *            least a chance that you will be reusing a thread, thus saving
-     *            teardown/startup costs.
-     * 
+     *
+     * @param threadProc The code to run. It doesn't matter if this code never returns
+     *                   - by using spawn (and, hence the thread pool) there is at
+     *                   least a chance that you will be reusing a thread, thus saving
+     *                   teardown/startup costs.
      * @return A Future<?> that lets you wait for thread completion, if
-     *         necessary
+     * necessary
      */
     public static Future<?> spawnHigh(final Runnable threadProc) {
         return spawn(HIGH_BACKGROUND_THREAD_PRIORITY, threadProc);
@@ -220,27 +213,36 @@ public abstract class Threads {
      * priority. This allows you to start a background thread, and later do a
      * <code><i>join()</i></code> (<i>i.e.</i>, block until the thread is done)
      * to get the thread's output.
-     * 
-     * @param <T>
-     *            The type-parameter of the Callable and the returned Future
-     * @param callable
-     *            The thread proc
+     *
+     * @param <T>      The type-parameter of the Callable and the returned Future
+     * @param callable The thread proc
      * @return A <code>Future&lt;T&gt;</code> that can be queried for the
-     *         thread's result
+     * thread's result
      */
     public static <T> Future<T> spawn(Callable<T> callable) {
         return threadPool.submit(callable);
     }
 
-    private static ExecutorService threadPool = Executors.newCachedThreadPool();
+    /**
+     * The spawn() methods use a {@link Executors#newCachedThreadPool()}; this
+     * method provides access to that thread pool, so that other parts of the
+     * app can use the pool without having to call one of the spwan() methods.
+     * <p/>
+     * <p/>
+     * Note that any prior call to {@link #setThreadPool(ExecutorService)} will
+     * affect the result of this method!
+     */
+    public static ExecutorService getThreadPool() {
+        return threadPool;
+    }
 
     /**
      * By default, the spawn() methods use their own
      * {@link Executors#newCachedThreadPool()}. This method allows you to use a
      * different thread pool, if the cached thread pool provides the wrong
      * semantics or if you want to use a single thread pool for the whole app.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * Note that calling this method will have <em>no effect</em> on any threads
      * started on the existing thread pool; they will run to completion in a
      * totally normal manner.
@@ -256,21 +258,44 @@ public abstract class Threads {
         threadPool = newThreadPool;
     }
 
-    /**
-     * The spawn() methods use a {@link Executors#newCachedThreadPool()}; this
-     * method provides access to that thread pool, so that other parts of the
-     * app can use the pool without having to call one of the spwan() methods.
-     * 
-     * <p>
-     * Note that any prior call to {@link #setThreadPool(ExecutorService)} will
-     * affect the result of this method!
+    /*
+     * Thread limiters
      */
-    public static ExecutorService getThreadPool() {
-        return threadPool;
+
+    /**
+     * Shorthand for <code>Thread.currentThread().getId()</code>
+     */
+    public static long threadId() {
+        return Thread.currentThread().getId();
+    }
+
+    /**
+     * This is an assertion method that can be used by a thread to confirm that
+     * the thread isn't already holding lock for an object, before acquiring a
+     * lock
+     *
+     * @param object object to test for lock
+     * @param name   tag associated with the lock
+     */
+    public static void assertUnlocked(Object object, String name) {
+        if (RUNTIME_ASSERTIONS) {
+            if (Thread.holdsLock(object)) {
+                throw new RuntimeAssertion("Recursive lock of %s", name);
+            }
+        }
+    }
+
+    private static void logException(String tag, Throwable t) {
+        Log.e(tag, "%s in thread %d", t, threadId());
+        t.printStackTrace();
+    }
+
+    private static void log(String tag, String pattern, Object... parameters) {
+        Log.d(tag, pattern, parameters);
     }
 
     /*
-     * Thread limiters
+     * Miscellaneous thread utilities
      */
 
     /**
@@ -278,25 +303,29 @@ public abstract class Threads {
      * get to them
      */
     public interface Cancelable extends Runnable {
-        /** Should we still run() this? */
+        /**
+         * Should we still run() this?
+         */
         boolean stillWanted();
     }
 
     /**
      * Manages pool of pending threads, deciding which should run next.
-     * 
+     * <p/>
      * Used in conjunction with a ThreadLimiter, which handles synchronization:
      * implementations generally don't need to pay attention to thread safety.
      */
     public interface ThreadPolicyProvider<CANCELABLE extends Cancelable> {
-        /** Add a thread proc to the pool */
+        /**
+         * Add a thread proc to the pool
+         */
         void put(CANCELABLE threadProc);
 
         /**
          * Are there any thread procs in the pool?
-         * 
+         * <p/>
          * May use {@link Cancelable#stillWanted()} to trim pool.
-         * */
+         */
         boolean isEmpty();
 
         /**
@@ -307,7 +336,7 @@ public abstract class Threads {
 
         /**
          * Make threadProc the next in the pool.
-         * 
+         * <p/>
          * <ul>
          * <li>If threadProc is already in the pool, move it to the front, so
          * get() returns it next.
@@ -318,12 +347,16 @@ public abstract class Threads {
         void reschedule(CANCELABLE threadProc);
     }
 
+    /*
+     * Private methods
+     */
+
     /**
      * Limits the number of (thread pool) threads running at any one time.
-     * 
+     * <p/>
      * A stand-alone class, as different subsystems may have different limits,
      * based on the resources their threads consume.
-     * 
+     * <p/>
      * Each subsystem that instantiates a thread limiter must supply an
      * implementation of {@link ThreadPolicyProvider}, or use the standard
      * {@link LifoThreadPolicyProvider}.
@@ -331,13 +364,15 @@ public abstract class Threads {
     public static class ThreadLimiter<CANCELABLE extends Cancelable> {
 
         private static final String TAG = Log.tag(ThreadLimiter.class);
-
+        private final static int PUT = 0;
+        private final static int RESCHEDULE = 1;
         private final int maxThreads;
         private final List<ThreadManager> threadManagers;
         private final ThreadPolicyProvider<CANCELABLE> policy;
         private final int slowThreadTimeout;
-
-        /** Cheap way to find the next thread timeout */
+        /**
+         * Cheap way to find the next thread timeout
+         */
         private final PriorityQueue<ThreadTimeouts> timeoutQueue;
         /**
          * Since most threads won't timeout, we need a way to remove
@@ -345,40 +380,32 @@ public abstract class Threads {
          */
         private final Map<ThreadManager, ThreadTimeouts> timeoutMap;
 
-        private final static int PUT = 0;
-        private final static int RESCHEDULE = 1;
-
         /**
          * Create a new thread limiter, with a
          * {@link #DEFAULT_SLOW_THREAD_TIMEOUT default slow-thread timeout}.
-         * 
-         * @param maxThreads
-         *            Maximum number of threads that can run at once.
-         * @param policy
-         *            Manages pool of pending threads, deciding which should run
-         *            next.
+         *
+         * @param maxThreads Maximum number of threads that can run at once.
+         * @param policy     Manages pool of pending threads, deciding which should run
+         *                   next.
          */
         public ThreadLimiter(int maxThreads,
-                ThreadPolicyProvider<CANCELABLE> policy) {
+                             ThreadPolicyProvider<CANCELABLE> policy) {
             this(maxThreads, policy, DEFAULT_SLOW_THREAD_TIMEOUT);
         }
 
         /**
          * Create a new thread limiter.
-         * 
-         * @param maxThreads
-         *            Maximum number of threads that can run at once.
-         * @param policy
-         *            Manages pool of pending threads, deciding which should run
-         *            next.
-         * @param slowThreadTimeout
-         *            If we try to start a new thread and any thread has gone
-         *            more than this many milliseconds since starting, we will
-         *            create a new thread, and drop back down to maxThreads
-         *            when/if the slow thread returns.
+         *
+         * @param maxThreads        Maximum number of threads that can run at once.
+         * @param policy            Manages pool of pending threads, deciding which should run
+         *                          next.
+         * @param slowThreadTimeout If we try to start a new thread and any thread has gone
+         *                          more than this many milliseconds since starting, we will
+         *                          create a new thread, and drop back down to maxThreads
+         *                          when/if the slow thread returns.
          */
         public ThreadLimiter(int maxThreads,
-                ThreadPolicyProvider<CANCELABLE> policy, int slowThreadTimeout) {
+                             ThreadPolicyProvider<CANCELABLE> policy, int slowThreadTimeout) {
             this.maxThreads = maxThreads;
             threadManagers = new ArrayList<ThreadManager>(maxThreads);
             for (int index = 0; index < maxThreads; ++index) {
@@ -395,7 +422,7 @@ public abstract class Threads {
 
         /**
          * Run a thread proc, on a thread from the system thread pool.
-         * 
+         * <p/>
          * Thread will run immediately, if possible. If the maximum number of
          * threads are already running, the thread proc will be added to a pool,
          * and scheduling will be determined by the ThreadPolicyProvider.
@@ -464,28 +491,28 @@ public abstract class Threads {
                 } else {
                     // Update policy within synchronized block
                     switch (policyOp) {
-                    case PUT:
-                        // run it sometime later
-                        if (VERBOSE_SCHEDULING) {
-                            log(TAG,
-                                    "Thread %d: Scheduling %s for later execution",
-                                    threadId(), threadProc);
-                        }
-                        policy.put(threadProc);
-                        break;
+                        case PUT:
+                            // run it sometime later
+                            if (VERBOSE_SCHEDULING) {
+                                log(TAG,
+                                        "Thread %d: Scheduling %s for later execution",
+                                        threadId(), threadProc);
+                            }
+                            policy.put(threadProc);
+                            break;
 
-                    case RESCHEDULE:
-                        // run it NEXT
-                        if (VERBOSE_SCHEDULING) {
-                            log(TAG,
-                                    "Thread %d: Rescheduling %s for immediate execution",
-                                    threadId(), threadProc);
-                        }
-                        policy.reschedule(threadProc);
-                        break;
-                    default:
-                        throw new RuntimeAssertion("Unknown policy op %d",
-                                policyOp);
+                        case RESCHEDULE:
+                            // run it NEXT
+                            if (VERBOSE_SCHEDULING) {
+                                log(TAG,
+                                        "Thread %d: Rescheduling %s for immediate execution",
+                                        threadId(), threadProc);
+                            }
+                            policy.reschedule(threadProc);
+                            break;
+                        default:
+                            throw new RuntimeAssertion("Unknown policy op %d",
+                                    policyOp);
                     }
                 }
             }
@@ -580,9 +607,9 @@ public abstract class Threads {
 
             /**
              * Remove this thread from the timeout queue
-             * 
+             *
              * @return {@code true} if the thread was still in the queue;
-             *         {@code false} if the thread has timed out
+             * {@code false} if the thread has timed out
              */
             private boolean removeFromTimeouts() {
                 ThreadTimeouts timeout = timeoutMap.remove(this);
@@ -599,12 +626,14 @@ public abstract class Threads {
             // 1000 * 1000 is easier to proof-read than 1000000
             private static final long NANOSECONDS_PER_MILLISECOND = 1000 * 1000;
 
-            /** Units are {@link System#nanoTime()  */
+            /**
+             * Units are {@link System#nanoTime()
+             */
             private final long timeout;
             private final ThreadManager threadManager;
 
             private ThreadTimeouts(ThreadManager threadManager,
-                    int millisecondTimeout) {
+                                   int millisecondTimeout) {
                 this.timeout = System.nanoTime() + millisecondTimeout
                         * NANOSECONDS_PER_MILLISECOND;
                 this.threadManager = threadManager;
@@ -623,7 +652,7 @@ public abstract class Threads {
      * Provides LIFO thread policy management: Most recently added thread proc
      * will run next. Appropriate for image galleries, say, where most recent
      * request is most likely to be visible.
-     * 
+     * <p/>
      * Never cancels a request!
      */
     public static class LifoThreadPolicyProvider implements
@@ -678,46 +707,6 @@ public abstract class Threads {
 
             }
         }
-    }
-
-    /*
-     * Miscellaneous thread utilities
-     */
-
-    /** Shorthand for <code>Thread.currentThread().getId()</code> */
-    public static long threadId() {
-        return Thread.currentThread().getId();
-    }
-
-    /**
-     * This is an assertion method that can be used by a thread to confirm that
-     * the thread isn't already holding lock for an object, before acquiring a
-     * lock
-     * 
-     * @param object
-     *            object to test for lock
-     * @param name
-     *            tag associated with the lock
-     */
-    public static void assertUnlocked(Object object, String name) {
-        if (RUNTIME_ASSERTIONS) {
-            if (Thread.holdsLock(object)) {
-                throw new RuntimeAssertion("Recursive lock of %s", name);
-            }
-        }
-    }
-
-    /*
-     * Private methods
-     */
-
-    private static void logException(String tag, Throwable t) {
-        Log.e(tag, "%s in thread %d", t, threadId());
-        t.printStackTrace();
-    }
-
-    private static void log(String tag, String pattern, Object... parameters) {
-        Log.d(tag, pattern, parameters);
     }
 
 }

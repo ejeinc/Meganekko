@@ -15,11 +15,14 @@
 
 package com.eje_c.meganekko;
 
-import static com.eje_c.meganekko.utility.Assert.*;
-
 import com.eje_c.meganekko.Material.ShaderType;
 
+import static com.eje_c.meganekko.utility.Assert.checkFloatNotNaNOrInfinity;
+import static com.eje_c.meganekko.utility.Assert.checkStringNotNullOrEmpty;
+
 public class Light extends HybridObject {
+
+    private boolean isEnabled;
 
     public Light(VrContext vrContext) {
         super(vrContext, NativeLight.ctor());
@@ -33,11 +36,11 @@ public class Light extends HybridObject {
 
     /**
      * Get the {@code light_pos} uniform.
-     * 
+     * <p/>
      * By convention, Meganekko shaders can use a {@code vec3} uniform named
      * {@code light_pos}. With the {@linkplain ShaderType.Lit 'lit' shader,}
      * this allows you to add an overlay color on top of the texture.
-     * 
+     *
      * @return The current {@code vec4 light_pos} as a three-element array
      */
     public float[] getPosition() {
@@ -46,19 +49,16 @@ public class Light extends HybridObject {
 
     /**
      * Set the {@code light_pos} uniform for light.
-     * 
+     * <p/>
      * By convention, Meganekko shaders can use a {@code vec3} uniform named
      * {@code light_pos}. With the {@linkplain ShaderType.Lit 'lit' shader,}
      * this allows you to add an overlay lighting color on top of the texture.
      * The position is in the camera coordinate system. The user is responsible
      * to use the correct coordinate system.
-     * 
-     * @param x
-     *            x-coordinate in camera coordinate system
-     * @param y
-     *            y-coordinate in camera coordinate system
-     * @param z
-     *            z-coordinate in camera coordinate system
+     *
+     * @param x x-coordinate in camera coordinate system
+     * @param y y-coordinate in camera coordinate system
+     * @param z z-coordinate in camera coordinate system
      */
     public void setPosition(float x, float y, float z) {
         setVec3("position", x, y, z);
@@ -66,14 +66,14 @@ public class Light extends HybridObject {
 
     /**
      * Get the {@code lightAmbientIntensity} uniform.
-     * 
+     * <p/>
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code lightAmbientIntensity}. With the {@linkplain ShaderType.Lit 
+     * {@code lightAmbientIntensity}. With the {@linkplain ShaderType.Lit
      * 'lit' shader,} this allows you to add an overlay color on top of the
      * texture.
-     * 
+     *
      * @return The current {@code vec4 lightAmbientIntensity} as a four-element
-     *         array
+     * array
      */
     public float[] getAmbientIntensity() {
         return getVec4("ambient_intensity");
@@ -81,21 +81,17 @@ public class Light extends HybridObject {
 
     /**
      * Set the {@code lightAmbientIntensity} uniform for lighting.
-     * 
+     * <p/>
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code lightAmbientIntensity}. With the {@linkplain ShaderType.Lit 
+     * {@code lightAmbientIntensity}. With the {@linkplain ShaderType.Lit
      * 'lit' shader,} this allows you to add an overlay ambient light intensity
      * on top of the texture. Values are between {@code 0.0f} and {@code 1.0f},
      * inclusive.
-     * 
-     * @param r
-     *            Red
-     * @param g
-     *            Green
-     * @param b
-     *            Blue
-     * @param a
-     *            Alpha
+     *
+     * @param r Red
+     * @param g Green
+     * @param b Blue
+     * @param a Alpha
      */
     public void setAmbientIntensity(float r, float g, float b, float a) {
         setVec4("ambient_intensity", r, g, b, a);
@@ -103,14 +99,14 @@ public class Light extends HybridObject {
 
     /**
      * Get the {@code lightDiffuseIntensity} uniform.
-     * 
+     * <p/>
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code lightDiffuseIntensity}. With the {@linkplain ShaderType.Lit 
+     * {@code lightDiffuseIntensity}. With the {@linkplain ShaderType.Lit
      * 'lit' shader,} this allows you to add an overlay color on top of the
      * texture.
-     * 
+     *
      * @return The current {@code vec4 lightDiffuseIntensity} as a four-element
-     *         array
+     * array
      */
     public float[] getDiffuseIntensity() {
         return getVec4("diffuse_intensity");
@@ -118,21 +114,17 @@ public class Light extends HybridObject {
 
     /**
      * Set the {@code lightDiffuseIntensity} uniform for lighting.
-     * 
+     * <p/>
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code lightDiffuseIntensity}. With the {@linkplain ShaderType.Lit 
+     * {@code lightDiffuseIntensity}. With the {@linkplain ShaderType.Lit
      * 'lit' shader,} this allows you to add an overlay diffuse light intensity
      * on top of the texture. Values are between {@code 0.0f} and {@code 1.0f},
      * inclusive.
-     * 
-     * @param r
-     *            Red
-     * @param g
-     *            Green
-     * @param b
-     *            Blue
-     * @param a
-     *            Alpha
+     *
+     * @param r Red
+     * @param g Green
+     * @param b Blue
+     * @param a Alpha
      */
     public void setDiffuseIntensity(float r, float g, float b, float a) {
         setVec4("diffuse_intensity", r, g, b, a);
@@ -140,14 +132,14 @@ public class Light extends HybridObject {
 
     /**
      * Get the {@code lightSpecularIntensity} uniform.
-     * 
+     * <p/>
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code lightSpecularIntensity}. With the {@linkplain ShaderType.Lit 
+     * {@code lightSpecularIntensity}. With the {@linkplain ShaderType.Lit
      * 'lit' shader,} this allows you to add an overlay color on top of the
      * texture.
-     * 
+     *
      * @return The current {@code vec4 lightSpecularIntensity} as a four-element
-     *         array
+     * array
      */
     public float[] getSpecularIntensity() {
         return getVec4("specular_intensity");
@@ -155,21 +147,17 @@ public class Light extends HybridObject {
 
     /**
      * Set the {@code lightSpecularIntensity} uniform for lighting.
-     * 
+     * <p/>
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code lightSpecularIntensity}. With the {@linkplain ShaderType.Lit 
+     * {@code lightSpecularIntensity}. With the {@linkplain ShaderType.Lit
      * 'lit' shader,} this allows you to add an overlay specular light intensity
      * on top of the texture. Values are between {@code 0.0f} and {@code 1.0f},
      * inclusive.
-     * 
-     * @param r
-     *            Red
-     * @param g
-     *            Green
-     * @param b
-     *            Blue
-     * @param a
-     *            Alpha
+     *
+     * @param r Red
+     * @param g Green
+     * @param b Blue
+     * @param a Alpha
      */
     public void setSpecularIntensity(float r, float g, float b, float a) {
         setVec4("specular_intensity", r, g, b, a);
@@ -193,7 +181,7 @@ public class Light extends HybridObject {
 
     /**
      * Get the enable/disable status for the light.
-     * 
+     *
      * @return true if light is enabled, false if light is disabled.
      */
     public boolean isEnabled() {
@@ -231,8 +219,6 @@ public class Light extends HybridObject {
         checkStringNotNullOrEmpty("key", key);
         NativeLight.setVec4(getNative(), key, x, y, z, w);
     }
-
-    private boolean isEnabled;
 }
 
 class NativeLight {
@@ -252,6 +238,5 @@ class NativeLight {
 
     static native float[] getVec4(long light, String key);
 
-    static native void setVec4(long light, String key, float x, float y,
-            float z, float w);
+    static native void setVec4(long light, String key, float x, float y, float z, float w);
 }

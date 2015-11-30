@@ -16,10 +16,10 @@
 package com.eje_c.meganekko.utility;
 
 import java.io.File;
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * A {@link FileInputStream} that supports {@link InputStream#mark(int)} and

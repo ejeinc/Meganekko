@@ -25,6 +25,20 @@ public class VrFrame {
         this.nativePtr = nativePtr;
     }
 
+    private static native double getPredictedDisplayTimeInSeconds(long vrFramePtr);
+
+    private static native float getDeltaSeconds(long vrFramePtr);
+
+    private static native int getFrameNumber(long vrFramePtr);
+
+    private static native float getSwipeFraction(long vrFramePtr);
+
+    private static native int getButtonState(long vrFramePtr);
+
+    private static native int getButtonPressed(long vrFramePtr);
+
+    private static native int getButtonReleased(long vrFramePtr);
+
     void setNativePtr(long nativePtr) {
         this.nativePtr = nativePtr;
     }
@@ -98,18 +112,4 @@ public class VrFrame {
     public int getButtonReleased() {
         return getButtonReleased(nativePtr);
     }
-
-    private static native double getPredictedDisplayTimeInSeconds(long vrFramePtr);
-
-    private static native float getDeltaSeconds(long vrFramePtr);
-
-    private static native int getFrameNumber(long vrFramePtr);
-
-    private static native float getSwipeFraction(long vrFramePtr);
-
-    private static native int getButtonState(long vrFramePtr);
-
-    private static native int getButtonPressed(long vrFramePtr);
-
-    private static native int getButtonReleased(long vrFramePtr);
 }

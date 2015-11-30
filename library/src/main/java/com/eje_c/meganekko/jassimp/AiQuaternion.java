@@ -44,19 +44,26 @@ import java.nio.ByteBuffer;
 
 /**
  * Wrapper for a quaternion.
- * <p>
- * 
+ * <p/>
+ * <p/>
  * The wrapper is writable, i.e., changes performed via the set-methods will
  * modify the underlying mesh/animation.
  */
 public final class AiQuaternion {
     /**
+     * Wrapped buffer.
+     */
+    private final ByteBuffer m_buffer;
+    /**
+     * Offset into m_buffer.
+     */
+    private final int m_offset;
+
+    /**
      * Constructor.
-     * 
-     * @param buffer
-     *            the buffer to wrap
-     * @param offset
-     *            offset into buffer
+     *
+     * @param buffer the buffer to wrap
+     * @param offset offset into buffer
      */
     public AiQuaternion(ByteBuffer buffer, int offset) {
         if (null == buffer) {
@@ -69,7 +76,7 @@ public final class AiQuaternion {
 
     /**
      * Returns the x value.
-     * 
+     *
      * @return the x value
      */
     public float getX() {
@@ -77,8 +84,17 @@ public final class AiQuaternion {
     }
 
     /**
+     * Sets the x component.
+     *
+     * @param x the new value
+     */
+    public void setX(float x) {
+        m_buffer.putFloat(m_offset + 4, x);
+    }
+
+    /**
      * Returns the y value.
-     * 
+     *
      * @return the y value
      */
     public float getY() {
@@ -86,8 +102,17 @@ public final class AiQuaternion {
     }
 
     /**
+     * Sets the y component.
+     *
+     * @param y the new value
+     */
+    public void setY(float y) {
+        m_buffer.putFloat(m_offset + 8, y);
+    }
+
+    /**
      * Returns the z value.
-     * 
+     *
      * @return the z value
      */
     public float getZ() {
@@ -95,8 +120,17 @@ public final class AiQuaternion {
     }
 
     /**
+     * Sets the z component.
+     *
+     * @param z the new value
+     */
+    public void setZ(float z) {
+        m_buffer.putFloat(m_offset + 12, z);
+    }
+
+    /**
      * Returns the w value.
-     * 
+     *
      * @return the w value
      */
     public float getW() {
@@ -104,40 +138,9 @@ public final class AiQuaternion {
     }
 
     /**
-     * Sets the x component.
-     * 
-     * @param x
-     *            the new value
-     */
-    public void setX(float x) {
-        m_buffer.putFloat(m_offset + 4, x);
-    }
-
-    /**
-     * Sets the y component.
-     * 
-     * @param y
-     *            the new value
-     */
-    public void setY(float y) {
-        m_buffer.putFloat(m_offset + 8, y);
-    }
-
-    /**
      * Sets the z component.
-     * 
-     * @param z
-     *            the new value
-     */
-    public void setZ(float z) {
-        m_buffer.putFloat(m_offset + 12, z);
-    }
-
-    /**
-     * Sets the z component.
-     * 
-     * @param w
-     *            the new value
+     *
+     * @param w the new value
      */
     public void setW(float w) {
         m_buffer.putFloat(m_offset, w);
@@ -148,14 +151,4 @@ public final class AiQuaternion {
         return "[" + getX() + ", " + getY() + ", " + getZ() + ", " + getW()
                 + "]";
     }
-
-    /**
-     * Wrapped buffer.
-     */
-    private final ByteBuffer m_buffer;
-
-    /**
-     * Offset into m_buffer.
-     */
-    private final int m_offset;
 }

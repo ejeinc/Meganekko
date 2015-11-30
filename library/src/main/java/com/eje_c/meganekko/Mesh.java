@@ -15,13 +15,14 @@
 
 package com.eje_c.meganekko;
 
-import static com.eje_c.meganekko.utility.Assert.*;
-
 import com.eje_c.meganekko.utility.Exceptions;
+
+import static com.eje_c.meganekko.utility.Assert.checkDivisibleDataLength;
+import static com.eje_c.meganekko.utility.Assert.checkStringNotNullOrEmpty;
 
 /**
  * This is one of the key Meganekko classes: It holds GL meshes.
- * 
+ * <p/>
  * A GL mesh is a net of triangles that define an object's surface geometry.
  */
 public class Mesh extends HybridObject {
@@ -36,11 +37,11 @@ public class Mesh extends HybridObject {
     /**
      * Get the 3D vertices of the mesh. Each vertex is represented as a packed
      * {@code float} triplet:
-     * <p>
+     * <p/>
      * <code>
-     *     { x0, y0, z0, x1, y1, z1, x2, y2, z2, ... }
+     * { x0, y0, z0, x1, y1, z1, x2, y2, z2, ... }
      * </code>
-     * 
+     *
      * @return Array with the packed vertex data.
      */
     public float[] getVertices() {
@@ -50,11 +51,10 @@ public class Mesh extends HybridObject {
     /**
      * Sets the 3D vertices of the mesh. Each vertex is represented as a packed
      * {@code float} triplet:
-     * <p>
+     * <p/>
      * <code>{ x0, y0, z0, x1, y1, z1, x2, y2, z2, ...}</code>
-     * 
-     * @param vertices
-     *            Array containing the packed vertex data.
+     *
+     * @param vertices Array containing the packed vertex data.
      */
     public void setVertices(float[] vertices) {
         checkValidFloatArray("vertices", vertices, 3);
@@ -64,9 +64,9 @@ public class Mesh extends HybridObject {
     /**
      * Get the normal vectors of the mesh. Each normal vector is represented as
      * a packed {@code float} triplet:
-     * <p>
+     * <p/>
      * <code>{ x0, y0, z0, x1, y1, z1, x2, y2, z2, ...}</code>
-     * 
+     *
      * @return Array with the packed normal data.
      */
     public float[] getNormals() {
@@ -76,11 +76,10 @@ public class Mesh extends HybridObject {
     /**
      * Sets the normal vectors of the mesh. Each normal vector is represented as
      * a packed {@code float} triplet:
-     * <p>
+     * <p/>
      * <code>{ x0, y0, z0, x1, y1, z1, x2, y2, z2, ...}</code>
-     * 
-     * @param normals
-     *            Array containing the packed normal data.
+     *
+     * @param normals Array containing the packed normal data.
      */
     public void setNormals(float[] normals) {
         checkValidFloatArray("normals", normals, 3);
@@ -90,9 +89,9 @@ public class Mesh extends HybridObject {
     /**
      * Get the u,v texture coordinates for the mesh. Each texture coordinate is
      * represented as a packed {@code float} pair:
-     * <p>
+     * <p/>
      * <code>{ u0, v0, u1, v1, u2, v2, ...}</code>
-     * 
+     *
      * @return Array with the packed texture coordinate data.
      */
     public float[] getTexCoords() {
@@ -102,11 +101,10 @@ public class Mesh extends HybridObject {
     /**
      * Sets the texture coordinates for the mesh. Each texture coordinate is
      * represented as a packed {@code float} pair:
-     * <p>
+     * <p/>
      * <code>{ u0, v0, u1, v1, u2, v2, ...}</code>
-     * 
-     * @param texCoords
-     *            Array containing the packed texture coordinate data.
+     *
+     * @param texCoords Array containing the packed texture coordinate data.
      */
     public void setTexCoords(float[] texCoords) {
         checkValidFloatArray("texCoords", texCoords, 2);
@@ -117,11 +115,11 @@ public class Mesh extends HybridObject {
      * Get the triangle vertex indices of the mesh. The indices for each
      * triangle are represented as a packed {@code char} triplet, where
      * {@code t0} is the first triangle, {@code t1} is the second, etc.:
-     * <p>
+     * <p/>
      * <code>
      * { t0[0], t0[1], t0[2], t1[0], t1[1], t1[2], ...}
      * </code>
-     * 
+     *
      * @return Array with the packed triangle index data.
      */
     public char[] getTriangles() {
@@ -132,13 +130,12 @@ public class Mesh extends HybridObject {
      * Sets the triangle vertex indices of the mesh. The indices for each
      * triangle are represented as a packed {@code int} triplet, where
      * {@code t0} is the first triangle, {@code t1} is the second, etc.:
-     * <p>
+     * <p/>
      * <code>
      * { t0[0], t0[1], t0[2], t1[0], t1[1], t1[2], ...}
      * </code>
-     * 
-     * @param triangles
-     *            Array containing the packed triangle index data.
+     *
+     * @param triangles Array containing the packed triangle index data.
      */
     public void setTriangles(char[] triangles) {
         checkDivisibleDataLength("triangles", triangles, 3);
@@ -148,9 +145,8 @@ public class Mesh extends HybridObject {
     /**
      * Get the array of {@code float} scalars bound to the shader attribute
      * {@code key}.
-     * 
-     * @param key
-     *            Name of the shader attribute
+     *
+     * @param key Name of the shader attribute
      * @return Array of {@code float} scalars.
      */
     public float[] getFloatVector(String key) {
@@ -160,11 +156,9 @@ public class Mesh extends HybridObject {
     /**
      * Bind an array of {@code float} scalars to the shader attribute
      * {@code key}.
-     * 
-     * @param key
-     *            Name of the shader attribute
-     * @param floatVector
-     *            Data to bind to the shader attribute.
+     *
+     * @param key         Name of the shader attribute
+     * @param floatVector Data to bind to the shader attribute.
      */
     public void setFloatVector(String key, float[] floatVector) {
         checkValidFloatVector("key", key, "floatVector", floatVector, 1);
@@ -174,9 +168,8 @@ public class Mesh extends HybridObject {
     /**
      * Get the array of two-component {@code float} vectors bound to the shader
      * attribute {@code key}.
-     * 
-     * @param key
-     *            Name of the shader attribute
+     *
+     * @param key Name of the shader attribute
      * @return Array of two-component {@code float} vectors.
      */
     public float[] getVec2Vector(String key) {
@@ -186,12 +179,10 @@ public class Mesh extends HybridObject {
     /**
      * Bind an array of two-component {@code float} vectors to the shader
      * attribute {@code key}.
-     * 
-     * @param key
-     *            Name of the shader attribute
-     * @param vec2Vector
-     *            Two-component {@code float} vector data to bind to the shader
-     *            attribute.
+     *
+     * @param key        Name of the shader attribute
+     * @param vec2Vector Two-component {@code float} vector data to bind to the shader
+     *                   attribute.
      */
     public void setVec2Vector(String key, float[] vec2Vector) {
         checkValidFloatVector("key", key, "vec2Vector", vec2Vector, 2);
@@ -201,9 +192,8 @@ public class Mesh extends HybridObject {
     /**
      * Get the array of three-component {@code float} vectors bound to the
      * shader attribute {@code key}.
-     * 
-     * @param key
-     *            Name of the shader attribute
+     *
+     * @param key Name of the shader attribute
      * @return Array of three-component {@code float} vectors.
      */
     public float[] getVec3Vector(String key) {
@@ -213,12 +203,10 @@ public class Mesh extends HybridObject {
     /**
      * Bind an array of three-component {@code float} vectors to the shader
      * attribute {@code key}.
-     * 
-     * @param key
-     *            Name of the shader attribute
-     * @param vec3Vector
-     *            Three-component {@code float} vector data to bind to the
-     *            shader attribute.
+     *
+     * @param key        Name of the shader attribute
+     * @param vec3Vector Three-component {@code float} vector data to bind to the
+     *                   shader attribute.
      */
     public void setVec3Vector(String key, float[] vec3Vector) {
         checkValidFloatVector("key", key, "vec3Vector", vec3Vector, 3);
@@ -228,9 +216,8 @@ public class Mesh extends HybridObject {
     /**
      * Get the array of four-component {@code float} vectors bound to the shader
      * attribute {@code key}.
-     * 
-     * @param key
-     *            Name of the shader attribute
+     *
+     * @param key Name of the shader attribute
      * @return Array of four-component {@code float} vectors.
      */
     public float[] getVec4Vector(String key) {
@@ -240,12 +227,10 @@ public class Mesh extends HybridObject {
     /**
      * Bind an array of four-component {@code float} vectors to the shader
      * attribute {@code key}.
-     * 
-     * @param key
-     *            Name of the shader attribute
-     * @param vec4Vector
-     *            Four-component {@code float} vector data to bind to the shader
-     *            attribute.
+     *
+     * @param key        Name of the shader attribute
+     * @param vec4Vector Four-component {@code float} vector data to bind to the shader
+     *                   attribute.
      */
     public void setVec4Vector(String key, float[] vec4Vector) {
         checkValidFloatVector("key", key, "vec4Vector", vec4Vector, 4);
@@ -254,8 +239,8 @@ public class Mesh extends HybridObject {
 
     /**
      * Constructs a {@link Mesh mesh} that contains this mesh.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This is primarily useful with the {@link Picker}, which does
      * "ray casting" to detect which scene object you're pointing to. Ray
      * casting is computationally expensive, and you generally want to limit the
@@ -263,7 +248,7 @@ public class Mesh extends HybridObject {
      * {@linkplain VrContext#createQuad(float, float) quad} is cheap enough,
      * but with complex meshes you will probably want to cut search time by
      * registering the object's bounding box, not the whole mesh.
-     * 
+     *
      * @return A {@link Mesh} of the bounding box.
      */
     public Mesh getBoundingBox() {
@@ -271,21 +256,17 @@ public class Mesh extends HybridObject {
                 NativeMesh.getBoundingBox(getNative()));
     }
 
-    private void checkValidFloatVector(String keyName, String key,
-            String vectorName, float[] vector, int expectedComponents) {
+    private void checkValidFloatVector(String keyName, String key, String vectorName, float[] vector, int expectedComponents) {
         checkStringNotNullOrEmpty(keyName, key);
         checkDivisibleDataLength(vectorName, vector, expectedComponents);
-        checkVectorLengthWithVertices(vectorName, vector.length,
-                expectedComponents);
+        checkVectorLengthWithVertices(vectorName, vector.length, expectedComponents);
     }
 
-    private void checkValidFloatArray(String parameterName, float[] data,
-            int expectedComponents) {
+    private void checkValidFloatArray(String parameterName, float[] data, int expectedComponents) {
         checkDivisibleDataLength(parameterName, data, expectedComponents);
     }
 
-    private void checkVectorLengthWithVertices(String parameterName,
-            int dataLength, int expectedComponents) {
+    private void checkVectorLengthWithVertices(String parameterName, int dataLength, int expectedComponents) {
         int verticesNumber = getVertices().length / 3;
         int numberOfElements = dataLength / expectedComponents;
         if (dataLength / expectedComponents != verticesNumber) {

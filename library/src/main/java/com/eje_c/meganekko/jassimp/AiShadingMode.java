@@ -42,13 +42,13 @@ package com.eje_c.meganekko.jassimp;
 
 /**
  * Defines all shading modes supported by the library.
- * <p>
- * 
+ * <p/>
+ * <p/>
  * The list of shading modes has been taken from Blender. See Blender
  * documentation for more information. The API does not distinguish between
  * "specular" and "diffuse" shaders (thus the specular term for diffuse shading
  * models like Oren-Nayar remains undefined).
- * <p>
+ * <p/>
  * Again, this value is just a hint. Assimp tries to select the shader whose
  * most common implementation matches the original rendering results of the 3D
  * modeller which wrote a particular model as closely as possible.
@@ -56,8 +56,8 @@ package com.eje_c.meganekko.jassimp;
 public enum AiShadingMode {
     /**
      * Flat shading.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Shading is done on per-face base, diffuse only. Also known as 'faceted
      * shading'.
      */
@@ -80,16 +80,16 @@ public enum AiShadingMode {
 
     /**
      * Toon-Shading per pixel.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Also known as 'comic' shader.
      */
     TOON(0x5),
 
     /**
      * OrenNayar-Shading per pixel.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Extension to standard Lambertian shading, taking the roughness of the
      * material into account
      */
@@ -97,8 +97,8 @@ public enum AiShadingMode {
 
     /**
      * Minnaert-Shading per pixel.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Extension to standard Lambertian shading, taking the "darkness" of the
      * material into account
      */
@@ -106,16 +106,16 @@ public enum AiShadingMode {
 
     /**
      * CookTorrance-Shading per pixel.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Special shader for metallic surfaces.
      */
     COOK_TORRANCE(0x8),
 
     /**
      * No shading at all.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Constant light influence of 1.0.
      */
     NO_SHADING(0x9),
@@ -126,15 +126,28 @@ public enum AiShadingMode {
     FRESNEL(0xa);
 
     /**
+     * The mapped c/c++ integer enum value.
+     */
+    private final int m_rawValue;
+
+    /**
+     * Constructor.
+     *
+     * @param rawValue maps java enum to c/c++ integer enum values
+     */
+    private AiShadingMode(int rawValue) {
+        m_rawValue = rawValue;
+    }
+
+    /**
      * Utility method for converting from c/c++ based integer enums to java
      * enums.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * This method is intended to be used from JNI and my change based on
      * implementation needs.
-     * 
-     * @param rawValue
-     *            an integer based enum value (as defined by assimp)
+     *
+     * @param rawValue an integer based enum value (as defined by assimp)
      * @return the enum value corresponding to rawValue
      */
     static AiShadingMode fromRawValue(int rawValue) {
@@ -146,19 +159,4 @@ public enum AiShadingMode {
 
         throw new IllegalArgumentException("unexptected raw value: " + rawValue);
     }
-
-    /**
-     * Constructor.
-     * 
-     * @param rawValue
-     *            maps java enum to c/c++ integer enum values
-     */
-    private AiShadingMode(int rawValue) {
-        m_rawValue = rawValue;
-    }
-
-    /**
-     * The mapped c/c++ integer enum value.
-     */
-    private final int m_rawValue;
 }

@@ -42,14 +42,14 @@ package com.eje_c.meganekko.jassimp;
 
 /**
  * Defines alpha-blend flags.
- * <p>
- * 
+ * <p/>
+ * <p/>
  * If you're familiar with OpenGL or D3D, these flags aren't new to you. They
  * define *how* the final color value of a pixel is computed, basing on the
  * previous color at that pixel and the new color value from the material. The
  * blend formula is: <br>
  * <code>
- *   SourceColor * SourceBlend + DestColor * DestBlend
+ * SourceColor * SourceBlend + DestColor * DestBlend
  * </code><br>
  * where <code>DestColor</code> is the previous color in the framebuffer at this
  * position and <code>SourceColor</code> is the material color before the
@@ -58,8 +58,8 @@ package com.eje_c.meganekko.jassimp;
 public enum AiBlendMode {
     /**
      * Default blending.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Formula: <code>
      * SourceColor*SourceAlpha + DestColor*(1-SourceAlpha)
      * </code>
@@ -68,8 +68,8 @@ public enum AiBlendMode {
 
     /**
      * Additive blending.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * Formula: <code>
      * SourceColor*1 + DestColor*1
      * </code>
@@ -77,15 +77,28 @@ public enum AiBlendMode {
     ADDITIVE(0x1);
 
     /**
+     * The mapped c/c++ integer enum value.
+     */
+    private final int m_rawValue;
+
+    /**
+     * Constructor.
+     *
+     * @param rawValue maps java enum to c/c++ integer enum values
+     */
+    private AiBlendMode(int rawValue) {
+        m_rawValue = rawValue;
+    }
+
+    /**
      * Utility method for converting from c/c++ based integer enums to java
      * enums.
-     * <p>
-     * 
+     * <p/>
+     * <p/>
      * This method is intended to be used from JNI and my change based on
      * implementation needs.
-     * 
-     * @param rawValue
-     *            an integer based enum value (as defined by assimp)
+     *
+     * @param rawValue an integer based enum value (as defined by assimp)
      * @return the enum value corresponding to rawValue
      */
     static AiBlendMode fromRawValue(int rawValue) {
@@ -97,19 +110,4 @@ public enum AiBlendMode {
 
         throw new IllegalArgumentException("unexptected raw value: " + rawValue);
     }
-
-    /**
-     * Constructor.
-     * 
-     * @param rawValue
-     *            maps java enum to c/c++ integer enum values
-     */
-    private AiBlendMode(int rawValue) {
-        m_rawValue = rawValue;
-    }
-
-    /**
-     * The mapped c/c++ integer enum value.
-     */
-    private final int m_rawValue;
 }

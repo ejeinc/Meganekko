@@ -1,4 +1,3 @@
-
 package com.eje_c.meganekko.utility;
 
 import android.content.BroadcastReceiver;
@@ -7,8 +6,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 public final class DockEventReceiver {
-    public DockEventReceiver(final Context context, final Runnable runOnDock,
-            final Runnable runOnUndock) {
+    private final static int EXTRA_DOCK_STATE_HMT = 11;   //Intent.EXTRA_DOCK_STATE_HMT
+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiverImpl();
+    private final Context mApplicationContext;
+    private final Runnable mRunOnDock;
+    private final Runnable mRunOnUndock;
+    private boolean mIsStarted;
+    public DockEventReceiver(final Context context, final Runnable runOnDock, final Runnable runOnUndock) {
         mRunOnDock = runOnDock;
         mRunOnUndock = runOnUndock;
         mApplicationContext = context.getApplicationContext();
@@ -43,12 +47,4 @@ public final class DockEventReceiver {
             }
         }
     }
-
-    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiverImpl();
-    private final Context mApplicationContext;
-    private boolean mIsStarted;
-    private final Runnable mRunOnDock;
-    private final Runnable mRunOnUndock;
-
-    private final static int EXTRA_DOCK_STATE_HMT = 11;   //Intent.EXTRA_DOCK_STATE_HMT
 }

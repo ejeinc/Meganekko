@@ -21,9 +21,6 @@ package com.eje_c.meganekko.utility;
 
 class JniException extends Exception {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private static final String TAG = "Meganekko";
 
@@ -32,8 +29,7 @@ class JniException extends Exception {
     }
 
     public static void printCallStack(String message) {
-        StackTraceElement[] elements = new JniException(message)
-                .getStackTrace();
+        StackTraceElement[] elements = new JniException(message).getStackTrace();
         Log.d(TAG, message);
         for (int i = 1; i < elements.length; i++) {
             Log.d(TAG, elements[i].toString());

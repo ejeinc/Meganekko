@@ -37,9 +37,8 @@ class AssimpImporter extends HybridObject {
 
     /**
      * Retrieves a specific mesh from the imported 3D model.
-     * 
-     * @param index
-     *            Index of the mesh to get
+     *
+     * @param index Index of the mesh to get
      * @return The mesh, encapsulated as a {@link Mesh}.
      */
     Mesh getMesh(int index) {
@@ -49,9 +48,9 @@ class AssimpImporter extends HybridObject {
 
     /**
      * Retrieves the complete scene from the imported 3D model.
-     * 
+     *
      * @return The scene, encapsulated as a {@link AiScene}, which is a
-     *         component of the Jassimp integration.
+     * component of the Jassimp integration.
      */
     AiScene getAssimpScene() {
         return NativeAssimpImporter.getAssimpScene(getNative());
@@ -59,7 +58,7 @@ class AssimpImporter extends HybridObject {
 
     /**
      * Retrieves the particular mesh for the given node.
-     * 
+     *
      * @return The mesh, encapsulated as a {@link Mesh}.
      */
     Mesh getNodeMesh(String nodeName, int meshIndex) {
@@ -69,7 +68,7 @@ class AssimpImporter extends HybridObject {
 
     /**
      * Retrieves the material for the mesh of the given node..
-     * 
+     *
      * @return The material, encapsulated as a {@link AiMaterial}.
      */
     AiMaterial getMeshMaterial(String nodeName, int meshIndex) {
@@ -87,8 +86,8 @@ class NativeAssimpImporter {
     static native AiScene getAssimpScene(long assimpImporter);
 
     static native long getNodeMesh(long assimpImporter, String nodeName,
-            int meshIndex);
+                                   int meshIndex);
 
     static native AiMaterial getMeshMaterial(long assimpImporter,
-            String nodeName, int meshIndex);
+                                             String nodeName, int meshIndex);
 }

@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 
-/** Specialized {@linkplain com.eje_c.meganekko.SceneObject scene objects}  */
+/**
+ * Specialized {@linkplain com.eje_c.meganekko.SceneObject scene objects}
+ */
 package com.eje_c.meganekko.scene_objects;
 
