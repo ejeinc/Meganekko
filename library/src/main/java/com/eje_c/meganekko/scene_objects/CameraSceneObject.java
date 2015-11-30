@@ -15,19 +15,18 @@
 
 package com.eje_c.meganekko.scene_objects;
 
-import java.io.IOException;
+import android.graphics.SurfaceTexture;
+import android.hardware.Camera;
 
-import com.eje_c.meganekko.ExternalTexture;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Material.ShaderType;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.Texture;
+import com.eje_c.meganekko.SurfaceTextureTexture;
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.VrFrame;
 
-import android.graphics.SurfaceTexture;
-import android.hardware.Camera;
+import java.io.IOException;
 
 /**
  * A {@linkplain SceneObject scene object} that shows live video from one of the
@@ -55,12 +54,14 @@ public class CameraSceneObject extends SceneObject {
      */
     public CameraSceneObject(VrContext vrContext, Mesh mesh, Camera camera) {
         super(vrContext, mesh);
-        Texture texture = new ExternalTexture(vrContext);
+
+        SurfaceTextureTexture texture = new SurfaceTextureTexture(vrContext);
+        mSurfaceTexture = texture.getSurfaceTexture();
+
         Material material = new Material(vrContext, ShaderType.OES.ID);
         material.setMainTexture(texture);
         getRenderData().setMaterial(material);
 
-        mSurfaceTexture = new SurfaceTexture(texture.getId());
         try {
             camera.setPreviewTexture(mSurfaceTexture);
         } catch (IOException e) {

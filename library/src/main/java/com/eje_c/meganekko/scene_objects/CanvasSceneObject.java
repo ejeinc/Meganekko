@@ -16,18 +16,18 @@
 
 package com.eje_c.meganekko.scene_objects;
 
-import com.eje_c.meganekko.ExternalTexture;
-import com.eje_c.meganekko.Material;
-import com.eje_c.meganekko.Material.ShaderType;
-import com.eje_c.meganekko.RenderData;
-import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.VrContext;
-import com.eje_c.meganekko.VrFrame;
-
 import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.SurfaceTexture;
 import android.view.Surface;
+
+import com.eje_c.meganekko.Material;
+import com.eje_c.meganekko.Material.ShaderType;
+import com.eje_c.meganekko.RenderData;
+import com.eje_c.meganekko.SceneObject;
+import com.eje_c.meganekko.SurfaceTextureTexture;
+import com.eje_c.meganekko.VrContext;
+import com.eje_c.meganekko.VrFrame;
 
 /**
  * A {@linkplain SceneObject scene object} that renders like a standard Android
@@ -43,8 +43,8 @@ public class CanvasSceneObject extends SceneObject {
     public CanvasSceneObject(VrContext vrContext) {
         super(vrContext);
 
-        // Initialize an OpenGL texture
-        ExternalTexture texture = new ExternalTexture(vrContext);
+        SurfaceTextureTexture texture = new SurfaceTextureTexture(vrContext);
+        mSurfaceTexture = texture.getSurfaceTexture();
 
         Material material = new Material(vrContext, ShaderType.OES.ID);
         material.setMainTexture(texture);
@@ -54,7 +54,6 @@ public class CanvasSceneObject extends SceneObject {
 
         attachRenderData(renderData);
 
-        mSurfaceTexture = new SurfaceTexture(texture.getId());
         mSurface = new Surface(mSurfaceTexture);
     }
 
