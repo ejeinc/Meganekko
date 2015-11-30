@@ -448,10 +448,6 @@ void Renderer::renderRenderData(RenderData* render_data,
                                    mv_matrix, mv_matrix.Inverted().Transposed(),
                                    mvp_matrix, render_data, curr_material);
                             break;
-                        case Material::ShaderType::EXTERNAL_RENDERER_SHADER:
-                            shader_manager->getExternalRendererShader()->render(
-                                    mvp_matrix, render_data);
-                            break;
                         case Material::ShaderType::ASSIMP_SHADER:
                             shader_manager->getAssimpShader()->render(
                                     mv_matrix, mv_matrix.Inverted().Transposed(),
