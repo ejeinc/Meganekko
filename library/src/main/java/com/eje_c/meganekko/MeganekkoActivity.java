@@ -111,18 +111,12 @@ public class MeganekkoActivity extends VrActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        /*
-         * Removes the title bar and the status bar.
-         */
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        String commandString = VrActivity.getCommandStringFromIntent(intent);
-        String fromPackageNameString = VrActivity.getPackageStringFromIntent(intent);
-        String uriString = VrActivity.getUriStringFromIntent(intent);
+        String commandString = getCommandStringFromIntent(intent);
+        String fromPackageNameString = getPackageStringFromIntent(intent);
+        String uriString = getUriStringFromIntent(intent);
 
         setAppPtr(nativeSetAppInterface(this, fromPackageNameString, commandString, uriString));
 

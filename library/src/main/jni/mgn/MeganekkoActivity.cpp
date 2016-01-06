@@ -181,12 +181,6 @@ bool MeganekkoActivity::OnKeyEvent(const int keyCode, const int repeatCount, con
         handled = GuiSys->OnKeyEvent(keyCode, repeatCount, eventType);
     }
 
-    // if not handled back key long press, show global menu
-    if (handled == false && keyCode == 4 && eventType == KEY_EVENT_LONG_PRESS)
-    {
-        app->StartSystemActivity(PUI_GLOBAL_MENU);
-    }
-
     return handled;
 }
 
