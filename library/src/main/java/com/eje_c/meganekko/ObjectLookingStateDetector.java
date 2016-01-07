@@ -55,6 +55,13 @@ public class ObjectLookingStateDetector implements FrameListener {
     @Override
     public void onEvent(VrFrame vrFrame) {
 
+        if (!mTarget.isShown()) {
+            if (mLooking) {
+                mListener.onLookEnd(mTarget, vrFrame);
+            }
+            return;
+        }
+
         boolean lookingNow = mActivity.isLookingAt(mTarget);
 
         if (lookingNow) {
