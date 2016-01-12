@@ -51,14 +51,14 @@ public abstract class HybridObject implements Closeable {
      * otherwise, the references get garbage collected (usually before their
      * objects) and never get enqueued.
      */
-    private static final Set<Reference> sReferenceSet = new HashSet<Reference>();
+    private static final Set<Reference> sReferenceSet = new HashSet<>();
 
     /*
      * Constructors
      */
 
     static {
-        new FinalizeThread();
+        new FinalizeThread().start();
     }
 
     private final VrContext mVrContext;
@@ -313,7 +313,7 @@ public abstract class HybridObject implements Closeable {
                         handler.nativeCleanup(mNativePointer);
                     }
                 }
-                NativeHybridObject.delete(mNativePointer);
+                delete(mNativePointer);
             }
 
             sReferenceSet.remove(this);
@@ -327,7 +327,6 @@ public abstract class HybridObject implements Closeable {
         private FinalizeThread() {
             setName("Finalize Thread");
             setPriority(MAX_PRIORITY);
-            start();
         }
 
         @Override
@@ -342,8 +341,6 @@ public abstract class HybridObject implements Closeable {
             }
         }
     }
-}
 
-class NativeHybridObject {
-    static native void delete(long nativePointer);
+    private static native void delete(long nativePointer);
 }

@@ -27,76 +27,76 @@
 namespace mgn {
 extern "C" {
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_ctor(JNIEnv* env, jobject obj);
+Java_com_eje_1c_meganekko_Mesh_initNativeInstance(JNIEnv* env, jobject obj);
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_getVertices(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_getVertices(JNIEnv * env,
         jobject obj, jlong jmesh);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_setVertices(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_setVertices(JNIEnv * env,
         jobject obj, jlong jmesh, jfloatArray vertices);
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_getNormals(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_getNormals(JNIEnv * env,
         jobject obj, jlong jmesh);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_setNormals(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_setNormals(JNIEnv * env,
         jobject obj, jlong jmesh, jfloatArray normals);
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_getTexCoords(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_getTexCoords(JNIEnv * env,
         jobject obj, jlong jmesh);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_setTexCoords(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_setTexCoords(JNIEnv * env,
         jobject obj, jlong jmesh, jfloatArray tex_coords);
 JNIEXPORT jcharArray JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_getTriangles(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_getTriangles(JNIEnv * env,
         jobject obj, jlong jmesh);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_setTriangles(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_setTriangles(JNIEnv * env,
         jobject obj, jlong jmesh, jcharArray triangles);
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_getFloatVector(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_getFloatVector(JNIEnv * env,
         jobject obj, jlong jmesh, jstring key);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_setFloatVector(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_setFloatVector(JNIEnv * env,
         jobject obj, jlong jmesh, jstring key, jfloatArray float_vector);
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_getVec2Vector(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_getVec2Vector(JNIEnv * env,
         jobject obj, jlong jmesh, jstring key);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_setVec2Vector(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_setVec2Vector(JNIEnv * env,
         jobject obj, jlong jmesh, jstring key, jfloatArray vec2_vector);
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_getVec3Vector(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_getVec3Vector(JNIEnv * env,
         jobject obj, jlong jmesh, jstring key);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_setVec3Vector(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_setVec3Vector(JNIEnv * env,
         jobject obj, jlong jmesh, jstring key, jfloatArray vec3_vector);
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_getVec4Vector(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_getVec4Vector(JNIEnv * env,
         jobject obj, jlong jmesh, jstring key);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_setVec4Vector(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_setVec4Vector(JNIEnv * env,
         jobject obj, jlong jmesh, jstring key, jfloatArray vec4_vector);
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_getBoundingBox(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_getBoundingBox(JNIEnv * env,
         jobject obj, jlong jmesh);
 }
 ;
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_ctor(JNIEnv* env, jobject obj) {
+Java_com_eje_1c_meganekko_Mesh_initNativeInstance(JNIEnv* env, jobject obj) {
     return reinterpret_cast<jlong>(new Mesh());
 }
 
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_getVertices(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_getVertices(JNIEnv * env,
         jobject obj, jlong jmesh) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     std::vector<OVR::Vector3f>& vertices = mesh->vertices();
@@ -107,7 +107,7 @@ Java_com_eje_1c_meganekko_NativeMesh_getVertices(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_setVertices(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_setVertices(JNIEnv * env,
         jobject obj, jlong jmesh, jfloatArray vertices) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     jfloat* jvertices_pointer = env->GetFloatArrayElements(vertices, 0);
@@ -124,7 +124,7 @@ Java_com_eje_1c_meganekko_NativeMesh_setVertices(JNIEnv * env,
 }
 
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_getNormals(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_getNormals(JNIEnv * env,
         jobject obj, jlong jmesh) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     std::vector<OVR::Vector3f>& normals = mesh->normals();
@@ -135,7 +135,7 @@ Java_com_eje_1c_meganekko_NativeMesh_getNormals(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_setNormals(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_setNormals(JNIEnv * env,
         jobject obj, jlong jmesh, jfloatArray normals) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     jfloat* jnormals_pointer = env->GetFloatArrayElements(normals, 0);
@@ -151,7 +151,7 @@ Java_com_eje_1c_meganekko_NativeMesh_setNormals(JNIEnv * env,
 }
 
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_getTexCoords(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_getTexCoords(JNIEnv * env,
         jobject obj, jlong jmesh) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     std::vector<OVR::Vector2f>& uvs = mesh->tex_coords();
@@ -162,7 +162,7 @@ Java_com_eje_1c_meganekko_NativeMesh_getTexCoords(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_setTexCoords(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_setTexCoords(JNIEnv * env,
         jobject obj, jlong jmesh, jfloatArray tex_coords) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     jfloat* jtex_coords_pointer = env->GetFloatArrayElements(tex_coords, 0);
@@ -179,7 +179,7 @@ Java_com_eje_1c_meganekko_NativeMesh_setTexCoords(JNIEnv * env,
 }
 
 JNIEXPORT jcharArray JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_getTriangles(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_getTriangles(JNIEnv * env,
         jobject obj, jlong jmesh) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     std::vector<unsigned short>& triangles = mesh->triangles();
@@ -189,7 +189,7 @@ Java_com_eje_1c_meganekko_NativeMesh_getTriangles(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_setTriangles(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_setTriangles(JNIEnv * env,
         jobject obj, jlong jmesh, jcharArray triangles) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     jchar* jtriangles_pointer = env->GetCharArrayElements(triangles, 0);
@@ -205,7 +205,7 @@ Java_com_eje_1c_meganekko_NativeMesh_setTriangles(JNIEnv * env,
 }
 
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_getFloatVector(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_getFloatVector(JNIEnv * env,
         jobject obj, jlong jmesh, jstring key) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     const char* char_key = env->GetStringUTFChars(key, 0);
@@ -219,7 +219,7 @@ Java_com_eje_1c_meganekko_NativeMesh_getFloatVector(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_setFloatVector(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_setFloatVector(JNIEnv * env,
         jobject obj, jlong jmesh, jstring key, jfloatArray float_vector) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     jfloat* jfloat_vector_pointer = env->GetFloatArrayElements(float_vector, 0);
@@ -239,7 +239,7 @@ Java_com_eje_1c_meganekko_NativeMesh_setFloatVector(JNIEnv * env,
 }
 
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_getVec2Vector(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_getVec2Vector(JNIEnv * env,
         jobject obj, jlong jmesh, jstring key) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     const char* char_key = env->GetStringUTFChars(key, 0);
@@ -253,7 +253,7 @@ Java_com_eje_1c_meganekko_NativeMesh_getVec2Vector(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_setVec2Vector(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_setVec2Vector(JNIEnv * env,
         jobject obj, jlong jmesh, jstring key, jfloatArray vec2_vector) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     jfloat* jvec2_vector_pointer = env->GetFloatArrayElements(vec2_vector, 0);
@@ -273,7 +273,7 @@ Java_com_eje_1c_meganekko_NativeMesh_setVec2Vector(JNIEnv * env,
 }
 
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_getVec3Vector(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_getVec3Vector(JNIEnv * env,
         jobject obj, jlong jmesh, jstring key) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     const char* char_key = env->GetStringUTFChars(key, 0);
@@ -287,7 +287,7 @@ Java_com_eje_1c_meganekko_NativeMesh_getVec3Vector(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_setVec3Vector(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_setVec3Vector(JNIEnv * env,
         jobject obj, jlong jmesh, jstring key, jfloatArray vec3_vector) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     jfloat* jvec3_vector_pointer = env->GetFloatArrayElements(vec3_vector, 0);
@@ -307,7 +307,7 @@ Java_com_eje_1c_meganekko_NativeMesh_setVec3Vector(JNIEnv * env,
 }
 
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_getVec4Vector(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_getVec4Vector(JNIEnv * env,
         jobject obj, jlong jmesh, jstring key) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     const char* char_key = env->GetStringUTFChars(key, 0);
@@ -321,7 +321,7 @@ Java_com_eje_1c_meganekko_NativeMesh_getVec4Vector(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_setVec4Vector(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_setVec4Vector(JNIEnv * env,
         jobject obj, jlong jmesh, jstring key, jfloatArray vec4_vector) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     jfloat* jvec4_vector_pointer = env->GetFloatArrayElements(vec4_vector, 0);
@@ -341,7 +341,7 @@ Java_com_eje_1c_meganekko_NativeMesh_setVec4Vector(JNIEnv * env,
 }
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeMesh_getBoundingBox(JNIEnv * env,
+Java_com_eje_1c_meganekko_Mesh_getBoundingBox(JNIEnv * env,
         jobject obj, jlong jmesh) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     return reinterpret_cast<jlong>(mesh->getBoundingBox());

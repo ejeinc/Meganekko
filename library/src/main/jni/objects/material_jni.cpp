@@ -25,19 +25,19 @@ namespace mgn {
 extern "C" {
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeMaterial_ctor(JNIEnv * env, jobject obj, jint shader_type) {
+Java_com_eje_1c_meganekko_Material_ctor(JNIEnv * env, jobject obj, jint shader_type) {
     return reinterpret_cast<jlong>(new Material(static_cast<Material::ShaderType>(shader_type)));
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMaterial_setShaderType(JNIEnv * env, jobject obj, jlong jmaterial, jint shader_type) {
+Java_com_eje_1c_meganekko_Material_setShaderType(JNIEnv * env, jobject obj, jlong jmaterial, jint shader_type) {
 
     Material* material = reinterpret_cast<Material*>(jmaterial);
     return material->set_shader_type(static_cast<Material::ShaderType>(shader_type));
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMaterial_setTexture(JNIEnv * env, jobject obj, jlong jmaterial, jstring key, jlong jtexture) {
+Java_com_eje_1c_meganekko_Material_setTexture(JNIEnv * env, jobject obj, jlong jmaterial, jstring key, jlong jtexture) {
 
     Material* material = reinterpret_cast<Material*>(jmaterial);
     Texture* texture = reinterpret_cast<Texture*>(jtexture);
@@ -50,7 +50,7 @@ Java_com_eje_1c_meganekko_NativeMaterial_setTexture(JNIEnv * env, jobject obj, j
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeMaterial_getFloat(JNIEnv * env, jobject obj, jlong jmaterial, jstring key) {
+Java_com_eje_1c_meganekko_Material_getFloat(JNIEnv * env, jobject obj, jlong jmaterial, jstring key) {
 
     Material* material = reinterpret_cast<Material*>(jmaterial);
     const char* char_key = env->GetStringUTFChars(key, 0);
@@ -64,17 +64,17 @@ Java_com_eje_1c_meganekko_NativeMaterial_getFloat(JNIEnv * env, jobject obj, jlo
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMaterial_setMat4(JNIEnv * env,
+Java_com_eje_1c_meganekko_Material_setMat4(JNIEnv * env,
         jobject obj, jlong jmaterial, jstring key, jfloat x1, jfloat y1,
         jfloat z1, jfloat w1, jfloat x2, jfloat y2, jfloat z2, jfloat w2,
         jfloat x3, jfloat y3, jfloat z3, jfloat w3, jfloat x4, jfloat y4,
         jfloat z4, jfloat w4);
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeMaterial_setShaderFeatureSet(JNIEnv * env, jobject obj,
+Java_com_eje_1c_meganekko_Material_setShaderFeatureSet(JNIEnv * env, jobject obj,
         jlong jmaterial, jint feature_set);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMaterial_setFloat(JNIEnv * env, jobject obj, jlong jmaterial, jstring key, jfloat value) {
+Java_com_eje_1c_meganekko_Material_setFloat(JNIEnv * env, jobject obj, jlong jmaterial, jstring key, jfloat value) {
 
     Material* material = reinterpret_cast<Material*>(jmaterial);
     const char* char_key = env->GetStringUTFChars(key, 0);
@@ -87,7 +87,7 @@ Java_com_eje_1c_meganekko_NativeMaterial_setFloat(JNIEnv * env, jobject obj, jlo
 }
 
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeMaterial_getVec2(JNIEnv * env, jobject obj, jlong jmaterial, jstring key) {
+Java_com_eje_1c_meganekko_Material_getVec2(JNIEnv * env, jobject obj, jlong jmaterial, jstring key) {
 
     Material* material = reinterpret_cast<Material*>(jmaterial);
     const char* char_key = env->GetStringUTFChars(key, 0);
@@ -103,7 +103,7 @@ Java_com_eje_1c_meganekko_NativeMaterial_getVec2(JNIEnv * env, jobject obj, jlon
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMaterial_setVec2(JNIEnv * env, jobject obj, jlong jmaterial, jstring key, jfloat x, jfloat y) {
+Java_com_eje_1c_meganekko_Material_setVec2(JNIEnv * env, jobject obj, jlong jmaterial, jstring key, jfloat x, jfloat y) {
 
     Material* material = reinterpret_cast<Material*>(jmaterial);
     const char* char_key = env->GetStringUTFChars(key, 0);
@@ -115,7 +115,7 @@ Java_com_eje_1c_meganekko_NativeMaterial_setVec2(JNIEnv * env, jobject obj, jlon
 }
 
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeMaterial_getVec3(JNIEnv * env, jobject obj, jlong jmaterial, jstring key) {
+Java_com_eje_1c_meganekko_Material_getVec3(JNIEnv * env, jobject obj, jlong jmaterial, jstring key) {
 
     Material* material = reinterpret_cast<Material*>(jmaterial);
     const char* char_key = env->GetStringUTFChars(key, 0);
@@ -131,7 +131,7 @@ Java_com_eje_1c_meganekko_NativeMaterial_getVec3(JNIEnv * env, jobject obj, jlon
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMaterial_setVec3(JNIEnv * env, jobject obj, jlong jmaterial, jstring key, jfloat x, jfloat y, jfloat z) {
+Java_com_eje_1c_meganekko_Material_setVec3(JNIEnv * env, jobject obj, jlong jmaterial, jstring key, jfloat x, jfloat y, jfloat z) {
 
     Material* material = reinterpret_cast<Material*>(jmaterial);
     const char* char_key = env->GetStringUTFChars(key, 0);
@@ -142,7 +142,7 @@ Java_com_eje_1c_meganekko_NativeMaterial_setVec3(JNIEnv * env, jobject obj, jlon
 }
 
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeMaterial_getVec4(JNIEnv * env, jobject obj, jlong jmaterial, jstring key) {
+Java_com_eje_1c_meganekko_Material_getVec4(JNIEnv * env, jobject obj, jlong jmaterial, jstring key) {
 
     Material* material = reinterpret_cast<Material*>(jmaterial);
     const char* char_key = env->GetStringUTFChars(key, 0);
@@ -158,7 +158,7 @@ Java_com_eje_1c_meganekko_NativeMaterial_getVec4(JNIEnv * env, jobject obj, jlon
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMaterial_setVec4(JNIEnv * env, jobject obj, jlong jmaterial, jstring key, jfloat x, jfloat y, jfloat z, jfloat w) {
+Java_com_eje_1c_meganekko_Material_setVec4(JNIEnv * env, jobject obj, jlong jmaterial, jstring key, jfloat x, jfloat y, jfloat z, jfloat w) {
 
     Material* material = reinterpret_cast<Material*>(jmaterial);
     const char* char_key = env->GetStringUTFChars(key, 0);
@@ -171,7 +171,7 @@ Java_com_eje_1c_meganekko_NativeMaterial_setVec4(JNIEnv * env, jobject obj, jlon
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMaterial_setMat4(JNIEnv * env,
+Java_com_eje_1c_meganekko_Material_setMat4(JNIEnv * env,
     jobject obj, jlong jmaterial, jstring key, jfloat x1, jfloat y1,
     jfloat z1, jfloat w1, jfloat x2, jfloat y2, jfloat z2, jfloat w2,
     jfloat x3, jfloat y3, jfloat z3, jfloat w3, jfloat x4, jfloat y4,
@@ -188,7 +188,7 @@ Java_com_eje_1c_meganekko_NativeMaterial_setMat4(JNIEnv * env,
 }
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeMaterial_setShaderFeatureSet(JNIEnv * env, jobject obj,
+Java_com_eje_1c_meganekko_Material_setShaderFeatureSet(JNIEnv * env, jobject obj,
     jlong jmaterial, jint feature_set) {
 Material* material = reinterpret_cast<Material*>(jmaterial);
 material->set_shader_feature_set(feature_set);

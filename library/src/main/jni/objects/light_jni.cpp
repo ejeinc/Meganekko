@@ -24,62 +24,62 @@
 namespace mgn {
 extern "C" {
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeLight_ctor(JNIEnv * env, jobject obj);
+Java_com_eje_1c_meganekko_Light_ctor(JNIEnv * env, jobject obj);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeLight_enable(JNIEnv * env, jobject obj, jlong jlight);
+Java_com_eje_1c_meganekko_Light_enable(JNIEnv * env, jobject obj, jlong jlight);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeLight_disable(JNIEnv * env, jobject obj, jlong jlight);
+Java_com_eje_1c_meganekko_Light_disable(JNIEnv * env, jobject obj, jlong jlight);
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeLight_getFloat(JNIEnv * env,
+Java_com_eje_1c_meganekko_Light_getFloat(JNIEnv * env,
         jobject obj, jlong jlight, jstring key);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeLight_setFloat(JNIEnv * env,
+Java_com_eje_1c_meganekko_Light_setFloat(JNIEnv * env,
         jobject obj, jlong jlight, jstring key, jfloat value);
 
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeLight_getVec3(JNIEnv * env,
+Java_com_eje_1c_meganekko_Light_getVec3(JNIEnv * env,
         jobject obj, jlong jlight, jstring key);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeLight_setVec3(JNIEnv * env,
+Java_com_eje_1c_meganekko_Light_setVec3(JNIEnv * env,
         jobject obj, jlong jlight, jstring key, jfloat x, jfloat y,
         jfloat z);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeLight_setVec4(JNIEnv * env,
+Java_com_eje_1c_meganekko_Light_setVec4(JNIEnv * env,
         jobject obj, jlong jlight, jstring key, jfloat x, jfloat y, jfloat z,
         jfloat w);
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeLight_getVec4(JNIEnv * env,
+Java_com_eje_1c_meganekko_Light_getVec4(JNIEnv * env,
         jobject obj, jlong jlight, jstring key);
 }
 ;
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeLight_ctor(JNIEnv * env, jobject obj) {
+Java_com_eje_1c_meganekko_Light_ctor(JNIEnv * env, jobject obj) {
     return reinterpret_cast<jlong>(new Light());
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeLight_enable(JNIEnv * env,
+Java_com_eje_1c_meganekko_Light_enable(JNIEnv * env,
     jobject obj, jlong jlight) {
     Light* light = reinterpret_cast<Light*>(jlight);
     light->enable();
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeLight_disable(JNIEnv * env,
+Java_com_eje_1c_meganekko_Light_disable(JNIEnv * env,
     jobject obj, jlong jlight) {
     Light* light = reinterpret_cast<Light*>(jlight);
     light->disable();
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeLight_getFloat(JNIEnv * env,
+Java_com_eje_1c_meganekko_Light_getFloat(JNIEnv * env,
     jobject obj, jlong jlight, jstring key) {
     Light* light = reinterpret_cast<Light*>(jlight);
     const char* char_key = env->GetStringUTFChars(key, 0);
@@ -90,7 +90,7 @@ Java_com_eje_1c_meganekko_NativeLight_getFloat(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeLight_setFloat(JNIEnv * env,
+Java_com_eje_1c_meganekko_Light_setFloat(JNIEnv * env,
     jobject obj, jlong jlight, jstring key, jfloat value) {
     Light* light = reinterpret_cast<Light*>(jlight);
     const char* char_key = env->GetStringUTFChars(key, 0);
@@ -100,7 +100,7 @@ Java_com_eje_1c_meganekko_NativeLight_setFloat(JNIEnv * env,
 }
 
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeLight_getVec3(JNIEnv * env,
+Java_com_eje_1c_meganekko_Light_getVec3(JNIEnv * env,
     jobject obj, jlong jlight, jstring key) {
     Light* light = reinterpret_cast<Light*>(jlight);
     const char* char_key = env->GetStringUTFChars(key, 0);
@@ -113,7 +113,7 @@ Java_com_eje_1c_meganekko_NativeLight_getVec3(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeLight_setVec3(JNIEnv * env,
+Java_com_eje_1c_meganekko_Light_setVec3(JNIEnv * env,
     jobject obj, jlong jlight, jstring key, jfloat x, jfloat y,
     jfloat z) {
     Light* light = reinterpret_cast<Light*>(jlight);
@@ -124,7 +124,7 @@ Java_com_eje_1c_meganekko_NativeLight_setVec3(JNIEnv * env,
 }
 
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeLight_getVec4(JNIEnv * env,
+Java_com_eje_1c_meganekko_Light_getVec4(JNIEnv * env,
     jobject obj, jlong jlight, jstring key) {
     Light* light = reinterpret_cast<Light*>(jlight);
     const char* char_key = env->GetStringUTFChars(key, 0);
@@ -137,7 +137,7 @@ Java_com_eje_1c_meganekko_NativeLight_getVec4(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeLight_setVec4(JNIEnv * env,
+Java_com_eje_1c_meganekko_Light_setVec4(JNIEnv * env,
     jobject obj, jlong jlight, jstring key, jfloat x, jfloat y, jfloat z,
     jfloat w) {
     Light* light = reinterpret_cast<Light*>(jlight);

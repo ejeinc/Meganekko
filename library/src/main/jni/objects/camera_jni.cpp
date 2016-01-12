@@ -32,7 +32,7 @@ JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_Camera_initNativeInstance(JNIEnv * env, jobject obj);
 
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeCamera_getLookAt(JNIEnv * env, jobject obj, jlong jcamera);
+Java_com_eje_1c_meganekko_Camera_getLookAt(JNIEnv * env, jobject obj, jlong jcamera);
 
 };
 
@@ -42,7 +42,7 @@ Java_com_eje_1c_meganekko_Camera_initNativeInstance(JNIEnv * env, jobject obj) {
 }
 
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeCamera_getLookAt(JNIEnv * env, jobject obj, jlong jcamera) {
+Java_com_eje_1c_meganekko_Camera_getLookAt(JNIEnv * env, jobject obj, jlong jcamera) {
     Camera* camera = reinterpret_cast<Camera*>(jcamera);
     return ToFloatArray(env, camera->getLookAt());
 }

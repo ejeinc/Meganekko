@@ -112,8 +112,6 @@ public class VrContext {
      */
     // true or false based on the support for anisotropy
     public boolean isAnisotropicSupported;
-    // Max anisotropic value if supported and -1 otherwise
-    public int maxAnisotropicValue = -1;
     /**
      * The ID of the GLthread. We use this ID to prevent non-GL thread from
      * calling GL functions.
@@ -1930,12 +1928,6 @@ public class VrContext {
         String extensions = GLES20.glGetString(GLES20.GL_EXTENSIONS);
         isAnisotropicSupported = extensions
                 .contains("GL_EXT_texture_filter_anisotropic");
-
-        // Evaluating max anisotropic value if supported
-        if (isAnisotropicSupported) {
-            maxAnisotropicValue = NativeTextureParameters
-                    .getMaxAnisotropicValue();
-        }
 
         /*
          * GL Initializations.

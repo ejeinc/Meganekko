@@ -27,58 +27,58 @@
 namespace mgn {
 extern "C" {
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addTextureKey(JNIEnv * env,
+Java_com_eje_1c_meganekko_MaterialMap_addTextureKey(JNIEnv * env,
         jobject obj, jlong jcustom_shader, jstring variable_name, jstring key);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addAttributeFloatKey(
+Java_com_eje_1c_meganekko_MaterialMap_addAttributeFloatKey(
         JNIEnv * env, jobject obj, jlong jcustom_shader, jstring variable_name,
         jstring key);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addAttributeVec2Key(
+Java_com_eje_1c_meganekko_MaterialMap_addAttributeVec2Key(
         JNIEnv * env, jobject obj, jlong jcustom_shader, jstring variable_name,
         jstring key);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addAttributeVec3Key(
+Java_com_eje_1c_meganekko_MaterialMap_addAttributeVec3Key(
         JNIEnv * env, jobject obj, jlong jcustom_shader, jstring variable_name,
         jstring key);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addAttributeVec4Key(
+Java_com_eje_1c_meganekko_MaterialMap_addAttributeVec4Key(
         JNIEnv * env, jobject obj, jlong jcustom_shader, jstring variable_name,
         jstring key);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addUniformFloatKey(
+Java_com_eje_1c_meganekko_MaterialMap_addUniformFloatKey(
         JNIEnv * env, jobject obj, jlong jcustom_shader, jstring variable_name,
         jstring key);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addUniformVec2Key(
+Java_com_eje_1c_meganekko_MaterialMap_addUniformVec2Key(
         JNIEnv * env, jobject obj, jlong jcustom_shader, jstring variable_name,
         jstring key);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addUniformVec3Key(
+Java_com_eje_1c_meganekko_MaterialMap_addUniformVec3Key(
         JNIEnv * env, jobject obj, jlong jcustom_shader, jstring variable_name,
         jstring key);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addUniformVec4Key(
+Java_com_eje_1c_meganekko_MaterialMap_addUniformVec4Key(
         JNIEnv * env, jobject obj, jlong jcustom_shader, jstring variable_name,
         jstring key);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addUniformMat4Key(
+Java_com_eje_1c_meganekko_MaterialMap_addUniformMat4Key(
         JNIEnv * env, jobject obj, jlong jcustom_shader, jstring variable_name,
         jstring key);
 }
 ;
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addTextureKey(JNIEnv * env,
+Java_com_eje_1c_meganekko_MaterialMap_addTextureKey(JNIEnv * env,
         jobject obj, jlong jcustom_shader, jstring variable_name, jstring key) {
     CustomShader* custom_shader = reinterpret_cast<CustomShader*>(jcustom_shader);
     const char* char_variable_name = env->GetStringUTFChars(variable_name, 0);
@@ -91,7 +91,7 @@ Java_com_eje_1c_meganekko_NativeCustomShader_addTextureKey(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addAttributeFloatKey(
+Java_com_eje_1c_meganekko_MaterialMap_addAttributeFloatKey(
         JNIEnv * env, jobject obj, jlong jcustom_shader, jstring variable_name,
         jstring key) {
     CustomShader* custom_shader = reinterpret_cast<CustomShader*>(jcustom_shader);
@@ -105,7 +105,7 @@ Java_com_eje_1c_meganekko_NativeCustomShader_addAttributeFloatKey(
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addAttributeVec2Key(
+Java_com_eje_1c_meganekko_MaterialMap_addAttributeVec2Key(
         JNIEnv * env, jobject obj, jlong jcustom_shader, jstring variable_name,
         jstring key) {
     CustomShader* custom_shader = reinterpret_cast<CustomShader*>(jcustom_shader);
@@ -119,7 +119,7 @@ Java_com_eje_1c_meganekko_NativeCustomShader_addAttributeVec2Key(
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addAttributeVec3Key(
+Java_com_eje_1c_meganekko_MaterialMap_addAttributeVec3Key(
         JNIEnv * env, jobject obj, jlong jcustom_shader, jstring variable_name,
         jstring key) {
     CustomShader* custom_shader = reinterpret_cast<CustomShader*>(jcustom_shader);
@@ -133,7 +133,7 @@ Java_com_eje_1c_meganekko_NativeCustomShader_addAttributeVec3Key(
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addAttributeVec4Key(
+Java_com_eje_1c_meganekko_MaterialMap_addAttributeVec4Key(
         JNIEnv * env, jobject obj, jlong jcustom_shader, jstring variable_name,
         jstring key) {
     CustomShader* custom_shader = reinterpret_cast<CustomShader*>(jcustom_shader);
@@ -147,7 +147,7 @@ Java_com_eje_1c_meganekko_NativeCustomShader_addAttributeVec4Key(
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addUniformFloatKey(
+Java_com_eje_1c_meganekko_MaterialMap_addUniformFloatKey(
         JNIEnv * env, jobject obj, jlong jcustom_shader, jstring variable_name,
         jstring key) {
     CustomShader* custom_shader = reinterpret_cast<CustomShader*>(jcustom_shader);
@@ -161,7 +161,7 @@ Java_com_eje_1c_meganekko_NativeCustomShader_addUniformFloatKey(
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addUniformVec2Key(
+Java_com_eje_1c_meganekko_MaterialMap_addUniformVec2Key(
         JNIEnv * env, jobject obj, jlong jcustom_shader, jstring variable_name,
         jstring key) {
     CustomShader* custom_shader = reinterpret_cast<CustomShader*>(jcustom_shader);
@@ -175,7 +175,7 @@ Java_com_eje_1c_meganekko_NativeCustomShader_addUniformVec2Key(
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addUniformVec3Key(
+Java_com_eje_1c_meganekko_MaterialMap_addUniformVec3Key(
         JNIEnv * env, jobject obj, jlong jcustom_shader, jstring variable_name,
         jstring key) {
     CustomShader* custom_shader = reinterpret_cast<CustomShader*>(jcustom_shader);
@@ -189,7 +189,7 @@ Java_com_eje_1c_meganekko_NativeCustomShader_addUniformVec3Key(
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addUniformVec4Key(
+Java_com_eje_1c_meganekko_MaterialMap_addUniformVec4Key(
         JNIEnv * env, jobject obj, jlong jcustom_shader, jstring variable_name,
         jstring key) {
     CustomShader* custom_shader = reinterpret_cast<CustomShader*>(jcustom_shader);
@@ -203,7 +203,7 @@ Java_com_eje_1c_meganekko_NativeCustomShader_addUniformVec4Key(
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeCustomShader_addUniformMat4Key(
+Java_com_eje_1c_meganekko_MaterialMap_addUniformMat4Key(
         JNIEnv * env, jobject obj, jlong jcustom_shader, jstring variable_name,
         jstring key) {
     CustomShader* custom_shader = reinterpret_cast<CustomShader*>(jcustom_shader);

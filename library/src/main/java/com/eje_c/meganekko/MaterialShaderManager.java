@@ -30,12 +30,15 @@ public class MaterialShaderManager extends
     private final Map<CustomMaterialShaderId, MaterialMap> materialMaps = new HashMap<>();
 
     MaterialShaderManager(VrContext vrContext) {
-        super(vrContext, NativeShaderManager.ctor());
+        super(vrContext);
     }
 
     @Override
+    protected native long initNativeInstance();
+
+    @Override
     public CustomMaterialShaderId addShader(String vertexShader, String fragmentShader) {
-        final int shaderId = NativeShaderManager.addCustomShader(getNative(), vertexShader, fragmentShader);
+        final int shaderId = addCustomShader(getNative(), vertexShader, fragmentShader);
         CustomMaterialShaderId result = new CustomMaterialShaderId(shaderId);
         materialMaps.put(result, retrieveShaderMap(result));
         return result;
@@ -48,15 +51,11 @@ public class MaterialShaderManager extends
 
     @SuppressWarnings("resource")
     private MaterialMap retrieveShaderMap(CustomMaterialShaderId id) {
-        long ptr = NativeShaderManager.getCustomShader(getNative(), id.ID);
+        long ptr = getCustomShader(getNative(), id.ID);
         return ptr == 0 ? null : new MaterialMap(getVrContext(), ptr);
     }
-}
 
-class NativeShaderManager {
-    static native long ctor();
+    private static native int addCustomShader(long shaderManager, String vertexShader, String fragmentShader);
 
-    static native int addCustomShader(long shaderManager, String vertexShader, String fragmentShader);
-
-    static native long getCustomShader(long shaderManager, int id);
+    private static native long getCustomShader(long shaderManager, int id);
 }

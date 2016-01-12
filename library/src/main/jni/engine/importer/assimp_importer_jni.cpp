@@ -25,24 +25,24 @@
 namespace mgn {
 extern "C" {
 JNIEXPORT jint JNICALL
-Java_com_eje_1c_meganekko_NativeAssimpImporter_getNumberOfMeshes(
+Java_com_eje_1c_meganekko_AssimpImporter_getNumberOfMeshes(
         JNIEnv * env, jobject obj, jlong jassimp_importer);
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeAssimpImporter_getMesh(JNIEnv * env,
+Java_com_eje_1c_meganekko_AssimpImporter_getMesh(JNIEnv * env,
         jobject obj, jlong jassimp_importer, jint index);
 JNIEXPORT jobject JNICALL
-Java_com_eje_1c_meganekko_NativeAssimpImporter_getAssimpScene(JNIEnv * env,
+Java_com_eje_1c_meganekko_AssimpImporter_getAssimpScene(JNIEnv * env,
         jobject obj, jlong jassimp_importer);
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeAssimpImporter_getNodeMesh(JNIEnv * env,
+Java_com_eje_1c_meganekko_AssimpImporter_getNodeMesh(JNIEnv * env,
         jobject obj, jlong jassimp_importer, jstring jnode_name, jint index);
 JNIEXPORT jobject JNICALL
-Java_com_eje_1c_meganekko_NativeAssimpImporter_getMeshMaterial(JNIEnv * env,
+Java_com_eje_1c_meganekko_AssimpImporter_getMeshMaterial(JNIEnv * env,
         jobject obj, jlong jassimp_importer, jstring jnode_name, jint index);
 }
 
 JNIEXPORT jint JNICALL
-Java_com_eje_1c_meganekko_NativeAssimpImporter_getNumberOfMeshes(
+Java_com_eje_1c_meganekko_AssimpImporter_getNumberOfMeshes(
         JNIEnv * env, jobject obj, jlong jassimp_importer) {
     AssimpImporter* assimp_importer =
             reinterpret_cast<AssimpImporter*>(jassimp_importer);
@@ -50,7 +50,7 @@ Java_com_eje_1c_meganekko_NativeAssimpImporter_getNumberOfMeshes(
 }
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeAssimpImporter_getMesh(JNIEnv * env,
+Java_com_eje_1c_meganekko_AssimpImporter_getMesh(JNIEnv * env,
         jobject obj, jlong jassimp_importer, jint index) {
     AssimpImporter* assimp_importer =
             reinterpret_cast<AssimpImporter*>(jassimp_importer);
@@ -58,7 +58,7 @@ Java_com_eje_1c_meganekko_NativeAssimpImporter_getMesh(JNIEnv * env,
 }
 
 JNIEXPORT jobject JNICALL
-Java_com_eje_1c_meganekko_NativeAssimpImporter_getAssimpScene(
+Java_com_eje_1c_meganekko_AssimpImporter_getAssimpScene(
         JNIEnv * env, jobject obj, jlong jassimp_importer) {
     AssimpImporter* assimp_importer =
             reinterpret_cast<AssimpImporter*>(jassimp_importer);
@@ -70,7 +70,7 @@ Java_com_eje_1c_meganekko_NativeAssimpImporter_getAssimpScene(
 }
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeAssimpImporter_getNodeMesh(JNIEnv * env,
+Java_com_eje_1c_meganekko_AssimpImporter_getNodeMesh(JNIEnv * env,
         jobject obj, jlong jassimp_importer, jstring jnode_name, jint index) {
     AssimpImporter* assimp_importer =
             reinterpret_cast<AssimpImporter*>(jassimp_importer);
@@ -83,7 +83,7 @@ Java_com_eje_1c_meganekko_NativeAssimpImporter_getNodeMesh(JNIEnv * env,
 }
 
 JNIEXPORT jobject JNICALL
-Java_com_eje_1c_meganekko_NativeAssimpImporter_getMeshMaterial(JNIEnv * env,
+Java_com_eje_1c_meganekko_AssimpImporter_getMeshMaterial(JNIEnv * env,
         jobject obj, jlong jassimp_importer, jstring jnode_name, jint index) {
     AssimpImporter* assimp_importer =
             reinterpret_cast<AssimpImporter*>(jassimp_importer);

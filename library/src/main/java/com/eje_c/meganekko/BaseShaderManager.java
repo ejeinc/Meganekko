@@ -27,8 +27,8 @@ import java.io.InputStream;
 
 public abstract class BaseShaderManager<MAP, ID> extends HybridObject implements ShaderManagers<MAP, ID> {
 
-    protected BaseShaderManager(VrContext vrContext, long pointer) {
-        super(vrContext, pointer);
+    protected BaseShaderManager(VrContext vrContext) {
+        super(vrContext);
     }
 
     protected static InputStream open(Resources resources, String pathPrefix, String assetRelativeFilename) throws IOException {

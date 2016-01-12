@@ -65,7 +65,7 @@ public class CubemapTexture extends Texture {
      *                          also contain default values.
      */
     public CubemapTexture(VrContext vrContext, Bitmap[] bitmapArray, TextureParameters textureParameters) {
-        super(vrContext, NativeCubemapTexture.bitmapArrayConstructor(
+        super(vrContext, bitmapArrayConstructor(
                 bitmapArray, textureParameters.getCurrentValuesArray()));
     }
 
@@ -89,8 +89,6 @@ public class CubemapTexture extends Texture {
             faceIndexMap.put(nameArray[i], i);
         }
     }
-}
 
-class NativeCubemapTexture {
-    static native long bitmapArrayConstructor(Bitmap[] bitmapArray, int[] textureParameterValues);
+    private static native long bitmapArrayConstructor(Bitmap[] bitmapArray, int[] textureParameterValues);
 }

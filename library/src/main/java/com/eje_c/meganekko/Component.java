@@ -38,6 +38,10 @@ class Component extends HybridObject {
         super(vrContext, nativePointer);
     }
 
+    protected Component(VrContext vrContext) {
+        super(vrContext);
+    }
+
     /**
      * Special constructor, for descendants like {#link GVRMeshEyePointee} that
      * need to 'unregister' instances.

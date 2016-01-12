@@ -26,111 +26,111 @@
 namespace mgn {
 extern "C" {
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_ctor(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_initNativeInstance(JNIEnv * env,
         jobject obj);
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getPositionX(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getPositionX(JNIEnv * env,
         jobject obj, jlong jtransform);
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getPositionY(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getPositionY(JNIEnv * env,
         jobject obj, jlong jtransform);
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getPositionZ(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getPositionZ(JNIEnv * env,
         jobject obj, jlong jtransform);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setPosition(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setPosition(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat x, jfloat y, jfloat z);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setPositionX(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setPositionX(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat x);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setPositionY(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setPositionY(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat y);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setPositionZ(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setPositionZ(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat z);
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getRotationW(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getRotationW(JNIEnv * env,
         jobject obj, jlong jtransform);
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getRotationX(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getRotationX(JNIEnv * env,
         jobject obj, jlong jtransform);
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getRotationY(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getRotationY(JNIEnv * env,
         jobject obj, jlong jtransform);
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getRotationZ(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getRotationZ(JNIEnv * env,
         jobject obj, jlong jtransform);
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getRotationYaw(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getRotationYaw(JNIEnv * env,
         jobject obj, jlong jtransform);
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getRotationPitch(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getRotationPitch(JNIEnv * env,
         jobject obj, jlong jtransform);
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getRotationRoll(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getRotationRoll(JNIEnv * env,
         jobject obj, jlong jtransform);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setRotation(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setRotation(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat w, jfloat x, jfloat y, jfloat z);
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getScaleX(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getScaleX(JNIEnv * env,
         jobject obj, jlong jtransform);
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getScaleY(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getScaleY(JNIEnv * env,
         jobject obj, jlong jtransform);
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getScaleZ(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getScaleZ(JNIEnv * env,
         jobject obj, jlong jtransform);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setScale(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setScale(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat x, jfloat y, jfloat z);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setScaleX(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setScaleX(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat x);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setScaleY(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setScaleY(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat y);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setScaleZ(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setScaleZ(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat z);
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getModelMatrix(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getModelMatrix(JNIEnv * env,
         jobject obj, jlong jtransform);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setModelMatrix(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setModelMatrix(JNIEnv * env,
         jobject obj, jlong jtransform, jfloatArray mat);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_translate(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_translate(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat x, jfloat y, jfloat z);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setRotationByAxis(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setRotationByAxis(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat angle, jfloat x, jfloat y,
         jfloat z);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_rotate(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_rotate(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat w, jfloat x, jfloat y, jfloat z);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_rotateByAxis(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_rotateByAxis(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat angle, jfloat x, jfloat y,
         jfloat z);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_rotateByAxisWithPivot(
+Java_com_eje_1c_meganekko_Transform_rotateByAxisWithPivot(
         JNIEnv * env, jobject obj, jlong jtransform, jfloat angle,
         jfloat axis_x, jfloat axis_y, jfloat axis_z, jfloat pivot_x,
         jfloat pivot_y, jfloat pivot_z);
@@ -138,167 +138,167 @@ Java_com_eje_1c_meganekko_NativeTransform_rotateByAxisWithPivot(
 ;
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_ctor(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_initNativeInstance(JNIEnv * env,
         jobject obj) {
     return reinterpret_cast<jlong>(new Transform());
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getPositionX(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getPositionX(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     return transform->getPosition().x;
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getPositionY(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getPositionY(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     return transform->getPosition().y;
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getPositionZ(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getPositionZ(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     return transform->getPosition().z;
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setPosition(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setPosition(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat x, jfloat y, jfloat z) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     transform->setPosition(OVR::Vector3f(x, y, z));
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setPositionX(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setPositionX(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat x) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     transform->setPositionX(x);
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setPositionY(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setPositionY(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat y) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     transform->setPositionY(y);
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setPositionZ(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setPositionZ(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat z) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     transform->setPositionZ(z);
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getRotationW(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getRotationW(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     return transform->getRotation().w;
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getRotationX(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getRotationX(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     return transform->getRotation().x;
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getRotationY(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getRotationY(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     return transform->getRotation().y;
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getRotationZ(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getRotationZ(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     return transform->getRotation().z;
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getRotationYaw(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getRotationYaw(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     return transform->getRotationYaw();
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getRotationPitch(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getRotationPitch(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     return transform->getRotationPitch();
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getRotationRoll(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getRotationRoll(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     return transform->getRotationRoll();
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setRotation(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setRotation(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat w, jfloat x, jfloat y, jfloat z) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     transform->setRotation(OVR::Quatf(x, y, z, w));
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getScaleX(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getScaleX(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     return transform->getScale().x;
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getScaleY(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getScaleY(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     return transform->getScale().y;
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getScaleZ(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getScaleZ(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     return transform->getScale().z;
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setScale(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setScale(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat x, jfloat y, jfloat z) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     transform->setScale(OVR::Vector3f(x, y, z));
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setScaleX(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setScaleX(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat x) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     transform->setScaleX(x);
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setScaleY(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setScaleY(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat y) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     transform->setScaleY(y);
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setScaleZ(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setScaleZ(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat z) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     transform->setScaleZ(z);
 }
 
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_getModelMatrix(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_getModelMatrix(JNIEnv * env,
         jobject obj, jlong jtransform) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     OVR::Matrix4f matrix = transform->getModelMatrix();
@@ -313,7 +313,7 @@ Java_com_eje_1c_meganekko_NativeTransform_getModelMatrix(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setModelMatrix(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setModelMatrix(JNIEnv * env,
 		jobject obj, jlong jtransform, jfloatArray mat){
 	Transform* transform = reinterpret_cast<Transform*>(jtransform);
 	jfloat* mat_arr = env->GetFloatArrayElements(mat, 0);
@@ -330,14 +330,14 @@ Java_com_eje_1c_meganekko_NativeTransform_setModelMatrix(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_translate(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_translate(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat x, jfloat y, jfloat z) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     transform->translate(x, y, z);
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_setRotationByAxis(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_setRotationByAxis(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat angle, jfloat x, jfloat y,
         jfloat z) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
@@ -345,14 +345,14 @@ Java_com_eje_1c_meganekko_NativeTransform_setRotationByAxis(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_rotate(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_rotate(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat w, jfloat x, jfloat y, jfloat z) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
     transform->rotate(w, x, y, z);
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_rotateByAxis(JNIEnv * env,
+Java_com_eje_1c_meganekko_Transform_rotateByAxis(JNIEnv * env,
         jobject obj, jlong jtransform, jfloat angle, jfloat x, jfloat y,
         jfloat z) {
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
@@ -360,7 +360,7 @@ Java_com_eje_1c_meganekko_NativeTransform_rotateByAxis(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeTransform_rotateByAxisWithPivot(
+Java_com_eje_1c_meganekko_Transform_rotateByAxisWithPivot(
         JNIEnv * env, jobject obj, jlong jtransform, jfloat angle,
         jfloat axis_x, jfloat axis_y, jfloat axis_z, jfloat pivot_x,
         jfloat pivot_y, jfloat pivot_z) {

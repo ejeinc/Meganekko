@@ -35,10 +35,8 @@ public class Camera extends SceneObject {
      * vector. ([0] : x, [1] : y, [2] : z)
      */
     public float[] getLookAt() {
-        return NativeCamera.getLookAt(getNative());
+        return getLookAt(getNative());
     }
-}
 
-class NativeCamera {
-    static native float[] getLookAt(long camera);
+    private static native float[] getLookAt(long camera);
 }

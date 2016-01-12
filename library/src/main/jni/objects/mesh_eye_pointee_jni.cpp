@@ -25,23 +25,23 @@
 namespace mgn {
 extern "C" {
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeMeshEyePointee_ctor(JNIEnv * env,
+Java_com_eje_1c_meganekko_MeshEyePointee_ctor(JNIEnv * env,
         jobject obj, jlong jmesh);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMeshEyePointee_setMesh(JNIEnv * env,
+Java_com_eje_1c_meganekko_MeshEyePointee_setMesh(JNIEnv * env,
         jobject obj, jlong jmesh_eye_pointee, jlong jmesh);
 }
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeMeshEyePointee_ctor(JNIEnv * env,
+Java_com_eje_1c_meganekko_MeshEyePointee_ctor(JNIEnv * env,
         jobject obj, jlong jmesh) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     return reinterpret_cast<jlong>(new MeshEyePointee(mesh));
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeMeshEyePointee_setMesh(JNIEnv * env,
+Java_com_eje_1c_meganekko_MeshEyePointee_setMesh(JNIEnv * env,
         jobject obj, jlong jmesh_eye_pointee, jlong jmesh) {
     MeshEyePointee* mesh_eye_pointee =
             reinterpret_cast<MeshEyePointee*>(jmesh_eye_pointee);

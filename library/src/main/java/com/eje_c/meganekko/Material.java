@@ -81,7 +81,7 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
      *                  {@linkplain MaterialShaderManager custom} shader.
      */
     public Material(VrContext vrContext, MaterialShaderId shaderId) {
-        super(vrContext, NativeMaterial.ctor(shaderId.ID));
+        super(vrContext, ctor(shaderId.ID));
         this.shaderId = shaderId;
         // if texture shader is used, set lighting coefficients to OpenGL default
         // values
@@ -121,7 +121,7 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
      */
     public void setShaderType(MaterialShaderId shaderId) {
         this.shaderId = shaderId;
-        NativeMaterial.setShaderType(getNative(), shaderId.ID);
+        setShaderType(getNative(), shaderId.ID);
     }
 
     public Texture getMainTexture() {
@@ -372,7 +372,7 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
         checkStringNotNullOrEmpty("key", key);
         checkNotNull("texture", texture);
         textures.put(key, texture);
-        NativeMaterial.setTexture(getNative(), key, texture.getNative());
+        setTexture(getNative(), key, texture.getNative());
     }
 
     public void setTexture(final String key, final Future<Texture> texture) {
@@ -390,40 +390,40 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
     }
 
     public float getFloat(String key) {
-        return NativeMaterial.getFloat(getNative(), key);
+        return getFloat(getNative(), key);
     }
 
     public void setFloat(String key, float value) {
         checkStringNotNullOrEmpty("key", key);
         checkFloatNotNaNOrInfinity("value", value);
-        NativeMaterial.setFloat(getNative(), key, value);
+        setFloat(getNative(), key, value);
     }
 
     public float[] getVec2(String key) {
-        return NativeMaterial.getVec2(getNative(), key);
+        return getVec2(getNative(), key);
     }
 
     public void setVec2(String key, float x, float y) {
         checkStringNotNullOrEmpty("key", key);
-        NativeMaterial.setVec2(getNative(), key, x, y);
+        setVec2(getNative(), key, x, y);
     }
 
     public float[] getVec3(String key) {
-        return NativeMaterial.getVec3(getNative(), key);
+        return getVec3(getNative(), key);
     }
 
     public void setVec3(String key, float x, float y, float z) {
         checkStringNotNullOrEmpty("key", key);
-        NativeMaterial.setVec3(getNative(), key, x, y, z);
+        setVec3(getNative(), key, x, y, z);
     }
 
     public float[] getVec4(String key) {
-        return NativeMaterial.getVec4(getNative(), key);
+        return getVec4(getNative(), key);
     }
 
     public void setVec4(String key, float x, float y, float z, float w) {
         checkStringNotNullOrEmpty("key", key);
-        NativeMaterial.setVec4(getNative(), key, x, y, z, w);
+        setVec4(getNative(), key, x, y, z, w);
     }
 
     /**
@@ -435,7 +435,7 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
                         float x2, float y2, float z2, float w2, float x3, float y3,
                         float z3, float w3, float x4, float y4, float z4, float w4) {
         checkStringNotNullOrEmpty("key", key);
-        NativeMaterial.setMat4(getNative(), key, x1, y1, z1, w1, x2, y2, z2,
+        setMat4(getNative(), key, x1, y1, z1, w1, x2, y2, z2,
                 w2, x3, y3, z3, w3, x4, y4, z4, w4);
     }
 
@@ -459,7 +459,7 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
      */
     public void setShaderFeatureSet(int featureSet) {
         this.mShaderFeatureSet = featureSet;
-        NativeMaterial.setShaderFeatureSet(getNative(), featureSet);
+        setShaderFeatureSet(getNative(), featureSet);
     }
 
     /**
@@ -532,35 +532,32 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
         }
     }
 
-}
+    private static native long ctor(int shaderType);
 
-class NativeMaterial {
-    static native long ctor(int shaderType);
+    private static native void setShaderType(long material, long shaderType);
 
-    static native void setShaderType(long material, long shaderType);
+    private static native void setTexture(long material, String key, long texture);
 
-    static native void setTexture(long material, String key, long texture);
+    private static native float getFloat(long material, String key);
 
-    static native float getFloat(long material, String key);
+    private static native void setFloat(long material, String key, float value);
 
-    static native void setFloat(long material, String key, float value);
+    private static native float[] getVec2(long material, String key);
 
-    static native float[] getVec2(long material, String key);
+    private static native void setVec2(long material, String key, float x, float y);
 
-    static native void setVec2(long material, String key, float x, float y);
+    private static native float[] getVec3(long material, String key);
 
-    static native float[] getVec3(long material, String key);
+    private static native void setVec3(long material, String key, float x, float y, float z);
 
-    static native void setVec3(long material, String key, float x, float y, float z);
+    private static native float[] getVec4(long material, String key);
 
-    static native float[] getVec4(long material, String key);
+    private static native void setVec4(long material, String key, float x, float y, float z, float w);
 
-    static native void setVec4(long material, String key, float x, float y, float z, float w);
+    private static native void setMat4(long material, String key, float x1, float y1,
+                                       float z1, float w1, float x2, float y2, float z2, float w2,
+                                       float x3, float y3, float z3, float w3, float x4, float y4,
+                                       float z4, float w4);
 
-    static native void setMat4(long material, String key, float x1, float y1,
-                               float z1, float w1, float x2, float y2, float z2, float w2,
-                               float x3, float y3, float z3, float w3, float x4, float y4,
-                               float z4, float w4);
-
-    static native void setShaderFeatureSet(long material, int featureSet);
+    private static native void setShaderFeatureSet(long material, int featureSet);
 }

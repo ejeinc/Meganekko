@@ -33,7 +33,7 @@ public class Texture extends HybridObject {
      * @return The GL ID of the texture.
      */
     public int getId() {
-        return NativeTexture.getId(getNative());
+        return getId(getNative());
     }
 
     /**
@@ -41,13 +41,10 @@ public class Texture extends HybridObject {
      * texture has been created.
      */
     public void updateTextureParameters(TextureParameters textureParameters) {
-        NativeTexture.updateTextureParameters(getNative(), textureParameters.getCurrentValuesArray());
+        updateTextureParameters(getNative(), textureParameters.getCurrentValuesArray());
     }
 
-}
+    private static native int getId(long texture);
 
-class NativeTexture {
-    static native int getId(long texture);
-
-    static native void updateTextureParameters(long texture, int[] textureParametersValues);
+    private static native void updateTextureParameters(long texture, int[] textureParametersValues);
 }

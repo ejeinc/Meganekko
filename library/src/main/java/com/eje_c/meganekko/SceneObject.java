@@ -266,7 +266,7 @@ public class SceneObject extends HybridObject implements FrameListener {
      */
     void attachTransform(Transform transform) {
         mTransform = transform;
-        NativeSceneObject.attachTransform(getNative(), transform.getNative());
+        attachTransform(getNative(), transform.getNative());
     }
 
     /**
@@ -275,7 +275,7 @@ public class SceneObject extends HybridObject implements FrameListener {
      */
     void detachTransform() {
         mTransform = null;
-        NativeSceneObject.detachTransform(getNative());
+        detachTransform(getNative());
     }
 
     /**
@@ -304,7 +304,7 @@ public class SceneObject extends HybridObject implements FrameListener {
     public void attachRenderData(RenderData renderData) {
         mRenderData = renderData;
         renderData.setOwnerObject(this);
-        NativeSceneObject.attachRenderData(getNative(), renderData.getNative());
+        attachRenderData(getNative(), renderData.getNative());
     }
 
     /**
@@ -317,7 +317,7 @@ public class SceneObject extends HybridObject implements FrameListener {
             mRenderData.setOwnerObject(null);
         }
         mRenderData = null;
-        NativeSceneObject.detachRenderData(getNative());
+        detachRenderData(getNative());
     }
 
     /**
@@ -341,7 +341,7 @@ public class SceneObject extends HybridObject implements FrameListener {
     public void attachEyePointeeHolder(EyePointeeHolder eyePointeeHolder) {
         mEyePointeeHolder = eyePointeeHolder;
         eyePointeeHolder.setOwnerObject(this);
-        NativeSceneObject.attachEyePointeeHolder(getNative(),
+        attachEyePointeeHolder(getNative(),
                 eyePointeeHolder.getNative());
     }
 
@@ -390,7 +390,7 @@ public class SceneObject extends HybridObject implements FrameListener {
                 mEyePointeeHolder.setOwnerObject(null);
             }
             mEyePointeeHolder = null;
-            NativeSceneObject.detachEyePointeeHolder(getNative());
+            detachEyePointeeHolder(getNative());
         } finally {
             Picker.sFindObjectsLock.unlock();
         }
@@ -459,7 +459,7 @@ public class SceneObject extends HybridObject implements FrameListener {
     public void addChildObject(SceneObject child) {
         mChildren.add(child);
         child.mParent = this;
-        NativeSceneObject.addChildObject(getNative(), child.getNative());
+        addChildObject(getNative(), child.getNative());
     }
 
     /**
@@ -471,7 +471,7 @@ public class SceneObject extends HybridObject implements FrameListener {
     public void removeChildObject(SceneObject child) {
         mChildren.remove(child);
         child.mParent = null;
-        NativeSceneObject.removeChildObject(getNative(), child.getNative());
+        removeChildObject(getNative(), child.getNative());
     }
 
     /**
@@ -482,7 +482,7 @@ public class SceneObject extends HybridObject implements FrameListener {
      * @return {@code true) if objects collide, {@code false} otherwise
      */
     public boolean isColliding(SceneObject otherObject) {
-        return NativeSceneObject.isColliding(getNative(),
+        return isColliding(getNative(),
                 otherObject.getNative());
     }
 
@@ -506,7 +506,7 @@ public class SceneObject extends HybridObject implements FrameListener {
             throw new IllegalArgumentException(
                     "minRange should not be greater than maxRange");
         }
-        NativeSceneObject.setLODRange(getNative(), minRange, maxRange);
+        setLODRange(getNative(), minRange, maxRange);
     }
 
     /**
@@ -516,7 +516,7 @@ public class SceneObject extends HybridObject implements FrameListener {
      * object. Default value is 0.
      */
     public float getLODMinRange() {
-        return NativeSceneObject.getLODMinRange(getNative());
+        return getLODMinRange(getNative());
     }
 
     /**
@@ -526,7 +526,7 @@ public class SceneObject extends HybridObject implements FrameListener {
      * object. Default value is Float.MAX_VALUE.
      */
     public float getLODMaxRange() {
-        return NativeSceneObject.getLODMaxRange(getNative());
+        return getLODMaxRange(getNative());
     }
 
     /**
@@ -785,30 +785,28 @@ public class SceneObject extends HybridObject implements FrameListener {
             throw new UnsupportedOperationException();
         }
     }
-}
 
-class NativeSceneObject {
-    static native void attachTransform(long sceneObject, long transform);
+    private static native void attachTransform(long sceneObject, long transform);
 
-    static native void detachTransform(long sceneObject);
+    private static native void detachTransform(long sceneObject);
 
-    static native void attachRenderData(long sceneObject, long renderData);
+    private static native void attachRenderData(long sceneObject, long renderData);
 
-    static native void detachRenderData(long sceneObject);
+    private static native void detachRenderData(long sceneObject);
 
-    static native void attachEyePointeeHolder(long sceneObject, long eyePointeeHolder);
+    private static native void attachEyePointeeHolder(long sceneObject, long eyePointeeHolder);
 
-    static native void detachEyePointeeHolder(long sceneObject);
+    private static native void detachEyePointeeHolder(long sceneObject);
 
-    static native void addChildObject(long sceneObject, long child);
+    private static native void addChildObject(long sceneObject, long child);
 
-    static native void removeChildObject(long sceneObject, long child);
+    private static native void removeChildObject(long sceneObject, long child);
 
-    static native boolean isColliding(long sceneObject, long otherObject);
+    private static native boolean isColliding(long sceneObject, long otherObject);
 
-    static native void setLODRange(long sceneObject, float minRange, float maxRange);
+    private static native void setLODRange(long sceneObject, float minRange, float maxRange);
 
-    static native float getLODMinRange(long sceneObject);
+    private static native float getLODMinRange(long sceneObject);
 
-    static native float getLODMaxRange(long sceneObject);
+    private static native float getLODMaxRange(long sceneObject);
 }

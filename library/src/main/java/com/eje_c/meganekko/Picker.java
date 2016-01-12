@@ -90,7 +90,7 @@ public class Picker {
     public static final EyePointeeHolder[] pickScene(Scene scene, float ox, float oy, float oz, float dx, float dy, float dz) {
         sFindObjectsLock.lock();
         try {
-            long[] ptrs = NativePicker.pickScene(scene.getNative(), ox, oy, oz,
+            long[] ptrs = pickScene(scene.getNative(), ox, oy, oz,
                     dx, dy, dz);
             EyePointeeHolder[] eyePointeeHolders = new EyePointeeHolder[ptrs.length];
             VrContext vrContext = scene.getVrContext();
@@ -150,7 +150,7 @@ public class Picker {
      * the camera is not pointing to the sceneObject.
      */
     public static final float pickSceneObject(SceneObject sceneObject, Camera camera) {
-        return NativePicker.pickSceneObject(sceneObject.getNative(), camera.getNative());
+        return pickSceneObject(sceneObject.getNative(), camera.getNative());
     }
 
     /**
@@ -161,7 +161,7 @@ public class Picker {
      * @return Hit location on object local coordinates.
      */
     public static final float[] pickSceneObjectv(SceneObject sceneObject, Camera camera) {
-        return NativePicker.pickSceneObjectv(sceneObject.getNative(), camera.getNative());
+        return pickSceneObjectv(sceneObject.getNative(), camera.getNative());
     }
 
     /**
@@ -209,7 +209,7 @@ public class Picker {
         try {
             VrContext vrContext = scene.getVrContext();
 
-            long[] pointers = NativePicker.pickScene(scene.getNative(), ox, oy,
+            long[] pointers = pickScene(scene.getNative(), ox, oy,
                     oz, dx, dy, dz);
             List<PickedObject> result = new ArrayList<PickedObject>(
                     pointers.length);
@@ -298,12 +298,10 @@ public class Picker {
             return hitLocation[2];
         }
     }
-}
 
-final class NativePicker {
-    static native long[] pickScene(long scene, float ox, float oy, float oz, float dx, float dy, float dz);
+    private static native long[] pickScene(long scene, float ox, float oy, float oz, float dx, float dy, float dz);
 
-    static native float pickSceneObject(long sceneObject, long camera);
+    private static native float pickSceneObject(long sceneObject, long camera);
 
-    static native float[] pickSceneObjectv(long sceneObject, long camera);
+    private static native float[] pickSceneObjectv(long sceneObject, long camera);
 }

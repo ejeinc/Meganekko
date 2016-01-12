@@ -86,21 +86,21 @@ public class Scene extends SceneObject implements FrameListener,
      */
     public void setMainCamera(Camera camera) {
         mMainCamera = camera;
-        NativeScene.setMainCamera(getNative(), camera.getNative());
+        setMainCamera(getNative(), camera.getNative());
     }
 
     /**
      * Sets the frustum culling for the {@link Scene}.
      */
     public void setFrustumCulling(boolean flag) {
-        NativeScene.setFrustumCulling(getNative(), flag);
+        setFrustumCulling(getNative(), flag);
     }
 
     /**
      * Sets the occlusion query for the {@link Scene}.
      */
     public void setOcclusionQuery(boolean flag) {
-        NativeScene.setOcclusionQuery(getNative(), flag);
+        setOcclusionQuery(getNative(), flag);
     }
 
     @Override
@@ -438,12 +438,10 @@ public class Scene extends SceneObject implements FrameListener,
      */
     public void onPause() {
     }
-}
 
-class NativeScene {
-    public static native void setFrustumCulling(long scene, boolean flag);
+    private static native void setFrustumCulling(long scene, boolean flag);
 
-    public static native void setOcclusionQuery(long scene, boolean flag);
+    private static native void setOcclusionQuery(long scene, boolean flag);
 
-    static native void setMainCamera(long scene, long camera);
+    private static native void setMainCamera(long scene, long camera);
 }

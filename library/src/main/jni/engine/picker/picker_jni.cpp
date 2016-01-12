@@ -26,17 +26,17 @@
 namespace mgn {
 extern "C" {
 JNIEXPORT jlongArray JNICALL
-Java_com_eje_1c_meganekko_NativePicker_pickScene(JNIEnv * env,
+Java_com_eje_1c_meganekko_Picker_pickScene(JNIEnv * env,
         jobject obj, jlong jscene, jfloat ox, jfloat oy, jfloat z, jfloat dx,
         jfloat dy, jfloat dz);
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativePicker_pickSceneObject(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jcamera);
+Java_com_eje_1c_meganekko_Picker_pickSceneObject(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jcamera);
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativePicker_pickSceneObjectv(JNIEnv * env, jclass clazz, jlong jsceneObject, jlong jcamera);
+Java_com_eje_1c_meganekko_Picker_pickSceneObjectv(JNIEnv * env, jclass clazz, jlong jsceneObject, jlong jcamera);
 }
 
 JNIEXPORT jlongArray JNICALL
-Java_com_eje_1c_meganekko_NativePicker_pickScene(JNIEnv * env,
+Java_com_eje_1c_meganekko_Picker_pickScene(JNIEnv * env,
         jobject obj, jlong jscene, jfloat ox, jfloat oy, jfloat oz, jfloat dx,
         jfloat dy, jfloat dz) {
     Scene* scene = reinterpret_cast<Scene*>(jscene);
@@ -57,14 +57,14 @@ Java_com_eje_1c_meganekko_NativePicker_pickScene(JNIEnv * env,
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_NativePicker_pickSceneObject(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jcamera) {
+Java_com_eje_1c_meganekko_Picker_pickSceneObject(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jcamera) {
     SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
     Camera* camera = reinterpret_cast<Camera*>(jcamera);
     return Picker::pickSceneObject(sceneObject, camera);
 }
 
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativePicker_pickSceneObjectv(JNIEnv * env, jclass clazz, jlong jsceneObject, jlong jcamera) {
+Java_com_eje_1c_meganekko_Picker_pickSceneObjectv(JNIEnv * env, jclass clazz, jlong jsceneObject, jlong jcamera) {
     SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
     Camera* camera = reinterpret_cast<Camera*>(jcamera);
     Vector3f vec = Picker::pickSceneObjectv(sceneObject, camera);

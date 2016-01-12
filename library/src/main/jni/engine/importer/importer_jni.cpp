@@ -29,18 +29,18 @@
 namespace mgn {
 extern "C" {
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeImporter_readFileFromAssets(JNIEnv * env,
+Java_com_eje_1c_meganekko_Importer_readFileFromAssets(JNIEnv * env,
         jobject obj, jobject asset_manager, jstring filename, jint settings);
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeImporter_readFileFromSDCard(JNIEnv * env,
+Java_com_eje_1c_meganekko_Importer_readFileFromSDCard(JNIEnv * env,
         jobject obj, jstring filename, jint settings);
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeImporter_readFromByteArray(JNIEnv * env,
+Java_com_eje_1c_meganekko_Importer_readFromByteArray(JNIEnv * env,
         jobject obj, jbyteArray bytes, jstring filename, jint settings);
 }
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeImporter_readFileFromAssets(JNIEnv * env,
+Java_com_eje_1c_meganekko_Importer_readFileFromAssets(JNIEnv * env,
         jobject obj, jobject asset_manager, jstring filename, jint settings) {
     const char* native_string = env->GetStringUTFChars(filename, 0);
     AAssetManager* mgr = AAssetManager_fromJava(env, asset_manager);
@@ -66,7 +66,7 @@ Java_com_eje_1c_meganekko_NativeImporter_readFileFromAssets(JNIEnv * env,
 }
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeImporter_readFromByteArray(JNIEnv * env,jobject obj,
+Java_com_eje_1c_meganekko_Importer_readFromByteArray(JNIEnv * env,jobject obj,
         jbyteArray bytes, jstring filename, jint settings) {
     jbyte* data = env->GetByteArrayElements(bytes, 0);
     int length = static_cast<int>(env->GetArrayLength(bytes));
@@ -82,7 +82,7 @@ Java_com_eje_1c_meganekko_NativeImporter_readFromByteArray(JNIEnv * env,jobject 
 }
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeImporter_readFileFromSDCard(JNIEnv * env,
+Java_com_eje_1c_meganekko_Importer_readFileFromSDCard(JNIEnv * env,
         jobject obj, jstring filename, jint settings) {
     const char* native_string = env->GetStringUTFChars(filename, 0);
     AssimpImporter* assimp_scene = Importer::readFileFromSDCard(native_string, static_cast<int>(settings));

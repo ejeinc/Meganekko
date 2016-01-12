@@ -35,12 +35,12 @@
 namespace mgn {
 extern "C" {
 JNIEXPORT jint JNICALL
-Java_com_eje_1c_meganekko_NativeTextureParameters_getMaxAnisotropicValue(JNIEnv * env, jobject obj);
+Java_com_eje_1c_meganekko_TextureParameters_getMaxAnisotropicValue(JNIEnv * env, jobject obj);
 }
 ;
 
 JNIEXPORT jint JNICALL
-Java_com_eje_1c_meganekko_NativeTextureParameters_getMaxAnisotropicValue(JNIEnv * env, jobject obj) {
+Java_com_eje_1c_meganekko_TextureParameters_getMaxAnisotropicValue(JNIEnv * env, jobject obj) {
     float aniso_max_value = 0.0f;
     glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso_max_value);
     return (int)aniso_max_value;

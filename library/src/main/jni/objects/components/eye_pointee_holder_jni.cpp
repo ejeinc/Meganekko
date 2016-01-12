@@ -25,42 +25,42 @@
 namespace mgn {
 extern "C" {
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeEyePointeeHolder_ctor(JNIEnv * env,
+Java_com_eje_1c_meganekko_EyePointeeHolder_ctor(JNIEnv * env,
         jobject obj);
 
 JNIEXPORT jboolean JNICALL
-Java_com_eje_1c_meganekko_NativeEyePointeeHolder_getEnable(JNIEnv * env,
+Java_com_eje_1c_meganekko_EyePointeeHolder_getEnable(JNIEnv * env,
         jobject obj, jlong jeye_pointee_holder);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeEyePointeeHolder_setEnable(JNIEnv * env,
+Java_com_eje_1c_meganekko_EyePointeeHolder_setEnable(JNIEnv * env,
         jobject obj, jlong jeye_pointee_holder, jboolean enable);
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeEyePointeeHolder_getHit(JNIEnv * env,
+Java_com_eje_1c_meganekko_EyePointeeHolder_getHit(JNIEnv * env,
         jobject obj, jlong jeye_pointee_holder);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeEyePointeeHolder_addPointee(JNIEnv * env,
+Java_com_eje_1c_meganekko_EyePointeeHolder_addPointee(JNIEnv * env,
         jobject obj, jlong jeye_pointee_holder, jlong jeye_pointee);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeEyePointeeHolder_removePointee(
+Java_com_eje_1c_meganekko_EyePointeeHolder_removePointee(
         JNIEnv * env, jobject obj, jlong jeye_pointee_holder,
         jlong jeye_pointee);
 JNIEXPORT jboolean JNICALL
-Java_com_eje_1c_meganekko_NativeEyePointeeHolder_isPointed(JNIEnv * env,
+Java_com_eje_1c_meganekko_EyePointeeHolder_isPointed(JNIEnv * env,
         jobject obj, jlong jeye_pointee_holder);
 }
 ;
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeEyePointeeHolder_ctor(JNIEnv * env,
+Java_com_eje_1c_meganekko_EyePointeeHolder_ctor(JNIEnv * env,
         jobject obj) {
     return reinterpret_cast<jlong>(new EyePointeeHolder());
 }
 
 JNIEXPORT jboolean JNICALL
-Java_com_eje_1c_meganekko_NativeEyePointeeHolder_getEnable(JNIEnv * env,
+Java_com_eje_1c_meganekko_EyePointeeHolder_getEnable(JNIEnv * env,
         jobject obj, jlong jeye_pointee_holder) {
     EyePointeeHolder* eye_pointee_holder =
             reinterpret_cast<EyePointeeHolder*>(jeye_pointee_holder);
@@ -68,7 +68,7 @@ Java_com_eje_1c_meganekko_NativeEyePointeeHolder_getEnable(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeEyePointeeHolder_setEnable(JNIEnv * env,
+Java_com_eje_1c_meganekko_EyePointeeHolder_setEnable(JNIEnv * env,
         jobject obj, jlong jeye_pointee_holder, jboolean enable) {
     EyePointeeHolder* eye_pointee_holder =
             reinterpret_cast<EyePointeeHolder*>(jeye_pointee_holder);
@@ -76,7 +76,7 @@ Java_com_eje_1c_meganekko_NativeEyePointeeHolder_setEnable(JNIEnv * env,
 }
 
 JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_NativeEyePointeeHolder_getHit(JNIEnv * env,
+Java_com_eje_1c_meganekko_EyePointeeHolder_getHit(JNIEnv * env,
         jobject obj, jlong jeye_pointee_holder) {
     EyePointeeHolder* eye_pointee_holder =
             reinterpret_cast<EyePointeeHolder*>(jeye_pointee_holder);
@@ -92,7 +92,7 @@ Java_com_eje_1c_meganekko_NativeEyePointeeHolder_getHit(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeEyePointeeHolder_addPointee(JNIEnv * env,
+Java_com_eje_1c_meganekko_EyePointeeHolder_addPointee(JNIEnv * env,
         jobject obj, jlong jeye_pointee_holder, jlong jeye_pointee) {
     EyePointeeHolder* eye_pointee_holder =
             reinterpret_cast<EyePointeeHolder*>(jeye_pointee_holder);
@@ -101,7 +101,7 @@ Java_com_eje_1c_meganekko_NativeEyePointeeHolder_addPointee(JNIEnv * env,
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeEyePointeeHolder_removePointee(
+Java_com_eje_1c_meganekko_EyePointeeHolder_removePointee(
         JNIEnv * env, jobject obj, jlong jeye_pointee_holder,
         jlong jeye_pointee) {
     EyePointeeHolder* eye_pointee_holder =

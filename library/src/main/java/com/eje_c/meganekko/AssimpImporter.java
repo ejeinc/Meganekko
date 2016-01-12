@@ -32,7 +32,7 @@ class AssimpImporter extends HybridObject {
      * @return The number of meshes contained in the imported 3D model.
      */
     int getNumberOfMeshes() {
-        return NativeAssimpImporter.getNumberOfMeshes(getNative());
+        return getNumberOfMeshes(getNative());
     }
 
     /**
@@ -42,7 +42,7 @@ class AssimpImporter extends HybridObject {
      * @return The mesh, encapsulated as a {@link Mesh}.
      */
     Mesh getMesh(int index) {
-        return new Mesh(getVrContext(), NativeAssimpImporter.getMesh(
+        return new Mesh(getVrContext(), getMesh(
                 getNative(), index));
     }
 
@@ -53,7 +53,7 @@ class AssimpImporter extends HybridObject {
      * component of the Jassimp integration.
      */
     AiScene getAssimpScene() {
-        return NativeAssimpImporter.getAssimpScene(getNative());
+        return getAssimpScene(getNative());
     }
 
     /**
@@ -62,7 +62,7 @@ class AssimpImporter extends HybridObject {
      * @return The mesh, encapsulated as a {@link Mesh}.
      */
     Mesh getNodeMesh(String nodeName, int meshIndex) {
-        return new Mesh(getVrContext(), NativeAssimpImporter.getNodeMesh(
+        return new Mesh(getVrContext(), getNodeMesh(
                 getNative(), nodeName, meshIndex));
     }
 
@@ -72,22 +72,16 @@ class AssimpImporter extends HybridObject {
      * @return The material, encapsulated as a {@link AiMaterial}.
      */
     AiMaterial getMeshMaterial(String nodeName, int meshIndex) {
-        return NativeAssimpImporter.getMeshMaterial(getNative(), nodeName,
-                meshIndex);
+        return getMeshMaterial(getNative(), nodeName, meshIndex);
     }
 
-}
+    private static native int getNumberOfMeshes(long assimpImporter);
 
-class NativeAssimpImporter {
-    static native int getNumberOfMeshes(long assimpImporter);
+    private static native long getMesh(long assimpImporter, int index);
 
-    static native long getMesh(long assimpImporter, int index);
+    private static native AiScene getAssimpScene(long assimpImporter);
 
-    static native AiScene getAssimpScene(long assimpImporter);
+    private static native long getNodeMesh(long assimpImporter, String nodeName, int meshIndex);
 
-    static native long getNodeMesh(long assimpImporter, String nodeName,
-                                   int meshIndex);
-
-    static native AiMaterial getMeshMaterial(long assimpImporter,
-                                             String nodeName, int meshIndex);
+    private static native AiMaterial getMeshMaterial(long assimpImporter, String nodeName, int meshIndex);
 }

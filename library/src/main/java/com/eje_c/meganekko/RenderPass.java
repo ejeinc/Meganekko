@@ -36,10 +36,13 @@ public class RenderPass extends HybridObject {
      * @param vrContext Current {@link VrContext}
      */
     public RenderPass(VrContext vrContext) {
-        super(vrContext, NativeRenderPass.ctor());
+        super(vrContext);
         mMaterial = new Material(vrContext);
         mCullFace = CullFaceEnum.Back;
     }
+
+    @Override
+    protected native long initNativeInstance();
 
     /**
      * @return The {@link Material material} this {@link RenderPass pass} will
@@ -57,7 +60,7 @@ public class RenderPass extends HybridObject {
      */
     public void setMaterial(Material material) {
         mMaterial = material;
-        NativeRenderPass.setMaterial(getNative(), material.getNative());
+        setMaterial(getNative(), material.getNative());
     }
 
     /**
@@ -77,7 +80,7 @@ public class RenderPass extends HybridObject {
      */
     public void setCullFace(CullFaceEnum cullFace) {
         mCullFace = cullFace;
-        NativeRenderPass.setCullFace(getNative(), cullFace.getValue());
+        setCullFace(getNative(), cullFace.getValue());
     }
 
     public enum CullFaceEnum {
@@ -120,13 +123,8 @@ public class RenderPass extends HybridObject {
             return mValue;
         }
     }
-}
 
-class NativeRenderPass {
+    private static native void setMaterial(long renderPass, long material);
 
-    static native long ctor();
-
-    static native void setMaterial(long renderPass, long material);
-
-    static native void setCullFace(long renderPass, int cullFace);
+    private static native void setCullFace(long renderPass, int cullFace);
 }

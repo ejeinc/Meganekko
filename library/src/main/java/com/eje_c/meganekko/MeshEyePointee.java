@@ -41,7 +41,7 @@ public class MeshEyePointee extends EyePointee {
      * @param mesh      The {@link Mesh} that the picking ray will test against.
      */
     public MeshEyePointee(VrContext vrContext, Mesh mesh) {
-        super(vrContext, NativeMeshEyePointee.ctor(mesh.getNative()));
+        super(vrContext, ctor(mesh.getNative()));
         mMesh = mesh;
     }
 
@@ -94,12 +94,10 @@ public class MeshEyePointee extends EyePointee {
      */
     public void setMesh(Mesh mesh) {
         mMesh = mesh;
-        NativeMeshEyePointee.setMesh(getNative(), mesh.getNative());
+        setMesh(getNative(), mesh.getNative());
     }
-}
 
-class NativeMeshEyePointee {
-    static native long ctor(long mesh);
+    private static native long ctor(long mesh);
 
-    static native void setMesh(long meshEyePointee, long mesh);
+    private static native void setMesh(long meshEyePointee, long mesh);
 }

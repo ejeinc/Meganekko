@@ -173,18 +173,6 @@ public class TextureParameters {
     }
 
     /**
-     * Returns the maximum anisotropic value.
-     *
-     * @return the maximum anisotropic value.
-     */
-    public int getMaxAnisotropicValue() {
-        if (mGVRContext.isAnisotropicSupported) {
-            return mGVRContext.maxAnisotropicValue;
-        }
-        return -1;
-    }
-
-    /**
      * Returns an integer array that contains the default values for all the
      * texture parameters.
      *
@@ -260,8 +248,6 @@ public class TextureParameters {
             return wrapValue;
         }
     }
-}
 
-class NativeTextureParameters {
-    static native int getMaxAnisotropicValue();
+    private static native int getMaxAnisotropicValue();
 }

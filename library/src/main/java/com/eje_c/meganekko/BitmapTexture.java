@@ -49,7 +49,7 @@ public class BitmapTexture extends Texture {
      *                          also contain default values.
      */
     public BitmapTexture(VrContext vrContext, Bitmap bitmap, TextureParameters textureParameters) {
-        super(vrContext, NativeBaseTexture.bareConstructor(textureParameters.getCurrentValuesArray()));
+        super(vrContext, bareConstructor(textureParameters.getCurrentValuesArray()));
         update(bitmap);
     }
 
@@ -94,7 +94,7 @@ public class BitmapTexture extends Texture {
      *                          also contain default values.
      */
     public BitmapTexture(VrContext vrContext, String pngAssetFilename, TextureParameters textureParameters) {
-        super(vrContext, NativeBaseTexture.fileConstructor(vrContext
+        super(vrContext, fileConstructor(vrContext
                 .getContext().getAssets(), pngAssetFilename, textureParameters
                 .getCurrentValuesArray()));
     }
@@ -130,7 +130,7 @@ public class BitmapTexture extends Texture {
      */
     public BitmapTexture(VrContext vrContext, int width, int height, byte[] grayscaleData, TextureParameters textureParameters)
             throws IllegalArgumentException {
-        super(vrContext, NativeBaseTexture.bareConstructor(textureParameters.getCurrentValuesArray()));
+        super(vrContext, bareConstructor(textureParameters.getCurrentValuesArray()));
         update(width, height, grayscaleData);
     }
 
@@ -159,7 +159,7 @@ public class BitmapTexture extends Texture {
         if (width <= 0 || height <= 0 || grayscaleData == null || grayscaleData.length < height * width) {
             throw new IllegalArgumentException();
         }
-        return NativeBaseTexture.update(getNative(), width, height, grayscaleData);
+        return update(getNative(), width, height, grayscaleData);
     }
 
     /**
@@ -183,12 +183,10 @@ public class BitmapTexture extends Texture {
         GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0);
         return (glGetError() == GL_NO_ERROR);
     }
-}
 
-class NativeBaseTexture {
-    static native long fileConstructor(AssetManager assetManager, String filename, int[] textureParameterValues);
+    private static native long fileConstructor(AssetManager assetManager, String filename, int[] textureParameterValues);
 
-    static native long bareConstructor(int[] textureParameterValues);
+    private static native long bareConstructor(int[] textureParameterValues);
 
-    static native boolean update(long pointer, int width, int height, byte[] grayscaleData);
+    private static native boolean update(long pointer, int width, int height, byte[] grayscaleData);
 }

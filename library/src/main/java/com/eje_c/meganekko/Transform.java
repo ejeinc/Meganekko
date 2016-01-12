@@ -27,12 +27,15 @@ package com.eje_c.meganekko;
  */
 public class Transform extends Component {
     Transform(VrContext vrContext) {
-        super(vrContext, NativeTransform.ctor());
+        super(vrContext);
     }
 
     private Transform(VrContext vrContext, long ptr) {
         super(vrContext, ptr);
     }
+
+    @Override
+    protected native long initNativeInstance();
 
     /**
      * Get the X component of the transform's position.
@@ -40,7 +43,7 @@ public class Transform extends Component {
      * @return 'X' component of the transform's position.
      */
     public float getPositionX() {
-        return NativeTransform.getPositionX(getNative());
+        return getPositionX(getNative());
     }
 
     /**
@@ -51,7 +54,7 @@ public class Transform extends Component {
      * @param x New 'X' component of the absolute position.
      */
     public void setPositionX(float x) {
-        NativeTransform.setPositionX(getNative(), x);
+        setPositionX(getNative(), x);
     }
 
     /**
@@ -60,7 +63,7 @@ public class Transform extends Component {
      * @return 'Y' component of the transform's position.
      */
     public float getPositionY() {
-        return NativeTransform.getPositionY(getNative());
+        return getPositionY(getNative());
     }
 
     /**
@@ -71,7 +74,7 @@ public class Transform extends Component {
      * @param y New 'Y' component of the absolute position.
      */
     public void setPositionY(float y) {
-        NativeTransform.setPositionY(getNative(), y);
+        setPositionY(getNative(), y);
     }
 
     /**
@@ -80,7 +83,7 @@ public class Transform extends Component {
      * @return 'Z' component of the transform's position.
      */
     public float getPositionZ() {
-        return NativeTransform.getPositionZ(getNative());
+        return getPositionZ(getNative());
     }
 
     /**
@@ -91,7 +94,7 @@ public class Transform extends Component {
      * @param z New 'Z' component of the absolute position.
      */
     public void setPositionZ(float z) {
-        NativeTransform.setPositionZ(getNative(), z);
+        setPositionZ(getNative(), z);
     }
 
     /**
@@ -104,7 +107,7 @@ public class Transform extends Component {
      * @param z 'Z' component of the absolute position.
      */
     public void setPosition(float x, float y, float z) {
-        NativeTransform.setPosition(getNative(), x, y, z);
+        setPosition(getNative(), x, y, z);
     }
 
     /**
@@ -114,7 +117,7 @@ public class Transform extends Component {
      * quaternion.
      */
     public float getRotationW() {
-        return NativeTransform.getRotationW(getNative());
+        return getRotationW(getNative());
     }
 
     /**
@@ -124,7 +127,7 @@ public class Transform extends Component {
      * quaternion.
      */
     public float getRotationX() {
-        return NativeTransform.getRotationX(getNative());
+        return getRotationX(getNative());
     }
 
     /**
@@ -134,7 +137,7 @@ public class Transform extends Component {
      * quaternion.
      */
     public float getRotationY() {
-        return NativeTransform.getRotationY(getNative());
+        return getRotationY(getNative());
     }
 
     /**
@@ -144,7 +147,7 @@ public class Transform extends Component {
      * quaternion.
      */
     public float getRotationZ() {
-        return NativeTransform.getRotationZ(getNative());
+        return getRotationZ(getNative());
     }
 
     /**
@@ -153,7 +156,7 @@ public class Transform extends Component {
      * @return The transform's current rotation around the 'Y' axis, in degrees.
      */
     public float getRotationYaw() {
-        return NativeTransform.getRotationYaw(getNative());
+        return getRotationYaw(getNative());
     }
 
     /**
@@ -162,7 +165,7 @@ public class Transform extends Component {
      * @return The transform's rotation around the 'X' axis, in degrees.
      */
     public float getRotationPitch() {
-        return NativeTransform.getRotationPitch(getNative());
+        return getRotationPitch(getNative());
     }
 
     /**
@@ -171,7 +174,7 @@ public class Transform extends Component {
      * @return The transform's rotation around the 'Z' axis, in degrees.
      */
     public float getRotationRoll() {
-        return NativeTransform.getRotationRoll(getNative());
+        return getRotationRoll(getNative());
     }
 
     /**
@@ -190,7 +193,7 @@ public class Transform extends Component {
      * @param z 'Z' component of the quaternion.
      */
     public void setRotation(float w, float x, float y, float z) {
-        NativeTransform.setRotation(getNative(), w, x, y, z);
+        setRotation(getNative(), w, x, y, z);
     }
 
     /**
@@ -199,7 +202,7 @@ public class Transform extends Component {
      * @return The transform's current scaling on the 'X' axis.
      */
     public float getScaleX() {
-        return NativeTransform.getScaleX(getNative());
+        return getScaleX(getNative());
     }
 
     /**
@@ -208,7 +211,7 @@ public class Transform extends Component {
      * @param x Scaling factor on the 'X' axis.
      */
     public void setScaleX(float x) {
-        NativeTransform.setScaleX(getNative(), x);
+        setScaleX(getNative(), x);
     }
 
     /**
@@ -217,7 +220,7 @@ public class Transform extends Component {
      * @return The transform's current scaling on the 'Y' axis.
      */
     public float getScaleY() {
-        return NativeTransform.getScaleY(getNative());
+        return getScaleY(getNative());
     }
 
     /**
@@ -226,7 +229,7 @@ public class Transform extends Component {
      * @param y Scaling factor on the 'Y' axis.
      */
     public void setScaleY(float y) {
-        NativeTransform.setScaleY(getNative(), y);
+        setScaleY(getNative(), y);
     }
 
     /**
@@ -235,7 +238,7 @@ public class Transform extends Component {
      * @return The transform's current scaling on the 'Z' axis.
      */
     public float getScaleZ() {
-        return NativeTransform.getScaleZ(getNative());
+        return getScaleZ(getNative());
     }
 
     /**
@@ -244,7 +247,7 @@ public class Transform extends Component {
      * @param z Scaling factor on the 'Z' axis.
      */
     public void setScaleZ(float z) {
-        NativeTransform.setScaleZ(getNative(), z);
+        setScaleZ(getNative(), z);
     }
 
     /**
@@ -255,7 +258,7 @@ public class Transform extends Component {
      * @param z Scaling factor on the 'Z' axis.
      */
     public void setScale(float x, float y, float z) {
-        NativeTransform.setScale(getNative(), x, y, z);
+        setScale(getNative(), x, y, z);
     }
 
     /**
@@ -265,7 +268,7 @@ public class Transform extends Component {
      * OpenGL-compatible column-major format.
      */
     public float[] getModelMatrix() {
-        return NativeTransform.getModelMatrix(getNative());
+        return getModelMatrix(getNative());
     }
 
     /**
@@ -279,7 +282,7 @@ public class Transform extends Component {
         if (mat.length != 16) {
             throw new IllegalArgumentException("Size not equal to 16.");
         }
-        NativeTransform.setModelMatrix(getNative(), mat);
+        setModelMatrix(getNative(), mat);
     }
 
     /**
@@ -293,7 +296,7 @@ public class Transform extends Component {
      * @param z 'Z' delta
      */
     public void translate(float x, float y, float z) {
-        NativeTransform.translate(getNative(), x, y, z);
+        translate(getNative(), x, y, z);
     }
 
     /**
@@ -313,7 +316,7 @@ public class Transform extends Component {
      * @param z     'Z' component of the axis.
      */
     public void setRotationByAxis(float angle, float x, float y, float z) {
-        NativeTransform.setRotationByAxis(getNative(), angle, x, y, z);
+        setRotationByAxis(getNative(), angle, x, y, z);
     }
 
     /**
@@ -325,7 +328,7 @@ public class Transform extends Component {
      * @param z 'Z' component of the quaternion.
      */
     public void rotate(float w, float x, float y, float z) {
-        NativeTransform.rotate(getNative(), w, x, y, z);
+        rotate(getNative(), w, x, y, z);
     }
 
     /**
@@ -337,7 +340,7 @@ public class Transform extends Component {
      * @param z     'Z' component of the axis.
      */
     public void rotateByAxis(float angle, float x, float y, float z) {
-        NativeTransform.rotateByAxis(getNative(), angle, x, y, z);
+        rotateByAxis(getNative(), angle, x, y, z);
     }
 
     /**
@@ -354,7 +357,7 @@ public class Transform extends Component {
      */
     public void rotateByAxisWithPivot(float angle, float axisX, float axisY,
                                       float axisZ, float pivotX, float pivotY, float pivotZ) {
-        NativeTransform.rotateByAxisWithPivot(getNative(), angle, axisX, axisY,
+        rotateByAxisWithPivot(getNative(), angle, axisX, axisY,
                 axisZ, pivotX, pivotY, pivotZ);
     }
 
@@ -379,71 +382,64 @@ public class Transform extends Component {
                 + getRotationX() + ", rotationY = " + getRotationY() + ", rotationZ = "
                 + getRotationZ();
     }
-}
 
-class NativeTransform {
-    static native long ctor();
+    private static native float getPositionX(long transform);
 
-    static native float getPositionX(long transform);
+    private static native float getPositionY(long transform);
 
-    static native float getPositionY(long transform);
+    private static native float getPositionZ(long transform);
 
-    static native float getPositionZ(long transform);
+    private static native void setPosition(long transform, float x, float y, float z);
 
-    static native void setPosition(long transform, float x, float y, float z);
+    private static native void setPositionX(long transform, float x);
 
-    static native void setPositionX(long transform, float x);
+    private static native void setPositionY(long transform, float y);
 
-    static native void setPositionY(long transform, float y);
+    private static native void setPositionZ(long transform, float z);
 
-    static native void setPositionZ(long transform, float z);
+    private static native float getRotationW(long transform);
 
-    static native float getRotationW(long transform);
+    private static native float getRotationX(long transform);
 
-    static native float getRotationX(long transform);
+    private static native float getRotationY(long transform);
 
-    static native float getRotationY(long transform);
+    private static native float getRotationZ(long transform);
 
-    static native float getRotationZ(long transform);
+    private static native float getRotationYaw(long transform);
 
-    static native float getRotationYaw(long transform);
+    private static native float getRotationPitch(long transform);
 
-    static native float getRotationPitch(long transform);
+    private static native float getRotationRoll(long transform);
 
-    static native float getRotationRoll(long transform);
+    private static native void setRotation(long transform, float w, float x, float y, float z);
 
-    static native void setRotation(long transform, float w, float x, float y,
-                                   float z);
+    private static native float getScaleX(long transform);
 
-    static native float getScaleX(long transform);
+    private static native float getScaleY(long transform);
 
-    static native float getScaleY(long transform);
+    private static native float getScaleZ(long transform);
 
-    static native float getScaleZ(long transform);
+    private static native void setScale(long transform, float x, float y, float z);
 
-    static native void setScale(long transform, float x, float y, float z);
+    private static native void setScaleX(long transform, float x);
 
-    static native void setScaleX(long transform, float x);
+    private static native void setScaleY(long transform, float y);
 
-    static native void setScaleY(long transform, float y);
+    private static native void setScaleZ(long transform, float z);
 
-    static native void setScaleZ(long transform, float z);
+    private static native float[] getModelMatrix(long transform);
 
-    static native float[] getModelMatrix(long transform);
+    private static native void setModelMatrix(long tranform, float[] mat);
 
-    static native void setModelMatrix(long tranform, float[] mat);
+    private static native void translate(long transform, float x, float y, float z);
 
-    static native void translate(long transform, float x, float y, float z);
+    private static native void setRotationByAxis(long transform, float angle, float x, float y, float z);
 
-    static native void setRotationByAxis(long transform, float angle, float x,
-                                         float y, float z);
+    private static native void rotate(long transform, float w, float x, float y, float z);
 
-    static native void rotate(long transform, float w, float x, float y, float z);
+    private static native void rotateByAxis(long transform, float angle, float x, float y, float z);
 
-    static native void rotateByAxis(long transform, float angle, float x,
-                                    float y, float z);
-
-    static native void rotateByAxisWithPivot(long transform, float angle,
-                                             float axisX, float axisY, float axisZ, float pivotX, float pivotY,
-                                             float pivotZ);
+    private static native void rotateByAxisWithPivot(long transform, float angle,
+                                                     float axisX, float axisY, float axisZ, float pivotX, float pivotY,
+                                                     float pivotZ);
 }

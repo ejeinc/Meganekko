@@ -27,12 +27,15 @@ import static com.eje_c.meganekko.utility.Assert.checkStringNotNullOrEmpty;
  */
 public class Mesh extends HybridObject {
     public Mesh(VrContext vrContext) {
-        super(vrContext, NativeMesh.ctor());
+        super(vrContext);
     }
 
     Mesh(VrContext vrContext, long ptr) {
         super(vrContext, ptr);
     }
+
+    @Override
+    protected native long initNativeInstance();
 
     /**
      * Get the 3D vertices of the mesh. Each vertex is represented as a packed
@@ -45,7 +48,7 @@ public class Mesh extends HybridObject {
      * @return Array with the packed vertex data.
      */
     public float[] getVertices() {
-        return NativeMesh.getVertices(getNative());
+        return getVertices(getNative());
     }
 
     /**
@@ -58,7 +61,7 @@ public class Mesh extends HybridObject {
      */
     public void setVertices(float[] vertices) {
         checkValidFloatArray("vertices", vertices, 3);
-        NativeMesh.setVertices(getNative(), vertices);
+        setVertices(getNative(), vertices);
     }
 
     /**
@@ -70,7 +73,7 @@ public class Mesh extends HybridObject {
      * @return Array with the packed normal data.
      */
     public float[] getNormals() {
-        return NativeMesh.getNormals(getNative());
+        return getNormals(getNative());
     }
 
     /**
@@ -83,7 +86,7 @@ public class Mesh extends HybridObject {
      */
     public void setNormals(float[] normals) {
         checkValidFloatArray("normals", normals, 3);
-        NativeMesh.setNormals(getNative(), normals);
+        setNormals(getNative(), normals);
     }
 
     /**
@@ -95,7 +98,7 @@ public class Mesh extends HybridObject {
      * @return Array with the packed texture coordinate data.
      */
     public float[] getTexCoords() {
-        return NativeMesh.getTexCoords(getNative());
+        return getTexCoords(getNative());
     }
 
     /**
@@ -108,7 +111,7 @@ public class Mesh extends HybridObject {
      */
     public void setTexCoords(float[] texCoords) {
         checkValidFloatArray("texCoords", texCoords, 2);
-        NativeMesh.setTexCoords(getNative(), texCoords);
+        setTexCoords(getNative(), texCoords);
     }
 
     /**
@@ -123,7 +126,7 @@ public class Mesh extends HybridObject {
      * @return Array with the packed triangle index data.
      */
     public char[] getTriangles() {
-        return NativeMesh.getTriangles(getNative());
+        return getTriangles(getNative());
     }
 
     /**
@@ -139,7 +142,7 @@ public class Mesh extends HybridObject {
      */
     public void setTriangles(char[] triangles) {
         checkDivisibleDataLength("triangles", triangles, 3);
-        NativeMesh.setTriangles(getNative(), triangles);
+        setTriangles(getNative(), triangles);
     }
 
     /**
@@ -150,7 +153,7 @@ public class Mesh extends HybridObject {
      * @return Array of {@code float} scalars.
      */
     public float[] getFloatVector(String key) {
-        return NativeMesh.getFloatVector(getNative(), key);
+        return getFloatVector(getNative(), key);
     }
 
     /**
@@ -162,7 +165,7 @@ public class Mesh extends HybridObject {
      */
     public void setFloatVector(String key, float[] floatVector) {
         checkValidFloatVector("key", key, "floatVector", floatVector, 1);
-        NativeMesh.setFloatVector(getNative(), key, floatVector);
+        setFloatVector(getNative(), key, floatVector);
     }
 
     /**
@@ -173,7 +176,7 @@ public class Mesh extends HybridObject {
      * @return Array of two-component {@code float} vectors.
      */
     public float[] getVec2Vector(String key) {
-        return NativeMesh.getVec2Vector(getNative(), key);
+        return getVec2Vector(getNative(), key);
     }
 
     /**
@@ -186,7 +189,7 @@ public class Mesh extends HybridObject {
      */
     public void setVec2Vector(String key, float[] vec2Vector) {
         checkValidFloatVector("key", key, "vec2Vector", vec2Vector, 2);
-        NativeMesh.setVec2Vector(getNative(), key, vec2Vector);
+        setVec2Vector(getNative(), key, vec2Vector);
     }
 
     /**
@@ -197,7 +200,7 @@ public class Mesh extends HybridObject {
      * @return Array of three-component {@code float} vectors.
      */
     public float[] getVec3Vector(String key) {
-        return NativeMesh.getVec3Vector(getNative(), key);
+        return getVec3Vector(getNative(), key);
     }
 
     /**
@@ -210,7 +213,7 @@ public class Mesh extends HybridObject {
      */
     public void setVec3Vector(String key, float[] vec3Vector) {
         checkValidFloatVector("key", key, "vec3Vector", vec3Vector, 3);
-        NativeMesh.setVec3Vector(getNative(), key, vec3Vector);
+        setVec3Vector(getNative(), key, vec3Vector);
     }
 
     /**
@@ -221,7 +224,7 @@ public class Mesh extends HybridObject {
      * @return Array of four-component {@code float} vectors.
      */
     public float[] getVec4Vector(String key) {
-        return NativeMesh.getVec4Vector(getNative(), key);
+        return getVec4Vector(getNative(), key);
     }
 
     /**
@@ -234,7 +237,7 @@ public class Mesh extends HybridObject {
      */
     public void setVec4Vector(String key, float[] vec4Vector) {
         checkValidFloatVector("key", key, "vec4Vector", vec4Vector, 4);
-        NativeMesh.setVec4Vector(getNative(), key, vec4Vector);
+        setVec4Vector(getNative(), key, vec4Vector);
     }
 
     /**
@@ -253,7 +256,7 @@ public class Mesh extends HybridObject {
      */
     public Mesh getBoundingBox() {
         return new Mesh(getVrContext(),
-                NativeMesh.getBoundingBox(getNative()));
+                getBoundingBox(getNative()));
     }
 
     private void checkValidFloatVector(String keyName, String key, String vectorName, float[] vector, int expectedComponents) {
@@ -277,42 +280,38 @@ public class Mesh extends HybridObject {
                             numberOfElements, verticesNumber);
         }
     }
-}
 
-class NativeMesh {
-    static native long ctor();
+    private static native float[] getVertices(long mesh);
 
-    static native float[] getVertices(long mesh);
+    private static native void setVertices(long mesh, float[] vertices);
 
-    static native void setVertices(long mesh, float[] vertices);
+    private static native float[] getNormals(long mesh);
 
-    static native float[] getNormals(long mesh);
+    private static native void setNormals(long mesh, float[] normals);
 
-    static native void setNormals(long mesh, float[] normals);
+    private static native float[] getTexCoords(long mesh);
 
-    static native float[] getTexCoords(long mesh);
+    private static native void setTexCoords(long mesh, float[] texCoords);
 
-    static native void setTexCoords(long mesh, float[] texCoords);
+    private static native char[] getTriangles(long mesh);
 
-    static native char[] getTriangles(long mesh);
+    private static native void setTriangles(long mesh, char[] triangles);
 
-    static native void setTriangles(long mesh, char[] triangles);
+    private static native float[] getFloatVector(long mesh, String key);
 
-    static native float[] getFloatVector(long mesh, String key);
+    private static native void setFloatVector(long mesh, String key, float[] floatVector);
 
-    static native void setFloatVector(long mesh, String key, float[] floatVector);
+    private static native float[] getVec2Vector(long mesh, String key);
 
-    static native float[] getVec2Vector(long mesh, String key);
+    private static native void setVec2Vector(long mesh, String key, float[] vec2Vector);
 
-    static native void setVec2Vector(long mesh, String key, float[] vec2Vector);
+    private static native float[] getVec3Vector(long mesh, String key);
 
-    static native float[] getVec3Vector(long mesh, String key);
+    private static native void setVec3Vector(long mesh, String key, float[] vec3Vector);
 
-    static native void setVec3Vector(long mesh, String key, float[] vec3Vector);
+    private static native float[] getVec4Vector(long mesh, String key);
 
-    static native float[] getVec4Vector(long mesh, String key);
+    private static native void setVec4Vector(long mesh, String key, float[] vec4Vector);
 
-    static native void setVec4Vector(long mesh, String key, float[] vec4Vector);
-
-    static native long getBoundingBox(long mesh);
+    private static native long getBoundingBox(long mesh);
 }

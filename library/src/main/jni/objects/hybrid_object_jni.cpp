@@ -21,12 +21,12 @@
 namespace mgn {
 extern "C" {
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeHybridObject_delete(JNIEnv * env,
+Java_com_eje_1c_meganekko_HybridObject_delete(JNIEnv * env,
         jobject obj, jlong jhybrid_object);
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_NativeHybridObject_delete(JNIEnv * env,
+Java_com_eje_1c_meganekko_HybridObject_delete(JNIEnv * env,
         jobject obj, jlong jhybrid_object) {
     delete reinterpret_cast<HybridObject*>(jhybrid_object);
 }

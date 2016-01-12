@@ -25,7 +25,7 @@ public class Light extends HybridObject {
     private boolean isEnabled;
 
     public Light(VrContext vrContext) {
-        super(vrContext, NativeLight.ctor());
+        super(vrContext, ctor());
         // set light parameters to OpenGL default values
         setPosition(0.0f, 0.0f, 1.0f);
         setAmbientIntensity(0.0f, 0.0f, 0.0f, 1.0f);
@@ -167,7 +167,7 @@ public class Light extends HybridObject {
      * Enable the light.
      */
     public void enable() {
-        NativeLight.enable(getNative());
+        enable(getNative());
         isEnabled = true;
     }
 
@@ -175,7 +175,7 @@ public class Light extends HybridObject {
      * Disable the light.
      */
     public void disable() {
-        NativeLight.disable(getNative());
+        disable(getNative());
         isEnabled = false;
     }
 
@@ -191,7 +191,7 @@ public class Light extends HybridObject {
     // for future use
     @SuppressWarnings("unused")
     private float getFloat(String key) {
-        return NativeLight.getFloat(getNative(), key);
+        return getFloat(getNative(), key);
     }
 
     // for future use
@@ -199,44 +199,42 @@ public class Light extends HybridObject {
     private void setFloat(String key, float value) {
         checkStringNotNullOrEmpty("key", key);
         checkFloatNotNaNOrInfinity("value", value);
-        NativeLight.setFloat(getNative(), key, value);
+        setFloat(getNative(), key, value);
     }
 
     private float[] getVec3(String key) {
-        return NativeLight.getVec3(getNative(), key);
+        return getVec3(getNative(), key);
     }
 
     private void setVec3(String key, float x, float y, float z) {
         checkStringNotNullOrEmpty("key", key);
-        NativeLight.setVec3(getNative(), key, x, y, z);
+        setVec3(getNative(), key, x, y, z);
     }
 
     private float[] getVec4(String key) {
-        return NativeLight.getVec4(getNative(), key);
+        return getVec4(getNative(), key);
     }
 
     private void setVec4(String key, float x, float y, float z, float w) {
         checkStringNotNullOrEmpty("key", key);
-        NativeLight.setVec4(getNative(), key, x, y, z, w);
+        setVec4(getNative(), key, x, y, z, w);
     }
-}
 
-class NativeLight {
-    static native long ctor();
+    private static native long ctor();
 
-    static native void enable(long light);
+    private static native void enable(long light);
 
-    static native void disable(long light);
+    private static native void disable(long light);
 
-    static native float getFloat(long light, String key);
+    private static native float getFloat(long light, String key);
 
-    static native void setFloat(long light, String key, float value);
+    private static native void setFloat(long light, String key, float value);
 
-    static native float[] getVec3(long light, String key);
+    private static native float[] getVec3(long light, String key);
 
-    static native void setVec3(long light, String key, float x, float y, float z);
+    private static native void setVec3(long light, String key, float x, float y, float z);
 
-    static native float[] getVec4(long light, String key);
+    private static native float[] getVec4(long light, String key);
 
-    static native void setVec4(long light, String key, float x, float y, float z, float w);
+    private static native void setVec4(long light, String key, float x, float y, float z, float w);
 }

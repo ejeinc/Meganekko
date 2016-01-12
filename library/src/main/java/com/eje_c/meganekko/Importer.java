@@ -44,7 +44,7 @@ class Importer {
      */
     static AssimpImporter readFileFromAssets(VrContext vrContext,
                                              String filename, EnumSet<ImportSettings> settings) {
-        long nativeValue = NativeImporter.readFileFromAssets(vrContext.getContext().getAssets(), filename, ImportSettings.getAssimpImportFlags(settings));
+        long nativeValue = readFileFromAssets(vrContext.getContext().getAssets(), filename, ImportSettings.getAssimpImportFlags(settings));
         return nativeValue == 0 ? null : new AssimpImporter(vrContext, nativeValue);
     }
 
@@ -66,7 +66,7 @@ class Importer {
             if (resourceFilename == null) {
                 resourceFilename = ""; // Passing null causes JNI exception.
             }
-            long nativeValue = NativeImporter.readFromByteArray(bytes, resourceFilename, ImportSettings.getAssimpImportFlags(settings));
+            long nativeValue = readFromByteArray(bytes, resourceFilename, ImportSettings.getAssimpImportFlags(settings));
             return new AssimpImporter(vrContext, nativeValue);
         } catch (IOException e) {
             e.printStackTrace();
@@ -86,15 +86,13 @@ class Importer {
      * @return An instance of {@link AssimpImporter}.
      */
     static AssimpImporter readFileFromSDCard(VrContext vrContext, String filename, EnumSet<ImportSettings> settings) {
-        long nativeValue = NativeImporter.readFileFromSDCard(filename, ImportSettings.getAssimpImportFlags(settings));
+        long nativeValue = readFileFromSDCard(filename, ImportSettings.getAssimpImportFlags(settings));
         return new AssimpImporter(vrContext, nativeValue);
     }
-}
 
-class NativeImporter {
-    static native long readFileFromAssets(AssetManager assetManager, String filename, int settings);
+    private static native long readFileFromAssets(AssetManager assetManager, String filename, int settings);
 
-    static native long readFileFromSDCard(String filename, int settings);
+    private static native long readFileFromSDCard(String filename, int settings);
 
-    static native long readFromByteArray(byte[] bytes, String filename, int settings);
+    private static native long readFromByteArray(byte[] bytes, String filename, int settings);
 }

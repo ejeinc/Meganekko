@@ -63,7 +63,7 @@ public class RenderData extends Component {
      * @param vrContext Current {@link VrContext}
      */
     public RenderData(VrContext vrContext) {
-        super(vrContext, NativeRenderData.ctor());
+        super(vrContext);
 
         RenderPass basePass = new RenderPass(vrContext);
         mRenderPassList = new ArrayList<RenderPass>();
@@ -78,6 +78,9 @@ public class RenderData extends Component {
         mRenderPassList = new ArrayList<RenderPass>();
         addPass(basePass);
     }
+
+    @Override
+    protected native long initNativeInstance();
 
     /**
      * @return The {@link Mesh mesh} being rendered.
@@ -123,7 +126,7 @@ public class RenderData extends Component {
             mMesh = mesh;
             mFutureMesh = null;
         }
-        NativeRenderData.setMesh(getNative(), mesh.getNative());
+        setMesh(getNative(), mesh.getNative());
     }
 
     /**
@@ -200,7 +203,7 @@ public class RenderData extends Component {
      */
     public void addPass(RenderPass pass) {
         mRenderPassList.add(pass);
-        NativeRenderData.addPass(getNative(), pass.getNative());
+        addPass(getNative(), pass.getNative());
     }
 
     /**
@@ -291,7 +294,7 @@ public class RenderData extends Component {
         }
 
         mLight = light;
-        NativeRenderData.setLight(getNative(), light.getNative());
+        setLight(getNative(), light.getNative());
         isLightEnabled = true;
     }
 
@@ -306,7 +309,7 @@ public class RenderData extends Component {
         if (mLight == null) {
             throw new UnsupportedOperationException("No light is added yet.");
         }
-        NativeRenderData.enableLight(getNative());
+        enableLight(getNative());
         isLightEnabled = true;
     }
 
@@ -321,7 +324,7 @@ public class RenderData extends Component {
         if (mLight == null) {
             throw new UnsupportedOperationException("No light is added yet.");
         }
-        NativeRenderData.disableLight(getNative());
+        disableLight(getNative());
         isLightEnabled = false;
     }
 
@@ -345,7 +348,7 @@ public class RenderData extends Component {
      * @see RenderMaskBit
      */
     public int getRenderMask() {
-        return NativeRenderData.getRenderMask(getNative());
+        return getRenderMask(getNative());
     }
 
     /**
@@ -355,7 +358,7 @@ public class RenderData extends Component {
      * @see RenderMaskBit
      */
     public void setRenderMask(int renderMask) {
-        NativeRenderData.setRenderMask(getNative(), renderMask);
+        setRenderMask(getNative(), renderMask);
     }
 
     /**
@@ -363,7 +366,7 @@ public class RenderData extends Component {
      * @see RenderingOrder
      */
     public int getRenderingOrder() {
-        return NativeRenderData.getRenderingOrder(getNative());
+        return getRenderingOrder(getNative());
     }
 
     /**
@@ -372,7 +375,7 @@ public class RenderData extends Component {
      * @param renderingOrder See {@link RenderingOrder}
      */
     public void setRenderingOrder(int renderingOrder) {
-        NativeRenderData.setRenderingOrder(getNative(), renderingOrder);
+        setRenderingOrder(getNative(), renderingOrder);
     }
 
     /**
@@ -455,7 +458,7 @@ public class RenderData extends Component {
      * {@code false} if not.
      */
     public boolean getOffset() {
-        return NativeRenderData.getOffset(getNative());
+        return getOffset(getNative());
     }
 
     /**
@@ -465,7 +468,7 @@ public class RenderData extends Component {
      *               enabled, {@code false} if not.
      */
     public void setOffset(boolean offset) {
-        NativeRenderData.setOffset(getNative(), offset);
+        setOffset(getNative(), offset);
     }
 
     /**
@@ -474,7 +477,7 @@ public class RenderData extends Component {
      * @see #setOffset(boolean)
      */
     public float getOffsetFactor() {
-        return NativeRenderData.getOffsetFactor(getNative());
+        return getOffsetFactor(getNative());
     }
 
     /**
@@ -487,7 +490,7 @@ public class RenderData extends Component {
      * @see #setOffset(boolean)
      */
     public void setOffsetFactor(float offsetFactor) {
-        NativeRenderData.setOffsetFactor(getNative(), offsetFactor);
+        setOffsetFactor(getNative(), offsetFactor);
     }
 
     /**
@@ -496,7 +499,7 @@ public class RenderData extends Component {
      * @see #setOffset(boolean)
      */
     public float getOffsetUnits() {
-        return NativeRenderData.getOffsetUnits(getNative());
+        return getOffsetUnits(getNative());
     }
 
     /**
@@ -509,7 +512,7 @@ public class RenderData extends Component {
      * @see #setOffset(boolean)
      */
     public void setOffsetUnits(float offsetUnits) {
-        NativeRenderData.setOffsetUnits(getNative(), offsetUnits);
+        setOffsetUnits(getNative(), offsetUnits);
     }
 
     /**
@@ -517,7 +520,7 @@ public class RenderData extends Component {
      * if not.
      */
     public boolean getDepthTest() {
-        return NativeRenderData.getDepthTest(getNative());
+        return getDepthTest(getNative());
     }
 
     /**
@@ -527,7 +530,7 @@ public class RenderData extends Component {
      *                  {@code false} if not.
      */
     public void setDepthTest(boolean depthTest) {
-        NativeRenderData.setDepthTest(getNative(), depthTest);
+        setDepthTest(getNative(), depthTest);
     }
 
     /**
@@ -535,7 +538,7 @@ public class RenderData extends Component {
      * not.
      */
     public boolean getAlphaBlend() {
-        return NativeRenderData.getAlphaBlend(getNative());
+        return getAlphaBlend(getNative());
     }
 
     /**
@@ -545,14 +548,14 @@ public class RenderData extends Component {
      *                   {@code false} if not.
      */
     public void setAlphaBlend(boolean alphaBlend) {
-        NativeRenderData.setAlphaBlend(getNative(), alphaBlend);
+        setAlphaBlend(getNative(), alphaBlend);
     }
 
     /**
      * @return The OpenGL draw mode (e.g. GL_TRIANGLES).
      */
     public int getDrawMode() {
-        return NativeRenderData.getDrawMode(getNative());
+        return getDrawMode(getNative());
     }
 
     /**
@@ -568,7 +571,7 @@ public class RenderData extends Component {
             throw new IllegalArgumentException(
                     "drawMode must be one of GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_TRIANGLES, GL_TRIANGLE_FAN, GL_TRIANGLE_STRIP.");
         }
-        NativeRenderData.setDrawMode(getNative(), drawMode);
+        setDrawMode(getNative(), drawMode);
     }
 
     /**
@@ -660,51 +663,46 @@ public class RenderData extends Component {
             return mFutureMesh.isDone();
         }
     }
-}
 
-class NativeRenderData {
-    static native long ctor();
+    private static native void setMesh(long renderData, long mesh);
 
-    static native void setMesh(long renderData, long mesh);
+    private static native void addPass(long renderData, long renderPass);
 
-    static native void addPass(long renderData, long renderPass);
+    private static native void setLight(long renderData, long light);
 
-    static native void setLight(long renderData, long light);
+    private static native void enableLight(long renderData);
 
-    static native void enableLight(long renderData);
+    private static native void disableLight(long renderData);
 
-    static native void disableLight(long renderData);
+    private static native int getRenderMask(long renderData);
 
-    static native int getRenderMask(long renderData);
+    private static native void setRenderMask(long renderData, int renderMask);
 
-    static native void setRenderMask(long renderData, int renderMask);
+    private static native int getRenderingOrder(long renderData);
 
-    static native int getRenderingOrder(long renderData);
+    private static native void setRenderingOrder(long renderData, int renderingOrder);
 
-    static native void setRenderingOrder(long renderData, int renderingOrder);
+    private static native boolean getOffset(long renderData);
 
-    static native boolean getOffset(long renderData);
+    private static native void setOffset(long renderData, boolean offset);
 
-    static native void setOffset(long renderData, boolean offset);
+    private static native float getOffsetFactor(long renderData);
 
-    static native float getOffsetFactor(long renderData);
+    private static native void setOffsetFactor(long renderData, float offsetFactor);
 
-    static native void setOffsetFactor(long renderData, float offsetFactor);
+    private static native float getOffsetUnits(long renderData);
 
-    static native float getOffsetUnits(long renderData);
+    private static native void setOffsetUnits(long renderData, float offsetUnits);
 
-    static native void setOffsetUnits(long renderData, float offsetUnits);
+    private static native boolean getDepthTest(long renderData);
 
-    static native boolean getDepthTest(long renderData);
+    private static native void setDepthTest(long renderData, boolean depthTest);
 
-    static native void setDepthTest(long renderData, boolean depthTest);
+    private static native boolean getAlphaBlend(long renderData);
 
-    static native boolean getAlphaBlend(long renderData);
+    private static native void setAlphaBlend(long renderData, boolean alphaBlend);
 
-    public static native void setAlphaBlend(long renderData, boolean alphaBlend);
+    private static native int getDrawMode(long renderData);
 
-    public static native int getDrawMode(long renderData);
-
-    public static native void setDrawMode(long renderData, int draw_mode);
-
+    private static native void setDrawMode(long renderData, int draw_mode);
 }

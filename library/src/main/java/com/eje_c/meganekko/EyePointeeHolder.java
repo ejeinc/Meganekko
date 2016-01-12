@@ -71,7 +71,7 @@ public class EyePointeeHolder extends Component {
      * @param vrContext Current {@link VrContext}
      */
     public EyePointeeHolder(VrContext vrContext) {
-        this(vrContext, NativeEyePointeeHolder.ctor());
+        this(vrContext, ctor());
     }
 
     private EyePointeeHolder(VrContext vrContext, long nativePointer) {
@@ -126,7 +126,7 @@ public class EyePointeeHolder extends Component {
      * @return true if enabled, false otherwise.
      */
     public boolean getEnable() {
-        return NativeEyePointeeHolder.getEnable(getNative());
+        return getEnable(getNative());
     }
 
     /**
@@ -138,7 +138,7 @@ public class EyePointeeHolder extends Component {
      * @param enable whether this holder should be enabled.
      */
     public void setEnable(boolean enable) {
-        NativeEyePointeeHolder.setEnable(getNative(), enable);
+        setEnable(getNative(), enable);
     }
 
     /**
@@ -147,7 +147,7 @@ public class EyePointeeHolder extends Component {
      * @return Three floats representing the x, y, z hit point.
      */
     public float[] getHit() {
-        return NativeEyePointeeHolder.getHit(getNative());
+        return getHit(getNative());
     }
 
     /**
@@ -157,7 +157,7 @@ public class EyePointeeHolder extends Component {
      */
     public void addPointee(EyePointee eyePointee) {
         pointees.add(eyePointee);
-        NativeEyePointeeHolder.addPointee(getNative(), eyePointee.getNative());
+        addPointee(getNative(), eyePointee.getNative());
     }
 
     /**
@@ -199,21 +199,18 @@ public class EyePointeeHolder extends Component {
      */
     public void removePointee(EyePointee eyePointee) {
         pointees.remove(eyePointee);
-        NativeEyePointeeHolder.removePointee(getNative(),
-                eyePointee.getNative());
+        removePointee(getNative(), eyePointee.getNative());
     }
-}
 
-class NativeEyePointeeHolder {
-    static native long ctor();
+    private static native long ctor();
 
-    static native boolean getEnable(long eyePointeeHolder);
+    private static native boolean getEnable(long eyePointeeHolder);
 
-    static native void setEnable(long eyePointeeHolder, boolean enable);
+    private static native void setEnable(long eyePointeeHolder, boolean enable);
 
-    static native float[] getHit(long eyePointeeHolder);
+    private static native float[] getHit(long eyePointeeHolder);
 
-    static native void addPointee(long eyePointeeHolder, long eyePointee);
+    private static native void addPointee(long eyePointeeHolder, long eyePointee);
 
-    static native void removePointee(long eyePointeeHolder, long eyePointee);
+    private static native void removePointee(long eyePointeeHolder, long eyePointee);
 }

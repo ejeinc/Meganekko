@@ -24,25 +24,25 @@
 namespace mgn {
 extern "C" {
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeShaderManager_ctor(JNIEnv * env,
+Java_com_eje_1c_meganekko_MaterialShaderManager_initNativeInstance(JNIEnv * env,
         jobject obj);
 JNIEXPORT jint JNICALL
-Java_com_eje_1c_meganekko_NativeShaderManager_addCustomShader(
+Java_com_eje_1c_meganekko_MaterialShaderManager_addCustomShader(
         JNIEnv * env, jobject obj, jlong jshader_manager, jstring vertex_shader,
         jstring fragment_shader);
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeShaderManager_getCustomShader(
+Java_com_eje_1c_meganekko_MaterialShaderManager_getCustomShader(
         JNIEnv * env, jobject obj, jlong jshader_manager, jint id);
 }
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeShaderManager_ctor(JNIEnv * env,
+Java_com_eje_1c_meganekko_MaterialShaderManager_initNativeInstance(JNIEnv * env,
     jobject obj) {
     return reinterpret_cast<jlong>(new ShaderManager());
 }
 
 JNIEXPORT jint JNICALL
-Java_com_eje_1c_meganekko_NativeShaderManager_addCustomShader(
+Java_com_eje_1c_meganekko_MaterialShaderManager_addCustomShader(
     JNIEnv * env, jobject obj, jlong jshader_manager, jstring vertex_shader,
     jstring fragment_shader) {
     ShaderManager* shader_manager =
@@ -61,7 +61,7 @@ Java_com_eje_1c_meganekko_NativeShaderManager_addCustomShader(
 }
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_NativeShaderManager_getCustomShader(
+Java_com_eje_1c_meganekko_MaterialShaderManager_getCustomShader(
     JNIEnv * env, jobject obj, jlong jshader_manager, jint id) {
     ShaderManager* shader_manager =
     reinterpret_cast<ShaderManager*>(jshader_manager);
