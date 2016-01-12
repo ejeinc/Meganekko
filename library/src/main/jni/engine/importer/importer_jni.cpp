@@ -18,13 +18,13 @@
  * JNI
  ***************************************************************************/
 
+#include <jni.h>
+
 #include "importer.h"
 
 #include <fstream>
 
 #include "android/asset_manager_jni.h"
-
-#include "util/gvr_jni.h"
 
 namespace mgn {
 extern "C" {

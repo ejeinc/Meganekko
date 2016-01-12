@@ -18,10 +18,11 @@
  * JNI
  ***************************************************************************/
 
+#include <jni.h>
+
 #include "mesh.h"
 
 #include "util/gvr_log.h"
-#include "util/gvr_jni.h"
 #include "android/asset_manager_jni.h"
 
 namespace mgn {

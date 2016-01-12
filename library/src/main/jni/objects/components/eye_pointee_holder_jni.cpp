@@ -18,9 +18,10 @@
  * JNI
  ***************************************************************************/
 
-#include "eye_pointee_holder.h"
+#include <jni.h>
 
-#include "util/gvr_jni.h"
+#include "eye_pointee_holder.h"
+#include "util/gvr_log.h"
 
 namespace mgn {
 extern "C" {

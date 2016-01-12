@@ -17,10 +17,9 @@
  * JNI
  ***************************************************************************/
 
+#include <jni.h>
+
 #include "render_data.h"
-
-#include "util/gvr_jni.h"
-
 #include "objects/mesh.h"
 #include "objects/material.h"
 

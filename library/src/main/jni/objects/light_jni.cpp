@@ -17,9 +17,9 @@
  * JNI
  ***************************************************************************/
 
-#include "light.h"
+#include <jni.h>
 
-#include "util/gvr_jni.h"
+#include "light.h"
 
 namespace mgn {
 extern "C" {

@@ -17,9 +17,9 @@
  * JNI
  ***************************************************************************/
 
-#include "scene.h"
+#include <jni.h>
 
-#include "util/gvr_jni.h"
+#include "scene.h"
 
 namespace mgn {
 extern "C" {

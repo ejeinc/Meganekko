@@ -17,10 +17,10 @@
  * JNI
  ***************************************************************************/
 
-#include "scene_object.h"
+#include <jni.h>
 
+#include "scene_object.h"
 #include "util/gvr_log.h"
-#include "util/gvr_jni.h"
 
 namespace mgn {
 extern "C" {

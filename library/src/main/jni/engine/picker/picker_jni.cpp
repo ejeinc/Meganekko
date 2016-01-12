@@ -18,9 +18,9 @@
  * JNI
  ***************************************************************************/
 
-#include "picker.h"
+#include <jni.h>
 
-#include "util/gvr_jni.h"
+#include "picker.h"
 #include "util/convert.h"
 
 namespace mgn {

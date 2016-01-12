@@ -18,9 +18,9 @@
  * JNI
  ***************************************************************************/
 
-#include "transform.h"
+#include <jni.h>
 
-#include "util/gvr_jni.h"
+#include "transform.h"
 #include "util/gvr_log.h"
 
 namespace mgn {

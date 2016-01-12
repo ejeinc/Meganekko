@@ -18,9 +18,9 @@
  * JNI
  ***************************************************************************/
 
-#include "texture.h"
+#include <jni.h>
 
-#include "util/gvr_jni.h"
+#include "texture.h"
 
 namespace mgn {
 extern "C" {

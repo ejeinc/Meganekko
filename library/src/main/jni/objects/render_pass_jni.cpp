@@ -17,10 +17,9 @@
  * JNI
  ***************************************************************************/
 
+#include <jni.h>
+
 #include "render_pass.h"
-
-#include "util/gvr_jni.h"
-
 #include "objects/material.h"
 
 namespace mgn {

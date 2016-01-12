@@ -32,9 +32,9 @@
  ---------------------------------------------------------------------------
  */
 
-#include "assimp_importer.h"
+#include <jni.h>
 
-#include "util/gvr_jni.h"
+#include "assimp_importer.h"
 
 namespace mgn {
 extern "C" {

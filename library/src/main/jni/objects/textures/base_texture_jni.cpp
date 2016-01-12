@@ -17,9 +17,10 @@
  * JNI
  ***************************************************************************/
 
+#include <jni.h>
+
 #include "base_texture.h"
 #include "png_loader.h"
-#include "util/gvr_jni.h"
 #include "util/gvr_java_stack_trace.h"
 #include "android/asset_manager_jni.h"
 

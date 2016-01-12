@@ -18,9 +18,9 @@
  * JNI
  ***************************************************************************/
 
-#include "mesh_eye_pointee.h"
+#include <jni.h>
 
-#include "util/gvr_jni.h"
+#include "mesh_eye_pointee.h"
 
 namespace mgn {
 extern "C" {

@@ -20,9 +20,9 @@
  * JNI
  ***************************************************************************/
 
-#include "custom_shader.h"
+#include <jni.h>
 
-#include "util/gvr_jni.h"
+#include "custom_shader.h"
 
 namespace mgn {
 extern "C" {

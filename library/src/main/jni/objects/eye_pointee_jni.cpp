@@ -20,8 +20,6 @@
 
 #include "eye_pointee.h"
 
-#include "util/gvr_jni.h"
-
 namespace mgn {
 extern "C" {
 }

@@ -17,6 +17,8 @@
  * JNI
  ***************************************************************************/
 
+#include <jni.h>
+
 #ifndef GL_EXT_texture_filter_anisotropic
 #define GL_EXT_texture_filter_anisotropic 1
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT     0x84FE
@@ -29,8 +31,6 @@
 #include "util/gvr_log.h"
 
 #include "engine/memory/gl_delete.h"
-
-#include "util/gvr_jni.h"
 
 namespace mgn {
 extern "C" {

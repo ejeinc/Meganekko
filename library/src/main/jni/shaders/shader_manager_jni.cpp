@@ -17,9 +17,9 @@
  * JNI
  ***************************************************************************/
 
-#include "shader_manager.h"
+#include <jni.h>
 
-#include "util/gvr_jni.h"
+#include "shader_manager.h"
 
 namespace mgn {
 extern "C" {

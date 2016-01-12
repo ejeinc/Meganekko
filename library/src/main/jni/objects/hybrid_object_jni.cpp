@@ -13,10 +13,9 @@
  * limitations under the License.
  */
 
+#include <jni.h>
 
 #include "hybrid_object.h"
-
-#include "util/gvr_jni.h"
 
 namespace mgn {
 extern "C" {

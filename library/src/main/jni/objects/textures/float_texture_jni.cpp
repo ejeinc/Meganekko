@@ -17,8 +17,9 @@
  * JNI
  ***************************************************************************/
 
+#include <jni.h>
+
 #include "float_texture.h"
-#include "util/gvr_jni.h"
 
 namespace mgn {
 extern "C" {

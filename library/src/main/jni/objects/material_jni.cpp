@@ -17,9 +17,9 @@
  * JNI
  ***************************************************************************/
 
-#include "material.h"
+#include <jni.h>
 
-#include "util/gvr_jni.h"
+#include "material.h"
 
 namespace mgn {
 extern "C" {

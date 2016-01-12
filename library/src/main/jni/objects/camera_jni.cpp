@@ -17,11 +17,10 @@
  * JNI
  ***************************************************************************/
 
+#include <jni.h>
 
 #include "camera.h"
 #include "util/convert.h"
-#include "util/gvr_jni.h"
-
 #include "util/gvr_java_stack_trace.h"
 
 namespace mgn {
