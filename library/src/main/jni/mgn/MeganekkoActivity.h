@@ -18,7 +18,7 @@
 #ifndef ACTIVITY_JNI_H
 #define ACTIVITY_JNI_H
 
-#include <Kernel/OVR_Math.h>
+#include "Kernel/OVR_Math.h"
 #include "App.h"
 #include "AppLocal.h"
 #include "GuiSys.h"

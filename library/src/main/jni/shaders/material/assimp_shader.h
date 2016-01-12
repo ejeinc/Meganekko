@@ -21,7 +21,7 @@
 #define ASSIMP_SHADER_H_
 
 #include <memory>
-#include <Kernel/OVR_Math.h>
+#include "Kernel/OVR_Math.h"
 #include "Kernel/OVR_GlUtils.h"
 
 #ifndef GL_ES_VERSION_3_0

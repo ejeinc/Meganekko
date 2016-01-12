@@ -16,7 +16,7 @@
 
 #include <jni.h>
 #include <VrApi.h>
-#include <Kernel/OVR_Math.h>
+#include "Kernel/OVR_Math.h"
 #include "MeganekkoActivity.h"
 
 using namespace OVR;
