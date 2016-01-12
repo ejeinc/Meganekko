@@ -23,6 +23,7 @@
 #define BOUNDING_BOX_SHADER_H_
 
 #include <memory>
+#include "Kernel/OVR_GlUtils.h"
 
 #ifndef GL_ES_VERSION_3_0
 #include "GLES3/gl3.h"

@@ -104,7 +104,7 @@ void UnlitVerticalStereoShader::render(const OVR::Matrix4f& mvp_matrix,
             0);
     glBindVertexArray(0);
 
-    checkGlError("UnlitShader::render");
+    GL_CheckErrors("UnlitShader::render");
 }
 
 }

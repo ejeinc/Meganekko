@@ -20,6 +20,7 @@
 #ifndef GL_PROGRAM_H_
 #define GL_PROGRAM_H_
 
+#include "Kernel/OVR_GlUtils.h"
 #ifndef GL_ES_VERSION_3_0
 #include "GLES3/gl3.h"
 #endif
@@ -27,6 +28,8 @@
 #include "engine/memory/gl_delete.h"
 
 #include "util/gvr_log.h"
+
+using namespace OVR;
 
 namespace mgn {
 class GLProgram {
@@ -58,12 +61,6 @@ public:
 
     GLuint id() const {
         return id_;
-    }
-
-    static void checkGlError(const char* op) {
-        for (GLint error = glGetError(); error; error = glGetError()) {
-            LOGI("after %s() glError (0x%x)\n", op, error);
-        }
     }
 
     static GLuint loadShader(GLenum shaderType, int strLength, const char** pSourceStrings,
@@ -113,9 +110,9 @@ public:
         GLuint program = glCreateProgram();
         if (program) {
             glAttachShader(program, vertexShader);
-            checkGlError("glAttachShader");
+            GL_CheckErrors("glAttachShader");
             glAttachShader(program, pixelShader);
-            checkGlError("glAttachShader");
+            GL_CheckErrors("glAttachShader");
             glLinkProgram(program);
             GLint linkStatus = GL_FALSE;
             glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);

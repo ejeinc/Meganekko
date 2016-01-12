@@ -269,7 +269,7 @@ void TextureShader::render(const OVR::Matrix4f& mv_matrix,
             0);
     glBindVertexArray(0);
 
-    checkGlError("TextureShader::render");
+    GL_CheckErrors("TextureShader::render");
 }
 
 }

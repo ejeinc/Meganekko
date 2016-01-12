@@ -247,7 +247,7 @@ void AssimpShader::render(const OVR::Matrix4f& mv_matrix,
             mesh->triangles().data());
 #endif
 
-    checkGlError("AssimpShader::render");
+    GL_CheckErrors("AssimpShader::render");
 }
 
 }

@@ -72,7 +72,7 @@ void BoundingBoxShader::render(const OVR::Matrix4f& mvp_matrix,
             0);
     glBindVertexArray(0);
 
-    checkGlError("BoundingBoxShader::render");
+    GL_CheckErrors("BoundingBoxShader::render");
 }
 
 }

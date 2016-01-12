@@ -103,7 +103,7 @@ void UnlitHorizontalStereoShader::render(const OVR::Matrix4f& mvp_matrix,
     glDrawElements(GL_TRIANGLES, mesh->triangles().size(), GL_UNSIGNED_SHORT,
             0);
     glBindVertexArray(0);
-    checkGlError("HorizontalStereoUnlitShader::render");
+    GL_CheckErrors("HorizontalStereoUnlitShader::render");
 }
 
 }

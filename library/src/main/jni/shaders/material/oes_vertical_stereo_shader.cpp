@@ -105,7 +105,7 @@ void OESVerticalStereoShader::render(const OVR::Matrix4f& mvp_matrix,
             0);
     glBindVertexArray(0);
 
-    checkGlError("OESVerticalStereoShader::render");
+    GL_CheckErrors("OESVerticalStereoShader::render");
 }
 
 }

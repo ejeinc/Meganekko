@@ -25,6 +25,7 @@
 
 #include <memory>
 #include "GlProgram.h"
+#include "Kernel/OVR_GlUtils.h"
 
 #define __gl2_h_
 #ifndef GL_ES_VERSION_3_0

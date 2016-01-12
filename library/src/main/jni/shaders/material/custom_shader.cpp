@@ -197,7 +197,7 @@ void CustomShader::render(const OVR::Matrix4f& mvp_matrix, RenderData* render_da
             0);
     glBindVertexArray(0);
 
-    checkGlError("CustomShader::render");
+    GL_CheckErrors("CustomShader::render");
 }
 
 int CustomShader::getGLTexture(int n) {

@@ -77,7 +77,7 @@ void ErrorShader::render(const OVR::Matrix4f& mvp_matrix, RenderData* render_dat
             0);
     glBindVertexArray(0);
 
-    checkGlError("ErrorShader::render");
+    GL_CheckErrors("ErrorShader::render");
 }
 
 }

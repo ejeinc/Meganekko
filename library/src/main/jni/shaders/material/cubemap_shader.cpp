@@ -135,7 +135,7 @@ void CubemapShader::render(const OVR::Matrix4f& model_matrix,
             0);
     glBindVertexArray(0);
 
-    checkGlError("CubemapShader::render");
+    GL_CheckErrors("CubemapShader::render");
 }
 
 }

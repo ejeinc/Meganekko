@@ -153,7 +153,7 @@ void CubemapReflectionShader::render(const OVR::Matrix4f& mv_matrix,
             0);
     glBindVertexArray(0);
 
-    checkGlError("CubemapReflectionShader::render");
+    GL_CheckErrors("CubemapReflectionShader::render");
 }
 
 }

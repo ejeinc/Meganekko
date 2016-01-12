@@ -93,7 +93,7 @@ void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Mate
     glActiveTexture( GL_TEXTURE0 );
     glBindTexture( GL_TEXTURE_EXTERNAL_OES, 0 );
     
-    checkGlError("OESShader::render");
+    GL_CheckErrors("OESShader::render");
 }
 
 }

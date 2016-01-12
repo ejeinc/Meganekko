@@ -105,7 +105,7 @@ void OESHorizontalStereoShader::render(const OVR::Matrix4f& mvp_matrix,
             0);
     glBindVertexArray(0);
 
-    checkGlError("OESHorizontalStereoShader::render");
+    GL_CheckErrors("OESHorizontalStereoShader::render");
 }
 
 }
