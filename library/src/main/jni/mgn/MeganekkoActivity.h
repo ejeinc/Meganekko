@@ -77,6 +77,8 @@ private:
     jmethodID           onTouchSingleMethodId;
     jmethodID           onTouchDoubleMethodId;
 
+    std::vector<SceneObject*> sceneObjects;
+
     inline jmethodID GetMethodID(const char * name, const char * signature)
     {
     	return ovr_GetMethodID(app->GetJava()->Env, app->GetAppInterface()->ActivityClass, name, signature);

@@ -53,7 +53,7 @@ private:
 public:
 
     static void RenderEyeView(JNIEnv* jni,
-            Scene* scene,
+            Scene* scene, std::vector<SceneObject*>,
             ShaderManager* shader_manager,
             const OVR::Matrix4f &eyeViewMatrix,
             const OVR::Matrix4f &eyeProjectionMatrix,

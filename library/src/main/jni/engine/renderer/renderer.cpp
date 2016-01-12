@@ -32,7 +32,7 @@ using namespace OVR;
 
 namespace mgn {
 
-void Renderer::RenderEyeView(JNIEnv * jni, Scene* scene, ShaderManager* shader_manager,
+void Renderer::RenderEyeView(JNIEnv * jni, Scene* scene, std::vector<SceneObject*> scene_objects, ShaderManager* shader_manager,
         const Matrix4f &eyeViewMatrix, const Matrix4f &eyeProjectionMatrix, const Matrix4f &eyeViewProjection, int eye) {
     // there is no need to flat and sort every frame.
     // however let's keep it as is and assume we are not changed
@@ -40,7 +40,6 @@ void Renderer::RenderEyeView(JNIEnv * jni, Scene* scene, ShaderManager* shader_m
     // bone/weight/joint and other assimp data, we will put general model conversion
     // on hold and do this kind of conversion fist
 
-    std::vector<SceneObject*> scene_objects = scene->getWholeSceneObjects();
     std::vector<RenderData*> render_data_vector;
 
     // do occlusion culling, if enabled

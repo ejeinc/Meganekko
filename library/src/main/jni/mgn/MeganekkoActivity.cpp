@@ -96,7 +96,7 @@ Matrix4f MeganekkoActivity::DrawEyeView(const int eye, const float fovDegreesX, 
 	const Matrix4f eyeProjectionMatrix = ovrMatrix4f_CreateProjectionFov( fovDegreesX, fovDegreesY, 0.0f, 0.0f, 1.0f, 0.0f );
 	const Matrix4f eyeViewProjection = eyeProjectionMatrix * eyeViewMatrix;
 
-    Renderer::RenderEyeView(app->GetJava()->Env, scene, shaderManager, eyeViewMatrix, eyeProjectionMatrix, eyeViewProjection, eye);
+    Renderer::RenderEyeView(app->GetJava()->Env, scene, sceneObjects, shaderManager, eyeViewMatrix, eyeProjectionMatrix, eyeViewProjection, eye);
 
     GuiSys->RenderEyeView(centerViewMatrix, eyeViewMatrix, eyeProjectionMatrix);
 
@@ -144,6 +144,9 @@ Matrix4f MeganekkoActivity::Frame( const VrFrame & vrFrame )
     GuiSys->Frame( vrFrame, centerViewMatrix);
 
     gl_delete.processQueues();
+
+    // Prepare for rendering
+    sceneObjects = scene->getWholeSceneObjects();
 
     return centerViewMatrix;
 }
