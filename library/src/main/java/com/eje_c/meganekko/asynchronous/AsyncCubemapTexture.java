@@ -20,9 +20,9 @@ import android.graphics.BitmapFactory;
 
 import com.eje_c.meganekko.AndroidResource;
 import com.eje_c.meganekko.AndroidResource.CancelableCallback;
-import com.eje_c.meganekko.CubemapTexture;
+import com.eje_c.meganekko.texture.CubemapTexture;
 import com.eje_c.meganekko.HybridObject;
-import com.eje_c.meganekko.Texture;
+import com.eje_c.meganekko.texture.Texture;
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.asynchronous.Throttler.AsyncLoader;
 import com.eje_c.meganekko.asynchronous.Throttler.AsyncLoaderFactory;

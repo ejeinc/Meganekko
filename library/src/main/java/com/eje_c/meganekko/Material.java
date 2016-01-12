@@ -17,6 +17,7 @@ package com.eje_c.meganekko;
 
 import android.graphics.Color;
 
+import com.eje_c.meganekko.texture.Texture;
 import com.eje_c.meganekko.utility.Colors;
 import com.eje_c.meganekko.utility.Threads;
 

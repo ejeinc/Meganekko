@@ -20,6 +20,7 @@ package com.eje_c.meganekko;
 import com.eje_c.meganekko.Material.ShaderType;
 import com.eje_c.meganekko.RenderData.RenderMaskBit;
 import com.eje_c.meganekko.event.FrameListener;
+import com.eje_c.meganekko.texture.Texture;
 
 import java.util.ArrayList;
 import java.util.Collections;

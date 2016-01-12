@@ -13,9 +13,12 @@
  * limitations under the License.
  */
 
-package com.eje_c.meganekko;
+package com.eje_c.meganekko.texture;
 
 import android.graphics.Bitmap;
+
+import com.eje_c.meganekko.TextureParameters;
+import com.eje_c.meganekko.VrContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +27,7 @@ import java.util.Map;
  * Cube map texture.
  */
 public class CubemapTexture extends Texture {
-    final static Map<String, Integer> faceIndexMap = new HashMap<>(6);
+    public final static Map<String, Integer> faceIndexMap = new HashMap<>(6);
 
     static {
         faceIndexMap.put("posx.png", 0);

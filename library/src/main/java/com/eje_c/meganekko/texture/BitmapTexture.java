@@ -13,12 +13,16 @@
  * limitations under the License.
  */
 
-package com.eje_c.meganekko;
+package com.eje_c.meganekko.texture;
 
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.opengl.GLUtils;
+
+import com.eje_c.meganekko.TextureParameters;
+import com.eje_c.meganekko.VrContext;
+import com.eje_c.meganekko.texture.Texture;
 
 import static android.opengl.GLES20.GL_NO_ERROR;
 import static android.opengl.GLES20.GL_TEXTURE_2D;

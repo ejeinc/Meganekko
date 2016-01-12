@@ -13,7 +13,11 @@
  * limitations under the License.
  */
 
-package com.eje_c.meganekko;
+package com.eje_c.meganekko.texture;
+
+import com.eje_c.meganekko.HybridObject;
+import com.eje_c.meganekko.TextureParameters;
+import com.eje_c.meganekko.VrContext;
 
 /**
  * Wrapper for a GL texture.

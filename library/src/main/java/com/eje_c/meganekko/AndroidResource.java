@@ -21,6 +21,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.util.TypedValue;
 
+import com.eje_c.meganekko.texture.Texture;
 import com.eje_c.meganekko.utility.MarkingFileInputStream;
 
 import java.io.File;

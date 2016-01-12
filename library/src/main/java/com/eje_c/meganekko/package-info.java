@@ -92,7 +92,7 @@
  * <a name="async"><h3>Asynchronous Resource Loading</h3></a>
  * <p/>
  * Loading an Android {@link android.graphics.Bitmap} to create a {@link
- * com.eje_c.meganekko.BitmapTexture} can take hundreds of milliseconds;
+ * com.eje_c.meganekko.texture.BitmapTexture} can take hundreds of milliseconds;
  * loading a {@link com.eje_c.meganekko.Mesh} can take even longer. These
  * are not operations that you want to do on the GL thread!
  * <p/>

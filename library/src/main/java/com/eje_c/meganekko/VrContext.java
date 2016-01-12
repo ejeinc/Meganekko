@@ -39,6 +39,9 @@ import com.eje_c.meganekko.jassimp.AiScene;
 import com.eje_c.meganekko.jassimp.AiTextureType;
 import com.eje_c.meganekko.jassimp.AiWrapperProvider;
 import com.eje_c.meganekko.periodic.PeriodicEngine;
+import com.eje_c.meganekko.texture.BitmapTexture;
+import com.eje_c.meganekko.texture.CubemapTexture;
+import com.eje_c.meganekko.texture.Texture;
 import com.eje_c.meganekko.utility.Log;
 import com.eje_c.meganekko.utility.ResourceCache;
 

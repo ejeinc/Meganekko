@@ -28,6 +28,7 @@ import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.VrFrame;
 import com.eje_c.meganekko.scene_objects.CanvasSceneObject.OnDrawListener;
+import com.eje_c.meganekko.texture.Texture;
 
 import ovr.JoyButton;
 
@@ -83,7 +84,7 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
     /**
      * Set view.
      *
-     * @param view View which is used as {@link com.eje_c.meganekko.Texture}.
+     * @param view View which is used as {@link Texture}.
      */
     public void setView(View view) {
         this.mView = view;

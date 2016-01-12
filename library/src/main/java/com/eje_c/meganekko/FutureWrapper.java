@@ -2,6 +2,8 @@ package com.eje_c.meganekko;
 
 import android.support.annotation.NonNull;
 
+import com.eje_c.meganekko.texture.Texture;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;

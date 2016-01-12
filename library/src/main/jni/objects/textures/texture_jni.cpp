@@ -25,23 +25,23 @@
 namespace mgn {
 extern "C" {
 JNIEXPORT jint JNICALL
-Java_com_eje_1c_meganekko_Texture_getId(JNIEnv * env, jobject obj,
+Java_com_eje_1c_meganekko_texture_Texture_getId(JNIEnv * env, jobject obj,
         jlong jtexture);
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Texture_updateTextureParameters(JNIEnv * env, jobject obj,
+Java_com_eje_1c_meganekko_texture_Texture_updateTextureParameters(JNIEnv * env, jobject obj,
         jlong jtexture, jintArray jtexture_parameters);
 }
 ;
 
 JNIEXPORT jint JNICALL
-Java_com_eje_1c_meganekko_Texture_getId(JNIEnv * env, jobject obj,
+Java_com_eje_1c_meganekko_texture_Texture_getId(JNIEnv * env, jobject obj,
         jlong jtexture) {
     Texture* texture = reinterpret_cast<Texture*>(jtexture);
     return texture->getId();
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Texture_updateTextureParameters(JNIEnv * env, jobject obj,
+Java_com_eje_1c_meganekko_texture_Texture_updateTextureParameters(JNIEnv * env, jobject obj,
         jlong jtexture, jintArray jtexture_parameters) {
     Texture* texture = reinterpret_cast<Texture*>(jtexture);
 

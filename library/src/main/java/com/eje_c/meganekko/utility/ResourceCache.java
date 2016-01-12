@@ -21,7 +21,7 @@ import com.eje_c.meganekko.AndroidResource.Callback;
 import com.eje_c.meganekko.AndroidResource.CancelableCallback;
 import com.eje_c.meganekko.AndroidResource.CompressedTextureCallback;
 import com.eje_c.meganekko.HybridObject;
-import com.eje_c.meganekko.Texture;
+import com.eje_c.meganekko.texture.Texture;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;

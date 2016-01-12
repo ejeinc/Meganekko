@@ -22,11 +22,11 @@ namespace mgn {
     // JNI API
     extern "C" {
 
-    jlong Java_com_eje_1c_meganekko_SurfaceTextureTexture_initNativeInstance(JNIEnv *jni, jobject obj) {
+    jlong Java_com_eje_1c_meganekko_texture_SurfaceTextureTexture_initNativeInstance(JNIEnv *jni, jobject obj) {
         return reinterpret_cast<jlong>(new SurfaceTextureTexture(jni));
     }
 
-    jobject Java_com_eje_1c_meganekko_SurfaceTextureTexture_getSurfaceTexture(
+    jobject Java_com_eje_1c_meganekko_texture_SurfaceTextureTexture_getSurfaceTexture(
             JNIEnv *env, jobject obj, jlong nativePtr) {
         SurfaceTextureTexture *texture = reinterpret_cast<SurfaceTextureTexture *>(nativePtr);
         return texture->getSurfaceTexture();

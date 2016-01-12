@@ -28,18 +28,18 @@
 namespace mgn {
 extern "C" {
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_BitmapTexture_fileConstructor(JNIEnv * env,
+Java_com_eje_1c_meganekko_texture_BitmapTexture_fileConstructor(JNIEnv * env,
         jobject obj, jobject asset_manager, jstring filename, jintArray jtexture_parameters);
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_BitmapTexture_bareConstructor(JNIEnv * env, jobject obj, jintArray jtexture_parameters);
+Java_com_eje_1c_meganekko_texture_BitmapTexture_bareConstructor(JNIEnv * env, jobject obj, jintArray jtexture_parameters);
 JNIEXPORT jboolean JNICALL
-Java_com_eje_1c_meganekko_BitmapTexture_update(JNIEnv * env, jobject obj,
+Java_com_eje_1c_meganekko_texture_BitmapTexture_update(JNIEnv * env, jobject obj,
         jlong jtexture, jint width, jint height, jbyteArray jdata);
 }
 ;
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_BitmapTexture_fileConstructor(JNIEnv * env,
+Java_com_eje_1c_meganekko_texture_BitmapTexture_fileConstructor(JNIEnv * env,
         jobject obj, jobject asset_manager, jstring filename, jintArray jtexture_parameters) {
 
     jint* texture_parameters = env->GetIntArrayElements(jtexture_parameters,0);
@@ -77,7 +77,7 @@ Java_com_eje_1c_meganekko_BitmapTexture_fileConstructor(JNIEnv * env,
 }
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_BitmapTexture_bareConstructor(JNIEnv * env, jobject obj, jintArray jtexture_parameters) {
+Java_com_eje_1c_meganekko_texture_BitmapTexture_bareConstructor(JNIEnv * env, jobject obj, jintArray jtexture_parameters) {
 
     jint* texture_parameters = env->GetIntArrayElements(jtexture_parameters,0);
     jlong result =  reinterpret_cast<jlong>(new BaseTexture(texture_parameters));
@@ -86,7 +86,7 @@ Java_com_eje_1c_meganekko_BitmapTexture_bareConstructor(JNIEnv * env, jobject ob
 }
 
 JNIEXPORT jboolean JNICALL
-Java_com_eje_1c_meganekko_BitmapTexture_update(JNIEnv * env, jobject obj,
+Java_com_eje_1c_meganekko_texture_BitmapTexture_update(JNIEnv * env, jobject obj,
         jlong jtexture, jint width, jint height, jbyteArray jdata) {
     BaseTexture* texture = reinterpret_cast<BaseTexture*>(jtexture);
     jbyte* data = env->GetByteArrayElements(jdata, 0);

@@ -28,13 +28,13 @@
 namespace mgn {
 extern "C" {
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_CubemapTexture_bitmapArrayConstructor(JNIEnv * env,
+Java_com_eje_1c_meganekko_texture_CubemapTexture_bitmapArrayConstructor(JNIEnv * env,
         jobject obj, jobjectArray bitmapArray, jintArray jtexture_parameters);
 }
 ;
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_CubemapTexture_bitmapArrayConstructor(JNIEnv * env,
+Java_com_eje_1c_meganekko_texture_CubemapTexture_bitmapArrayConstructor(JNIEnv * env,
     jobject obj, jobjectArray bitmapArray, jintArray jtexture_parameters) {
     if (env->GetArrayLength(bitmapArray) != 6) {
         std::string error =

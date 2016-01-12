@@ -15,7 +15,7 @@
 
 package com.eje_c.meganekko.asynchronous;
 
-import com.eje_c.meganekko.Texture;
+import com.eje_c.meganekko.texture.Texture;
 import com.eje_c.meganekko.TextureParameters;
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.utility.Log;

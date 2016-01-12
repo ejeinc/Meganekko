@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package com.eje_c.meganekko;
+package com.eje_c.meganekko.texture;
 
 import android.graphics.SurfaceTexture;
+
+import com.eje_c.meganekko.VrContext;
+import com.eje_c.meganekko.texture.Texture;
 
 public class SurfaceTextureTexture extends Texture {
     public SurfaceTextureTexture(VrContext vrContext) {

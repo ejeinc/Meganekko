@@ -20,12 +20,12 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 
-import com.eje_c.meganekko.BitmapTexture;
+import com.eje_c.meganekko.texture.BitmapTexture;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.Texture;
+import com.eje_c.meganekko.texture.Texture;
 import com.eje_c.meganekko.VrContext;
 
 /**

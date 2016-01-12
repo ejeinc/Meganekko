@@ -15,6 +15,8 @@
 
 package com.eje_c.meganekko;
 
+import com.eje_c.meganekko.texture.Texture;
+
 import java.util.concurrent.Future;
 
 /**
