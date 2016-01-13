@@ -27,7 +27,6 @@ import com.eje_c.meganekko.MaterialShaderId;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.texture.SurfaceTextureTexture;
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.VrFrame;
 
@@ -53,14 +52,9 @@ public class VideoSceneObject extends SceneObject {
     public VideoSceneObject(VrContext vrContext) {
         super(vrContext);
 
-        SurfaceTextureTexture texture = new SurfaceTextureTexture(vrContext);
-
-        // Generate GL texture
-        mSurfaceTexture = texture.getSurfaceTexture();
-
         // Setup material
         Material material = new Material(vrContext, ShaderType.OES.ID);
-        material.setMainTexture(texture);
+        mSurfaceTexture = material.getSurfaceTexture();
         RenderData renderData = new RenderData(vrContext);
         renderData.setMaterial(material);
         attachRenderData(renderData);
@@ -86,11 +80,6 @@ public class VideoSceneObject extends SceneObject {
     public VideoSceneObject(VrContext vrContext, Mesh mesh, MediaPlayer mediaPlayer, VideoType videoType) {
         super(vrContext, mesh);
 
-        SurfaceTextureTexture texture = new SurfaceTextureTexture(vrContext);
-
-        // Generate GL texture
-        mSurfaceTexture = texture.getSurfaceTexture();
-
         MaterialShaderId materialType;
         switch (videoType) {
             case MONO:
@@ -103,15 +92,10 @@ public class VideoSceneObject extends SceneObject {
                 materialType = ShaderType.OESVerticalStereo.ID;
                 break;
             default:
-                try {
-                    texture.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 throw new IllegalArgumentException();
         }
         Material material = new Material(vrContext, materialType);
-        material.setMainTexture(texture);
+        mSurfaceTexture = material.getSurfaceTexture();
         getRenderData().setMaterial(material);
 
         mMediaPlayer = mediaPlayer;

@@ -25,7 +25,6 @@ import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Material.ShaderType;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.texture.SurfaceTextureTexture;
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.VrFrame;
 
@@ -43,11 +42,9 @@ public class CanvasSceneObject extends SceneObject {
     public CanvasSceneObject(VrContext vrContext) {
         super(vrContext);
 
-        SurfaceTextureTexture texture = new SurfaceTextureTexture(vrContext);
-        mSurfaceTexture = texture.getSurfaceTexture();
 
         Material material = new Material(vrContext, ShaderType.OES.ID);
-        material.setMainTexture(texture);
+        mSurfaceTexture = material.getSurfaceTexture();
 
         RenderData renderData = new RenderData(vrContext);
         renderData.setMaterial(material);

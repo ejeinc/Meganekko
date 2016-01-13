@@ -25,6 +25,7 @@
 #include "objects/mesh.h"
 #include "objects/components/render_data.h"
 #include "util/gvr_gl.h"
+#include "SurfaceTexture.h"
 
 namespace mgn {
 
@@ -66,13 +67,7 @@ void OESShader::recycle() {
 void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Material * material) {
     
     Mesh * mesh = renderData->mesh();
-    Texture * mainTexture = material->getTexture("main_texture");
     Vector3f color = material->getVec3("color");
-
-    if (mainTexture->getTarget() != GL_TEXTURE_EXTERNAL_OES) {
-        std::string error = "OESShader::render : texture with wrong target";
-        throw error;
-    }
 
     mesh->setVertexLoc(VERTEX_ATTRIBUTE_LOCATION_POSITION);
     mesh->setTexCoordLoc(VERTEX_ATTRIBUTE_LOCATION_UV0);
@@ -82,7 +77,7 @@ void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Mate
 
     glUniformMatrix4fv(program.uMvp, 1, GL_TRUE, mvpMatrix.M[0]);
     glActiveTexture (GL_TEXTURE0);
-    glBindTexture(mainTexture->getTarget(), mainTexture->getId());
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, material->getId());
     glUniform3f(program.uColor, color.x, color.y, color.z);
     glUniform1f(opacity, material->getFloat("opacity"));
 

@@ -16,6 +16,7 @@
 package com.eje_c.meganekko;
 
 import android.graphics.Color;
+import android.graphics.SurfaceTexture;
 
 import com.eje_c.meganekko.texture.Texture;
 import com.eje_c.meganekko.utility.Colors;
@@ -462,6 +463,12 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
         this.mShaderFeatureSet = featureSet;
         setShaderFeatureSet(getNative(), featureSet);
     }
+
+    public SurfaceTexture getSurfaceTexture() {
+        return getSurfaceTexture(getNative());
+    }
+
+    private native SurfaceTexture getSurfaceTexture(long nativePtr);
 
     /**
      * Pre-built shader ids.

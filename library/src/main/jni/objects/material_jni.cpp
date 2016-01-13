@@ -26,7 +26,7 @@ extern "C" {
 
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_Material_ctor(JNIEnv * env, jobject obj, jint shader_type) {
-    return reinterpret_cast<jlong>(new Material(static_cast<Material::ShaderType>(shader_type)));
+    return reinterpret_cast<jlong>(new Material(env, static_cast<Material::ShaderType>(shader_type)));
 }
 
 JNIEXPORT void JNICALL
@@ -192,6 +192,12 @@ Java_com_eje_1c_meganekko_Material_setShaderFeatureSet(JNIEnv * env, jobject obj
     jlong jmaterial, jint feature_set) {
 Material* material = reinterpret_cast<Material*>(jmaterial);
 material->set_shader_feature_set(feature_set);
+}
+
+JNIEXPORT jobject JNICALL
+Java_com_eje_1c_meganekko_Material_getSurfaceTexture(JNIEnv * env, jobject obj, jlong jmaterial) {
+    Material* material = reinterpret_cast<Material*>(jmaterial);
+    return material->getSurfaceTexture();
 }
 
 }

@@ -20,6 +20,7 @@
 #ifndef MATERIAL_H_
 #define MATERIAL_H_
 
+#include <jni.h>
 #include <map>
 #include <memory>
 #include <string>
@@ -28,6 +29,9 @@
 #include "objects/textures/texture.h"
 
 #include "Kernel/OVR_Math.h"
+#include "SurfaceTexture.h"
+
+using namespace OVR;
 
 namespace mgn {
 class Color;
@@ -47,9 +51,10 @@ public:
         TEXTURE_SHADER_NOLIGHT = 100
     };
 
-    explicit Material(ShaderType shader_type) :
+    explicit Material(JNIEnv * jni, ShaderType shader_type) :
             shader_type_(shader_type), textures_(), floats_(), vec2s_(), vec3s_(), vec4s_(), shader_feature_set_(
                     0) {
+        MovieTexture = new SurfaceTexture(jni);
         switch (shader_type) {
         default:
             vec3s_["color"] = OVR::Vector3f(1.0f, 1.0f, 1.0f);
@@ -59,6 +64,8 @@ public:
     }
 
     ~Material() {
+        delete MovieTexture;
+        MovieTexture = NULL;
     }
 
     ShaderType shader_type() const {
@@ -161,6 +168,14 @@ public:
         shader_feature_set_ = feature_set;
     }
 
+    GLuint getId() const {
+        return MovieTexture->GetTextureId();
+    }
+
+    jobject getSurfaceTexture() {
+        return MovieTexture->GetJavaObject();
+    }
+
 private:
     Material(const Material& material);
     Material(Material&& material);
@@ -169,6 +184,7 @@ private:
 
 private:
     ShaderType shader_type_;
+    SurfaceTexture *MovieTexture;
     std::map<std::string, Texture*> textures_;
     std::map<std::string, float> floats_;
     std::map<std::string, OVR::Vector2f> vec2s_;
