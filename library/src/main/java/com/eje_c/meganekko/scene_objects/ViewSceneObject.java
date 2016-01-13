@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.eje_c.meganekko.Mesh;
-import com.eje_c.meganekko.Picker;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.VrFrame;
@@ -150,9 +149,8 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
         if (mView != null) {
 
             // Simulate pressing
-            if (mSimulatePressing && getEyePointeeHolder() != null) {
-                float distance = Picker.pickSceneObject(this, getVrContext().getActivity().getScene().getMainCamera());
-                if (distance < Float.POSITIVE_INFINITY) {
+            if (mSimulatePressing) {
+                if (getVrContext().getActivity().isLookingAt(this)) {
                     if (!mLooking) {
                         mLooking = true;
                         getVrContext().getActivity().runOnUiThread(updateViewState);

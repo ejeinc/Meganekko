@@ -22,7 +22,6 @@
 #include "objects/material.h"
 #include "objects/scene.h"
 #include "objects/scene_object.h"
-#include "objects/components/eye_pointee_holder.h"
 #include "objects/components/render_data.h"
 #include "shaders/shader_manager.h"
 #include "util/gvr_gl.h"

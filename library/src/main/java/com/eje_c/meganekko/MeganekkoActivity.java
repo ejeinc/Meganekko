@@ -21,14 +21,11 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.Window;
-import android.view.WindowManager;
 
 import com.eje_c.meganekko.event.FrameListener;
 import com.eje_c.meganekko.event.KeyDoubleTapEvent;
@@ -108,6 +105,8 @@ public class MeganekkoActivity extends VrActivity {
     private static native void setScene(long appPtr, long nativeScene);
 
     private static native void setShaderManager(long appPtr, long nativeShaderManager);
+
+    private static native boolean isLookingAt(long appPtr, long nativeSceneObject);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -501,10 +500,7 @@ public class MeganekkoActivity extends VrActivity {
      * @return true if user is looking at object.
      */
     public boolean isLookingAt(@NonNull SceneObject object) {
-        if (object.getEyePointeeHolder() == null) {
-            object.attachEyePointeeHolder();
-        }
-        return Picker.pickSceneObject(object, mScene.getMainCamera()) < Float.POSITIVE_INFINITY;
+        return isLookingAt(getAppPtr(), object.getNative());
     }
 
     /**

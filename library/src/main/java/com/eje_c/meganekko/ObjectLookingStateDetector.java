@@ -46,10 +46,6 @@ public class ObjectLookingStateDetector implements FrameListener {
         this.mTarget = target;
         this.mListener = listener;
         this.mActivity = target.getVrContext().getActivity();
-
-        if (target.getEyePointeeHolder() == null) {
-            target.attachEyePointeeHolder();
-        }
     }
 
     @Override

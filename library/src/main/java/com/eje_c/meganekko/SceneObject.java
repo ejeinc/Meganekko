@@ -51,7 +51,6 @@ public class SceneObject extends HybridObject implements FrameListener {
     private String mName;
     private Transform mTransform;
     private RenderData mRenderData;
-    private EyePointeeHolder mEyePointeeHolder;
     private SceneObject mParent;
     private float mOpacity = 1.0f;
     private boolean mVisible = true;
@@ -329,114 +328,6 @@ public class SceneObject extends HybridObject implements FrameListener {
      */
     public RenderData getRenderData() {
         return mRenderData;
-    }
-
-    /**
-     * Attach a new {@link EyePointeeHolder} to the object.
-     * <p/>
-     * If another {@link EyePointeeHolder} is currently attached, it is replaced
-     * with the new one.
-     *
-     * @param eyePointeeHolder New {@link EyePointeeHolder}.
-     */
-    public void attachEyePointeeHolder(EyePointeeHolder eyePointeeHolder) {
-        mEyePointeeHolder = eyePointeeHolder;
-        eyePointeeHolder.setOwnerObject(this);
-        attachEyePointeeHolder(getNative(),
-                eyePointeeHolder.getNative());
-    }
-
-    /**
-     * Attach a default {@link EyePointeeHolder} to the object.
-     * <p/>
-     * The default holder contains a single {@link MeshEyePointee}, which refers
-     * to the bounding box of the {@linkplain Mesh mesh} in this scene object's
-     * {@linkplain RenderData render data}. If you need more control (multiple
-     * meshes, perhaps, or using the actual mesh instead of a bounding box) use
-     * the {@linkplain #attachEyePointeeHolder(EyePointeeHolder) explicit
-     * overload.} If another {@link EyePointeeHolder} is currently attached, it
-     * is replaced with the new one.
-     *
-     * @return {@code true} if and only this scene object has render data
-     * <em>and</em> you have called either
-     * {@link RenderData#setMesh(Mesh)} or
-     * {@link RenderData#setMesh(Future)}; {@code false}, otherwise.
-     */
-    public boolean attachEyePointeeHolder() {
-        RenderData renderData = getRenderData();
-        if (renderData == null) {
-            return false;
-        }
-
-        Future<EyePointee> eyePointee = renderData.getMeshEyePointee();
-        if (eyePointee == null) {
-            return false;
-        }
-
-        EyePointeeHolder eyePointeeHolder = new EyePointeeHolder(
-                getVrContext());
-        eyePointeeHolder.addPointee(eyePointee);
-        attachEyePointeeHolder(eyePointeeHolder);
-        return true;
-    }
-
-    /**
-     * Detach the object's current {@link EyePointeeHolder}.
-     */
-    public void detachEyePointeeHolder() {
-        // see GVRPicker.findObjects
-        Picker.sFindObjectsLock.lock();
-        try {
-            if (mEyePointeeHolder != null) {
-                mEyePointeeHolder.setOwnerObject(null);
-            }
-            mEyePointeeHolder = null;
-            detachEyePointeeHolder(getNative());
-        } finally {
-            Picker.sFindObjectsLock.unlock();
-        }
-    }
-
-    /**
-     * Get the attached {@link EyePointeeHolder}
-     *
-     * @return The {@link EyePointeeHolder} attached to the object. If no
-     * {@link EyePointeeHolder} is currently attached, returns
-     * {@code null}.
-     */
-    public EyePointeeHolder getEyePointeeHolder() {
-        return mEyePointeeHolder;
-    }
-
-    /**
-     * Is eye picking enabled for this scene object?
-     *
-     * @return Whether eye picking can 'see' this scene object?
-     */
-    public boolean getPickingEnabled() {
-        return mEyePointeeHolder != null;
-    }
-
-    /**
-     * Simple, high-level API to enable or disable eye picking for this scene
-     * object.
-     * <p/>
-     * The {@linkplain #attachEyePointeeHolder(EyePointeeHolder) low-level API}
-     * gives you a lot of control over eye picking, but it does involve an awful
-     * lot of details. Since most apps are just going to use the
-     * {@linkplain #attachEyePointeeHolder() simple API} anyhow, this method
-     * (and {@link #getPickingEnabled()}) provides a simple boolean property.
-     *
-     * @param enabled Should eye picking 'see' this scene object?
-     */
-    public void setPickingEnabled(boolean enabled) {
-        if (enabled != getPickingEnabled()) {
-            if (enabled) {
-                attachEyePointeeHolder();
-            } else {
-                detachEyePointeeHolder();
-            }
-        }
     }
 
     /**

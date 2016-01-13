@@ -130,73 +130,6 @@ public class RenderData extends Component {
     }
 
     /**
-     * Return a {@code Future<GVREyePointee>} or {@code null}.
-     * <p/>
-     * If you use {@link #setMesh(Future)}, trying to create a
-     * {@link MeshEyePointee} in the 'normal' (synchronous) way will fail,
-     * because this {@link RenderData} won't have a mesh yet. This method
-     * prevents that problem by returning an {@code Future} tied to the current
-     * mesh status:
-     * <ul>
-     * <li>If you have already set a mesh, you will get a {@code Future} with
-     * {@code get()} methods that return immediately.
-     * <li>If you are currently waiting on a {@code Future<GVRMesh>}, you will
-     * get a 'true' {@code Future} that waits for the {@code Future<GVRMesh>}.
-     * <li>If you have neither, you will get {@code null}.
-     * </ul>
-     * <p/>
-     * This overload will return a {@code Future<GVREyePointee>} that uses the
-     * mesh's bounding box; use the {@link #getMeshEyePointee(boolean)} overload
-     * if you would prefer to use the actual mesh. With complicated meshes, it's
-     * cheaper - though less accurate - to use the bounding box.
-     *
-     * @return Either a {@code Future<GVREyePointee>} or {@code null}.
-     */
-    public Future<EyePointee> getMeshEyePointee() {
-        return getMeshEyePointee(true);
-    }
-
-    /**
-     * Return a {@code Future<GVREyePointee>} or {@code null}.
-     * <p/>
-     * If you use {@link #setMesh(Future)}, trying to create a
-     * {@link MeshEyePointee} in the 'normal' (synchronous) way will fail,
-     * because this {@link RenderData} won't have a mesh yet. This method
-     * prevents that problem by returning an {@code Future} tied to the current
-     * mesh status:
-     * <ul>
-     * <li>If you have already set a mesh, you will get a {@code Future} with
-     * {@code get()} methods that return immediately.
-     * <li>If you are currently waiting on a {@code Future<GVRMesh>}, you will
-     * get a 'true' {@code Future} that waits for the {@code Future<GVRMesh>}.
-     * <li>If you have neither, you will get {@code null}.
-     * </ul>
-     *
-     * @param useBoundingBox When {@code true}, will use {@link Mesh#getBoundingBox()};
-     *                       when {@code false} will use {@code mesh} directly. With
-     *                       complicated meshes, it's cheaper - though less accurate - to
-     *                       use the bounding box.
-     * @return Either a {@code Future<GVREyePointee>} or {@code null}.
-     */
-    public Future<EyePointee> getMeshEyePointee(boolean useBoundingBox) {
-        synchronized (this) {
-            if (mMesh != null) {
-                // Wrap an eye pointee around the mesh,
-                // return a non-blocking wrapper
-                MeshEyePointee eyePointee = new MeshEyePointee(mMesh,
-                        useBoundingBox);
-                return new FutureWrapper<EyePointee>(eyePointee);
-            } else if (mFutureMesh != null) {
-                // Return a true (blocking) Future, tied to the Future<GVRMesh>
-                return new FutureMeshEyePointee(mFutureMesh, useBoundingBox);
-            } else {
-                // No mesh
-                return null;
-            }
-        }
-    }
-
-    /**
      * Add a render {@link RenderPass pass} to this RenderData.
      *
      * @param pass
@@ -623,45 +556,6 @@ public class RenderData extends Component {
          * Render the mesh in the right {@link Camera camera}.
          */
         public static final int Right = 0x2;
-    }
-
-    private static class FutureMeshEyePointee implements Future<EyePointee> {
-
-        private final Future<Mesh> mFutureMesh;
-        private final boolean mUseBoundingBox;
-
-        private FutureMeshEyePointee(Future<Mesh> futureMesh,
-                                     boolean useBoundingBox) {
-            mFutureMesh = futureMesh;
-            mUseBoundingBox = useBoundingBox;
-        }
-
-        @Override
-        public boolean cancel(boolean mayInterruptIfRunning) {
-            return isDone() ? false : mFutureMesh.cancel(mayInterruptIfRunning);
-        }
-
-        @Override
-        public MeshEyePointee get() throws InterruptedException, ExecutionException {
-            Mesh mesh = mFutureMesh.get();
-            return new MeshEyePointee(mesh, mUseBoundingBox);
-        }
-
-        @Override
-        public MeshEyePointee get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-            Mesh mesh = mFutureMesh.get(timeout, unit);
-            return new MeshEyePointee(mesh, mUseBoundingBox);
-        }
-
-        @Override
-        public boolean isCancelled() {
-            return mFutureMesh.isCancelled();
-        }
-
-        @Override
-        public boolean isDone() {
-            return mFutureMesh.isDone();
-        }
     }
 
     private static native void setMesh(long renderData, long mesh);

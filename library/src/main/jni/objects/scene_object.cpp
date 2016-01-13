@@ -19,7 +19,6 @@
 
 #include "scene_object.h"
 
-#include "objects/components/eye_pointee_holder.h"
 #include "objects/components/render_data.h"
 #include "util/gvr_log.h"
 #include "mesh.h"
@@ -84,27 +83,6 @@ void SceneObject::detachRenderData() {
     if (render_data_) {
         render_data_->removeOwnerObject();
         render_data_ = NULL;
-    }
-}
-
-void SceneObject::attachEyePointeeHolder(
-        SceneObject* self,
-        EyePointeeHolder* eye_pointee_holder) {
-    if (eye_pointee_holder_) {
-        detachEyePointeeHolder();
-    }
-    SceneObject* owner_object(eye_pointee_holder->owner_object());
-    if (owner_object) {
-        owner_object->detachEyePointeeHolder();
-    }
-    eye_pointee_holder_ = eye_pointee_holder;
-    eye_pointee_holder_->set_owner_object(self);
-}
-
-void SceneObject::detachEyePointeeHolder() {
-    if (eye_pointee_holder_) {
-        eye_pointee_holder_->removeOwnerObject();
-        eye_pointee_holder_ = NULL;
     }
 }
 

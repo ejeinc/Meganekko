@@ -22,6 +22,8 @@
 #include <VrApi_LocalPrefs.h>
 #include "objects/scene.h"
 #include "objects/scene_object.h"
+#include "objects/components/render_data.h"
+#include "Kernel/OVR_Geometry.h"
 
 namespace mgn
 {
@@ -72,6 +74,26 @@ void Java_com_eje_1c_meganekko_MeganekkoActivity_setShaderManager(JNIEnv * jni, 
     MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
     ShaderManager* shaderManager = reinterpret_cast<ShaderManager*>(jshaderManager);
     activity->shaderManager = shaderManager;
+}
+
+jboolean Java_com_eje_1c_meganekko_MeganekkoActivity_isLookingAt(JNIEnv * jni, jclass clazz, jlong appPtr, jlong jsceneObject)
+{
+    MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+
+    Matrix4f m = sceneObject->transform()->getModelMatrix().InvertedHomogeneousTransform();
+    const Vector3f rayStart = m.Transform(activity->scene->main_camera()->transform()->getPosition());
+    const Vector3f rayDir = activity->scene->main_camera()->getLookAt();
+    const float* boundingBoxInfo = sceneObject->render_data()->mesh()->getBoundingBoxInfo();
+    const Vector3f mins(boundingBoxInfo[0], boundingBoxInfo[1], boundingBoxInfo[2]);
+    const Vector3f maxs(boundingBoxInfo[3], boundingBoxInfo[4], boundingBoxInfo[5]);
+    float t0 = 0.0f;
+    float t1 = 0.0f;
+
+    return Intersect_RayBounds(rayStart, rayDir, mins, maxs, t0, t1);
+//    if (Intersect_RayBounds(rayStart, rayDir, mins, maxs, t0, t1)) {
+//        return rayStart + t0 * rayDir;
+//    }
 }
 
 } // extern "C"
