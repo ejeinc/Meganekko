@@ -2,6 +2,8 @@
 
 VR rendering framework built on Oculus Mobile SDK. Forked from [GearVRf](http://www.gearvrf.org/).
 
+**Currently, this repository is in significant refactoring. Almost old features are removed in future.**
+
 ## Using Meganekko
 
 Modify your **app/build.gradle** to include dependency.
