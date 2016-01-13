@@ -18,16 +18,9 @@ package com.eje_c.meganekko;
 import android.graphics.Color;
 import android.graphics.SurfaceTexture;
 
-import com.eje_c.meganekko.texture.Texture;
 import com.eje_c.meganekko.utility.Colors;
-import com.eje_c.meganekko.utility.Threads;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Future;
 
 import static com.eje_c.meganekko.utility.Assert.checkFloatNotNaNOrInfinity;
-import static com.eje_c.meganekko.utility.Assert.checkNotNull;
 import static com.eje_c.meganekko.utility.Assert.checkStringNotNullOrEmpty;
 
 /**
@@ -71,7 +64,6 @@ import static com.eje_c.meganekko.utility.Assert.checkStringNotNullOrEmpty;
  */
 public class Material extends HybridObject implements Shaders<MaterialShaderId> {
 
-    final private Map<String, Texture> textures = new HashMap<String, Texture>();
     private int mShaderFeatureSet;
     private MaterialShaderId shaderId;
 
@@ -116,18 +108,6 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
     public void setShaderType(MaterialShaderId shaderId) {
         this.shaderId = shaderId;
         setShaderType(getNative(), shaderId.ID);
-    }
-
-    public Texture getMainTexture() {
-        return getTexture(MAIN_TEXTURE);
-    }
-
-    public void setMainTexture(Future<Texture> texture) {
-        setTexture(MAIN_TEXTURE, texture);
-    }
-
-    public void setMainTexture(Texture texture) {
-        setTexture(MAIN_TEXTURE, texture);
     }
 
     /**
@@ -356,31 +336,6 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
      */
     public void setOpacity(float opacity) {
         setFloat("opacity", opacity);
-    }
-
-    public Texture getTexture(String key) {
-        return textures.get(key);
-    }
-
-    public void setTexture(String key, Texture texture) {
-        checkStringNotNullOrEmpty("key", key);
-        checkNotNull("texture", texture);
-        textures.put(key, texture);
-        setTexture(getNative(), key, texture.getNative());
-    }
-
-    public void setTexture(final String key, final Future<Texture> texture) {
-        Threads.spawn(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    setTexture(key, texture.get());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     public float getFloat(String key) {

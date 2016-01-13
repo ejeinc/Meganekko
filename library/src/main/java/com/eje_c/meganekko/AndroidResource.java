@@ -21,7 +21,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.util.TypedValue;
 
-import com.eje_c.meganekko.texture.Texture;
 import com.eje_c.meganekko.utility.MarkingFileInputStream;
 
 import java.io.File;
@@ -367,32 +366,6 @@ public class AndroidResource {
     /*
      * Specialized callback interfaces, to make use a bit smaller and clearer.
      */
-
-    /**
-     * Callback for asynchronous compressed-texture loads.
-     * <p/>
-     * Compressed textures load very quickly, so they're not subject to
-     * throttling and don't support
-     * {@link BitmapTextureCallback#stillWanted(AndroidResource)}
-     */
-    public interface CompressedTextureCallback extends Callback<Texture> {
-    }
-
-    /**
-     * Callback for asynchronous bitmap-texture loads.
-     */
-    public interface BitmapTextureCallback extends CancelableCallback<Texture> {
-    }
-
-    /**
-     * Callback for asynchronous texture loads.
-     * <p/>
-     * Both compressed and bitmapped textures, using the
-     * {@link VrContext#loadTexture(AndroidResource.TextureCallback, AndroidResource)}
-     * APIs.
-     */
-    public interface TextureCallback extends CancelableCallback<Texture> {
-    }
 
     /**
      * Callback for asynchronous mesh loads

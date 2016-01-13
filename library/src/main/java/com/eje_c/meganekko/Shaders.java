@@ -15,10 +15,6 @@
 
 package com.eje_c.meganekko;
 
-import com.eje_c.meganekko.texture.Texture;
-
-import java.util.concurrent.Future;
-
 /**
  * The API shared by {@link Material} and {@link GVRPostEffect}.
  * <p/>
@@ -49,70 +45,6 @@ public interface Shaders<ID> {
      *                 and scene shader ids in distinct namespaces.
      */
     public void setShaderType(ID shaderId);
-
-    /**
-     * The {@link Texture texture} currently bound to the
-     * {@code main_texture} shader uniform.
-     * <p/>
-     * With most shaders, this is the texture that is actually displayed.
-     *
-     * @return The {@linkplain Texture main texture}
-     */
-    public Texture getMainTexture();
-
-    /**
-     * Asynchronously bind a different {@link Texture texture} to the
-     * {@code main_texture} shader uniform.
-     * <p/>
-     * Uses a background thread from the thread pool to wait for the
-     * {@code Future.get()} method; unless you are loading dozens of textures
-     * asynchronously, the extra overhead should be modest compared to the cost
-     * of loading a texture.
-     *
-     * @param texture A future texture, from one of the the
-     *                {@link VrContext#loadFutureTexture(AndroidResource)}
-     *                methods
-     */
-    public void setMainTexture(Future<Texture> texture);
-
-    /**
-     * Bind a different {@link Texture texture} to the {@code main_texture}
-     * shader uniform.
-     *
-     * @param texture The {@link Texture} to bind.
-     */
-    public void setMainTexture(Texture texture);
-
-    /**
-     * Get the {@link Texture texture} currently bound to the shader uniform
-     * {@code key}.
-     *
-     * @param key A texture name
-     * @return The current {@link Texture texture}.
-     */
-    public Texture getTexture(String key);
-
-    /**
-     * Bind a {@link Texture texture} to the shader uniform {@code key}.
-     *
-     * @param key     Name of the shader uniform to bind the texture to.
-     * @param texture The {@link Texture texture} to bind.
-     */
-    public void setTexture(String key, Texture texture);
-
-    /**
-     * Asynchronously bind a {@link Texture texture} to the shader uniform
-     * {@code key}.
-     * <p/>
-     * Uses a background thread from the thread pool to wait for the
-     * {@code Future.get()} method; unless you are loading dozens of textures
-     * asynchronously, the extra overhead should be modest compared to the cost
-     * of loading a texture.
-     *
-     * @param key     Name of the shader uniform to bind the texture to.
-     * @param texture The {@link Texture texture} to bind.
-     */
-    public void setTexture(String key, Future<Texture> texture);
 
     /**
      * Get the {@code float} bound to the shader uniform {@code key}.

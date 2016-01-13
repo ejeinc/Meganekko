@@ -19,11 +19,8 @@ import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.texture.Texture;
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.utility.Log;
-
-import java.util.concurrent.Future;
 
 public class SphereSceneObject extends SceneObject {
 
@@ -75,29 +72,6 @@ public class SphereSceneObject extends SceneObject {
 
         generateSphereObject(vrContext, STACK_NUMBER, SLICE_NUMBER, facingOut,
                 new Material(vrContext));
-    }
-
-    /**
-     * Constructs a sphere scene object with a radius of 1 and 18 stacks, and 36
-     * slices.
-     * <p/>
-     * The sphere's triangles and normals are facing either in or out and the
-     * same texture will be applied to each side of the sphere.
-     *
-     * @param vrContext     current {@link VrContext}
-     * @param facingOut     whether the triangles and normals should be facing in or
-     *                      facing out.
-     * @param futureTexture the texture for the sphere. {@code Future<Texture>} is used
-     *                      here for asynchronously loading the texture.
-     */
-    public SphereSceneObject(VrContext vrContext, boolean facingOut,
-                             Future<Texture> futureTexture) {
-        super(vrContext);
-
-        Material material = new Material(vrContext);
-        material.setMainTexture(futureTexture);
-        generateSphereObject(vrContext, STACK_NUMBER, SLICE_NUMBER, facingOut,
-                material);
     }
 
     /**

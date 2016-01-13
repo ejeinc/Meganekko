@@ -27,7 +27,6 @@ import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.VrFrame;
 import com.eje_c.meganekko.scene_objects.CanvasSceneObject.OnDrawListener;
-import com.eje_c.meganekko.texture.Texture;
 
 import ovr.JoyButton;
 

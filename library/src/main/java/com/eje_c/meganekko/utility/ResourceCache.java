@@ -16,12 +16,9 @@
 package com.eje_c.meganekko.utility;
 
 import com.eje_c.meganekko.AndroidResource;
-import com.eje_c.meganekko.AndroidResource.BitmapTextureCallback;
 import com.eje_c.meganekko.AndroidResource.Callback;
 import com.eje_c.meganekko.AndroidResource.CancelableCallback;
-import com.eje_c.meganekko.AndroidResource.CompressedTextureCallback;
 import com.eje_c.meganekko.HybridObject;
-import com.eje_c.meganekko.texture.Texture;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -42,26 +39,6 @@ public class ResourceCache<T extends HybridObject> {
 
     private final Map<AndroidResource, WeakReference<T>> cache //
             = new HashMap<AndroidResource, WeakReference<T>>();
-
-    /**
-     * Wrap the callback, to cache the
-     * {@link CompressedTextureCallback#loaded(HybridObject, AndroidResource)
-     * loaded()} resource
-     */
-    public static CompressedTextureCallback wrapCallback(
-            ResourceCache<Texture> cache, CompressedTextureCallback callback) {
-        return new CompressedTextureCallbackWrapper(cache, callback);
-    }
-
-    /**
-     * Wrap the callback, to cache the
-     * {@link BitmapTextureCallback#loaded(HybridObject, AndroidResource)
-     * loaded()} resource
-     */
-    public static BitmapTextureCallback wrapCallback(
-            ResourceCache<Texture> cache, BitmapTextureCallback callback) {
-        return new BitmapTextureCallbackWrapper(cache, callback);
-    }
 
     /**
      * Save a weak reference to the resource
@@ -150,25 +127,6 @@ public class ResourceCache<T extends HybridObject> {
         public boolean stillWanted(AndroidResource androidResource) {
             return ((CancelableCallback<T>) callback)
                     .stillWanted(androidResource);
-        }
-    }
-
-    // Those 'convenience' interfaces are getting to be a real annoyance
-    private static class CompressedTextureCallbackWrapper extends
-            CallbackWrapper<Texture> implements CompressedTextureCallback {
-
-        CompressedTextureCallbackWrapper(ResourceCache<Texture> cache,
-                                         CompressedTextureCallback callback) {
-            super(cache, callback);
-        }
-    }
-
-    private static class BitmapTextureCallbackWrapper extends
-            CancelableCallbackWrapper<Texture> implements
-            BitmapTextureCallback {
-        BitmapTextureCallbackWrapper(ResourceCache<Texture> cache,
-                                     BitmapTextureCallback callback) {
-            super(cache, callback);
         }
     }
 }

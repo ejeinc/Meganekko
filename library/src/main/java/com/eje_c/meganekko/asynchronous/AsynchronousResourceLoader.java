@@ -15,27 +15,14 @@
 
 package com.eje_c.meganekko.asynchronous;
 
-import android.graphics.Bitmap;
-
 import com.eje_c.meganekko.AndroidResource;
-import com.eje_c.meganekko.AndroidResource.BitmapTextureCallback;
 import com.eje_c.meganekko.AndroidResource.CancelableCallback;
-import com.eje_c.meganekko.AndroidResource.CompressedTextureCallback;
-import com.eje_c.meganekko.FutureWrapper;
 import com.eje_c.meganekko.HybridObject;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
-import com.eje_c.meganekko.Shaders;
-import com.eje_c.meganekko.texture.Texture;
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.utility.Log;
-import com.eje_c.meganekko.utility.ResourceCache;
-import com.eje_c.meganekko.utility.Threads;
 
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.Map;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -54,99 +41,6 @@ import java.util.concurrent.TimeoutException;
  * .
  */
 public class AsynchronousResourceLoader {
-
-    /**
-     * Load a compressed texture asynchronously.
-     * <p/>
-     * This is the implementation of
-     * {@link VrContext#loadCompressedTexture(AndroidResource.CompressedTextureCallback, AndroidResource)}
-     * : it will usually be more convenient (and more efficient) to call that
-     * directly.
-     *
-     * @param vrContext    The Meganekko context
-     * @param textureCache Texture cache - may be {@code null}
-     * @param callback     Asynchronous notifications
-     * @param resource     Stream containing a compressed texture
-     * @throws IllegalArgumentException If {@code vrContext} or {@code callback} parameters are
-     *                                  {@code null}
-     */
-    public static void loadCompressedTexture(final VrContext vrContext,
-                                             ResourceCache<Texture> textureCache,
-                                             final CompressedTextureCallback callback,
-                                             final AndroidResource resource) throws IllegalArgumentException {
-        loadCompressedTexture(vrContext, textureCache, callback, resource,
-                GVRCompressedTexture.DEFAULT_QUALITY);
-    }
-
-    /**
-     * Load a compressed texture asynchronously.
-     * <p/>
-     * This is the implementation of
-     * {@link VrContext#loadCompressedTexture(AndroidResource.CompressedTextureCallback, AndroidResource)}
-     * : it will usually be more convenient (and more efficient) to call that
-     * directly.
-     *
-     * @param vrContext    The Meganekko context
-     * @param textureCache Texture cache - may be {@code null}
-     * @param callback     Asynchronous notifications
-     * @param resource     Basically, a stream containing a compressed texture. Taking a
-     *                     {@link AndroidResource} parameter eliminates six overloads.
-     * @param quality      Speed/quality tradeoff: should be one of
-     *                     {@link GVRCompressedTexture#SPEED},
-     *                     {@link GVRCompressedTexture#BALANCED}, or
-     *                     {@link GVRCompressedTexture#QUALITY}, but other values are
-     *                     'clamped' to one of the recognized values.
-     * @throws IllegalArgumentException If {@code vrContext} or {@code callback} parameters are
-     *                                  {@code null}
-     */
-    public static void loadCompressedTexture(final VrContext vrContext,
-                                             final ResourceCache<Texture> textureCache,
-                                             final CompressedTextureCallback callback,
-                                             final AndroidResource resource, final int quality)
-            throws IllegalArgumentException {
-        validateCallbackParameters(vrContext, callback, resource);
-
-        final Texture cached = textureCache == null ? null : textureCache
-                .get(resource);
-        if (cached != null) {
-            vrContext.runOnGlThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    callback.loaded(cached, resource);
-                }
-            });
-        } else {
-            // Load the bytes on a background thread
-            Threads.spawn(new Runnable() {
-
-                @Override
-                public void run() {
-                    try {
-                        final CompressedTexture compressedTexture = CompressedTexture
-                                .load(resource.getStream(), false);
-                        resource.closeStream();
-                        // Create texture on GL thread
-                        vrContext.runOnGlThread(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                Texture texture = compressedTexture
-                                        .toTexture(vrContext, quality);
-                                if (textureCache != null) {
-                                    textureCache.put(resource, texture);
-                                }
-                                callback.loaded(texture, resource);
-                            }
-                        });
-                    } catch (Exception e) {
-                        callback.failed(e, resource);
-                    }
-                }
-            });
-        }
-    }
-
 
     /**
      * Load a GL mesh asynchronously.

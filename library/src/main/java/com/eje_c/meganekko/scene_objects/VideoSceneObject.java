@@ -30,8 +30,6 @@ import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.VrFrame;
 
-import java.io.IOException;
-
 /**
  * A {@linkplain SceneObject scene object} that shows video, using the Android
  * {@link MediaPlayer}.

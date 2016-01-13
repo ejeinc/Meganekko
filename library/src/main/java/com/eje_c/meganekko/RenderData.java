@@ -17,15 +17,11 @@ package com.eje_c.meganekko;
 
 import android.util.Log;
 
-import com.eje_c.meganekko.Material.ShaderType;
 import com.eje_c.meganekko.RenderPass.CullFaceEnum;
 import com.eje_c.meganekko.utility.Threads;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import static android.opengl.GLES30.GL_LINES;
 import static android.opengl.GLES30.GL_LINE_LOOP;

@@ -17,35 +17,16 @@ package com.eje_c.meganekko;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 
-import com.eje_c.meganekko.AndroidResource.BitmapTextureCallback;
-import com.eje_c.meganekko.AndroidResource.CompressedTextureCallback;
 import com.eje_c.meganekko.AndroidResource.MeshCallback;
-import com.eje_c.meganekko.AndroidResource.TextureCallback;
-import com.eje_c.meganekko.Material.ShaderType;
 import com.eje_c.meganekko.animation.Animation;
 import com.eje_c.meganekko.animation.AnimationEngine;
 import com.eje_c.meganekko.asynchronous.AsynchronousResourceLoader;
-import com.eje_c.meganekko.asynchronous.CompressedTextureLoader;
-import com.eje_c.meganekko.asynchronous.GVRCompressedTexture;
-import com.eje_c.meganekko.jassimp.AiColor;
-import com.eje_c.meganekko.jassimp.AiMaterial;
-import com.eje_c.meganekko.jassimp.AiMatrix4f;
-import com.eje_c.meganekko.jassimp.AiNode;
-import com.eje_c.meganekko.jassimp.AiScene;
-import com.eje_c.meganekko.jassimp.AiTextureType;
-import com.eje_c.meganekko.jassimp.AiWrapperProvider;
 import com.eje_c.meganekko.periodic.PeriodicEngine;
-import com.eje_c.meganekko.texture.Texture;
 import com.eje_c.meganekko.utility.Log;
 import com.eje_c.meganekko.utility.ResourceCache;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -99,7 +80,6 @@ public class VrContext {
     public static final int DEFAULT_PRIORITY = 0;
     private static final String TAG = Log.tag(VrContext.class);
     private final static ResourceCache<Mesh> sMeshCache = new ResourceCache<Mesh>();
-    private final static ResourceCache<Texture> sTextureCache = new ResourceCache<Texture>();
     private static final List<Runnable> sHandlers = new ArrayList<Runnable>();
     /**
      * The default texture parameter instance for overloading texture methods

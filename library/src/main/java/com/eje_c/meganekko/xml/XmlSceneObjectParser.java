@@ -28,12 +28,10 @@ import android.util.Xml;
 
 import com.eje_c.meganekko.AndroidResource;
 import com.eje_c.meganekko.FutureWrapper;
-import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.RenderData.RenderingOrder;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.texture.Texture;
 import com.eje_c.meganekko.Transform;
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.scene_objects.CanvasSceneObject;
@@ -49,7 +47,6 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Locale;
 import java.util.concurrent.Future;
 
 /**
@@ -216,7 +213,6 @@ public class XmlSceneObjectParser {
         int renderingOrder = -1;
         int color = -1;
         Future<Mesh> mesh = null;
-        Future<Texture> texture = null;
 
         // Assign mesh if exists
         RenderData renderData = object.getRenderData();
@@ -371,18 +367,6 @@ public class XmlSceneObjectParser {
         // Set mesh if needed
         if (mesh != null) {
             ensureHavingRenderData(object).getRenderData().setMesh(mesh);
-        }
-
-        // Set texture
-        if (texture != null) {
-            Material material = new Material(mContext);
-            material.setMainTexture(texture);
-
-            if (color != -1) {
-                material.setColor(color);
-            }
-
-            ensureHavingRenderData(object).getRenderData().setMaterial(material);
         }
 
         // Apply renderingOrder
