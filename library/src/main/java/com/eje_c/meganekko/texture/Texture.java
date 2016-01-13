@@ -16,7 +16,6 @@
 package com.eje_c.meganekko.texture;
 
 import com.eje_c.meganekko.HybridObject;
-import com.eje_c.meganekko.TextureParameters;
 import com.eje_c.meganekko.VrContext;
 
 /**
@@ -40,15 +39,5 @@ public class Texture extends HybridObject {
         return getId(getNative());
     }
 
-    /**
-     * Update the texture parameters {@link TextureParameters} after the
-     * texture has been created.
-     */
-    public void updateTextureParameters(TextureParameters textureParameters) {
-        updateTextureParameters(getNative(), textureParameters.getCurrentValuesArray());
-    }
-
     private static native int getId(long texture);
-
-    private static native void updateTextureParameters(long texture, int[] textureParametersValues);
 }

@@ -27,9 +27,6 @@ extern "C" {
 JNIEXPORT jint JNICALL
 Java_com_eje_1c_meganekko_texture_Texture_getId(JNIEnv * env, jobject obj,
         jlong jtexture);
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_texture_Texture_updateTextureParameters(JNIEnv * env, jobject obj,
-        jlong jtexture, jintArray jtexture_parameters);
 }
 ;
 
@@ -38,17 +35,6 @@ Java_com_eje_1c_meganekko_texture_Texture_getId(JNIEnv * env, jobject obj,
         jlong jtexture) {
     Texture* texture = reinterpret_cast<Texture*>(jtexture);
     return texture->getId();
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_texture_Texture_updateTextureParameters(JNIEnv * env, jobject obj,
-        jlong jtexture, jintArray jtexture_parameters) {
-    Texture* texture = reinterpret_cast<Texture*>(jtexture);
-
-    jint* texture_parameters = env->GetIntArrayElements(jtexture_parameters, 0);
-    texture->updateTextureParameters(texture_parameters);
-    env->ReleaseIntArrayElements(jtexture_parameters, texture_parameters, 0);
-
 }
 
 }

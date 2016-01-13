@@ -47,15 +47,6 @@ public class RenderData extends Component {
     private static final String TAG = "Meganekko";
     private Mesh mMesh;
     private ArrayList<RenderPass> mRenderPassList;
-    private Light mLight;
-
-    /**
-     * Just for {@link #getMeshEyePointee()}
-     */
-    private Future<Mesh> mFutureMesh;
-    private boolean isLightEnabled;
-
-    ;
 
     /**
      * Constructor.
@@ -68,7 +59,6 @@ public class RenderData extends Component {
         RenderPass basePass = new RenderPass(vrContext);
         mRenderPassList = new ArrayList<RenderPass>();
         addPass(basePass);
-        isLightEnabled = false;
     }
 
     private RenderData(VrContext vrContext, long ptr) {
@@ -100,9 +90,6 @@ public class RenderData extends Component {
      * @param mesh The mesh to be rendered.
      */
     public void setMesh(final Future<Mesh> mesh) {
-        synchronized (this) {
-            mFutureMesh = mesh;
-        }
         Threads.spawn(new Runnable() {
 
             @Override
@@ -124,7 +111,6 @@ public class RenderData extends Component {
     public void setMesh(Mesh mesh) {
         synchronized (this) {
             mMesh = mesh;
-            mFutureMesh = null;
         }
         setMesh(getNative(), mesh.getNative());
     }
@@ -197,81 +183,6 @@ public class RenderData extends Component {
         } else {
             Log.e(TAG, "Trying to set material from invalid pass. Pass " + passIndex + " was not created.");
         }
-    }
-
-    /**
-     * @return The {@link Light light} the {@link Mesh mesh} is being lit
-     * by.
-     */
-    public Light getLight() {
-        return mLight;
-    }
-
-    /**
-     * Set the {@link Light light} the mesh will be lit by.
-     *
-     * @param light The {@link Light light} for rendering.
-     */
-    public void setLight(Light light) {
-        boolean supportsLight = false;
-
-        for (int pass = 0; pass < mRenderPassList.size(); ++pass) {
-            if (mRenderPassList.get(pass).getMaterial().getShaderType() == ShaderType.Texture.ID) {
-                supportsLight = true;
-                break;
-            }
-        }
-
-        if (!supportsLight) {
-            throw new UnsupportedOperationException("Only Texture shader can has light.");
-        }
-
-        mLight = light;
-        setLight(getNative(), light.getNative());
-        isLightEnabled = true;
-    }
-
-    /**
-     * Enable lighting effect for the render_data. Note that it is different to
-     * GVRLight.enable(). GVRLight.enable turn on a light, while this method
-     * enable the lighting effect for the render_data. The lighting effect is
-     * applied if and only if {@code mLight} is enabled (i.e. on) AND the
-     * lighting effect is enabled for the render_data.
-     */
-    public void enableLight() {
-        if (mLight == null) {
-            throw new UnsupportedOperationException("No light is added yet.");
-        }
-        enableLight(getNative());
-        isLightEnabled = true;
-    }
-
-    /**
-     * Disable lighting effect for the render_data. Note that it is different to
-     * GVRLight.disable(). GVRLight.disable turn off a light, while this method
-     * disable the lighting effect for the render_data. The lighting effect is
-     * applied if and only if {@code mLight} is enabled (i.e. on) AND the
-     * lighting effect is enabled for the render_data.
-     */
-    public void disableLight() {
-        if (mLight == null) {
-            throw new UnsupportedOperationException("No light is added yet.");
-        }
-        disableLight(getNative());
-        isLightEnabled = false;
-    }
-
-    /**
-     * Get the enable/disable status for the lighting effect. Note that it is
-     * different to enable/disable status of the light. The lighting effect is
-     * applied if and only if {@code mLight} is enabled (i.e. on) AND the
-     * lighting effect is enabled for the render_data.
-     *
-     * @return true if lighting effect is enabled, false if lighting effect is
-     * disabled.
-     */
-    public boolean isLightEnabled() {
-        return isLightEnabled;
     }
 
     /**

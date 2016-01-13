@@ -204,40 +204,6 @@ void Renderer::frustum_cull(JNIEnv * jni, Scene* scene, const Vector3f& camera_p
                 || !scene->get_occlusion_culling()) {
             continue;
         }
-
-#if _GVRF_USE_GLES3_
-        //If a previous query is active, do not issue a new query.
-        //This avoids overloading the GPU with too many queries
-        //Queries may span multiple frames
-
-        bool is_query_issued = scene_object->is_query_issued();
-        if (!is_query_issued) {
-            //Setup basic bounding box and material
-            RenderData* bounding_box_render_data(new RenderData());
-            Mesh* bounding_box_mesh = render_data->mesh()->getBoundingBox();
-            bounding_box_render_data->set_mesh(bounding_box_mesh);
-
-            GLuint *query = scene_object->get_occlusion_array();
-
-            glDepthFunc (GL_LEQUAL);
-            glEnable (GL_DEPTH_TEST);
-            glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-
-            //Issue the query only with a bounding box
-            glBeginQuery(GL_ANY_SAMPLES_PASSED, query[0]);
-            shader_manager->getBoundingBoxShader()->render(mvp_matrix_tmp,
-                    bounding_box_render_data,
-                    bounding_box_render_data->pass(0)->material());
-            glEndQuery (GL_ANY_SAMPLES_PASSED);
-            scene_object->set_query_issued(true);
-
-            glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-
-            //Delete the generated bounding box mesh
-            bounding_box_mesh->cleanUp();
-            delete bounding_box_render_data;
-        }
-#endif
     }
 }
 
@@ -406,16 +372,6 @@ void Renderer::renderRenderData(RenderData* render_data,
                         bool right = render_mask
                                 & RenderData::RenderMaskBit::Right;
                         switch (curr_material->shader_type()) {
-                        case Material::ShaderType::UNLIT_HORIZONTAL_STEREO_SHADER:
-                            shader_manager->getUnlitHorizontalStereoShader()->render(
-                                    mvp_matrix, render_data, curr_material,
-                                    right);
-                            break;
-                        case Material::ShaderType::UNLIT_VERTICAL_STEREO_SHADER:
-                            shader_manager->getUnlitVerticalStereoShader()->render(
-                                    mvp_matrix, render_data, curr_material,
-                                    right);
-                            break;
                         case Material::ShaderType::OES_SHADER:
                             shader_manager->getOESShader()->render(mvp_matrix,
                                     render_data, curr_material);
@@ -429,11 +385,6 @@ void Renderer::renderRenderData(RenderData* render_data,
                             shader_manager->getOESVerticalStereoShader()->render(
                                     mvp_matrix, render_data, curr_material,
                                     right);
-                            break;
-                        case Material::ShaderType::TEXTURE_SHADER:
-                            shader_manager->getTextureShader()->render(
-                                   mv_matrix, mv_matrix.Inverted().Transposed(),
-                                   mvp_matrix, render_data, curr_material);
                             break;
                         case Material::ShaderType::ASSIMP_SHADER:
                             shader_manager->getAssimpShader()->render(
@@ -449,7 +400,6 @@ void Renderer::renderRenderData(RenderData* render_data,
                         }
                     } catch (std::string error) {
                         LOGE("Error detected in Renderer::renderRenderData; error : %s", error.c_str());
-                        shader_manager->getErrorShader()->render(mvp_matrix, render_data);
                     }
                 }
             }

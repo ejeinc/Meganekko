@@ -21,15 +21,10 @@
 #define SHADER_MANAGER_H_
 
 #include "objects/hybrid_object.h"
-#include "shaders/material/bounding_box_shader.h"
 #include "shaders/material/custom_shader.h"
-#include "shaders/material/error_shader.h"
 #include "shaders/material/oes_horizontal_stereo_shader.h"
 #include "shaders/material/oes_shader.h"
 #include "shaders/material/oes_vertical_stereo_shader.h"
-#include "shaders/material/unlit_horizontal_stereo_shader.h"
-#include "shaders/material/unlit_vertical_stereo_shader.h"
-#include "shaders/material/texture_shader.h"
 #include "shaders/material/assimp_shader.h"
 #include "util/gvr_log.h"
 
@@ -37,41 +32,16 @@ namespace mgn {
 class ShaderManager: public HybridObject {
 public:
     ShaderManager() :
-            HybridObject(), bounding_box_shader_(),
-            unlit_horizontal_stereo_shader_(), unlit_vertical_stereo_shader_(),
+            HybridObject(),
             oes_shader_(), oes_horizontal_stereo_shader_(), oes_vertical_stereo_shader_(),
-            texture_shader_(), assimp_shader_(),
-            error_shader_(), latest_custom_shader_id_(
-                    INITIAL_CUSTOM_SHADER_INDEX), custom_shaders_() {
+            assimp_shader_(), latest_custom_shader_id_(INITIAL_CUSTOM_SHADER_INDEX), custom_shaders_() {
     }
     ~ShaderManager() {
-        delete unlit_horizontal_stereo_shader_;
-        delete unlit_vertical_stereo_shader_;
         delete oes_shader_;
         delete oes_horizontal_stereo_shader_;
         delete oes_vertical_stereo_shader_;
-        delete texture_shader_;
         delete assimp_shader_;
-        delete error_shader_;
         // We don't delete the custom shaders, as their Java owner-objects will do that for us.
-    }
-    BoundingBoxShader* getBoundingBoxShader() {
-        if (!bounding_box_shader_) {
-            bounding_box_shader_ = new BoundingBoxShader();
-        }
-        return bounding_box_shader_;
-    }
-    UnlitHorizontalStereoShader* getUnlitHorizontalStereoShader() {
-        if (!unlit_horizontal_stereo_shader_) {
-            unlit_horizontal_stereo_shader_ = new UnlitHorizontalStereoShader();
-        }
-        return unlit_horizontal_stereo_shader_;
-    }
-    UnlitVerticalStereoShader* getUnlitVerticalStereoShader() {
-        if (!unlit_vertical_stereo_shader_) {
-            unlit_vertical_stereo_shader_ = new UnlitVerticalStereoShader();
-        }
-        return unlit_vertical_stereo_shader_;
     }
     OESShader* getOESShader() {
         if (!oes_shader_) {
@@ -91,23 +61,11 @@ public:
         }
         return oes_vertical_stereo_shader_;
     }
-    TextureShader* getTextureShader() {
-        if (!texture_shader_) {
-            texture_shader_ = new TextureShader();
-        }
-        return texture_shader_;
-    }
     AssimpShader* getAssimpShader() {
         if (!assimp_shader_) {
             assimp_shader_ = new AssimpShader();
         }
         return assimp_shader_;
-    }
-    ErrorShader* getErrorShader() {
-        if (!error_shader_) {
-            error_shader_ = new ErrorShader();
-        }
-        return error_shader_;
     }
     int addCustomShader(std::string vertex_shader,
             std::string fragment_shader) {
@@ -135,15 +93,10 @@ private:
 
 private:
     static const int INITIAL_CUSTOM_SHADER_INDEX = 1000;
-    BoundingBoxShader* bounding_box_shader_;
-    UnlitHorizontalStereoShader* unlit_horizontal_stereo_shader_;
-    UnlitVerticalStereoShader* unlit_vertical_stereo_shader_;
     OESShader* oes_shader_;
     OESHorizontalStereoShader* oes_horizontal_stereo_shader_;
     OESVerticalStereoShader* oes_vertical_stereo_shader_;
-    TextureShader* texture_shader_;
     AssimpShader* assimp_shader_;
-    ErrorShader* error_shader_;
     int latest_custom_shader_id_;
     std::map<int, CustomShader*> custom_shaders_;
 };
