@@ -1,8 +1,8 @@
 <scene>
-    <object
-        drawable="@mipmap/ic_launcher"
+    <view
         height="1.0"
         id="@+id/myObject"
+        layout="@layout/hello_world"
         width="1.0"
         z="-3.0" />
 </scene>
