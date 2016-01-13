@@ -45,7 +45,7 @@ import java.util.concurrent.Future;
  */
 public class SceneObject extends HybridObject implements FrameListener {
 
-    private static final MaterialShaderId STANDARD_SHADER = ShaderType.Texture.ID;
+    private static final MaterialShaderId STANDARD_SHADER = ShaderType.OES.ID;
     private final List<SceneObject> mChildren = new ArrayList<SceneObject>();
     private int mId;
     private String mName;

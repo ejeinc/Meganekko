@@ -85,14 +85,6 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
     public Material(VrContext vrContext, MaterialShaderId shaderId) {
         super(vrContext, ctor(shaderId.ID));
         this.shaderId = shaderId;
-        // if texture shader is used, set lighting coefficients to OpenGL default
-        // values
-        if (shaderId == ShaderType.Texture.ID) {
-            setAmbientColor(0.2f, 0.2f, 0.2f, 1.0f);
-            setDiffuseColor(0.8f, 0.8f, 0.8f, 1.0f);
-            setSpecularColor(0.0f, 0.0f, 0.0f, 1.0f);
-            setSpecularExponent(0.0f);
-        }
         this.mShaderFeatureSet = 0;
     }
 
@@ -105,7 +97,7 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
      * @param vrContext Current {@link VrContext}
      */
     public Material(VrContext vrContext) {
-        this(vrContext, ShaderType.Texture.ID);
+        this(vrContext, ShaderType.OES.ID);
     }
 
     Material(VrContext vrContext, long ptr) {
@@ -475,14 +467,6 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
      */
     public abstract static class ShaderType {
 
-        public abstract static class UnlitHorizontalStereo {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(0);
-        }
-
-        public abstract static class UnlitVerticalStereo {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(1);
-        }
-
         public abstract static class OES {
             public static final MaterialShaderId ID = new StockMaterialShaderId(2);
         }
@@ -493,42 +477,6 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
 
         public abstract static class OESVerticalStereo {
             public static final MaterialShaderId ID = new StockMaterialShaderId(4);
-        }
-
-        public abstract static class Texture {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(7);
-        }
-
-        public abstract static class ExternalRenderer {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(8);
-        }
-
-        public abstract static class Assimp {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(9);
-
-            /*
-             * Set this feature enum if diffuse texture is present in Assimp
-             * material Diffuse texture maps to main_texture in GearVRf
-             */
-            public static int AS_DIFFUSE_TEXTURE = 0x00000000;
-
-            /*
-             * Set this feature enum if specular texture is present in Assimp
-             * material
-             */
-            public static int AS_SPECULAR_TEXTURE = 0x00000001;
-
-            public static int setBit(int number, int index) {
-                return (number |= 1 << index);
-            }
-
-            public static boolean isSet(int number, int index) {
-                return ((number & (1 << index)) != 0);
-            }
-
-            public static int clearBit(int number, int index) {
-                return (number &= ~(1 << index));
-            }
         }
     }
 
