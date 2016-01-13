@@ -22,7 +22,6 @@ import com.eje_c.meganekko.AndroidResource.BitmapTextureCallback;
 import com.eje_c.meganekko.AndroidResource.CancelableCallback;
 import com.eje_c.meganekko.AndroidResource.CompressedTextureCallback;
 import com.eje_c.meganekko.texture.BitmapTexture;
-import com.eje_c.meganekko.texture.CubemapTexture;
 import com.eje_c.meganekko.FutureWrapper;
 import com.eje_c.meganekko.HybridObject;
 import com.eje_c.meganekko.Mesh;
@@ -340,44 +339,6 @@ public class AsynchronousResourceLoader {
 
             loadTexture(vrContext, textureCache, result.callback, resource,
                     priority, quality);
-
-            return result;
-        }
-    }
-
-    /**
-     * Load a cube map texture asynchronously.
-     * <p/>
-     * This is the implementation of
-     * {@link VrContext#loadFutureCubemapTexture(AndroidResource)} - it will
-     * usually be more convenient (and more efficient) to call that directly.
-     *
-     * @param vrContext    The Meganekko context
-     * @param textureCache Texture cache - may be {@code null}
-     * @param resource     A steam containing a zip file which contains six bitmaps. The
-     *                     six bitmaps correspond to +x, -x, +y, -y, +z, and -z faces of
-     *                     the cube map texture respectively. The default names of the
-     *                     six images are "posx.png", "negx.png", "posy.png", "negx.png",
-     *                     "posz.png", and "negz.png", which can be changed by calling
-     *                     {@link CubemapTexture#setFaceNames(String[])}.
-     * @param priority     This request's priority. Please see the notes on asynchronous
-     *                     priorities in the <a href="package-summary.html#async">package
-     *                     description</a>.
-     * @return A {@link Future} that you can pass to methods like
-     * {@link Shaders#setMainTexture(Future)}
-     */
-    public static Future<Texture> loadFutureCubemapTexture(
-            VrContext vrContext, ResourceCache<Texture> textureCache,
-            AndroidResource resource, int priority,
-            Map<String, Integer> faceIndexMap) {
-        Texture cached = textureCache.get(resource);
-        if (cached != null) {
-            return new FutureWrapper<Texture>(cached);
-        } else {
-            FutureResource<Texture> result = new FutureResource<Texture>();
-
-            AsyncCubemapTexture.loadTexture(vrContext, result.callback,
-                    resource, priority, faceIndexMap);
 
             return result;
         }

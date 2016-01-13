@@ -430,17 +430,6 @@ void Renderer::renderRenderData(RenderData* render_data,
                                     mvp_matrix, render_data, curr_material,
                                     right);
                             break;
-                        case Material::ShaderType::CUBEMAP_SHADER:
-                            shader_manager->getCubemapShader()->render(
-                                    model_matrix, mvp_matrix, render_data,
-                                    curr_material);
-                            break;
-                        case Material::ShaderType::CUBEMAP_REFLECTION_SHADER:
-                            shader_manager->getCubemapReflectionShader()->render(
-                                    mv_matrix, mv_matrix.Inverted().Transposed(),
-                                    view_matrix.Inverted(), mvp_matrix,
-                                    render_data, curr_material);
-                            break;
                         case Material::ShaderType::TEXTURE_SHADER:
                             shader_manager->getTextureShader()->render(
                                    mv_matrix, mv_matrix.Inverted().Transposed(),

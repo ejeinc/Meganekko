@@ -488,14 +488,6 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
             public static final MaterialShaderId ID = new StockMaterialShaderId(4);
         }
 
-        public abstract static class Cubemap {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(5);
-        }
-
-        public abstract static class CubemapReflection {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(6);
-        }
-
         public abstract static class Texture {
             public static final MaterialShaderId ID = new StockMaterialShaderId(7);
         }

@@ -40,7 +40,6 @@ import com.eje_c.meganekko.jassimp.AiTextureType;
 import com.eje_c.meganekko.jassimp.AiWrapperProvider;
 import com.eje_c.meganekko.periodic.PeriodicEngine;
 import com.eje_c.meganekko.texture.BitmapTexture;
-import com.eje_c.meganekko.texture.CubemapTexture;
 import com.eje_c.meganekko.texture.Texture;
 import com.eje_c.meganekko.utility.Log;
 import com.eje_c.meganekko.utility.ResourceCache;
@@ -1059,52 +1058,6 @@ public class VrContext {
     }
 
     /**
-     * Loads a cube map texture synchronously.
-     * <p/>
-     * <p/>
-     * Note that this method may take hundreds of milliseconds to return: unless
-     * the cube map is quite tiny, you probably don't want to call this directly
-     * from your callback as that is called
-     * once per frame, and a long call will cause you to miss frames.
-     *
-     * @param resourceArray An array containing six resources for six bitmaps. The order
-     *                      of the bitmaps is important to the correctness of the cube map
-     *                      texture. The six bitmaps should correspond to +x, -x, +y, -y,
-     *                      +z, and -z faces of the cube map texture respectively.
-     * @return The cube map texture, or {@code null} if the length of
-     * rsourceArray is not 6.
-     */
-    /*
-     * TODO Deprecate, and replace with an overload that takes a single
-     * AndroidResource which specifies a zip file ... and caches result
-     */
-    public CubemapTexture loadCubemapTexture(
-            AndroidResource[] resourceArray) {
-        return loadCubemapTexture(resourceArray, DEFAULT_TEXTURE_PARAMETERS);
-    }
-
-    // Texture parameters
-    public CubemapTexture loadCubemapTexture(
-            AndroidResource[] resourceArray,
-            TextureParameters textureParameters) {
-
-        assertGLThread();
-
-        if (resourceArray.length != 6) {
-            return null;
-        }
-
-        Bitmap[] bitmapArray = new Bitmap[6];
-        for (int i = 0; i < 6; i++) {
-            bitmapArray[i] = AsynchronousResourceLoader.decodeStream(
-                    resourceArray[i].getStream(), false);
-            resourceArray[i].closeStream();
-        }
-
-        return new CubemapTexture(this, bitmapArray, textureParameters);
-    }
-
-    /**
      * Throws an exception if the current thread is not a GL thread.
      */
     private void assertGLThread() {
@@ -1810,43 +1763,6 @@ public class VrContext {
                                              int priority, int quality) {
         return AsynchronousResourceLoader.loadFutureTexture(this,
                 sTextureCache, resource, priority, quality);
-    }
-
-    /**
-     * Simple, high-level method to load a cube map texture asynchronously, for
-     * use with {@link Shaders#setMainTexture(Future)} and
-     * {@link Shaders#setTexture(String, Future)}.
-     *
-     * @param resource A steam containing a zip file which contains six bitmaps. The
-     *                 six bitmaps correspond to +x, -x, +y, -y, +z, and -z faces of
-     *                 the cube map texture respectively. The default names of the
-     *                 six images are "posx.png", "negx.png", "posy.png", "negx.png",
-     *                 "posz.png", and "negz.png", which can be changed by calling
-     *                 {@link CubemapTexture#setFaceNames(String[])}.
-     * @return A {@link Future} that you can pass to methods like
-     * {@link Shaders#setMainTexture(Future)}
-     * @throws IllegalArgumentException If you 'abuse' request consolidation by passing the same
-     *                                  {@link AndroidResource} descriptor to multiple load calls.
-     *                                  <p/>
-     *                                  It's fairly common for multiple scene objects to use the same
-     *                                  texture or the same mesh. Thus, if you try to load, say,
-     *                                  {@code R.raw.whatever} while you already have a pending
-     *                                  request for {@code R.raw.whatever}, it will only be loaded
-     *                                  once; the same resource will be used to satisfy both (all)
-     *                                  requests. This "consolidation" uses
-     *                                  {@link AndroidResource#equals(Object)}, <em>not</em>
-     *                                  {@code ==} (aka "reference equality"): The problem with using
-     *                                  the same resource descriptor is that if requests can't be
-     *                                  consolidated (because the later one(s) came in after the
-     *                                  earlier one(s) had already completed) the resource will be
-     *                                  reloaded ... but the original descriptor will have been
-     *                                  closed.
-     */
-    public Future<Texture> loadFutureCubemapTexture(
-            AndroidResource resource) {
-        return AsynchronousResourceLoader.loadFutureCubemapTexture(this,
-                sTextureCache, resource, DEFAULT_PRIORITY,
-                CubemapTexture.faceIndexMap);
     }
 
     /**

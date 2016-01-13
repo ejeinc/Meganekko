@@ -29,8 +29,6 @@
 #include "shaders/material/oes_vertical_stereo_shader.h"
 #include "shaders/material/unlit_horizontal_stereo_shader.h"
 #include "shaders/material/unlit_vertical_stereo_shader.h"
-#include "shaders/material/cubemap_shader.h"
-#include "shaders/material/cubemap_reflection_shader.h"
 #include "shaders/material/texture_shader.h"
 #include "shaders/material/assimp_shader.h"
 #include "util/gvr_log.h"
@@ -42,7 +40,7 @@ public:
             HybridObject(), bounding_box_shader_(),
             unlit_horizontal_stereo_shader_(), unlit_vertical_stereo_shader_(),
             oes_shader_(), oes_horizontal_stereo_shader_(), oes_vertical_stereo_shader_(),
-            cubemap_shader_(), cubemap_reflection_shader_(), texture_shader_(), assimp_shader_(),
+            texture_shader_(), assimp_shader_(),
             error_shader_(), latest_custom_shader_id_(
                     INITIAL_CUSTOM_SHADER_INDEX), custom_shaders_() {
     }
@@ -52,8 +50,6 @@ public:
         delete oes_shader_;
         delete oes_horizontal_stereo_shader_;
         delete oes_vertical_stereo_shader_;
-        delete cubemap_shader_;
-        delete cubemap_reflection_shader_;
         delete texture_shader_;
         delete assimp_shader_;
         delete error_shader_;
@@ -94,18 +90,6 @@ public:
             oes_vertical_stereo_shader_ = new OESVerticalStereoShader();
         }
         return oes_vertical_stereo_shader_;
-    }
-    CubemapShader* getCubemapShader() {
-        if (!cubemap_shader_) {
-            cubemap_shader_ = new CubemapShader();
-        }
-        return cubemap_shader_;
-    }
-    CubemapReflectionShader* getCubemapReflectionShader() {
-        if (!cubemap_reflection_shader_) {
-            cubemap_reflection_shader_ = new CubemapReflectionShader();
-        }
-        return cubemap_reflection_shader_;
     }
     TextureShader* getTextureShader() {
         if (!texture_shader_) {
@@ -157,8 +141,6 @@ private:
     OESShader* oes_shader_;
     OESHorizontalStereoShader* oes_horizontal_stereo_shader_;
     OESVerticalStereoShader* oes_vertical_stereo_shader_;
-    CubemapShader* cubemap_shader_;
-    CubemapReflectionShader* cubemap_reflection_shader_;
     TextureShader* texture_shader_;
     AssimpShader* assimp_shader_;
     ErrorShader* error_shader_;
