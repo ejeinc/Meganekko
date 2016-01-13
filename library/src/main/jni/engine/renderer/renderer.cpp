@@ -386,17 +386,6 @@ void Renderer::renderRenderData(RenderData* render_data,
                                     mvp_matrix, render_data, curr_material,
                                     right);
                             break;
-                        case Material::ShaderType::ASSIMP_SHADER:
-                            shader_manager->getAssimpShader()->render(
-                                    mv_matrix, mv_matrix.Inverted().Transposed(),
-                                    mvp_matrix, render_data, curr_material);
-                            break;
-                        default:
-                            shader_manager->getCustomShader(
-                                    curr_material->shader_type())->render(
-                                    mvp_matrix, render_data, curr_material,
-                                    right);
-                            break;
                         }
                     } catch (std::string error) {
                         LOGE("Error detected in Renderer::renderRenderData; error : %s", error.c_str());

@@ -88,7 +88,6 @@ public class MeganekkoActivity extends VrActivity {
     private VrFrame vrFrame;
     private EventBus mEventBus = EventBus.builder().logNoSubscriberMessages(false).build();
     private Scene mScene;
-    private MaterialShaderManager mMaterialShaderManager;
     private App mApp;
     private DockEventReceiver mDockEventReceiver;
 
@@ -123,7 +122,6 @@ public class MeganekkoActivity extends VrActivity {
         mInternalSensorManager = new InternalSensorManager(this, getAppPtr());
 
         mVrContext = new VrContext(this);
-        mMaterialShaderManager = new MaterialShaderManager(mVrContext);
         mApp = new App(getAppPtr());
     }
 
@@ -145,7 +143,6 @@ public class MeganekkoActivity extends VrActivity {
     private void oneTimeInit() {
 
         setScene(new Scene(mVrContext));
-        setShaderManager(getAppPtr(), getMaterialShaderManager().getNative());
         mVrContext.onSurfaceCreated();
 
         if (!mDocked) {
@@ -483,10 +480,6 @@ public class MeganekkoActivity extends VrActivity {
      */
     public void offFrame(@NonNull FrameListener listener) {
         mEventBus.unregister(listener);
-    }
-
-    public MaterialShaderManager getMaterialShaderManager() {
-        return mMaterialShaderManager;
     }
 
     public App getApp() {

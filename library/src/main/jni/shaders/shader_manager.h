@@ -21,11 +21,9 @@
 #define SHADER_MANAGER_H_
 
 #include "objects/hybrid_object.h"
-#include "shaders/material/custom_shader.h"
 #include "shaders/material/oes_horizontal_stereo_shader.h"
 #include "shaders/material/oes_shader.h"
 #include "shaders/material/oes_vertical_stereo_shader.h"
-#include "shaders/material/assimp_shader.h"
 #include "util/gvr_log.h"
 
 namespace mgn {
@@ -34,13 +32,12 @@ public:
     ShaderManager() :
             HybridObject(),
             oes_shader_(), oes_horizontal_stereo_shader_(), oes_vertical_stereo_shader_(),
-            assimp_shader_(), latest_custom_shader_id_(INITIAL_CUSTOM_SHADER_INDEX), custom_shaders_() {
+            latest_custom_shader_id_(INITIAL_CUSTOM_SHADER_INDEX) {
     }
     ~ShaderManager() {
         delete oes_shader_;
         delete oes_horizontal_stereo_shader_;
         delete oes_vertical_stereo_shader_;
-        delete assimp_shader_;
         // We don't delete the custom shaders, as their Java owner-objects will do that for us.
     }
     OESShader* getOESShader() {
@@ -61,29 +58,6 @@ public:
         }
         return oes_vertical_stereo_shader_;
     }
-    AssimpShader* getAssimpShader() {
-        if (!assimp_shader_) {
-            assimp_shader_ = new AssimpShader();
-        }
-        return assimp_shader_;
-    }
-    int addCustomShader(std::string vertex_shader,
-            std::string fragment_shader) {
-        int id = latest_custom_shader_id_++;
-        CustomShader* custom_shader(
-                new CustomShader(vertex_shader, fragment_shader));
-        custom_shaders_[id] = custom_shader;
-        return id;
-    }
-    CustomShader* getCustomShader(int id) {
-        auto it = custom_shaders_.find(id);
-        if (it != custom_shaders_.end()) {
-            return it->second;
-        } else {
-            LOGE("ShaderManager::getCustomShader()");
-            throw "ShaderManager::getCustomShader()";
-        }
-    }
 
 private:
     ShaderManager(const ShaderManager& shader_manager);
@@ -96,9 +70,7 @@ private:
     OESShader* oes_shader_;
     OESHorizontalStereoShader* oes_horizontal_stereo_shader_;
     OESVerticalStereoShader* oes_vertical_stereo_shader_;
-    AssimpShader* assimp_shader_;
     int latest_custom_shader_id_;
-    std::map<int, CustomShader*> custom_shaders_;
 };
 
 }

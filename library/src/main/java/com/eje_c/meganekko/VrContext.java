@@ -533,19 +533,6 @@ public class VrContext {
     }
 
     /**
-     * The {@linkplain MaterialShaderManager object shader manager} singleton.
-     * <p/>
-     * Use the shader manager to define custom GL object shaders, which are used
-     * to render a scene object's surface.
-     *
-     * @return The {@linkplain MaterialShaderManager shader manager} singleton.
-     */
-    @Deprecated
-    public MaterialShaderManager getMaterialShaderManager() {
-        return getActivity().getMaterialShaderManager();
-    }
-
-    /**
      * The {@linkplain AnimationEngine animation engine} singleton.
      * <p/>
      * Use the animation engine to start and stop {@linkplain Animation

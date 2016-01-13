@@ -24,7 +24,6 @@
 #include "objects/material.h"
 #include "objects/mesh.h"
 #include "objects/components/render_data.h"
-#include "objects/textures/texture.h"
 #include "util/gvr_gl.h"
 
 namespace mgn {
@@ -76,15 +75,8 @@ void OESVerticalStereoShader::recycle() {
 void OESVerticalStereoShader::render(const OVR::Matrix4f& mvp_matrix,
         RenderData* render_data, Material* material, bool right) {
     Mesh* mesh = render_data->mesh();
-    Texture* texture = material->getTexture("main_texture");
     OVR::Vector3f color = material->getVec3("color");
     float opacity = material->getFloat("opacity");
-
-    if (texture->getTarget() != GL_TEXTURE_EXTERNAL_OES) {
-        std::string error =
-                "OESVerticalStereoShader::render : texture with wrong target";
-        throw error;
-    }
 
     mesh->setVertexLoc(a_position_);
     mesh->setTexCoordLoc(a_tex_coord_);
@@ -94,7 +86,7 @@ void OESVerticalStereoShader::render(const OVR::Matrix4f& mvp_matrix,
 
     glUniformMatrix4fv(u_mvp_, 1, GL_TRUE, mvp_matrix.M[0]);
     glActiveTexture (GL_TEXTURE0);
-    glBindTexture(texture->getTarget(), texture->getId());
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, material->getId());
     glUniform1i(u_texture_, 0);
     glUniform3f(u_color_, color.x, color.y, color.z);
     glUniform1f(u_opacity_, opacity);

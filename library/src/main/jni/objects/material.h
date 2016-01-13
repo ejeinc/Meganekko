@@ -25,8 +25,12 @@
 #include <memory>
 #include <string>
 
+#ifndef GL_ES_VERSION_3_0
+#include <GLES3/gl3.h>
+#include <GLES3/gl3ext.h>
+#endif
+
 #include "objects/hybrid_object.h"
-#include "objects/textures/texture.h"
 
 #include "Kernel/OVR_Math.h"
 #include "SurfaceTexture.h"
@@ -52,7 +56,7 @@ public:
     };
 
     explicit Material(JNIEnv * jni, ShaderType shader_type) :
-            shader_type_(shader_type), textures_(), floats_(), vec2s_(), vec3s_(), vec4s_(), shader_feature_set_(
+            shader_type_(shader_type), floats_(), vec2s_(), vec3s_(), vec4s_(), shader_feature_set_(
                     0) {
         MovieTexture = new SurfaceTexture(jni);
         switch (shader_type) {
@@ -74,21 +78,6 @@ public:
 
     void set_shader_type(ShaderType shader_type) {
         shader_type_ = shader_type;
-    }
-
-    Texture* getTexture(std::string key) const {
-        auto it = textures_.find(key);
-        if (it != textures_.end()) {
-            return it->second;
-        } else {
-            std::string error = "Material::getTexture() : " + key
-                    + " not found";
-            throw error;
-        }
-    }
-
-    void setTexture(std::string key, Texture* texture) {
-        textures_[key] = texture;
     }
 
     float getFloat(std::string key) {
@@ -185,7 +174,6 @@ private:
 private:
     ShaderType shader_type_;
     SurfaceTexture *MovieTexture;
-    std::map<std::string, Texture*> textures_;
     std::map<std::string, float> floats_;
     std::map<std::string, OVR::Vector2f> vec2s_;
     std::map<std::string, OVR::Vector3f> vec3s_;

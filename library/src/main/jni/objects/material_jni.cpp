@@ -36,19 +36,6 @@ Java_com_eje_1c_meganekko_Material_setShaderType(JNIEnv * env, jobject obj, jlon
     return material->set_shader_type(static_cast<Material::ShaderType>(shader_type));
 }
 
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Material_setTexture(JNIEnv * env, jobject obj, jlong jmaterial, jstring key, jlong jtexture) {
-
-    Material* material = reinterpret_cast<Material*>(jmaterial);
-    Texture* texture = reinterpret_cast<Texture*>(jtexture);
-    const char* char_key = env->GetStringUTFChars(key, 0);
-    std::string native_key = std::string(char_key);
-
-    material->setTexture(native_key, texture);
-
-    env->ReleaseStringUTFChars(key, char_key);
-}
-
 JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_Material_getFloat(JNIEnv * env, jobject obj, jlong jmaterial, jstring key) {
 

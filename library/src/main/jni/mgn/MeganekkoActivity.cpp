@@ -31,10 +31,10 @@ namespace mgn
 MeganekkoActivity::MeganekkoActivity() :
       GuiSys( OvrGuiSys::Create() ),
       Locale( NULL ),
-      scene(NULL),
-      shaderManager(NULL)
+      scene(NULL)
 {
     centerViewMatrix = ovrMatrix4f_CreateIdentity();
+    shaderManager = new ShaderManager();
 }
 
 MeganekkoActivity::~MeganekkoActivity()
