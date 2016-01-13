@@ -27,7 +27,6 @@
 #include <map>
 
 #include "objects/camera.h"
-#include "objects/textures/base_texture.h"
 #include "objects/components/transform.h"
 #include "objects/components/component.h"
 #include "objects/hybrid_object.h"

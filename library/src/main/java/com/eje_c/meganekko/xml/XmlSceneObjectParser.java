@@ -27,7 +27,6 @@ import android.util.AttributeSet;
 import android.util.Xml;
 
 import com.eje_c.meganekko.AndroidResource;
-import com.eje_c.meganekko.texture.BitmapTexture;
 import com.eje_c.meganekko.FutureWrapper;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Mesh;
@@ -42,7 +41,6 @@ import com.eje_c.meganekko.scene_objects.ConeSceneObject;
 import com.eje_c.meganekko.scene_objects.CubeSceneObject;
 import com.eje_c.meganekko.scene_objects.CylinderSceneObject;
 import com.eje_c.meganekko.scene_objects.SphereSceneObject;
-import com.eje_c.meganekko.scene_objects.TextSceneObject;
 import com.eje_c.meganekko.scene_objects.VideoSceneObject;
 import com.eje_c.meganekko.scene_objects.ViewSceneObject;
 
@@ -283,57 +281,6 @@ public class XmlSceneObjectParser {
                     }
                     break;
 
-                case "texture":
-                    if (useAsyncLoading) {
-                        texture = parseTexture(attributeSet.getAttributeValue(i));
-                    } else {
-                        texture = new FutureWrapper<>(parseTextureSync(attributeSet.getAttributeValue(i)));
-                    }
-                    break;
-
-                case "text":
-                    if (object instanceof TextSceneObject) {
-                        ((TextSceneObject) object).setText(attributeSet.getAttributeValue(i));
-                    }
-                    break;
-
-                case "textColor":
-                    if (object instanceof TextSceneObject) {
-                        int textColor = Color.parseColor(attributeSet.getAttributeValue(i));
-                        ((TextSceneObject) object).setColor(textColor);
-                    } else {
-                        color = attributeSet.getAttributeIntValue(i, color);
-                    }
-                    break;
-
-                case "textSize":
-                    if (object instanceof TextSceneObject) {
-                        ((TextSceneObject) object).setTextSize(attributeSet.getAttributeFloatValue(i, 0));
-                    } else {
-                        textSize = attributeSet.getAttributeFloatValue(i, textSize);
-                    }
-                    break;
-
-                case "textScale":
-                    if (object instanceof TextSceneObject) {
-                        ((TextSceneObject) object).setTextScale(attributeSet.getAttributeFloatValue(i, 0));
-                    }
-                    break;
-
-                case "textAlign":
-                    textAlign = Paint.Align.valueOf(attributeSet.getAttributeValue(i).toUpperCase(Locale.ENGLISH));
-                    break;
-
-                case "drawable":
-                    int res = attributeSet.getAttributeResourceValue(i, -1);
-                    if (res != -1) {
-                        Texture t = parseDrawableAsTexture(res);
-                        if (t != null) {
-                            texture = new FutureWrapper<>(t);
-                        }
-                    }
-                    break;
-
                 case "color":
                     String colorVal = attributeSet.getAttributeValue(i);
                     if (colorVal.startsWith("@color")) {
@@ -414,8 +361,6 @@ public class XmlSceneObjectParser {
             if (renderingOrder < 0) {
                 renderingOrder = RenderingOrder.TRANSPARENT;
             }
-
-            texture = new FutureWrapper<Texture>(new BitmapTexture(mContext, bitmap));
         }
 
         // Create quad mesh if needed
@@ -474,12 +419,6 @@ public class XmlSceneObjectParser {
         return object;
     }
 
-    private Texture parseDrawableAsTexture(int res) {
-        Drawable drawable = ContextCompat.getDrawable(mContext.getContext(), res);
-        Bitmap bitmap = drawableToBitmap(drawable);
-        return new BitmapTexture(mContext, bitmap);
-    }
-
     private SceneObject createSceneObject(XmlPullParser parser) {
 
         String name = parser.getName();
@@ -502,8 +441,6 @@ public class XmlSceneObjectParser {
                     return new ConeSceneObject(mContext);
                 case "cylinder":
                     return new CylinderSceneObject(mContext);
-                case "text":
-                    return new TextSceneObject(mContext);
                 case "video":
                     return new VideoSceneObject(mContext);
                 case "canvas":
@@ -532,14 +469,6 @@ public class XmlSceneObjectParser {
 
     private Mesh parseMeshSync(String value) throws IOException {
         return mContext.loadMesh(new AndroidResource(mContext, value));
-    }
-
-    private Future<Texture> parseTexture(String value) throws IOException {
-        return mContext.loadFutureTexture(new AndroidResource(mContext, value));
-    }
-
-    private Texture parseTextureSync(String value) throws IOException {
-        return mContext.loadTexture(new AndroidResource(mContext, value));
     }
 
     @Deprecated

@@ -168,21 +168,6 @@ public class SceneObject extends HybridObject implements FrameListener {
     }
 
     /**
-     * Very high-level constructor that asynchronously loads the mesh and
-     * texture.
-     *
-     * @param vrContext current {@link VrContext}.
-     * @param mesh      Basically, a stream containing a mesh file.
-     * @param texture   Basically, a stream containing a texture file. This can be
-     *                  either a compressed texture or a regular Android bitmap file.
-     */
-    public SceneObject(VrContext vrContext, AndroidResource mesh,
-                       AndroidResource texture) {
-        this(vrContext, vrContext.loadFutureMesh(mesh), vrContext
-                .loadFutureTexture(texture));
-    }
-
-    /**
      * Create a standard, rectangular texture object, using a non-default shader
      * to apply complex visual affects.
      *

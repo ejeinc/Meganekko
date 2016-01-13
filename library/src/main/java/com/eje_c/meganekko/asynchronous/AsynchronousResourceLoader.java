@@ -21,7 +21,6 @@ import com.eje_c.meganekko.AndroidResource;
 import com.eje_c.meganekko.AndroidResource.BitmapTextureCallback;
 import com.eje_c.meganekko.AndroidResource.CancelableCallback;
 import com.eje_c.meganekko.AndroidResource.CompressedTextureCallback;
-import com.eje_c.meganekko.texture.BitmapTexture;
 import com.eje_c.meganekko.FutureWrapper;
 import com.eje_c.meganekko.HybridObject;
 import com.eje_c.meganekko.Mesh;
@@ -55,17 +54,6 @@ import java.util.concurrent.TimeoutException;
  * .
  */
 public class AsynchronousResourceLoader {
-
-    /**
-     * Get device parameters and so on.
-     * <p/>
-     * This is an internal method, public only so it can be called across
-     * package boundaries. Calling it from user code is both harmless and
-     * pointless.
-     */
-    public static void setup(VrContext vrContext) {
-        AsyncBitmapTexture.setup(vrContext);
-    }
 
     /**
      * Load a compressed texture asynchronously.
@@ -159,190 +147,6 @@ public class AsynchronousResourceLoader {
         }
     }
 
-    /**
-     * Load a bitmap texture asynchronously.
-     * <p/>
-     * This is the implementation of
-     * {@link VrContext#loadBitmapTexture(AndroidResource.BitmapTextureCallback, AndroidResource, int)}
-     * - it will usually be more convenient (and more efficient) to call that
-     * directly.
-     *
-     * @param vrContext    The Meganekko context
-     * @param textureCache Texture cache - may be {@code null}
-     * @param callback     Asynchronous notifications
-     * @param resource     Basically, a stream containing a compressed texture. Taking a
-     *                     {@link AndroidResource} parameter eliminates six overloads.
-     * @param priority     A value {@literal >=} {@link VrContext#LOWEST_PRIORITY} and
-     *                     {@literal <=} {@link VrContext#HIGHEST_PRIORITY}
-     * @throws IllegalArgumentException If {@code priority} {@literal <}
-     *                                  {@link VrContext#LOWEST_PRIORITY} or {@literal >}
-     *                                  {@link VrContext#HIGHEST_PRIORITY}, or any of the other
-     *                                  parameters are {@code null}.
-     */
-    public static void loadBitmapTexture(VrContext vrContext,
-                                         ResourceCache<Texture> textureCache,
-                                         final BitmapTextureCallback callback,
-                                         final AndroidResource resource, int priority)
-            throws IllegalArgumentException {
-        validatePriorityCallbackParameters(vrContext, callback, resource,
-                priority);
-
-        final Texture cached = textureCache == null ? null : textureCache
-                .get(resource);
-        if (cached != null) {
-            vrContext.runOnGlThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    callback.loaded(cached, resource);
-                }
-            });
-        } else {
-            BitmapTextureCallback actualCallback = textureCache == null ? callback
-                    : ResourceCache.wrapCallback(textureCache, callback);
-            AsyncBitmapTexture.loadTexture(vrContext, actualCallback,
-                    resource, priority);
-        }
-    }
-
-    /**
-     * Load a (compressed or bitmapped) texture asynchronously.
-     * <p/>
-     * This is the implementation of
-     * {@link VrContext#loadTexture(com.eje_c.meganekko.AndroidResource.TextureCallback, AndroidResource, int, int)}
-     * - it will usually be more convenient (and more efficient) to call that
-     * directly.
-     *
-     * @param vrContext    The Meganekko context
-     * @param textureCache Texture cache - may be {@code null}
-     * @param callback     Asynchronous notifications
-     * @param resource     Basically, a stream containing a compressed texture. Taking a
-     *                     {@link AndroidResource} parameter eliminates six overloads.
-     * @param priority     A value {@literal >=} {@link VrContext#LOWEST_PRIORITY} and
-     *                     {@literal <=} {@link VrContext#HIGHEST_PRIORITY}
-     * @throws IllegalArgumentException If {@code priority} {@literal <}
-     *                                  {@link VrContext#LOWEST_PRIORITY} or {@literal >}
-     *                                  {@link VrContext#HIGHEST_PRIORITY}, or any of the other
-     *                                  parameters are {@code null}.
-     */
-    public static void loadTexture(final VrContext vrContext,
-                                   final ResourceCache<Texture> textureCache,
-                                   final CancelableCallback<Texture> callback,
-                                   final AndroidResource resource, final int priority,
-                                   final int quality) {
-        validateCallbackParameters(vrContext, callback, resource);
-
-        final Texture cached = textureCache == null ? null : textureCache
-                .get(resource);
-        if (cached != null) {
-            vrContext.runOnGlThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    callback.loaded(cached, resource);
-                }
-            });
-        } else {
-            // 'Sniff' out compressed textures on a thread from the thread-pool
-            Threads.spawn(new Runnable() {
-
-                @Override
-                public void run() {
-                    try {
-                        // Save stream position
-                        resource.mark();
-
-                        CompressedTextureLoader loader;
-                        try {
-                            loader = CompressedTexture.sniff(resource
-                                    .getStream());
-                        } finally {
-                            resource.reset();
-                        }
-
-                        if (loader != null) {
-                            // We have a compressed texture: proceed on this
-                            // thread
-                            final CompressedTexture compressedTexture = CompressedTexture
-                                    .parse(resource.getStream(), false, loader);
-                            resource.closeStream();
-
-                            // Create texture on GL thread
-                            vrContext.runOnGlThread(new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    Texture texture = compressedTexture
-                                            .toTexture(vrContext, quality);
-                                    textureCache.put(resource, texture);
-                                    callback.loaded(texture, resource);
-                                }
-                            });
-                        } else {
-                            // We don't have a compressed texture: pass to
-                            // AsyncBitmapTexture code
-                            CancelableCallback<Texture> actualCallback = textureCache == null ? callback
-                                    : textureCache.wrapCallback(callback);
-                            AsyncBitmapTexture.loadTexture(vrContext,
-                                    actualCallback, resource, priority);
-                        }
-                    } catch (Exception e) {
-                        callback.failed(e, resource);
-                    }
-                }
-            });
-        }
-    }
-
-    /**
-     * Load a (compressed or bitmapped) texture asynchronously.
-     * <p/>
-     * This is the implementation of
-     * {@link VrContext#loadFutureTexture(AndroidResource, int, int)} - it
-     * will usually be more convenient (and more efficient) to call that
-     * directly.
-     *
-     * @param vrContext    The Meganekko context
-     * @param textureCache Texture cache - may be {@code null}
-     * @param resource     Basically, a stream containing a texture file. The
-     *                     {@link AndroidResource} class has six constructors to
-     *                     handle a wide variety of Android resource types. Taking a
-     *                     {@code GVRAndroidResource} here eliminates six overloads.
-     * @param priority     This request's priority. Please see the notes on asynchronous
-     *                     priorities in the <a href="package-summary.html#async">package
-     *                     description</a>. Also, please note priorities only apply to
-     *                     uncompressed textures (standard Android bitmap files, which
-     *                     can take hundreds of milliseconds to load): compressed
-     *                     textures load so quickly that they are not run through the
-     *                     request scheduler.
-     * @param quality      The compressed texture {@link GVRCompressedTexture#mQuality
-     *                     quality} parameter: should be one of
-     *                     {@link GVRCompressedTexture#SPEED},
-     *                     {@link GVRCompressedTexture#BALANCED}, or
-     *                     {@link GVRCompressedTexture#QUALITY}, but other values are
-     *                     'clamped' to one of the recognized values. Please note that
-     *                     this (currently) only applies to compressed textures; normal
-     *                     {@linkplain BitmapTexture bitmapped textures} don't take a
-     *                     quality parameter.
-     * @return A {@link Future} that you can pass to methods like
-     * {@link Shaders#setMainTexture(Future)}
-     */
-    public static Future<Texture> loadFutureTexture(VrContext vrContext,
-                                                    ResourceCache<Texture> textureCache,
-                                                    AndroidResource resource, int priority, int quality) {
-        Texture cached = textureCache == null ? null : textureCache
-                .get(resource);
-        if (cached != null) {
-            return new FutureWrapper<Texture>(cached);
-        } else {
-            FutureResource<Texture> result = new FutureResource<Texture>();
-
-            loadTexture(vrContext, textureCache, result.callback, resource,
-                    priority, quality);
-
-            return result;
-        }
-    }
 
     /**
      * Load a GL mesh asynchronously.
@@ -423,34 +227,6 @@ public class AsynchronousResourceLoader {
             throw new IllegalArgumentException(
                     "Priority < GVRContext.LOWEST_PRIORITY or > GVRContext.HIGHEST_PRIORITY");
         }
-    }
-
-    /**
-     * An internal method, public only so that GVRContext can make cross-package
-     * calls.
-     * <p/>
-     * A synchronous (blocking) wrapper around
-     * {@link android.graphics.BitmapFactory#decodeStream(InputStream)
-     * BitmapFactory.decodeStream} that uses an
-     * {@link android.graphics.BitmapFactory.Options} <code>inTempStorage</code>
-     * decode buffer. On low memory, returns half (quarter, eighth, ...) size
-     * images.
-     * <p/>
-     * If {@code stream} is a {@link FileInputStream} and is at offset 0 (zero),
-     * uses
-     * {@link android.graphics.BitmapFactory#decodeFileDescriptor(FileDescriptor)
-     * BitmapFactory.decodeFileDescriptor()} instead of
-     * {@link android.graphics.BitmapFactory#decodeStream(InputStream)
-     * BitmapFactory.decodeStream()}.
-     *
-     * @param stream      Bitmap stream
-     * @param closeStream If {@code true}, closes {@code stream}
-     * @return Bitmap, or null if cannot be decoded into a bitmap
-     */
-    public static Bitmap decodeStream(InputStream stream, boolean closeStream) {
-        return AsyncBitmapTexture.decodeStream(stream,
-                AsyncBitmapTexture.glMaxTextureSize,
-                AsyncBitmapTexture.glMaxTextureSize, true, null, closeStream);
     }
 
     private static class FutureResource<T extends HybridObject> implements
