@@ -32,8 +32,6 @@ LOCAL_MODULE := meganekko
 FILE_LIST := $(wildcard $(LOCAL_PATH)/*.cpp)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/**/*.cpp)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/**/**/*.cpp)
-FILE_LIST += $(wildcard $(LOCAL_PATH)/contrib/libpng/*.c)
-FILE_LIST += $(wildcard $(LOCAL_PATH)/contrib/libpng/*.s)
 LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
 
 # Include directories
@@ -50,7 +48,6 @@ LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrAppSupport/SystemUtils/Include
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/contrib/assimp
 LOCAL_C_INCLUDES +=	$(LOCAL_PATH)/contrib/assimp/include
 LOCAL_C_INCLUDES +=	$(LOCAL_PATH)/contrib/assimp/include/Compiler
-LOCAL_C_INCLUDES +=	$(LOCAL_PATH)/contrib/libpng
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/contrib
 
 LOCAL_SHARED_LIBRARIES += assimp

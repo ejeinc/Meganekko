@@ -33,7 +33,6 @@
 #include "GLES3/gl3ext.h"
 
 #include "objects/mesh.h"
-#include "gl/gl_program.h"
 #include "Kernel/OVR_Math.h"
 
 namespace mgn

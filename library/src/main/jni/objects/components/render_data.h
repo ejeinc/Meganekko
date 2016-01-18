@@ -23,10 +23,9 @@
 #include <memory>
 #include <vector>
 
-#include "gl/gl_program.h"
-
 #include "objects/components/component.h"
 #include "objects/render_pass.h"
+#include "util/gvr_gl.h"
 
 namespace mgn {
 class Mesh;
