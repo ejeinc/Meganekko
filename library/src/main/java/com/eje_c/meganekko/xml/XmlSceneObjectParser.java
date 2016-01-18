@@ -54,35 +54,10 @@ import java.util.concurrent.Future;
  */
 public class XmlSceneObjectParser {
 
-    public static final float DEFAULT_TEXT_SIZE = 30.0f;
     private final VrContext mContext;
 
     public XmlSceneObjectParser(VrContext context) {
         this.mContext = context;
-    }
-
-    private static Bitmap drawableToBitmap(Drawable drawable) {
-
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable) drawable).getBitmap();
-        } else {
-            Bitmap bitmap = null;
-
-            int width = drawable.getIntrinsicWidth();
-            int height = drawable.getIntrinsicHeight();
-
-            if (width <= 0 || height <= 0) {
-                bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
-            } else {
-                bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-            }
-
-            Canvas canvas = new Canvas(bitmap);
-            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawable.draw(canvas);
-
-            return bitmap;
-        }
     }
 
     private static void parsePosition(Transform transform, String value) {
@@ -205,7 +180,6 @@ public class XmlSceneObjectParser {
             return null;
 
         Paint.Align textAlign = Paint.Align.LEFT;
-        float textSize = DEFAULT_TEXT_SIZE;
         float width = -1;
         float height = -1;
         float opacity = -1;
@@ -334,31 +308,6 @@ public class XmlSceneObjectParser {
             }
         }
 
-        // Parse text node (deprecated)
-        if (parser.next() == XmlPullParser.TEXT) {
-            String text = parser.getText();
-            Bitmap bitmap = textAsBitmap(text, textSize, color, textAlign);
-
-            // Auto size
-            if (width < 0.0f && height < 0.0f) {
-                width = bitmap.getWidth() * 0.01f;
-                height = bitmap.getHeight() * 0.01f;
-            } else {
-                float aspect = (float) bitmap.getWidth() / (float) bitmap.getHeight();
-
-                if (width < 0.0f) {
-                    width = height * aspect;
-                } else if (height < 0.0f) {
-                    height = width / aspect;
-                }
-            }
-
-            // Set renderingOrder to TRANSPARENT if not specified
-            if (renderingOrder < 0) {
-                renderingOrder = RenderingOrder.TRANSPARENT;
-            }
-        }
-
         // Create quad mesh if needed
         if (mesh == null && width >= 0.0f && height >= 0.0f) {
             mesh = new FutureWrapper<>(mContext.createQuad(width, height));
@@ -375,7 +324,7 @@ public class XmlSceneObjectParser {
         }
 
         // Parse children
-        while (parser.getEventType() != XmlPullParser.END_TAG) {
+        while (parser.next() != XmlPullParser.END_TAG) {
 
             if (parser.getEventType() == XmlPullParser.START_TAG) {
                 SceneObject child = parse(parser, useAsyncLoading);
@@ -383,8 +332,6 @@ public class XmlSceneObjectParser {
                     object.addChildObject(child);
                 }
             }
-
-            parser.next();
         }
 
         /*
