@@ -22,6 +22,13 @@ import com.eje_c.meganekko.Camera;
 import com.eje_c.meganekko.Scene;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrContext;
+import com.eje_c.meganekko.xml.attribute_parser.BasicParser;
+import com.eje_c.meganekko.xml.attribute_parser.CanvasParser;
+import com.eje_c.meganekko.xml.attribute_parser.MeshParser;
+import com.eje_c.meganekko.xml.attribute_parser.PositionParser;
+import com.eje_c.meganekko.xml.attribute_parser.RotationParser;
+import com.eje_c.meganekko.xml.attribute_parser.ScaleParser;
+import com.eje_c.meganekko.xml.attribute_parser.ViewParser;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -30,18 +37,44 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Load XML and add {@link SceneObject}s to {@link Scene}.
  */
 public class XmlSceneParser {
 
+    private static final List<Class<? extends XmlAttributeParser>> DEFAULT_ATTRIBUTE_PARSERS = Arrays.asList(
+            BasicParser.class,
+            PositionParser.class,
+            ScaleParser.class,
+            RotationParser.class,
+            MeshParser.class,
+            CanvasParser.class,
+            ViewParser.class
+    );
+    private final Set<Class<? extends XmlAttributeParser>> attributeParsers = new HashSet<>();
     private final VrContext mContext;
     private final XmlSceneObjectParser mObjectParser;
 
     public XmlSceneParser(VrContext context) {
         this.mContext = context;
         this.mObjectParser = new XmlSceneObjectParser(context);
+
+        attributeParsers.addAll(DEFAULT_ATTRIBUTE_PARSERS);
+    }
+
+    public boolean addXmlAttributeParser(Class<? extends XmlAttributeParser> parser) {
+        return attributeParsers.add(parser);
+    }
+
+    public boolean removeXmlAttributeParser(Class<? extends XmlAttributeParser> parser) {
+        return attributeParsers.remove(parser);
     }
 
     /**
@@ -54,21 +87,7 @@ public class XmlSceneParser {
      * @throws IOException
      */
     public Scene parse(int xmlRes, Scene scene) throws XmlPullParserException, IOException {
-        return parse(xmlRes, scene, false);
-    }
-
-    /**
-     * Parse scene from XML resource.
-     *
-     * @param xmlRes          XML resource.
-     * @param scene           Root scene. It can be null.
-     * @param useAsyncLoading
-     * @return Parsed {@code Scene}.
-     * @throws XmlPullParserException
-     * @throws IOException
-     */
-    public Scene parse(int xmlRes, Scene scene, boolean useAsyncLoading) throws XmlPullParserException, IOException {
-        return parse(mContext.getContext().getResources().getXml(xmlRes), scene, useAsyncLoading);
+        return parse(mContext.getContext().getResources().getXml(xmlRes), scene);
     }
 
     /**
@@ -81,21 +100,7 @@ public class XmlSceneParser {
      * @throws IOException
      */
     public Scene parse(String url, Scene scene) throws XmlPullParserException, IOException {
-        return parse(url, scene, false);
-    }
-
-    /**
-     * Parse scene from {@code URL}. XML can be loaded any where.
-     *
-     * @param url             URL pointing to XML resource.
-     * @param scene           Root scene. It can be null.
-     * @param useAsyncLoading
-     * @return Parsed {@code Scene}.
-     * @throws XmlPullParserException
-     * @throws IOException
-     */
-    public Scene parse(String url, Scene scene, boolean useAsyncLoading) throws XmlPullParserException, IOException {
-        return parse(new URL(url).openStream(), scene, useAsyncLoading);
+        return parse(new URL(url).openStream(), scene);
     }
 
     /**
@@ -108,25 +113,11 @@ public class XmlSceneParser {
      * @throws IOException
      */
     public Scene parse(InputStream in, Scene scene) throws XmlPullParserException, IOException {
-        return parse(in, scene, false);
-    }
-
-    /**
-     * Parse scene from {@code InputStream}. XML can be loaded any where.
-     *
-     * @param in              {@code InputStream} of XML.
-     * @param scene           Root scene. It can be null.
-     * @param useAsyncLoading
-     * @return Parsed {@code Scene}.
-     * @throws XmlPullParserException
-     * @throws IOException
-     */
-    public Scene parse(InputStream in, Scene scene, boolean useAsyncLoading) throws XmlPullParserException, IOException {
         try {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(in, null);
-            return parse(parser, scene, useAsyncLoading);
+            return parse(parser, scene);
         } finally {
             in.close();
         }
@@ -143,21 +134,6 @@ public class XmlSceneParser {
      * @throws IOException
      */
     public Scene parse(XmlPullParser parser, Scene scene) throws XmlPullParserException, IOException {
-        return parse(parser, scene, false);
-    }
-
-    /**
-     * Parse scene from {@code XmlPullParser}. This method can be used with
-     * {@code Resources#getXml(int)}.
-     *
-     * @param parser
-     * @param scene           Root scene. It can be null.
-     * @param useAsyncLoading
-     * @return
-     * @throws XmlPullParserException
-     * @throws IOException
-     */
-    public Scene parse(XmlPullParser parser, Scene scene, boolean useAsyncLoading) throws XmlPullParserException, IOException {
 
         AttributeSet attributeSet = Xml.asAttributeSet(parser);
 
@@ -167,6 +143,17 @@ public class XmlSceneParser {
                 if (parser.next() == XmlPullParser.END_DOCUMENT) {
                     return scene;
                 }
+            }
+        }
+
+        // Instantiate attribute parsers
+        Collection<XmlAttributeParser> parsers = new ArrayList<>();
+        for (Class<? extends XmlAttributeParser> clazz : attributeParsers) {
+            try {
+                parsers.add(clazz.newInstance());
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
             }
         }
 
@@ -197,14 +184,14 @@ public class XmlSceneParser {
                         Camera camera = scene.getMainCamera();
 
                         while (parser.nextTag() == XmlPullParser.START_TAG) {
-                            SceneObject object = mObjectParser.parse(parser, useAsyncLoading);
+                            SceneObject object = mObjectParser.parse(parser, parsers);
                             if (object != null) {
                                 camera.addChildObject(object);
                             }
                         }
                     } else {
 
-                        SceneObject object = mObjectParser.parse(parser, useAsyncLoading);
+                        SceneObject object = mObjectParser.parse(parser, parsers);
 
                         if (object != null) {
                             scene.addChildObject(object);
@@ -227,13 +214,5 @@ public class XmlSceneParser {
             e.printStackTrace();
             throw new XmlPullParserException("Invalid class name " + className + ".", parser, e);
         }
-    }
-
-    /**
-     * @param useAsyncLoading
-     */
-    @Deprecated
-    public void setAsyncTextureLoading(boolean useAsyncLoading) {
-        // NOOP
     }
 }
