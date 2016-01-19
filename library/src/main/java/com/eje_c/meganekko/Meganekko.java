@@ -1,6 +1,7 @@
 package com.eje_c.meganekko;
 
 import android.animation.Animator;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -25,4 +26,6 @@ public interface Meganekko {
     void animate(@NonNull final Animator anim, @Nullable final Runnable endCallback);
 
     void cancel(@NonNull final Animator anim, @Nullable final Runnable endCallback);
+
+    Context getContext();
 }

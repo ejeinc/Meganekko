@@ -1,6 +1,7 @@
 package com.eje_c.meganekko.sample;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
 
 import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoActivity;
@@ -52,5 +53,10 @@ public class MainActivity extends MeganekkoActivity {
             public void shutdown(Meganekko meganekko) {
             }
         };
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
     }
 }
