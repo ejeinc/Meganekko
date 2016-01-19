@@ -170,12 +170,10 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
         }
     }
 
-    @Override
     public void hideGazeCursor() {
         nativeHideGazeCursor(getAppPtr());
     }
 
-    @Override
     public void showGazeCursor() {
         nativeShowGazeCursor(getAppPtr());
     }

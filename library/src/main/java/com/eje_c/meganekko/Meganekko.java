@@ -19,10 +19,6 @@ public interface Meganekko {
 
     void recenter();
 
-    void showGazeCursor();
-
-    void hideGazeCursor();
-
     void animate(@NonNull final Animator anim, @Nullable final Runnable endCallback);
 
     void cancel(@NonNull final Animator anim, @Nullable final Runnable endCallback);
