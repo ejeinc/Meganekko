@@ -12,12 +12,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.eje_c.meganekko;
+package ovr;
 
 /**
  * Native VrFrame wrapper.
  */
-public interface VrFrame {
+public class VrFrame implements com.eje_c.meganekko.VrFrame {
+
+    private final long nativePtr;
+
+    public VrFrame(long nativePtr) {
+        this.nativePtr = nativePtr;
+    }
+
+    private static native double getPredictedDisplayTimeInSeconds(long vrFramePtr);
+
+    private static native float getDeltaSeconds(long vrFramePtr);
+
+    private static native int getFrameNumber(long vrFramePtr);
+
+    private static native float getSwipeFraction(long vrFramePtr);
+
+    private static native int getButtonState(long vrFramePtr);
+
+    private static native int getButtonPressed(long vrFramePtr);
+
+    private static native int getButtonReleased(long vrFramePtr);
 
     /**
      * Predicted absolute time in seconds this frame will be displayed.
@@ -26,7 +46,10 @@ public interface VrFrame {
      *
      * @return Predicted absolute time
      */
-    double getPredictedDisplayTimeInSeconds();
+    @Override
+    public double getPredictedDisplayTimeInSeconds() {
+        return getPredictedDisplayTimeInSeconds(nativePtr);
+    }
 
     /**
      * The amount of time in seconds that has passed since the last frame,
@@ -36,14 +59,20 @@ public interface VrFrame {
      *
      * @return The amount of time in seconds that has passed since the last frame
      */
-    float getDeltaSeconds();
+    @Override
+    public float getDeltaSeconds() {
+        return getDeltaSeconds(nativePtr);
+    }
 
     /**
      * Incremented once for every frame.
      *
      * @return Frame number
      */
-    int getFrameNumber();
+    @Override
+    public int getFrameNumber() {
+        return getFrameNumber(nativePtr);
+    }
 
     /**
      * Ranges from 0.0 - 1.0 during a swipe action.
@@ -52,26 +81,38 @@ public interface VrFrame {
      *
      * @return Swipe fraction.
      */
-    float getSwipeFraction();
+    @Override
+    public float getSwipeFraction() {
+        return getSwipeFraction(nativePtr);
+    }
 
     /**
      * Bits are set for the buttons that are currently pressed down.
      *
      * @return Button state
      */
-    int getButtonState();
+    @Override
+    public int getButtonState() {
+        return getButtonState(nativePtr);
+    }
 
     /**
      * Pressed button from the last VrFrame.
      *
      * @return Pressed buttons from the last VrFrame.
      */
-    int getButtonPressed();
+    @Override
+    public int getButtonPressed() {
+        return getButtonPressed(nativePtr);
+    }
 
     /**
      * Released button from the last VrFrame.
      *
      * @return Released button from the last VrFrame.
      */
-    int getButtonReleased();
+    @Override
+    public int getButtonReleased() {
+        return getButtonReleased(nativePtr);
+    }
 }

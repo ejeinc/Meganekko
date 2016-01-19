@@ -163,9 +163,7 @@ public class MeganekkoActivity extends VrActivity {
 
         // Setup VrFrame
         if (vrFrame == null) {
-            vrFrame = new VrFrame(vrFramePtr);
-        } else {
-            vrFrame.setNativePtr(vrFramePtr);
+            vrFrame = new ovr.VrFrame(vrFramePtr);
         }
 
         // runOnGlThread handling (1 event per frame)
