@@ -31,22 +31,19 @@ class Component extends HybridObject {
     /**
      * Normal constructor
      *
-     * @param vrContext     The current Meganekko context
      * @param nativePointer The native pointer, returned by the native constructor
      */
-    protected Component(VrContext vrContext, long nativePointer) {
-        super(vrContext, nativePointer);
+    protected Component(long nativePointer) {
+        super(nativePointer);
     }
 
-    protected Component(VrContext vrContext) {
-        super(vrContext);
+    protected Component() {
     }
 
     /**
      * Special constructor, for descendants like {#link GVRMeshEyePointee} that
      * need to 'unregister' instances.
      *
-     * @param vrContext       The current Meganekko context
      * @param nativePointer   The native pointer, returned by the native constructor
      * @param cleanupHandlers Cleanup handler(s).
      *                        Normally, this will be a {@code private static} class
@@ -59,8 +56,8 @@ class Component extends HybridObject {
      *                        concatenated lists - see {@link EyePointeeHolder} for an
      *                        example.
      */
-    protected Component(VrContext vrContext, long nativePointer, List<NativeCleanupHandler> cleanupHandlers) {
-        super(vrContext, nativePointer, cleanupHandlers);
+    protected Component(long nativePointer, List<NativeCleanupHandler> cleanupHandlers) {
+        super(nativePointer, cleanupHandlers);
     }
 
     /**

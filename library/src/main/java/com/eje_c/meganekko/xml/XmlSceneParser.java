@@ -15,13 +15,13 @@
  */
 package com.eje_c.meganekko.xml;
 
+import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Xml;
 
 import com.eje_c.meganekko.Camera;
 import com.eje_c.meganekko.Scene;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.xml.attribute_parser.BasicParser;
 import com.eje_c.meganekko.xml.attribute_parser.CanvasParser;
 import com.eje_c.meganekko.xml.attribute_parser.MeshParser;
@@ -59,10 +59,10 @@ public class XmlSceneParser {
             ViewParser.class
     );
     private final Set<Class<? extends XmlAttributeParser>> attributeParsers = new HashSet<>();
-    private final VrContext mContext;
+    private final Context mContext;
     private final XmlSceneObjectParser mObjectParser;
 
-    public XmlSceneParser(VrContext context) {
+    public XmlSceneParser(Context context) {
         this.mContext = context;
         this.mObjectParser = new XmlSceneObjectParser(context);
 
@@ -87,7 +87,7 @@ public class XmlSceneParser {
      * @throws IOException
      */
     public Scene parse(int xmlRes, Scene scene) throws XmlPullParserException, IOException {
-        return parse(mContext.getContext().getResources().getXml(xmlRes), scene);
+        return parse(mContext.getResources().getXml(xmlRes), scene);
     }
 
     /**
@@ -163,7 +163,7 @@ public class XmlSceneParser {
             if ("scene".equals(parser.getName())) {
                 String className = attributeSet.getClassAttribute();
                 if (className == null) {
-                    scene = new Scene(mContext);
+                    scene = new Scene();
                 } else {
                     scene = createScene(parser, className);
                 }
@@ -209,7 +209,7 @@ public class XmlSceneParser {
 
     private Scene createScene(XmlPullParser parser, String className) throws XmlPullParserException {
         try {
-            return ObjectFactory.newInstance(className, mContext);
+            return ObjectFactory.newInstance(className);
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException | ClassNotFoundException | NoSuchMethodException e) {
             e.printStackTrace();
             throw new XmlPullParserException("Invalid class name " + className + ".", parser, e);

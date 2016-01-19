@@ -88,11 +88,6 @@ public class VrContext {
     private static final String TAG = Log.tag(VrContext.class);
     private final static ResourceCache<Mesh> sMeshCache = new ResourceCache<Mesh>();
     private static final List<Runnable> sHandlers = new ArrayList<Runnable>();
-    /**
-     * The default texture parameter instance for overloading texture methods
-     */
-    public final TextureParameters DEFAULT_TEXTURE_PARAMETERS = new TextureParameters(
-            this);
     private final MeganekkoActivity mContext;
 
     /*
@@ -238,8 +233,7 @@ public class VrContext {
                          EnumSet<ImportSettings> settings) {
         Mesh mesh = sMeshCache.get(androidResource);
         if (mesh == null) {
-            AssimpImporter assimpImporter = Importer
-                    .readFileFromResources(this, androidResource, settings);
+            AssimpImporter assimpImporter = Importer.readFileFromResources(androidResource, settings);
             mesh = assimpImporter.getMesh(0);
             sMeshCache.put(androidResource, mesh);
         }
@@ -464,7 +458,7 @@ public class VrContext {
      * @return A 2D, rectangular mesh with four vertices and two triangles
      */
     public Mesh createQuad(float width, float height) {
-        Mesh mesh = new Mesh(this);
+        Mesh mesh = new Mesh();
 
         float[] vertices = {width * -0.5f, height * 0.5f, 0.0f, width * -0.5f,
                 height * -0.5f, 0.0f, width * 0.5f, height * 0.5f, 0.0f,

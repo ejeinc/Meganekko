@@ -61,7 +61,6 @@ public abstract class HybridObject implements Closeable {
         new FinalizeThread().start();
     }
 
-    private final VrContext mVrContext;
     /**
      * This is not {@code final}: the first call to {@link #close()} sets
      * {@link #mNativePointer} to 0, so that {@link #close()} can safely be
@@ -71,15 +70,13 @@ public abstract class HybridObject implements Closeable {
 
     /**
      * Normal constructor
-     *
-     * @param vrContext The current VR context
      */
-    protected HybridObject(VrContext vrContext) {
-        this(vrContext, null);
+    protected HybridObject() {
+        this(null);
     }
 
-    protected HybridObject(VrContext vrContext, long nativePointer) {
-        this(vrContext, nativePointer, null);
+    protected HybridObject(long nativePointer) {
+        this(nativePointer, null);
     }
 
     /*
@@ -90,7 +87,6 @@ public abstract class HybridObject implements Closeable {
      * Special constructor, for descendants like {#link MeshEyePointee} that
      * need to 'unregister' instances.
      *
-     * @param vrContext       The current Meganekko context
      * @param cleanupHandlers Cleanup handler(s).
      *                        <p/>
      *                        <p/>
@@ -104,8 +100,7 @@ public abstract class HybridObject implements Closeable {
      *                        concatenated lists - see {@link EyePointeeHolder} for an
      *                        example.
      */
-    protected HybridObject(VrContext vrContext, List<NativeCleanupHandler> cleanupHandlers) {
-        mVrContext = vrContext;
+    protected HybridObject(List<NativeCleanupHandler> cleanupHandlers) {
         mNativePointer = initNativeInstance();
 
         if (mNativePointer == 0l) {
@@ -115,8 +110,7 @@ public abstract class HybridObject implements Closeable {
         sReferenceSet.add(new Reference(this, mNativePointer, cleanupHandlers));
     }
 
-    protected HybridObject(VrContext vrContext, long nativePointer, List<NativeCleanupHandler> cleanupHandlers) {
-        mVrContext = vrContext;
+    protected HybridObject(long nativePointer, List<NativeCleanupHandler> cleanupHandlers) {
         mNativePointer = nativePointer;
 
         if (mNativePointer == 0l) {
@@ -161,8 +155,9 @@ public abstract class HybridObject implements Closeable {
      *
      * @return The object's {@link VrContext}.
      */
+    @Deprecated
     public VrContext getVrContext() {
-        return mVrContext;
+        return VrContext.get();
     }
 
     /**

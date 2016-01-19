@@ -59,9 +59,9 @@ public class SceneObject extends HybridObject implements FrameListener {
      *
      * @param vrContext current {@link VrContext}
      */
-    public SceneObject(VrContext vrContext) {
-        super(vrContext);
-        attachTransform(new Transform(vrContext));
+    public SceneObject() {
+        super();
+        attachTransform(new Transform());
     }
 
     /**
@@ -72,23 +72,10 @@ public class SceneObject extends HybridObject implements FrameListener {
      *                  {@link VrContext#loadMesh(AndroidResource)} methods, or
      *                  {@link VrContext#createQuad(float, float)}
      */
-    public SceneObject(VrContext vrContext, Mesh mesh) {
-        this(vrContext);
-        RenderData renderData = new RenderData(vrContext);
+    public SceneObject(Mesh mesh) {
+        RenderData renderData = new RenderData();
         attachRenderData(renderData);
         renderData.setMesh(mesh);
-    }
-
-    /**
-     * Constructs a rectangular scene object, whose geometry is completely
-     * specified by the width and height.
-     *
-     * @param vrContext current {@link VrContext}
-     * @param width     the scene object's width
-     * @param height    the scene object's height
-     */
-    public SceneObject(VrContext vrContext, float width, float height) {
-        this(vrContext, vrContext.createQuad(width, height));
     }
 
     @Override

@@ -142,7 +142,7 @@ public class MeganekkoActivity extends VrActivity {
      */
     private void oneTimeInit() {
 
-        setScene(new Scene(mVrContext));
+        setScene(new Scene());
         mVrContext.onSurfaceCreated();
 
         if (!mDocked) {
@@ -421,7 +421,7 @@ public class MeganekkoActivity extends VrActivity {
      */
     public Scene parseAndSetScene(int xmlRes) {
 
-        XmlSceneParser parser = XmlSceneParserFactory.getInstance(mVrContext).getSceneParser();
+        XmlSceneParser parser = XmlSceneParserFactory.getInstance(this).getSceneParser();
 
         try {
             Scene scene = parser.parse(getResources().getXml(xmlRes), null);

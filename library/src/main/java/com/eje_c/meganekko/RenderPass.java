@@ -35,9 +35,8 @@ public class RenderPass extends HybridObject {
      *
      * @param vrContext Current {@link VrContext}
      */
-    public RenderPass(VrContext vrContext) {
-        super(vrContext);
-        mMaterial = new Material(vrContext);
+    public RenderPass() {
+        mMaterial = new Material();
         mCullFace = CullFaceEnum.Back;
     }
 

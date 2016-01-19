@@ -1,5 +1,6 @@
 package com.eje_c.meganekko.xml.attribute_parser;
 
+import android.content.Context;
 import android.util.AttributeSet;
 
 import com.eje_c.meganekko.AndroidResource;
@@ -12,7 +13,7 @@ import java.io.IOException;
 public class MeshParser implements XmlAttributeParser {
 
     @Override
-    public void parse(SceneObject object, AttributeSet attributeSet) {
+    public void parse(Context context, SceneObject object, AttributeSet attributeSet) {
 
         // Already have mesh
         if (object.getRenderData() != null && object.getRenderData().getMesh() != null) return;
@@ -21,7 +22,7 @@ public class MeshParser implements XmlAttributeParser {
 
         if (mesh != null) {
             try {
-                object.getRenderData().setMesh(VrContext.get().loadMesh(new AndroidResource(VrContext.get(), mesh)));
+                object.getRenderData().setMesh(VrContext.get().loadMesh(new AndroidResource(VrContext.get().getContext(), mesh)));
                 return;
             } catch (IOException e) {
                 e.printStackTrace();

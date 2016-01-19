@@ -20,10 +20,6 @@ package com.eje_c.meganekko;
  */
 public class Camera extends SceneObject {
 
-    public Camera(VrContext vrContext) {
-        super(vrContext);
-    }
-
     @Override
     protected native long initNativeInstance();
 

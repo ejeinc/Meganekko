@@ -37,15 +37,15 @@ public class ObjectLookingStateDetector implements FrameListener {
     private boolean mLooking;
 
     /**
-     * Creates a ObjectLookingStateDetector with the supplied listener. If target object has no {@link EyePointee}, it is automatically attached.
+     * Creates a ObjectLookingStateDetector with the supplied listener.
      *
      * @param target   the target object.
      * @param listener the listener invoked for all callbacks, this must not be null.
      */
-    public ObjectLookingStateDetector(@NonNull SceneObject target, @NonNull ObjectLookingStateListener listener) {
+    public ObjectLookingStateDetector(@NonNull MeganekkoActivity activity, @NonNull SceneObject target, @NonNull ObjectLookingStateListener listener) {
         this.mTarget = target;
         this.mListener = listener;
-        this.mActivity = target.getVrContext().getActivity();
+        this.mActivity = activity;
     }
 
     @Override

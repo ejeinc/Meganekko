@@ -24,8 +24,8 @@ import com.eje_c.meganekko.jassimp.AiScene;
  */
 class AssimpImporter extends HybridObject {
 
-    AssimpImporter(VrContext vrContext, long ptr) {
-        super(vrContext, ptr);
+    AssimpImporter(long ptr) {
+        super(ptr);
     }
 
     /**
@@ -42,8 +42,7 @@ class AssimpImporter extends HybridObject {
      * @return The mesh, encapsulated as a {@link Mesh}.
      */
     Mesh getMesh(int index) {
-        return new Mesh(getVrContext(), getMesh(
-                getNative(), index));
+        return new Mesh(getMesh(getNative(), index));
     }
 
     /**
@@ -62,8 +61,7 @@ class AssimpImporter extends HybridObject {
      * @return The mesh, encapsulated as a {@link Mesh}.
      */
     Mesh getNodeMesh(String nodeName, int meshIndex) {
-        return new Mesh(getVrContext(), getNodeMesh(
-                getNative(), nodeName, meshIndex));
+        return new Mesh(getNodeMesh(getNative(), nodeName, meshIndex));
     }
 
     /**

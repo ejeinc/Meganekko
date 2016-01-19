@@ -82,16 +82,6 @@ public class AndroidResource {
     /**
      * Open a {@code res/raw} or {@code res/drawable} bitmap file.
      *
-     * @param vrContext  The VR Context
-     * @param resourceId A {@code R.raw} or {@code R.drawable} id
-     */
-    public AndroidResource(VrContext vrContext, int resourceId) {
-        this(vrContext.getContext(), resourceId);
-    }
-
-    /**
-     * Open a {@code res/raw} or {@code res/drawable} bitmap file.
-     *
      * @param context    An Android Context
      * @param resourceId A {@code R.raw} or {@code R.drawable} id
      */
@@ -106,20 +96,6 @@ public class AndroidResource {
         TypedValue value = new TypedValue();
         resources.getValue(resourceId, value, true);
         resourceFilePath = value.string.toString();
-    }
-
-    /**
-     * Open an {@code assets} file
-     *
-     * @param vrContext             The VR Context
-     * @param assetRelativeFilename A filename, relative to the {@code assets} directory. The file
-     *                              can be in a sub-directory of the {@code assets} directory:
-     *                              {@code "foo/bar.png"} will open the file {@code assets/foo/bar.png}
-     * @throws IOException File does not exist or cannot be read
-     */
-    public AndroidResource(VrContext vrContext,
-                           String assetRelativeFilename) throws IOException {
-        this(vrContext.getContext(), assetRelativeFilename);
     }
 
     /**

@@ -28,8 +28,8 @@ package com.eje_c.meganekko;
  * programs.
  */
 public class MaterialMap extends HybridObject implements ShaderMaps {
-    MaterialMap(VrContext vrContext, long ptr) {
-        super(vrContext, ptr);
+    MaterialMap(long ptr) {
+        super(ptr);
     }
 
     public void addTextureKey(String variableName, String key) {

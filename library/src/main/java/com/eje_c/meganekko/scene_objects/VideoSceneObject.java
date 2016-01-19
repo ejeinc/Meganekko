@@ -27,7 +27,6 @@ import com.eje_c.meganekko.MaterialShaderId;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.VrFrame;
 
 /**
@@ -44,39 +43,34 @@ public class VideoSceneObject extends SceneObject {
      * arbitrarily complex geometry, using the Android {@link MediaPlayer}. You
      * have to call {@code VideoSceneObject#setMediaPlayer(MediaPlayer)}} to
      * play video.
-     *
-     * @param vrContext current {@link VrContext}
      */
-    public VideoSceneObject(VrContext vrContext) {
-        super(vrContext);
-
+    public VideoSceneObject() {
         // Setup material
-        Material material = new Material(vrContext, ShaderType.OES.ID);
+        Material material = new Material(ShaderType.OES.ID);
         mSurfaceTexture = material.getSurfaceTexture();
-        RenderData renderData = new RenderData(vrContext);
+        RenderData renderData = new RenderData();
         renderData.setMaterial(material);
         attachRenderData(renderData);
     }
 
     @Deprecated
-    public VideoSceneObject(VrContext vrContext, Mesh mesh, MediaPlayer mediaPlayer, int videoType) {
-        this(vrContext, mesh, mediaPlayer, VideoType.values()[videoType]);
+    public VideoSceneObject(Mesh mesh, MediaPlayer mediaPlayer, int videoType) {
+        this(mesh, mediaPlayer, VideoType.values()[videoType]);
     }
 
     /**
      * Play a video on a {@linkplain SceneObject scene object} with an
      * arbitrarily complex geometry, using the Android {@link MediaPlayer}
      *
-     * @param vrContext   current {@link VrContext}
      * @param mesh        a {@link Mesh} - see
-     *                    {@link VrContext#loadMesh(com.eje_c.meganekko.AndroidResource)}
-     *                    and {@link VrContext#createQuad(float, float)}
+     *                    {@link #loadMesh(com.eje_c.meganekko.AndroidResource)}
+     *                    and {@link #createQuad(float, float)}
      * @param mediaPlayer an Android {@link MediaPlayer}
      * @param videoType   One of the {@linkplain VideoType video type constants}
      * @throws IllegalArgumentException on an invalid {@code videoType} parameter
      */
-    public VideoSceneObject(VrContext vrContext, Mesh mesh, MediaPlayer mediaPlayer, VideoType videoType) {
-        super(vrContext, mesh);
+    public VideoSceneObject(Mesh mesh, MediaPlayer mediaPlayer, VideoType videoType) {
+        super(mesh);
 
         MaterialShaderId materialType;
         switch (videoType) {
@@ -92,34 +86,11 @@ public class VideoSceneObject extends SceneObject {
             default:
                 throw new IllegalArgumentException();
         }
-        Material material = new Material(vrContext, materialType);
+        Material material = new Material(materialType);
         mSurfaceTexture = material.getSurfaceTexture();
         getRenderData().setMaterial(material);
 
         mMediaPlayer = mediaPlayer;
-    }
-
-    /**
-     * Play a video on a 2D, rectangular {@linkplain SceneObject scene object,}
-     * using the Android {@link MediaPlayer}
-     *
-     * @param vrContext   current {@link VrContext}
-     * @param width       the rectangle's width
-     * @param height      the rectangle's height
-     * @param mediaPlayer an Android {@link MediaPlayer}
-     * @param videoType   One of the {@linkplain VideoType video type constants}
-     * @throws IllegalArgumentException on an invalid {@code videoType} parameter
-     */
-    public VideoSceneObject(VrContext vrContext, float width,
-                            float height, MediaPlayer mediaPlayer, VideoType videoType) {
-        this(vrContext, vrContext.createQuad(width, height), mediaPlayer,
-                videoType);
-    }
-
-    @Deprecated
-    public VideoSceneObject(VrContext vrContext, float width,
-                            float height, MediaPlayer mediaPlayer, int videoType) {
-        this(vrContext, width, height, mediaPlayer, VideoType.values()[videoType]);
     }
 
     /**

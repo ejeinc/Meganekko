@@ -24,7 +24,6 @@ import android.view.ViewGroup;
 
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.VrFrame;
 import com.eje_c.meganekko.scene_objects.CanvasSceneObject.OnDrawListener;
 
@@ -52,10 +51,6 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
     };
     private boolean mSimulatePressing = true;
     private boolean mGenerateAutoSizedMesh = true;
-
-    public ViewSceneObject(VrContext vrContext) {
-        super(vrContext);
-    }
 
     /**
      * Check dirty state of view recursively.

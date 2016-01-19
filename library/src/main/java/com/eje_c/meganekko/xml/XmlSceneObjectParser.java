@@ -15,11 +15,11 @@
  */
 package com.eje_c.meganekko.xml;
 
+import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Xml;
 
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.scene_objects.CanvasSceneObject;
 import com.eje_c.meganekko.scene_objects.ConeSceneObject;
 import com.eje_c.meganekko.scene_objects.CubeSceneObject;
@@ -40,9 +40,9 @@ import java.util.Collection;
  */
 public class XmlSceneObjectParser {
 
-    private final VrContext mContext;
+    private final Context mContext;
 
-    public XmlSceneObjectParser(VrContext context) {
+    public XmlSceneObjectParser(Context context) {
         this.mContext = context;
     }
 
@@ -67,7 +67,7 @@ public class XmlSceneObjectParser {
         // Parse attributes
         AttributeSet attributeSet = Xml.asAttributeSet(parser);
         for (XmlAttributeParser attributeParser : attributeParsers) {
-            attributeParser.parse(object, attributeSet);
+            attributeParser.parse(mContext, object, attributeSet);
         }
 
         // TODO refactor
@@ -133,26 +133,26 @@ public class XmlSceneObjectParser {
                 case "object":
                     final String className = parser.getAttributeValue(null, "class");
                     if (className == null) {
-                        return new SceneObject(mContext);
+                        return new SceneObject();
                     } else {
-                        return ObjectFactory.newInstance(className, mContext);
+                        return ObjectFactory.newInstance(className);
                     }
                 case "cube":
-                    return new CubeSceneObject(mContext);
+                    return new CubeSceneObject();
                 case "sphere":
-                    return new SphereSceneObject(mContext);
+                    return new SphereSceneObject();
                 case "cone":
-                    return new ConeSceneObject(mContext);
+                    return new ConeSceneObject();
                 case "cylinder":
-                    return new CylinderSceneObject(mContext);
+                    return new CylinderSceneObject();
                 case "video":
-                    return new VideoSceneObject(mContext);
+                    return new VideoSceneObject();
                 case "canvas":
-                    return new CanvasSceneObject(mContext);
+                    return new CanvasSceneObject();
                 case "view":
-                    return new ViewSceneObject(mContext);
+                    return new ViewSceneObject();
                 default:
-                    return ObjectFactory.newInstance(name, mContext);
+                    return ObjectFactory.newInstance(name);
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();

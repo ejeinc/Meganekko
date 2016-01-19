@@ -49,18 +49,16 @@ public class RenderData extends Component {
      *
      * @param vrContext Current {@link VrContext}
      */
-    public RenderData(VrContext vrContext) {
-        super(vrContext);
-
-        RenderPass basePass = new RenderPass(vrContext);
+    public RenderData() {
+        RenderPass basePass = new RenderPass();
         mRenderPassList = new ArrayList<RenderPass>();
         addPass(basePass);
     }
 
-    private RenderData(VrContext vrContext, long ptr) {
-        super(vrContext, ptr);
+    private RenderData(long ptr) {
+        super(ptr);
 
-        RenderPass basePass = new RenderPass(vrContext);
+        RenderPass basePass = new RenderPass();
         mRenderPassList = new ArrayList<RenderPass>();
         addPass(basePass);
     }

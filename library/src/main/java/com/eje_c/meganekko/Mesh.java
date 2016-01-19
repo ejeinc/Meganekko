@@ -26,12 +26,11 @@ import static com.eje_c.meganekko.utility.Assert.checkStringNotNullOrEmpty;
  * A GL mesh is a net of triangles that define an object's surface geometry.
  */
 public class Mesh extends HybridObject {
-    public Mesh(VrContext vrContext) {
-        super(vrContext);
+    public Mesh() {
     }
 
-    Mesh(VrContext vrContext, long ptr) {
-        super(vrContext, ptr);
+    Mesh(long ptr) {
+        super(ptr);
     }
 
     @Override
@@ -255,8 +254,7 @@ public class Mesh extends HybridObject {
      * @return A {@link Mesh} of the bounding box.
      */
     public Mesh getBoundingBox() {
-        return new Mesh(getVrContext(),
-                getBoundingBox(getNative()));
+        return new Mesh(getBoundingBox(getNative()));
     }
 
     private void checkValidFloatVector(String keyName, String key, String vectorName, float[] vector, int expectedComponents) {

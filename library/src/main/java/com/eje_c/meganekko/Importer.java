@@ -15,6 +15,7 @@
 
 package com.eje_c.meganekko;
 
+import android.content.Context;
 import android.content.res.AssetManager;
 
 import java.io.IOException;
@@ -37,22 +38,22 @@ class Importer {
      * Imports a 3D model from the specified file in the application's
      * {@code asset} directory.
      *
-     * @param vrContext Context to import file from.
-     * @param filename  Name of the file to import.
+     * @param context  Context to import file from.
+     * @param filename Name of the file to import.
      * @return An instance of {@link AssimpImporter} or {@code null} if the
      * file does not exist (or cannot be read)
      */
-    static AssimpImporter readFileFromAssets(VrContext vrContext,
+    static AssimpImporter readFileFromAssets(Context context,
                                              String filename, EnumSet<ImportSettings> settings) {
-        long nativeValue = readFileFromAssets(vrContext.getContext().getAssets(), filename, ImportSettings.getAssimpImportFlags(settings));
-        return nativeValue == 0 ? null : new AssimpImporter(vrContext, nativeValue);
+        long nativeValue = readFileFromAssets(context.getAssets(), filename, ImportSettings.getAssimpImportFlags(settings));
+        return nativeValue == 0 ? null : new AssimpImporter(nativeValue);
     }
 
-    static AssimpImporter readFileFromResources(VrContext vrContext, int resourceId, EnumSet<ImportSettings> settings) {
-        return readFileFromResources(vrContext, new AndroidResource(vrContext, resourceId), settings);
+    static AssimpImporter readFileFromResources(Context context, int resourceId, EnumSet<ImportSettings> settings) {
+        return readFileFromResources(new AndroidResource(context, resourceId), settings);
     }
 
-    static AssimpImporter readFileFromResources(VrContext vrContext, AndroidResource resource, EnumSet<ImportSettings> settings) {
+    static AssimpImporter readFileFromResources(AndroidResource resource, EnumSet<ImportSettings> settings) {
         try {
             byte[] bytes;
             InputStream stream = resource.getStream();
@@ -67,27 +68,11 @@ class Importer {
                 resourceFilename = ""; // Passing null causes JNI exception.
             }
             long nativeValue = readFromByteArray(bytes, resourceFilename, ImportSettings.getAssimpImportFlags(settings));
-            return new AssimpImporter(vrContext, nativeValue);
+            return new AssimpImporter(nativeValue);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
-    }
-
-    /**
-     * Imports a 3D model from a file on the device's SD card. The application
-     * must have read permission for the directory containing the file.
-     * <p/>
-     * Does not check that file exists and is readable by this process: the only
-     * public caller does that check.
-     *
-     * @param vrContext Context to import file from.
-     * @param filename  Name of the file to import.
-     * @return An instance of {@link AssimpImporter}.
-     */
-    static AssimpImporter readFileFromSDCard(VrContext vrContext, String filename, EnumSet<ImportSettings> settings) {
-        long nativeValue = readFileFromSDCard(filename, ImportSettings.getAssimpImportFlags(settings));
-        return new AssimpImporter(vrContext, nativeValue);
     }
 
     private static native long readFileFromAssets(AssetManager assetManager, String filename, int settings);

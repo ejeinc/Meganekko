@@ -59,12 +59,9 @@ public class Scene extends SceneObject implements FrameListener,
 
     /**
      * Constructs a scene with a camera rig holding left & right cameras in it.
-     *
-     * @param vrContext {@link VrContext} the app is using.
      */
-    public Scene(VrContext vrContext) {
-        super(vrContext);
-        Camera camera = new Camera(vrContext);
+    public Scene() {
+        Camera camera = new Camera();
         addChildObject(camera);
         setMainCamera(camera);
     }

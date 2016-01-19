@@ -16,7 +16,6 @@
 package com.eje_c.meganekko.scene_objects;
 
 import com.eje_c.meganekko.Material;
-import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.utility.Log;
 
 public class ConeSceneObject extends CylinderSceneObject {
@@ -36,11 +35,9 @@ public class ConeSceneObject extends CylinderSceneObject {
      * <p/>
      * The cone's triangles and normals are facing out and the same texture will
      * be applied to bottom, and side of the cone.
-     *
-     * @param vrContext current {@link VrContext}
      */
-    public ConeSceneObject(VrContext vrContext) {
-        super(vrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT, STACK_NUMBER, SLICE_NUMBER, true);
+    public ConeSceneObject() {
+        super(BASE_RADIUS, TOP_RADIUS, HEIGHT, STACK_NUMBER, SLICE_NUMBER, true);
     }
 
     /**
@@ -50,12 +47,11 @@ public class ConeSceneObject extends CylinderSceneObject {
      * The cone's triangles and normals are facing either in or out and the same
      * texture will be applied to bottom, and side of the cone.
      *
-     * @param vrContext current {@link VrContext}
      * @param facingOut whether the triangles and normals should be facing in or
      *                  facing out.
      */
-    public ConeSceneObject(VrContext vrContext, boolean facingOut) {
-        super(vrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT, STACK_NUMBER, SLICE_NUMBER, facingOut);
+    public ConeSceneObject(boolean facingOut) {
+        super(BASE_RADIUS, TOP_RADIUS, HEIGHT, STACK_NUMBER, SLICE_NUMBER, facingOut);
     }
 
     /**
@@ -65,12 +61,11 @@ public class ConeSceneObject extends CylinderSceneObject {
      * The cone's triangles and normals are facing either in or out and the same
      * material will be applied to bottom, and side of the cone.
      *
-     * @param vrContext current {@link VrContext}
      * @param facingOut whether the triangles and normals should be facing in or
      *                  facing out.
      * @param material  the material for the cone.
      */
-    public ConeSceneObject(VrContext vrContext, boolean facingOut, Material material) {
-        super(vrContext, BASE_RADIUS, TOP_RADIUS, HEIGHT, STACK_NUMBER, SLICE_NUMBER, facingOut, material);
+    public ConeSceneObject(boolean facingOut, Material material) {
+        super(BASE_RADIUS, TOP_RADIUS, HEIGHT, STACK_NUMBER, SLICE_NUMBER, facingOut, material);
     }
 }

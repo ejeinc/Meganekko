@@ -70,12 +70,11 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
     /**
      * A new holder for a shader's uniforms.
      *
-     * @param vrContext Current {@link VrContext}
      * @param shaderId  Id of a {@linkplain ShaderType stock} or
      *                  {@linkplain MaterialShaderManager custom} shader.
      */
-    public Material(VrContext vrContext, MaterialShaderId shaderId) {
-        super(vrContext, ctor(shaderId.ID));
+    public Material(MaterialShaderId shaderId) {
+        super(ctor(shaderId.ID));
         this.shaderId = shaderId;
         this.mShaderFeatureSet = 0;
     }
@@ -85,15 +84,13 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
     /**
      * A convenience overload: builds a {@link Material} that uses the most
      * common stock shader, the {@linkplain ShaderType.Texture 'texture'} shader.
-     *
-     * @param vrContext Current {@link VrContext}
      */
-    public Material(VrContext vrContext) {
-        this(vrContext, ShaderType.OES.ID);
+    public Material() {
+        this(ShaderType.OES.ID);
     }
 
-    Material(VrContext vrContext, long ptr) {
-        super(vrContext, ptr);
+    Material(long ptr) {
+        super(ptr);
     }
 
     public MaterialShaderId getShaderType() {

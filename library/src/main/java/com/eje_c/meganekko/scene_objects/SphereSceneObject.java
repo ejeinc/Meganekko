@@ -19,7 +19,6 @@ import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.utility.Log;
 
 public class SphereSceneObject extends SceneObject {
@@ -46,14 +45,9 @@ public class SphereSceneObject extends SceneObject {
      * <p/>
      * The sphere's triangles and normals are facing out and the same texture
      * will be applied to each side of the sphere.
-     *
-     * @param vrContext current {@link VrContext}
      */
-    public SphereSceneObject(VrContext vrContext) {
-        super(vrContext);
-
-        generateSphereObject(vrContext, STACK_NUMBER, SLICE_NUMBER, true,
-                new Material(vrContext));
+    public SphereSceneObject() {
+        generateSphereObject(STACK_NUMBER, SLICE_NUMBER, true, new Material());
     }
 
     /**
@@ -63,15 +57,11 @@ public class SphereSceneObject extends SceneObject {
      * The sphere's triangles and normals are facing either in or out and the
      * same texture will be applied to each side of the sphere.
      *
-     * @param vrContext current {@link VrContext}
      * @param facingOut whether the triangles and normals should be facing in or
      *                  facing out.
      */
-    public SphereSceneObject(VrContext vrContext, boolean facingOut) {
-        super(vrContext);
-
-        generateSphereObject(vrContext, STACK_NUMBER, SLICE_NUMBER, facingOut,
-                new Material(vrContext));
+    public SphereSceneObject(boolean facingOut) {
+        generateSphereObject(STACK_NUMBER, SLICE_NUMBER, facingOut, new Material());
     }
 
     /**
@@ -81,17 +71,12 @@ public class SphereSceneObject extends SceneObject {
      * The sphere's triangles and normals are facing either in or out and the
      * same material will be applied to each side of the sphere.
      *
-     * @param vrContext current {@link VrContext}
      * @param facingOut whether the triangles and normals should be facing in or
      *                  facing out.
      * @param material  the material for the sphere.
      */
-    public SphereSceneObject(VrContext vrContext, boolean facingOut,
-                             Material material) {
-        super(vrContext);
-
-        generateSphereObject(vrContext, STACK_NUMBER, SLICE_NUMBER, facingOut,
-                material);
+    public SphereSceneObject(boolean facingOut, Material material) {
+        generateSphereObject(STACK_NUMBER, SLICE_NUMBER, facingOut, material);
     }
 
     /**
@@ -101,7 +86,6 @@ public class SphereSceneObject extends SceneObject {
      * The sphere's triangles and normals are facing either in or out and the
      * same material will be applied to each side of the sphere.
      *
-     * @param vrContext   current {@link VrContext}
      * @param stackNumber the number of stacks for the sphere. It should be equal or
      *                    greater than 3.
      * @param sliceNumber the number of slices for the sphere. It should be equal or
@@ -110,9 +94,7 @@ public class SphereSceneObject extends SceneObject {
      *                    facing out.
      * @param material    the material for the sphere.
      */
-    public SphereSceneObject(VrContext vrContext, int stackNumber,
-                             int sliceNumber, boolean facingOut, Material material) {
-        super(vrContext);
+    public SphereSceneObject(int stackNumber, int sliceNumber, boolean facingOut, Material material) {
 
         // assert sliceNumber>=4
         if (sliceNumber < 4) {
@@ -126,7 +108,7 @@ public class SphereSceneObject extends SceneObject {
                     "Stack number should be equal or greater than 3.");
         }
 
-        generateSphereObject(vrContext, stackNumber, sliceNumber, facingOut,
+        generateSphereObject(stackNumber, sliceNumber, facingOut,
                 material);
     }
 
@@ -137,7 +119,6 @@ public class SphereSceneObject extends SceneObject {
      * The sphere's triangles and normals are facing either in or out and the
      * same material will be applied to each side of the sphere.
      *
-     * @param vrContext          current {@link VrContext}
      * @param stackNumber        the number of stacks for the sphere. It should be equal or
      *                           greater than 3.
      * @param sliceNumber        the number of slices for the sphere. It should be equal or
@@ -153,10 +134,9 @@ public class SphereSceneObject extends SceneObject {
      *                           Number of slices (i.e. sliceNumber) should be divisible by
      *                           sliceSegmentNumber.
      */
-    public SphereSceneObject(VrContext vrContext, int stackNumber,
+    public SphereSceneObject(int stackNumber,
                              int sliceNumber, boolean facingOut, Material material,
                              int stackSegmentNumber, int sliceSegmentNumber) {
-        super(vrContext);
 
         // assert stackNumber>=3
         if (stackNumber < 3) {
@@ -182,28 +162,27 @@ public class SphereSceneObject extends SceneObject {
                     "sliceNumber should be divisible by sliceSegmentNumber.");
         }
 
-        generateComplexSphereObject(vrContext, stackNumber, sliceNumber,
+        generateComplexSphereObject(stackNumber, sliceNumber,
                 facingOut, material, stackSegmentNumber, sliceSegmentNumber);
     }
 
-    private void generateSphereObject(VrContext vrContext, int stackNumber,
+    private void generateSphereObject(int stackNumber,
                                       int sliceNumber, boolean facingOut, Material material) {
         generateSphere(stackNumber, sliceNumber, facingOut);
 
-        Mesh mesh = new Mesh(vrContext);
+        Mesh mesh = new Mesh();
         mesh.setVertices(vertices);
         mesh.setNormals(normals);
         mesh.setTexCoords(texCoords);
         mesh.setTriangles(indices);
 
-        RenderData renderData = new RenderData(vrContext);
+        RenderData renderData = new RenderData();
         attachRenderData(renderData);
         renderData.setMesh(mesh);
         renderData.setMaterial(material);
     }
 
-    private void generateSphere(int stackNumber, int sliceNumber,
-                                boolean facingOut) {
+    private void generateSphere(int stackNumber, int sliceNumber, boolean facingOut) {
         int capVertexNumber = 3 * sliceNumber;
         int bodyVertexNumber = 4 * sliceNumber * (stackNumber - 2);
         int vertexNumber = (2 * capVertexNumber) + bodyVertexNumber;
@@ -225,8 +204,7 @@ public class SphereSceneObject extends SceneObject {
         createCap(stackNumber, sliceNumber, true, facingOut);
     }
 
-    private void createCap(int stackNumber, int sliceNumber, boolean top,
-                           boolean facingOut) {
+    private void createCap(int stackNumber, int sliceNumber, boolean top, boolean facingOut) {
 
         float stackPercentage0;
         float stackPercentage1;
@@ -493,29 +471,28 @@ public class SphereSceneObject extends SceneObject {
 
     }
 
-    private void generateComplexSphereObject(VrContext vrContext,
-                                             int stackNumber, int sliceNumber, boolean facingOut,
+    private void generateComplexSphereObject(int stackNumber, int sliceNumber, boolean facingOut,
                                              Material material, int stackSegmentNumber, int sliceSegmentNumber) {
         // bottom cap
-        createComplexCap(vrContext, stackNumber, sliceNumber, false,
+        createComplexCap(stackNumber, sliceNumber, false,
                 facingOut, material, sliceSegmentNumber);
 
         // body
-        createComplexBody(vrContext, stackNumber, sliceNumber, facingOut,
+        createComplexBody(stackNumber, sliceNumber, facingOut,
                 material, stackSegmentNumber, sliceSegmentNumber);
 
         // top cap
-        createComplexCap(vrContext, stackNumber, sliceNumber, true, facingOut,
+        createComplexCap(stackNumber, sliceNumber, true, facingOut,
                 material, sliceSegmentNumber);
 
         // attached an empty renderData for parent object, so that we can set
         // some common properties
-        RenderData renderData = new RenderData(vrContext);
+        RenderData renderData = new RenderData();
         renderData.setMaterial(material);
         attachRenderData(renderData);
     }
 
-    private void createComplexCap(VrContext vrContext, int stackNumber,
+    private void createComplexCap(int stackNumber,
                                   int sliceNumber, boolean top, boolean facingOut,
                                   Material material, int sliceSegmentNumber) {
         int slicePerSegment = sliceNumber / sliceSegmentNumber;
@@ -641,13 +618,12 @@ public class SphereSceneObject extends SceneObject {
 
             sliceCounter++;
             if (sliceCounter == slicePerSegment) {
-                Mesh mesh = new Mesh(vrContext);
+                Mesh mesh = new Mesh();
                 mesh.setVertices(vertices);
                 mesh.setNormals(normals);
                 mesh.setTexCoords(texCoords);
                 mesh.setTriangles(indices);
-                SceneObject childObject = new SceneObject(vrContext,
-                        mesh);
+                SceneObject childObject = new SceneObject(mesh);
                 childObject.getRenderData().setMaterial(material);
                 addChildObject(childObject);
 
@@ -666,7 +642,7 @@ public class SphereSceneObject extends SceneObject {
         }
     }
 
-    private void createComplexBody(VrContext vrContext, int stackNumber,
+    private void createComplexBody(int stackNumber,
                                    int sliceNumber, boolean facingOut, Material material,
                                    int stackSegmentNumber, int sliceSegmentNumber) {
         int stackPerSegment = (stackNumber - 2) / stackSegmentNumber;
@@ -834,13 +810,12 @@ public class SphereSceneObject extends SceneObject {
                     }
                 }
 
-                Mesh mesh = new Mesh(vrContext);
+                Mesh mesh = new Mesh();
                 mesh.setVertices(vertices);
                 mesh.setNormals(normals);
                 mesh.setTexCoords(texCoords);
                 mesh.setTriangles(indices);
-                SceneObject childObject = new SceneObject(vrContext,
-                        mesh);
+                SceneObject childObject = new SceneObject(mesh);
                 childObject.getRenderData().setMaterial(material);
                 addChildObject(childObject);
 

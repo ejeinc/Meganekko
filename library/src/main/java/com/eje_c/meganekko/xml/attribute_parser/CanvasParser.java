@@ -1,5 +1,6 @@
 package com.eje_c.meganekko.xml.attribute_parser;
 
+import android.content.Context;
 import android.util.AttributeSet;
 
 import com.eje_c.meganekko.SceneObject;
@@ -9,7 +10,7 @@ import com.eje_c.meganekko.xml.XmlAttributeParser;
 public class CanvasParser implements XmlAttributeParser {
 
     @Override
-    public void parse(SceneObject object, AttributeSet attributeSet) {
+    public void parse(Context context, SceneObject object, AttributeSet attributeSet) {
         if (!(object instanceof CanvasSceneObject)) return;
 
         String canvasSize = attributeSet.getAttributeValue(NAMESPACE, "canvasSize");

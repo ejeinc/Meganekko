@@ -48,10 +48,10 @@ public class CameraSceneObject extends SceneObject {
      *                  should be sure to call it before you call
      *                  {@link Camera#startPreview()}.
      */
-    public CameraSceneObject(VrContext vrContext, Mesh mesh, Camera camera) {
-        super(vrContext, mesh);
+    public CameraSceneObject(Mesh mesh, Camera camera) {
+        super(mesh);
 
-        Material material = new Material(vrContext, ShaderType.OES.ID);
+        Material material = new Material(ShaderType.OES.ID);
         mSurfaceTexture = material.getSurfaceTexture();
 
         getRenderData().setMaterial(material);
@@ -61,23 +61,6 @@ public class CameraSceneObject extends SceneObject {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Create a 2D, rectangular {@linkplain SceneObject scene object} that shows
-     * live video from one of the device's cameras
-     *
-     * @param vrContext current {@link VrContext}
-     * @param width     the scene rectangle's width
-     * @param height    the rectangle's height
-     * @param camera    an Android {@link Camera}. <em>Note</em>: this constructor
-     *                  calls {@link Camera#setPreviewTexture(SurfaceTexture)} so you
-     *                  should be sure to call it before you call
-     *                  {@link Camera#startPreview()}.
-     */
-    public CameraSceneObject(VrContext vrContext, float width,
-                             float height, Camera camera) {
-        this(vrContext, vrContext.createQuad(width, height), camera);
     }
 
     /**

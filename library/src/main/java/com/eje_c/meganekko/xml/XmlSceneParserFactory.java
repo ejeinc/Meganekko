@@ -15,7 +15,7 @@
  */
 package com.eje_c.meganekko.xml;
 
-import com.eje_c.meganekko.VrContext;
+import android.content.Context;
 
 /**
  * Simple singleton implementation for {@link XmlSceneParser}.
@@ -23,22 +23,21 @@ import com.eje_c.meganekko.VrContext;
 public class XmlSceneParserFactory {
 
     private static XmlSceneParserFactory instance;
-    private final VrContext mVrContext;
+    private final Context mContext;
     private XmlSceneParser mSceneParser;
 
-    public XmlSceneParserFactory(VrContext vrContext) {
-        mVrContext = vrContext;
+    public XmlSceneParserFactory(Context context) {
+        mContext = context;
     }
 
     /**
      * Get a singleton instance of {@link XmlSceneParserFactory}.
      *
-     * @param vrContext
      * @return Singleton instance.
      */
-    public synchronized static XmlSceneParserFactory getInstance(VrContext vrContext) {
+    public synchronized static XmlSceneParserFactory getInstance(Context context) {
         if (instance == null) {
-            instance = new XmlSceneParserFactory(vrContext);
+            instance = new XmlSceneParserFactory(context.getApplicationContext());
         }
         return instance;
     }
@@ -50,7 +49,7 @@ public class XmlSceneParserFactory {
      */
     public synchronized XmlSceneParser getSceneParser() {
         if (mSceneParser == null) {
-            mSceneParser = new XmlSceneParser(mVrContext);
+            mSceneParser = new XmlSceneParser(mContext);
         }
         return mSceneParser;
     }

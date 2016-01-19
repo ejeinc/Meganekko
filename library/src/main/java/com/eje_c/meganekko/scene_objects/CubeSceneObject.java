@@ -19,7 +19,6 @@ import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.VrContext;
 
 public class CubeSceneObject extends SceneObject {
 
@@ -213,13 +212,9 @@ public class CubeSceneObject extends SceneObject {
      * <p/>
      * The cube's triangles and normals are facing out and the same texture will
      * be applied to each side of the cube.
-     *
-     * @param vrContext current {@link VrContext}
      */
-    public CubeSceneObject(VrContext vrContext) {
-        super(vrContext);
-
-        createSimpleCube(vrContext, true, new Material(vrContext));
+    public CubeSceneObject() {
+        createSimpleCube(true, new Material());
     }
 
     /**
@@ -228,14 +223,11 @@ public class CubeSceneObject extends SceneObject {
      * The cube's triangles and normals are facing either in or out and the same
      * texture will be applied to each side of the cube.
      *
-     * @param vrContext current {@link VrContext}
      * @param facingOut whether the triangles and normals should be facing in or
      *                  facing out.
      */
-    public CubeSceneObject(VrContext vrContext, boolean facingOut) {
-        super(vrContext);
-
-        createSimpleCube(vrContext, facingOut, new Material(vrContext));
+    public CubeSceneObject(boolean facingOut) {
+        createSimpleCube(facingOut, new Material());
     }
 
     /**
@@ -245,22 +237,17 @@ public class CubeSceneObject extends SceneObject {
      * texture will be applied to each side of the cube. All six faces share the
      * same material (i.e. same texture and same shader).
      *
-     * @param vrContext current {@link VrContext}
      * @param facingOut whether the triangles and normals should be facing in or
      *                  facing out.
      * @param material  the material for six faces.
      */
-    public CubeSceneObject(VrContext vrContext, boolean facingOut,
-                           Material material) {
-        super(vrContext);
-
-        createSimpleCube(vrContext, facingOut, material);
+    public CubeSceneObject(boolean facingOut, Material material) {
+        createSimpleCube(facingOut, material);
     }
 
-    private void createSimpleCube(VrContext vrContext, boolean facingOut,
-                                  Material material) {
+    private void createSimpleCube(boolean facingOut, Material material) {
 
-        Mesh mesh = new Mesh(vrContext);
+        Mesh mesh = new Mesh();
 
         if (facingOut) {
             mesh.setVertices(SIMPLE_VERTICES);
@@ -274,7 +261,7 @@ public class CubeSceneObject extends SceneObject {
             mesh.setTriangles(SIMPLE_INWARD_INDICES);
         }
 
-        RenderData renderData = new RenderData(vrContext);
+        RenderData renderData = new RenderData();
         renderData.setMaterial(material);
         attachRenderData(renderData);
         renderData.setMesh(mesh);
