@@ -151,16 +151,6 @@ public abstract class HybridObject implements Closeable {
      */
 
     /**
-     * Get the {@link VrContext} this object is attached to.
-     *
-     * @return The object's {@link VrContext}.
-     */
-    @Deprecated
-    public VrContext getVrContext() {
-        return VrContext.get();
-    }
-
-    /**
      * The actual address of the native object.
      * <p/>
      * This is an internal method that may be useful in diagnostic code.

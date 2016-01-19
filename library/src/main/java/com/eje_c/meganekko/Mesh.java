@@ -17,6 +17,8 @@ package com.eje_c.meganekko;
 
 import com.eje_c.meganekko.utility.Exceptions;
 
+import java.util.EnumSet;
+
 import static com.eje_c.meganekko.utility.Assert.checkDivisibleDataLength;
 import static com.eje_c.meganekko.utility.Assert.checkStringNotNullOrEmpty;
 
@@ -26,6 +28,82 @@ import static com.eje_c.meganekko.utility.Assert.checkStringNotNullOrEmpty;
  * A GL mesh is a net of triangles that define an object's surface geometry.
  */
 public class Mesh extends HybridObject {
+
+    /**
+     * Creates a quad consisting of two triangles, with the specified width and
+     * height.
+     *
+     * @param width  the quad's width
+     * @param height the quad's height
+     * @return A 2D, rectangular mesh with four vertices and two triangles
+     */
+    public static Mesh createQuad(float width, float height) {
+        Mesh mesh = new Mesh();
+
+        float[] vertices = {
+                width * -0.5f, height * 0.5f, 0.0f,
+                width * -0.5f, height * -0.5f, 0.0f,
+                width * 0.5f, height * 0.5f, 0.0f,
+                width * 0.5f, height * -0.5f, 0.0f
+        };
+        mesh.setVertices(vertices);
+
+        final float[] normals = {
+                0.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, 1.0f
+        };
+        mesh.setNormals(normals);
+
+        final float[] texCoords = {
+                0.0f, 0.0f,
+                0.0f, 1.0f,
+                1.0f, 0.0f,
+                1.0f, 1.0f
+        };
+        mesh.setTexCoords(texCoords);
+
+        char[] triangles = {0, 1, 2, 1, 3, 2};
+        mesh.setTriangles(triangles);
+
+        return mesh;
+    }
+
+    /**
+     * Loads a file as a {@link Mesh}.
+     * <p/>
+     * Note that this method can be quite slow; we recommend never calling it
+     * from the GL thread.
+     *
+     * @param androidResource Basically, a stream containing a 3D model. The
+     *                        {@link AndroidResource} class has six constructors to handle a
+     *                        wide variety of Android resource types. Taking a
+     *                        {@code AndroidResource} here eliminates six overloads.
+     * @return The file as a GL mesh.
+     */
+    public static Mesh from(AndroidResource androidResource) {
+        return from(androidResource, ImportSettings.getRecommendedSettings());
+    }
+
+    /**
+     * Loads a file as a {@link Mesh}.
+     * <p/>
+     * Note that this method can be quite slow; we recommend never calling it
+     * from the GL thread.
+     *
+     * @param androidResource Basically, a stream containing a 3D model. The
+     *                        {@link AndroidResource} class has six constructors to handle a
+     *                        wide variety of Android resource types. Taking a
+     *                        {@code AndroidResource} here eliminates six overloads.
+     * @param settings        Additional import {@link ImportSettings settings}.
+     * @return The file as a GL mesh.
+     */
+    public static Mesh from(AndroidResource androidResource, EnumSet<ImportSettings> settings) {
+        AssimpImporter assimpImporter = Importer.readFileFromResources(androidResource, settings);
+        return assimpImporter.getMesh(0);
+    }
+
     public Mesh() {
     }
 
@@ -237,24 +315,6 @@ public class Mesh extends HybridObject {
     public void setVec4Vector(String key, float[] vec4Vector) {
         checkValidFloatVector("key", key, "vec4Vector", vec4Vector, 4);
         setVec4Vector(getNative(), key, vec4Vector);
-    }
-
-    /**
-     * Constructs a {@link Mesh mesh} that contains this mesh.
-     * <p/>
-     * <p/>
-     * This is primarily useful with the {@link Picker}, which does
-     * "ray casting" to detect which scene object you're pointing to. Ray
-     * casting is computationally expensive, and you generally want to limit the
-     * number of {@linkplain EyePointeeHolder triangles to check.} A simple
-     * {@linkplain VrContext#createQuad(float, float) quad} is cheap enough,
-     * but with complex meshes you will probably want to cut search time by
-     * registering the object's bounding box, not the whole mesh.
-     *
-     * @return A {@link Mesh} of the bounding box.
-     */
-    public Mesh getBoundingBox() {
-        return new Mesh(getBoundingBox(getNative()));
     }
 
     private void checkValidFloatVector(String keyName, String key, String vectorName, float[] vector, int expectedComponents) {

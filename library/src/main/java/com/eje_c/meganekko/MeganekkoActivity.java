@@ -40,7 +40,6 @@ import com.eje_c.meganekko.event.SwipeUpEvent;
 import com.eje_c.meganekko.event.TouchDoubleEvent;
 import com.eje_c.meganekko.event.TouchSingleEvent;
 import com.eje_c.meganekko.utility.DockEventReceiver;
-import com.eje_c.meganekko.utility.Log;
 import com.eje_c.meganekko.xml.XmlSceneParser;
 import com.eje_c.meganekko.xml.XmlSceneParserFactory;
 import com.oculus.vrappframework.VrActivity;
@@ -60,8 +59,6 @@ import ovr.App;
  * sensor data to manage a viewpoint, and thus present an appropriate stereoscopic view of your scene graph.
  */
 public abstract class MeganekkoActivity extends VrActivity implements Meganekko {
-
-    private static final String TAG = Log.tag(MeganekkoActivity.class);
 
     static {
         System.loadLibrary("meganekko");
@@ -118,7 +115,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
         mDockEventReceiver = new DockEventReceiver(this, mRunOnDock, mRunOnUndock);
         mInternalSensorManager = new InternalSensorManager(this, getAppPtr());
 
-        new VrContext(this);
         mApp = new App(getAppPtr());
     }
 
@@ -383,11 +379,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
     @Override
     public Scene getScene() {
         return mScene;
-    }
-
-    @Override
-    public Mesh loadMesh(AndroidResource resource) {
-        return VrContext.get().loadMesh(resource);
     }
 
     /**

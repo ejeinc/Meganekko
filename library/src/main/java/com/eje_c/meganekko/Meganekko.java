@@ -12,8 +12,6 @@ public interface Meganekko {
 
     Scene getScene();
 
-    Mesh loadMesh(AndroidResource resource);
-
     void runOnGlThread(Runnable runnable);
 
     void runOnUiThread(Runnable runnable);

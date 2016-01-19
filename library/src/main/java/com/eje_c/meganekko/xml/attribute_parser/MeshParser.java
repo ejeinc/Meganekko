@@ -4,11 +4,12 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import com.eje_c.meganekko.AndroidResource;
+import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.xml.XmlAttributeParser;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class MeshParser implements XmlAttributeParser {
@@ -22,11 +23,25 @@ public class MeshParser implements XmlAttributeParser {
 
             ensureHaveRenderData(object);
 
+            AndroidResource resource = null;
+
             try {
-                object.getRenderData().setMesh(VrContext.get().loadMesh(new AndroidResource(VrContext.get().getContext(), mesh)));
-                return;
+                resource = new AndroidResource(context, mesh);
             } catch (IOException e) {
-                e.printStackTrace();
+//                    e.printStackTrace();
+            }
+
+            if (resource == null) {
+                try {
+                    resource = new AndroidResource(mesh);
+                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+                }
+            }
+
+            if (resource != null) {
+                object.getRenderData().setMesh(Mesh.from(resource));
+                return;
             }
         }
 
@@ -38,7 +53,7 @@ public class MeshParser implements XmlAttributeParser {
 
             ensureHaveRenderData(object);
 
-            object.getRenderData().setMesh(VrContext.get().createQuad(w, h));
+            object.getRenderData().setMesh(Mesh.createQuad(w, h));
         }
     }
 

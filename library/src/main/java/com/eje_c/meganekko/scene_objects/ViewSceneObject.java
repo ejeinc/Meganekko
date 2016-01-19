@@ -16,6 +16,7 @@
 
 package com.eje_c.meganekko.scene_objects;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PorterDuff.Mode;
 import android.view.LayoutInflater;
@@ -26,8 +27,6 @@ import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrFrame;
 import com.eje_c.meganekko.scene_objects.CanvasSceneObject.OnDrawListener;
-
-import ovr.JoyButton;
 
 /**
  * A {@linkplain SceneObject scene object} that renders Android's standard {@code View}.
@@ -77,7 +76,7 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
     /**
      * Set view.
      *
-     * @param view View which is used as {@link Texture}.
+     * @param view View which is used as Texture.
      */
     public void setView(View view) {
         this.mView = view;
@@ -105,8 +104,8 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
      *
      * @param layoutRes Layout XML resource ID
      */
-    public void setView(int layoutRes) {
-        LayoutInflater layoutInflater = LayoutInflater.from(getVrContext().getContext());
+    public void setView(Context context, int layoutRes) {
+        LayoutInflater layoutInflater = LayoutInflater.from(context);
         View view = layoutInflater.inflate(layoutRes, null);
         setView(view);
     }
@@ -133,41 +132,8 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
     public void setAutoSizedQuadMesh() {
         float width = mView.getMeasuredWidth() * AUTO_SIZE_SCALE;
         float height = mView.getMeasuredHeight() * AUTO_SIZE_SCALE;
-        Mesh quadMesh = getVrContext().createQuad(width, height);
+        Mesh quadMesh = Mesh.createQuad(width, height);
         getRenderData().setMesh(quadMesh);
-    }
-
-    @Override
-    public void onEvent(VrFrame vrFrame) {
-
-        if (mView != null) {
-
-            // Simulate pressing
-            if (mSimulatePressing) {
-                if (getVrContext().getActivity().isLookingAt(this)) {
-                    if (!mLooking) {
-                        mLooking = true;
-                        getVrContext().getActivity().runOnUiThread(updateViewState);
-                    }
-                } else {
-                    if (mLooking) {
-                        mLooking = false;
-                        getVrContext().getActivity().runOnUiThread(updateViewState);
-                    }
-                }
-            }
-
-            // Simulate click
-            if (mLooking) {
-                if (JoyButton.contains(vrFrame.getButtonPressed(), JoyButton.BUTTON_TOUCH_SINGLE)) {
-                    mView.callOnClick();
-                } else if (JoyButton.contains(vrFrame.getButtonPressed(), JoyButton.BUTTON_TOUCH_LONGPRESS)) {
-                    mView.performLongClick();
-                }
-            }
-        }
-
-        super.onEvent(vrFrame);
     }
 
     @Override

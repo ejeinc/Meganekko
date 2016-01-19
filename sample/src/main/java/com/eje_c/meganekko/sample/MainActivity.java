@@ -29,6 +29,8 @@ public class MainActivity extends MeganekkoActivity {
                 if (JoyButton.contains(vrFrame.getButtonPressed(), JoyButton.BUTTON_TOUCH_SINGLE)) {
                     ObjectAnimator anim = ObjectAnimator.ofFloat(obj, "opacity", 1, 0, 1);
                     meganekko.animate(anim, null);
+                } else if (JoyButton.contains(vrFrame.getButtonPressed(), JoyButton.BUTTON_TOUCH_DOUBLE)) {
+                    meganekko.recenter();
                 }
             }
 

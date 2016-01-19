@@ -16,7 +16,7 @@ public class ViewParser implements XmlAttributeParser {
         String layout = attributeSet.getAttributeValue(NAMESPACE, "layout");
         if (layout != null) {
             if (layout.startsWith("@layout/")) {
-                ((ViewSceneObject) object).setView(attributeSet.getAttributeResourceValue(null, "layout", 0));
+                ((ViewSceneObject) object).setView(context, attributeSet.getAttributeResourceValue(null, "layout", 0));
             }
         }
     }
