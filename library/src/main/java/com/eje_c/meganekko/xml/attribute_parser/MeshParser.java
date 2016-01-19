@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import com.eje_c.meganekko.AndroidResource;
+import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrContext;
 import com.eje_c.meganekko.xml.XmlAttributeParser;
@@ -16,13 +17,20 @@ public class MeshParser implements XmlAttributeParser {
     public void parse(Context context, SceneObject object, AttributeSet attributeSet) {
 
         // Already have mesh
-        if (object.getRenderData() != null && object.getRenderData().getMesh() != null) return;
+        RenderData renderData = object.getRenderData();
+        if (renderData != null && renderData.getMesh() != null) return;
 
         String mesh = attributeSet.getAttributeValue(NAMESPACE, "mesh");
 
         if (mesh != null) {
+            
+            if (renderData == null) {
+                renderData = new RenderData();
+                object.attachRenderData(renderData);
+            }
+
             try {
-                object.getRenderData().setMesh(VrContext.get().loadMesh(new AndroidResource(VrContext.get().getContext(), mesh)));
+                renderData.setMesh(VrContext.get().loadMesh(new AndroidResource(VrContext.get().getContext(), mesh)));
                 return;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -34,7 +42,13 @@ public class MeshParser implements XmlAttributeParser {
         if (width != null && height != null) {
             float w = Float.parseFloat(width);
             float h = Float.parseFloat(height);
-            object.getRenderData().setMesh(VrContext.get().createQuad(w, h));
+
+            if (renderData == null) {
+                renderData = new RenderData();
+                object.attachRenderData(renderData);
+            }
+
+            renderData.setMesh(VrContext.get().createQuad(w, h));
         }
     }
 }
