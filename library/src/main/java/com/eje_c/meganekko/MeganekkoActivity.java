@@ -59,7 +59,7 @@ import ovr.App;
  * not directly from {@code Activity}. {@code MeganekkoActivity} creates and manages the internal classes which use
  * sensor data to manage a viewpoint, and thus present an appropriate stereoscopic view of your scene graph.
  */
-public class MeganekkoActivity extends VrActivity {
+public abstract class MeganekkoActivity extends VrActivity implements Meganekko {
 
     private static final String TAG = Log.tag(MeganekkoActivity.class);
 
@@ -88,6 +88,7 @@ public class MeganekkoActivity extends VrActivity {
     private Scene mScene;
     private App mApp;
     private DockEventReceiver mDockEventReceiver;
+    private MeganekkoApp meganekkoApp;
 
     private static native long nativeSetAppInterface(VrActivity act, String fromPackageName, String commandString, String uriString);
 
@@ -138,23 +139,15 @@ public class MeganekkoActivity extends VrActivity {
      */
     private void oneTimeInit() {
 
-        setScene(new Scene());
-        VrContext.get().onSurfaceCreated();
+        meganekkoApp = createMeganekkoApp();
+        meganekkoApp.init(this);
 
         if (!mDocked) {
             mInternalSensorManager.start();
         }
-
-        oneTimeInit(VrContext.get());
     }
 
-    /**
-     * Called when native oneTimeInit is called.
-     *
-     * @param context
-     */
-    protected void oneTimeInit(VrContext context) {
-    }
+    protected abstract MeganekkoApp createMeganekkoApp();
 
     /**
      * Called from native AppInterface::frame().
@@ -172,16 +165,10 @@ public class MeganekkoActivity extends VrActivity {
             event.run();
         }
 
+        meganekkoApp.update(this, vrFrame);
+
         // Notify frame event
         mEventBus.post(vrFrame);
-
-        frame();
-    }
-
-    /**
-     * @deprecated Use {@link #onFrame(FrameListener)} to handle global frame update event or {@link Scene#onFrame(FrameListener)} to scene specific frame update event.
-     */
-    protected void frame() {
     }
 
     /**
@@ -189,43 +176,21 @@ public class MeganekkoActivity extends VrActivity {
      */
     private void oneTimeShutDown() {
 
+        meganekkoApp.shutdown(this);
+
         if (!mDocked) {
             mInternalSensorManager.stop();
         }
-
-        oneTimeShutDown(VrContext.get());
     }
 
-    /**
-     * Called when native oneTimeShutDown is called.
-     *
-     * @param context
-     */
-    protected void oneTimeShutDown(VrContext context) {
-    }
-
+    @Override
     public void hideGazeCursor() {
         nativeHideGazeCursor(getAppPtr());
     }
 
+    @Override
     public void showGazeCursor() {
         nativeShowGazeCursor(getAppPtr());
-    }
-
-    /**
-     * @return Minimum Vsyncs value
-     * @deprecated This method will be deleted in future. Use {@link App#setMinimumVsyncs(int)}.
-     */
-    public int getMinimumVsyncs() {
-        return mApp.getMinimumVsyncs();
-    }
-
-    /**
-     * @param vsyncs
-     * @deprecated This method will be deleted in future. Use {@link App#setMinimumVsyncs(int)}.
-     */
-    public void setMinimumVsyncs(int vsyncs) {
-        mApp.setMinimumVsyncs(vsyncs);
     }
 
     public boolean onKeyShortPress(int keyCode, int repeatCount) {
@@ -334,18 +299,9 @@ public class MeganekkoActivity extends VrActivity {
      *
      * @param runnable A bit of code that must run on the GL thread
      */
+    @Override
     public void runOnGlThread(@NonNull Runnable runnable) {
         mRunnables.add(runnable);
-    }
-
-    /**
-     * Get {@link VrContext}.
-     *
-     * @return {@code VrContext}
-     */
-    @Deprecated
-    public VrContext getVrContext() {
-        return VrContext.get();
     }
 
     /**
@@ -357,7 +313,8 @@ public class MeganekkoActivity extends VrActivity {
         return vrFrame;
     }
 
-    public void recenterPose() {
+    @Override
+    public void recenter() {
         recenterPose(getAppPtr());
     }
 
@@ -381,31 +338,14 @@ public class MeganekkoActivity extends VrActivity {
         return mScene.findObjectById(id);
     }
 
-    /**
-     * Short hand method for XML scene parsing.
-     *
-     * @param xmlRes
-     * @return New scene.
-     * @deprecated Use {@link MeganekkoActivity#parseAndSetScene(int)}.
-     */
-    public Scene setScene(int xmlRes) {
-        return parseAndSetScene(xmlRes);
-    }
-
-    /**
-     * Short hand method for XML scene parsing.
-     *
-     * @param xmlRes Scene XML resource.
-     * @return New scene.
-     */
-    public Scene parseAndSetScene(int xmlRes) {
+    @Override
+    public void setSceneFromXML(int xmlRes) {
 
         XmlSceneParser parser = XmlSceneParserFactory.getInstance(this).getSceneParser();
 
         try {
             Scene scene = parser.parse(getResources().getXml(xmlRes), null);
             setScene(scene);
-            return scene;
         } catch (XmlPullParserException | IOException e) {
             e.printStackTrace();
             throw new IllegalArgumentException(e);
@@ -413,19 +353,11 @@ public class MeganekkoActivity extends VrActivity {
     }
 
     /**
-     * Get current rendering scene.
-     *
-     * @return Current rendering scene.
-     */
-    public Scene getScene() {
-        return mScene;
-    }
-
-    /**
      * Set current rendering scene.
      *
      * @param scene
      */
+    @Override
     public synchronized void setScene(@NonNull Scene scene) {
 
         if (scene == mScene)
@@ -441,6 +373,21 @@ public class MeganekkoActivity extends VrActivity {
 
         mScene = scene;
         setScene(getAppPtr(), scene.getNative());
+    }
+
+    /**
+     * Get current rendering scene.
+     *
+     * @return Current rendering scene.
+     */
+    @Override
+    public Scene getScene() {
+        return mScene;
+    }
+
+    @Override
+    public Mesh loadMesh(AndroidResource resource) {
+        return VrContext.get().loadMesh(resource);
     }
 
     /**
@@ -482,6 +429,7 @@ public class MeganekkoActivity extends VrActivity {
      * @param endCallback Callback for animation end. This is <b>not</b> called when animation is canceled.
      *                    If you require more complicated callbacks, use {@code AnimatorListener} instead of this.
      */
+    @Override
     public void animate(@NonNull final Animator anim, @Nullable final Runnable endCallback) {
 
         if (anim.isRunning()) {
@@ -519,20 +467,12 @@ public class MeganekkoActivity extends VrActivity {
     }
 
     /**
-     * Run {@link Animator} on UI thread.
-     *
-     * @param anim {@link Animator}.
-     */
-    public void animate(@NonNull Animator anim) {
-        animate(anim, null);
-    }
-
-    /**
      * Cancel {@link Animator} running.
      *
      * @param anim     {@link Animator}.
      * @param callback Callback for canceling operation was called in UI thread.
      */
+    @Override
     public void cancel(@NonNull final Animator anim, @Nullable final Runnable callback) {
         runOnUiThread(new Runnable() {
             @Override
@@ -541,14 +481,5 @@ public class MeganekkoActivity extends VrActivity {
                 if (callback != null) runOnGlThread(callback);
             }
         });
-    }
-
-    /**
-     * Cancel {@link Animator} running.
-     *
-     * @param anim
-     */
-    public void cancel(@NonNull final Animator anim) {
-        cancel(anim, null);
     }
 }

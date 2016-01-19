@@ -26,23 +26,6 @@ import android.util.SparseArray;
 public abstract class MaterialShaderId {
     private final static SparseArray<MaterialShaderId> sIds = new SparseArray<>();
 
-    static {
-        VrContext.addResetOnRestartHandler(new Runnable() {
-
-            @Override
-            public void run() {
-                // Remove any custom shaders, which are GVRContext-dependent;
-                // leave all stock shaders, which are not
-                SparseArray<MaterialShaderId> clone = sIds.clone();
-                for (int index = 0, size = clone.size(); index < size; ++index) {
-                    if (clone.valueAt(index) instanceof CustomMaterialShaderId) {
-                        sIds.removeAt(index);
-                    }
-                }
-            }
-        });
-    }
-
     final int ID;
 
     protected MaterialShaderId(int id) {
