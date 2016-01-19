@@ -42,6 +42,13 @@ import java.util.concurrent.Future;
  * {@linkplain #loadTexture(AndroidResource) GL textures.}
  */
 public class VrContext {
+
+    private static VrContext instance;
+
+    public static VrContext get() {
+        return instance;
+    }
+
     /**
      * Meganekko can't use every {@code int} as a priority - it needs some
      * sentinel values. It will probably never need anywhere near this many, but
@@ -102,6 +109,7 @@ public class VrContext {
     VrContext(MeganekkoActivity context) {
         mContext = context;
 
+        instance = this;
         // Clear singletons and per-run data structures
         resetOnRestart();
     }
