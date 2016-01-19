@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 
 import com.eje_c.meganekko.event.FrameListener;
 import com.eje_c.meganekko.event.KeyDoubleTapEvent;
@@ -101,8 +100,6 @@ public class MeganekkoActivity extends VrActivity {
     private static native void recenterPose(long appPtr);
 
     private static native void setScene(long appPtr, long nativeScene);
-
-    private static native void setShaderManager(long appPtr, long nativeShaderManager);
 
     private static native boolean isLookingAt(long appPtr, long nativeSceneObject);
 
@@ -231,22 +228,6 @@ public class MeganekkoActivity extends VrActivity {
      */
     public void setMinimumVsyncs(int vsyncs) {
         mApp.setMinimumVsyncs(vsyncs);
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        boolean handled = super.dispatchTouchEvent(event);// VrActivity's
-
-        /*
-         * Situation: while the super class VrActivity is implementing
-         * dispatchTouchEvent() without calling its own super
-         * dispatchTouchEvent(), we still need to call the
-         * VRTouchPadGestureDetector onTouchEvent. Call it here, similar way
-         * like in place of viewGroup.onInterceptTouchEvent()
-         */
-        onTouchEvent(event);
-
-        return handled;
     }
 
     public boolean onKeyShortPress(int keyCode, int repeatCount) {
