@@ -59,16 +59,12 @@ public:
         NORMAL = 0, TOP_BOTTOM, BOTTOM_TOP, LEFT_RIGHT, RIGHT_LEFT
     };
 
-    explicit Material(JNIEnv * jni, ShaderType shader_type) :
-            shader_type_(shader_type), floats_(), vec2s_(), vec3s_(), vec4s_(), shader_feature_set_(0) {;
+    explicit Material(JNIEnv * jni) :
+            shader_type_(OES_SHADER), floats_(), vec2s_(), vec3s_(), vec4s_(), shader_feature_set_(0) {;
         Mode = NORMAL;
         MovieTexture = new SurfaceTexture(jni);
-        switch (shader_type) {
-        default:
-            vec3s_["color"] = OVR::Vector3f(1.0f, 1.0f, 1.0f);
-            floats_["opacity"] = 1.0f;
-            break;
-        }
+        vec3s_["color"] = OVR::Vector3f(1.0f, 1.0f, 1.0f);
+        floats_["opacity"] = 1.0f;
     }
 
     ~Material() {

@@ -19,7 +19,6 @@ import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 
 import com.eje_c.meganekko.Material;
-import com.eje_c.meganekko.Material.ShaderType;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrFrame;
@@ -47,7 +46,7 @@ public class CameraSceneObject extends SceneObject {
     public CameraSceneObject(Mesh mesh, Camera camera) {
         super(mesh);
 
-        Material material = new Material(ShaderType.OES.ID);
+        Material material = new Material();
         mSurfaceTexture = material.getSurfaceTexture();
 
         getRenderData().setMaterial(material);

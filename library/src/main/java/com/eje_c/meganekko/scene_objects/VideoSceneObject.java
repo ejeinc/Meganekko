@@ -22,7 +22,6 @@ import android.media.MediaPlayer;
 import android.view.Surface;
 
 import com.eje_c.meganekko.Material;
-import com.eje_c.meganekko.Material.ShaderType;
 import com.eje_c.meganekko.MaterialShaderId;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
@@ -46,16 +45,11 @@ public class VideoSceneObject extends SceneObject {
      */
     public VideoSceneObject() {
         // Setup material
-        Material material = new Material(ShaderType.OES.ID);
+        Material material = new Material();
         mSurfaceTexture = material.getSurfaceTexture();
         RenderData renderData = new RenderData();
         renderData.setMaterial(material);
         attachRenderData(renderData);
-    }
-
-    @Deprecated
-    public VideoSceneObject(Mesh mesh, MediaPlayer mediaPlayer, int videoType) {
-        this(mesh, mediaPlayer, VideoType.values()[videoType]);
     }
 
     /**
@@ -66,27 +60,12 @@ public class VideoSceneObject extends SceneObject {
      *                    {@link #loadMesh(com.eje_c.meganekko.AndroidResource)}
      *                    and {@link #createQuad(float, float)}
      * @param mediaPlayer an Android {@link MediaPlayer}
-     * @param videoType   One of the {@linkplain VideoType video type constants}
      * @throws IllegalArgumentException on an invalid {@code videoType} parameter
      */
-    public VideoSceneObject(Mesh mesh, MediaPlayer mediaPlayer, VideoType videoType) {
+    public VideoSceneObject(Mesh mesh, MediaPlayer mediaPlayer) {
         super(mesh);
 
-        MaterialShaderId materialType;
-        switch (videoType) {
-            case MONO:
-                materialType = ShaderType.OES.ID;
-                break;
-            case HORIZONTAL_STEREO:
-                materialType = ShaderType.OESHorizontalStereo.ID;
-                break;
-            case VERTICAL_STEREO:
-                materialType = ShaderType.OESVerticalStereo.ID;
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
-        Material material = new Material(materialType);
+        Material material = new Material();
         mSurfaceTexture = material.getSurfaceTexture();
         getRenderData().setMaterial(material);
 
@@ -170,23 +149,6 @@ public class VideoSceneObject extends SceneObject {
      */
     public long getTimeStamp() {
         return mSurfaceTexture.getTimestamp();
-    }
-
-    public void setVideoType(VideoType videoType) {
-
-        switch (videoType) {
-            case MONO:
-                getRenderData().getMaterial().setShaderType(ShaderType.OES.ID);
-                break;
-            case HORIZONTAL_STEREO:
-                getRenderData().getMaterial().setShaderType(ShaderType.OESHorizontalStereo.ID);
-                break;
-            case VERTICAL_STEREO:
-                getRenderData().getMaterial().setShaderType(ShaderType.OESVerticalStereo.ID);
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
     }
 
     @Override

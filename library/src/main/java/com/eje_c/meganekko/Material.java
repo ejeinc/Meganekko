@@ -73,24 +73,10 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
 
     /**
      * A new holder for a shader's uniforms.
-     *
-     * @param shaderId  Id of a {@linkplain ShaderType stock} or
-     *                  {@linkplain MaterialShaderManager custom} shader.
-     */
-    public Material(MaterialShaderId shaderId) {
-        super(ctor(shaderId.ID));
-        this.shaderId = shaderId;
-        this.mShaderFeatureSet = 0;
-    }
-
-    ;
-
-    /**
-     * A convenience overload: builds a {@link Material} that uses the most
-     * common stock shader, the {@linkplain ShaderType.Texture 'texture'} shader.
      */
     public Material() {
-        this(ShaderType.OES.ID);
+        super(ctor());
+        this.mShaderFeatureSet = 0;
     }
 
     Material(long ptr) {
@@ -422,25 +408,7 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
         setStereoMode(getNative(), stereoMode.ordinal());
     }
 
-    /**
-     * Pre-built shader ids.
-     */
-    public abstract static class ShaderType {
-
-        public abstract static class OES {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(2);
-        }
-
-        public abstract static class OESHorizontalStereo {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(3);
-        }
-
-        public abstract static class OESVerticalStereo {
-            public static final MaterialShaderId ID = new StockMaterialShaderId(4);
-        }
-    }
-
-    private static native long ctor(int shaderType);
+    private static native long ctor();
 
     private static native void setShaderType(long material, long shaderType);
 

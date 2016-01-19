@@ -369,11 +369,7 @@ void Renderer::renderRenderData(RenderData* render_data,
                     Matrix4f mv_matrix(view_matrix * model_matrix);
                     Matrix4f mvp_matrix = projection_matrix * mv_matrix;
                     try {
-                        switch (curr_material->shader_type()) {
-                        case Material::ShaderType::OES_SHADER:
-                            shader_manager->getOESShader()->render(mvp_matrix, render_data, curr_material, eye);
-                            break;
-                        }
+                        shader_manager->getOESShader()->render(mvp_matrix, render_data, curr_material, eye);
                     } catch (std::string error) {
                         __android_log_print(ANDROID_LOG_ERROR, "mgn", "Error detected in Renderer::renderRenderData; error : %s", error.c_str());
                     }

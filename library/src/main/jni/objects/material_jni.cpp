@@ -25,8 +25,8 @@ namespace mgn {
 extern "C" {
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_Material_ctor(JNIEnv * env, jobject obj, jint shader_type) {
-    return reinterpret_cast<jlong>(new Material(env, static_cast<Material::ShaderType>(shader_type)));
+Java_com_eje_1c_meganekko_Material_ctor(JNIEnv * env, jobject obj) {
+    return reinterpret_cast<jlong>(new Material(env));
 }
 
 JNIEXPORT void JNICALL

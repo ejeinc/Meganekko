@@ -22,7 +22,6 @@ import android.graphics.SurfaceTexture;
 import android.view.Surface;
 
 import com.eje_c.meganekko.Material;
-import com.eje_c.meganekko.Material.ShaderType;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrFrame;
@@ -40,7 +39,7 @@ public class CanvasSceneObject extends SceneObject {
 
     public CanvasSceneObject() {
 
-        Material material = new Material(ShaderType.OES.ID);
+        Material material = new Material();
         mSurfaceTexture = material.getSurfaceTexture();
 
         RenderData renderData = new RenderData();
