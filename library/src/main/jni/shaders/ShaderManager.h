@@ -21,22 +21,18 @@
 #define SHADER_MANAGER_H_
 
 #include "objects/HybridObject.h"
-#include "shaders/material/OESHorizontalStereoShader.h"
 #include "shaders/material/OESShader.h"
-#include "shaders/material/OESVerticalStereoShader.h"
 
 namespace mgn {
 class ShaderManager: public HybridObject {
 public:
     ShaderManager() :
             HybridObject(),
-            oes_shader_(), oes_horizontal_stereo_shader_(), oes_vertical_stereo_shader_(),
+            oes_shader_(),
             latest_custom_shader_id_(INITIAL_CUSTOM_SHADER_INDEX) {
     }
     ~ShaderManager() {
         delete oes_shader_;
-        delete oes_horizontal_stereo_shader_;
-        delete oes_vertical_stereo_shader_;
         // We don't delete the custom shaders, as their Java owner-objects will do that for us.
     }
     OESShader* getOESShader() {
@@ -44,18 +40,6 @@ public:
             oes_shader_ = new OESShader();
         }
         return oes_shader_;
-    }
-    OESHorizontalStereoShader* getOESHorizontalStereoShader() {
-        if (!oes_horizontal_stereo_shader_) {
-            oes_horizontal_stereo_shader_ = new OESHorizontalStereoShader();
-        }
-        return oes_horizontal_stereo_shader_;
-    }
-    OESVerticalStereoShader* getOESVerticalStereoShader() {
-        if (!oes_vertical_stereo_shader_) {
-            oes_vertical_stereo_shader_ = new OESVerticalStereoShader();
-        }
-        return oes_vertical_stereo_shader_;
     }
 
 private:
@@ -67,8 +51,6 @@ private:
 private:
     static const int INITIAL_CUSTOM_SHADER_INDEX = 1000;
     OESShader* oes_shader_;
-    OESHorizontalStereoShader* oes_horizontal_stereo_shader_;
-    OESVerticalStereoShader* oes_vertical_stereo_shader_;
     int latest_custom_shader_id_;
 };
 

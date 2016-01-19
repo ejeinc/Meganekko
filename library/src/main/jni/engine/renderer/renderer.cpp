@@ -369,22 +369,9 @@ void Renderer::renderRenderData(RenderData* render_data,
                     Matrix4f mv_matrix(view_matrix * model_matrix);
                     Matrix4f mvp_matrix = projection_matrix * mv_matrix;
                     try {
-                        bool right = render_mask
-                                & RenderData::RenderMaskBit::Right;
                         switch (curr_material->shader_type()) {
                         case Material::ShaderType::OES_SHADER:
-                            shader_manager->getOESShader()->render(mvp_matrix,
-                                    render_data, curr_material, eye);
-                            break;
-                        case Material::ShaderType::OES_HORIZONTAL_STEREO_SHADER:
-                            shader_manager->getOESHorizontalStereoShader()->render(
-                                    mvp_matrix, render_data, curr_material,
-                                    right);
-                            break;
-                        case Material::ShaderType::OES_VERTICAL_STEREO_SHADER:
-                            shader_manager->getOESVerticalStereoShader()->render(
-                                    mvp_matrix, render_data, curr_material,
-                                    right);
+                            shader_manager->getOESShader()->render(mvp_matrix, render_data, curr_material, eye);
                             break;
                         }
                     } catch (std::string error) {
