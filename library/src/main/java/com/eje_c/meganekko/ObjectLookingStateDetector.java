@@ -18,8 +18,6 @@ package com.eje_c.meganekko;
 
 import android.support.annotation.NonNull;
 
-import com.eje_c.meganekko.event.FrameListener;
-
 /**
  * Detects if user is looking at target object automatically.
  * The {@link ObjectLookingStateDetector.ObjectLookingStateListener} callback will notify users
@@ -29,7 +27,7 @@ import com.eje_c.meganekko.event.FrameListener;
  * <li>Register {@code ObjectLookingStateDetector} to {@link MeganekkoActivity#onFrame(FrameListener)} or {@link Scene#onFrame(FrameListener)}.</li>
  * </ul>
  */
-public class ObjectLookingStateDetector implements FrameListener {
+public class ObjectLookingStateDetector {
 
     private final SceneObject mTarget;
     private final ObjectLookingStateListener mListener;
@@ -48,8 +46,7 @@ public class ObjectLookingStateDetector implements FrameListener {
         this.mActivity = activity;
     }
 
-    @Override
-    public void onEvent(VrFrame vrFrame) {
+    public void update(VrFrame vrFrame) {
 
         if (!mTarget.isShown()) {
             if (mLooking) {

@@ -70,12 +70,6 @@ void MeganekkoActivity::OneTimeInit(const char * fromPackage, const char * launc
     onKeyDownMethodId = GetMethodID("onKeyDown", "(II)Z");
     onKeyUpMethodId = GetMethodID("onKeyUp", "(II)Z");
     onKeyMaxMethodId = GetMethodID("onKeyMax", "(II)Z");
-    onSwipeUpMethodId = GetMethodID("onSwipeUp", "()V");
-    onSwipeDownMethodId = GetMethodID("onSwipeDown", "()V");
-    onSwipeForwardMethodId = GetMethodID("onSwipeForward", "()V");
-    onSwipeBackMethodId = GetMethodID("onSwipeBack", "()V");
-    onTouchSingleMethodId = GetMethodID("onTouchSingle", "()V");
-    onTouchDoubleMethodId = GetMethodID("onTouchDouble", "()V");
 }
 
 void MeganekkoActivity::OneTimeShutdown()
@@ -113,23 +107,6 @@ Matrix4f MeganekkoActivity::Frame( const VrFrame & vrFrame )
     if (vrFrame.DeviceStatus.DeviceIsDocked)
     {
         camera->transform()->setRotation(vrFrame.Tracking.HeadPose.Pose.Orientation);
-    }
-
-    // Input handling
-    int buttonPressed = vrFrame.Input.buttonPressed;
-
-    if (buttonPressed & OVR::JoyButton::BUTTON_SWIPE_UP) {
-        jni->CallVoidMethod(app->GetJava()->ActivityObject, onSwipeUpMethodId);
-    } else if (buttonPressed & OVR::JoyButton::BUTTON_SWIPE_DOWN) {
-        jni->CallVoidMethod(app->GetJava()->ActivityObject, onSwipeDownMethodId);
-    } else if (buttonPressed & OVR::JoyButton::BUTTON_SWIPE_FORWARD) {
-        jni->CallVoidMethod(app->GetJava()->ActivityObject, onSwipeForwardMethodId);
-    } else if (buttonPressed & OVR::JoyButton::BUTTON_SWIPE_BACK) {
-        jni->CallVoidMethod(app->GetJava()->ActivityObject, onSwipeBackMethodId);
-    } else if (buttonPressed & OVR::JoyButton::BUTTON_TOUCH_SINGLE) {
-        jni->CallVoidMethod(app->GetJava()->ActivityObject, onTouchSingleMethodId);
-    } else if (buttonPressed & OVR::JoyButton::BUTTON_TOUCH_DOUBLE) {
-        jni->CallVoidMethod(app->GetJava()->ActivityObject, onTouchDoubleMethodId);
     }
 
     jni->CallVoidMethod(app->GetJava()->ActivityObject, frameMethodId, (jlong)(intptr_t)&vrFrame);

@@ -65,7 +65,7 @@ public class CanvasSceneObject extends SceneObject {
 
     @SuppressLint("WrongCall")
     @Override
-    public void onEvent(VrFrame vrFrame) {
+    public void update(VrFrame vrFrame) {
 
         if (mOnDrawListener != null && mOnDrawListener.isDirty()) {
 
@@ -82,7 +82,7 @@ public class CanvasSceneObject extends SceneObject {
             mSurfaceTexture.updateTexImage();
         }
 
-        super.onEvent(vrFrame);
+        super.update(vrFrame);
     }
 
     /**

@@ -86,10 +86,10 @@ public class CameraSceneObject extends SceneObject {
     }
 
     @Override
-    public void onEvent(VrFrame vrFrame) {
+    public void update(VrFrame vrFrame) {
         if (!mPaused) {
             mSurfaceTexture.updateTexImage();
         }
-        super.onEvent(vrFrame);
+        super.update(vrFrame);
     }
 }

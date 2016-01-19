@@ -70,12 +70,6 @@ private:
     jmethodID           onKeyDownMethodId;
     jmethodID           onKeyUpMethodId;
     jmethodID           onKeyMaxMethodId;
-    jmethodID           onSwipeUpMethodId;
-    jmethodID           onSwipeDownMethodId;
-    jmethodID           onSwipeForwardMethodId;
-    jmethodID           onSwipeBackMethodId;
-    jmethodID           onTouchSingleMethodId;
-    jmethodID           onTouchDoubleMethodId;
 
     std::vector<SceneObject*> sceneObjects;
 

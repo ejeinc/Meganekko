@@ -32,6 +32,20 @@ public class MainActivity extends MeganekkoActivity {
                 } else if (JoyButton.contains(vrFrame.getButtonPressed(), JoyButton.BUTTON_TOUCH_DOUBLE)) {
                     meganekko.recenter();
                 }
+
+                if (JoyButton.contains(vrFrame.getButtonPressed(), JoyButton.BUTTON_SWIPE_UP)) {
+                    ObjectAnimator anim = ObjectAnimator.ofFloat(obj.getTransform(), "positionY", obj.getTransform().getPositionY(), obj.getTransform().getPositionY() + 1.0f);
+                    meganekko.animate(anim, null);
+                } else if (JoyButton.contains(vrFrame.getButtonPressed(), JoyButton.BUTTON_SWIPE_DOWN)) {
+                    ObjectAnimator anim = ObjectAnimator.ofFloat(obj.getTransform(), "positionY", obj.getTransform().getPositionY(), obj.getTransform().getPositionY() - 1.0f);
+                    meganekko.animate(anim, null);
+                } else if (JoyButton.contains(vrFrame.getButtonPressed(), JoyButton.BUTTON_SWIPE_FORWARD)) {
+                    ObjectAnimator anim = ObjectAnimator.ofFloat(obj.getTransform(), "positionZ", obj.getTransform().getPositionZ(), obj.getTransform().getPositionZ() - 1.0f);
+                    meganekko.animate(anim, null);
+                } else if (JoyButton.contains(vrFrame.getButtonPressed(), JoyButton.BUTTON_SWIPE_BACK)) {
+                    ObjectAnimator anim = ObjectAnimator.ofFloat(obj.getTransform(), "positionZ", obj.getTransform().getPositionZ(), obj.getTransform().getPositionZ() + 1.0f);
+                    meganekko.animate(anim, null);
+                }
             }
 
             @Override

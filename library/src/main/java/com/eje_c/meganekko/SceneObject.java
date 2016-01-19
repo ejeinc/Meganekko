@@ -18,7 +18,6 @@
 package com.eje_c.meganekko;
 
 import com.eje_c.meganekko.RenderData.RenderMaskBit;
-import com.eje_c.meganekko.event.FrameListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,7 +38,7 @@ import java.util.List;
  * {@link RenderData} has a {@link Mesh GL mesh} that defines its geometry, and
  * a {@link Material} that defines its surface.
  */
-public class SceneObject extends HybridObject implements FrameListener {
+public class SceneObject extends HybridObject {
 
     private final List<SceneObject> mChildren = new ArrayList<>();
     private int mId;
@@ -465,11 +464,76 @@ public class SceneObject extends HybridObject implements FrameListener {
         return true;
     }
 
-    @Override
-    public void onEvent(VrFrame vrFrame) {
+    public void update(VrFrame vrFrame) {
         for (SceneObject child : mChildren) {
-            child.onEvent(vrFrame);
+            child.update(vrFrame);
         }
+    }
+
+    public boolean onKeyShortPress(int keyCode, int repeatCount) {
+
+        for (SceneObject child : mChildren) {
+            if (child.onKeyShortPress(keyCode, repeatCount)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean onKeyDoubleTap(int keyCode, int repeatCount) {
+
+        for (SceneObject child : mChildren) {
+            if (child.onKeyDoubleTap(keyCode, repeatCount)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean onKeyLongPress(int keyCode, int repeatCount) {
+
+        for (SceneObject child : mChildren) {
+            if (child.onKeyLongPress(keyCode, repeatCount)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean onKeyDown(int keyCode, int repeatCount) {
+
+        for (SceneObject child : mChildren) {
+            if (child.onKeyDown(keyCode, repeatCount)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean onKeyUp(int keyCode, int repeatCount) {
+
+        for (SceneObject child : mChildren) {
+            if (child.onKeyUp(keyCode, repeatCount)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean onKeyMax(int keyCode, int repeatCount) {
+
+        for (SceneObject child : mChildren) {
+            if (child.onKeyMax(keyCode, repeatCount)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static native void attachTransform(long sceneObject, long transform);

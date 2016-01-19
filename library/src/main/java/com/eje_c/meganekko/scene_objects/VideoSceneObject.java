@@ -190,11 +190,11 @@ public class VideoSceneObject extends SceneObject {
     }
 
     @Override
-    public void onEvent(VrFrame vrFrame) {
+    public void update(VrFrame vrFrame) {
         if (mMediaPlayer != null && mActive) {
             mSurfaceTexture.updateTexImage();
         }
-        super.onEvent(vrFrame);
+        super.update(vrFrame);
     }
 
     /**
