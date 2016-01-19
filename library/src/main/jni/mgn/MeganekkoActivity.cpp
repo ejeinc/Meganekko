@@ -20,10 +20,9 @@
 #include <VrApi.h>
 #include <VrApi_Helpers.h>
 
-#include "objects/scene.h"
-#include "objects/scene_object.h"
+#include "objects/Scene.h"
+#include "objects/SceneObject.h"
 #include "Input.h"
-#include "../engine/renderer/renderer.h"
 
 namespace mgn
 {

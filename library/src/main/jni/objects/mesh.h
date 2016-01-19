@@ -29,8 +29,8 @@
 #include "GLES3/gl3.h"
 #endif
 
-#include "objects/hybrid_object.h"
-#include "objects/material.h"
+#include "objects/HybridObject.h"
+#include "objects/Material.h"
 
 #include "engine/memory/gl_delete.h"
 

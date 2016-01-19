@@ -18,9 +18,9 @@
  * Holds left, right cameras and reacts to the rotation sensor.
  ***************************************************************************/
 
-#include "camera.h"
+#include "Camera.h"
 
-#include "objects/scene_object.h"
+#include "objects/SceneObject.h"
 
 namespace mgn {
 

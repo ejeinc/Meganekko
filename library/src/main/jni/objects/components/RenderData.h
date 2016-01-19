@@ -23,8 +23,8 @@
 #include <memory>
 #include <vector>
 
-#include "objects/components/component.h"
-#include "objects/render_pass.h"
+#include "objects/components/Component.h"
+#include "objects/RenderPass.h"
 #include "util/gvr_gl.h"
 
 namespace mgn {

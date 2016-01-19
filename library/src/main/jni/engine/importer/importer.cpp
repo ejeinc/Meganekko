@@ -17,7 +17,7 @@
  * Imports a scene file using Assimp.
  ***************************************************************************/
 
-#include "importer.h"
+#include "Importer.h"
 
 namespace mgn {
 AssimpImporter* Importer::readFileFromAssets(char* buffer, long size,

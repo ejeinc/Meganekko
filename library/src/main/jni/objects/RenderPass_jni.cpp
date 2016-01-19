@@ -19,8 +19,8 @@
 
 #include <jni.h>
 
-#include "render_pass.h"
-#include "objects/material.h"
+#include "RenderPass.h"
+#include "objects/Material.h"
 
 namespace mgn {
 

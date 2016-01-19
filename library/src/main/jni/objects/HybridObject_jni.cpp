@@ -15,7 +15,7 @@
 
 #include <jni.h>
 
-#include "hybrid_object.h"
+#include "HybridObject.h"
 
 namespace mgn {
 extern "C" {

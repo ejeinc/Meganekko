@@ -20,7 +20,7 @@
 
 #include <jni.h>
 
-#include "assimp_importer.h"
+#include "AssimpImporter.h"
 
 namespace mgn {
 extern "C" {

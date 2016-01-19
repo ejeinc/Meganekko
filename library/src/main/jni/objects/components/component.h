@@ -22,7 +22,7 @@
 
 #include <memory>
 
-#include "objects/hybrid_object.h"
+#include "objects/HybridObject.h"
 
 namespace mgn {
 class SceneObject;

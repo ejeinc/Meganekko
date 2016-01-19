@@ -20,7 +20,7 @@
 
 #include <jni.h>
 
-#include "mesh.h"
+#include "Mesh.h"
 
 #include "util/gvr_log.h"
 #include "android/asset_manager_jni.h"

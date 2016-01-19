@@ -26,7 +26,7 @@
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 
-#include "engine/importer/assimp_importer.h"
+#include "engine/importer/AssimpImporter.h"
 
 namespace mgn {
 class Importer {

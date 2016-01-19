@@ -17,9 +17,9 @@
  * Containing data about how to position an object.
  ***************************************************************************/
 
-#include "transform.h"
+#include "Transform.h"
 
-#include "objects/scene_object.h"
+#include "objects/SceneObject.h"
 
 namespace mgn {
 Transform::Transform() :

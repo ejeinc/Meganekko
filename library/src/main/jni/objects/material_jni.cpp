@@ -19,7 +19,7 @@
 
 #include <jni.h>
 
-#include "material.h"
+#include "Material.h"
 
 namespace mgn {
 extern "C" {

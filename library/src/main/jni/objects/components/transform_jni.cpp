@@ -20,7 +20,7 @@
 
 #include <jni.h>
 
-#include "transform.h"
+#include "Transform.h"
 #include "util/gvr_log.h"
 
 namespace mgn {

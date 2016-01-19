@@ -19,7 +19,7 @@
 
 #include <jni.h>
 
-#include "scene.h"
+#include "Scene.h"
 
 namespace mgn {
 extern "C" {

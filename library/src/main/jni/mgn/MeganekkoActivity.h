@@ -28,8 +28,8 @@
 #include "Input.h"
 #include "Android/JniUtils.h"
 #include "SoundEffectContext.h"
-#include "objects/scene.h"
-#include "shaders/shader_manager.h"
+#include "objects/Scene.h"
+#include "shaders/ShaderManager.h"
 
 using namespace OVR;
 

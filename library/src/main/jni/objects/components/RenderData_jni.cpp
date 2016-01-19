@@ -19,9 +19,9 @@
 
 #include <jni.h>
 
-#include "render_data.h"
+#include "RenderData.h"
 #include "objects/mesh.h"
-#include "objects/material.h"
+#include "objects/Material.h"
 
 namespace mgn {
 

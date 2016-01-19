@@ -17,11 +17,11 @@
  * Objects in a scene.
  ***************************************************************************/
 
-#include "scene_object.h"
+#include "SceneObject.h"
 
-#include "objects/components/render_data.h"
+#include "objects/components/RenderData.h"
 #include "util/gvr_log.h"
-#include "mesh.h"
+#include "Mesh.h"
 
 namespace mgn {
 SceneObject::SceneObject(JNIEnv * jni, jobject javaObject) :

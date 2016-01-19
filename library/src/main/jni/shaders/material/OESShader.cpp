@@ -19,11 +19,11 @@
  * Renders a GL_TEXTURE_EXTERNAL_OES texture.
  ***************************************************************************/
 
-#include "oes_shader.h"
+#include "OESShader.h"
 
-#include "objects/material.h"
+#include "objects/Material.h"
 #include "objects/mesh.h"
-#include "objects/components/render_data.h"
+#include "objects/components/RenderData.h"
 #include "util/gvr_gl.h"
 #include "SurfaceTexture.h"
 

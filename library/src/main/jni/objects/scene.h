@@ -25,8 +25,8 @@
 #include <vector>
 
 
-#include "objects/hybrid_object.h"
-#include "objects/camera.h"
+#include "objects/HybridObject.h"
+#include "objects/Camera.h"
 #include "engine/renderer/renderer.h"
 
 namespace mgn {

@@ -19,7 +19,7 @@
 
 #include <jni.h>
 
-#include "scene_object.h"
+#include "SceneObject.h"
 #include "util/gvr_log.h"
 
 namespace mgn {

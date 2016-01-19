@@ -21,7 +21,7 @@
 #ifndef RECYCLABLE_OBJECT_H_
 #define RECYCLABLE_OBJECT_H_
 
-#include "objects/hybrid_object.h"
+#include "objects/HybridObject.h"
 
 #include "util/gvr_log.h"
 

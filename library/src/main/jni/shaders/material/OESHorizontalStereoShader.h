@@ -17,11 +17,11 @@
 
 
 /***************************************************************************
- * Renders a vertically split GL_TEXTURE_EXTERNAL_OES texture.
+ * Renders a horizontally split GL_TEXTURE_EXTERNAL_OES texture.
  ***************************************************************************/
 
-#ifndef OES_VERTICAL_STEREO_SHADER_H_
-#define OES_VERTICAL_STEREO_SHADER_H_
+#ifndef OES_HORIZONTAL_STEREO_SHADER_H_
+#define OES_HORIZONTAL_STEREO_SHADER_H_
 
 #include <memory>
 #include "Kernel/OVR_GlUtils.h"
@@ -31,10 +31,11 @@
 #include "GLES3/gl3.h"
 #endif
 #include <GLES2/gl2ext.h>
+
 #include "Kernel/OVR_Math.h"
 #include "GlProgram.h"
 
-#include "objects/recyclable_object.h"
+#include "objects/RecyclableObject.h"
 
 using namespace OVR;
 
@@ -42,22 +43,22 @@ namespace mgn {
 class RenderData;
 class Material;
 
-class OESVerticalStereoShader: public RecyclableObject {
+class OESHorizontalStereoShader: public RecyclableObject {
 public:
-    OESVerticalStereoShader();
-    ~OESVerticalStereoShader();
+    OESHorizontalStereoShader();
+    ~OESHorizontalStereoShader();
     void recycle();
     void render(const OVR::Matrix4f& mvp_matrix, RenderData* render_data, Material* material, bool right);
 
 private:
-    OESVerticalStereoShader(
-            const OESVerticalStereoShader& oes_vertical_stereo_shader);
-    OESVerticalStereoShader(
-            OESVerticalStereoShader&& oes_vertical_stereo_shader);
-    OESVerticalStereoShader& operator=(
-            const OESVerticalStereoShader& oes_vertical_stereo_shader);
-    OESVerticalStereoShader& operator=(
-            OESVerticalStereoShader&& oes_vertical_stereo_shader);
+    OESHorizontalStereoShader(
+            const OESHorizontalStereoShader& oes_horizontal_stereo_shader);
+    OESHorizontalStereoShader(
+            OESHorizontalStereoShader&& oes_horizontal_stereo_shader);
+    OESHorizontalStereoShader& operator=(
+            const OESHorizontalStereoShader& oes_horizontal_stereo_shader);
+    OESHorizontalStereoShader& operator=(
+            OESHorizontalStereoShader&& oes_horizontal_stereo_shader);
 
 private:
     GlProgram program_;

@@ -20,7 +20,7 @@
 #ifndef RENDER_PASS_H_
 #define RENDER_PASS_H_
 
-#include "objects/hybrid_object.h"
+#include "objects/HybridObject.h"
 
 namespace mgn {
 class Material;

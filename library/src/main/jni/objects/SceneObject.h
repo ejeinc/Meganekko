@@ -24,7 +24,7 @@
 #include <vector>
 #include <memory>
 
-#include "objects/hybrid_object.h"
+#include "objects/HybridObject.h"
 #include "objects/components/transform.h"
 #include "util/gvr_gl.h"
 

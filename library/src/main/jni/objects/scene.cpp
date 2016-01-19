@@ -17,9 +17,9 @@
  * Holds scene objects. Can be used by engines.
  ***************************************************************************/
 
-#include "scene.h"
+#include "Scene.h"
 
-#include "objects/scene_object.h"
+#include "objects/SceneObject.h"
 
 namespace mgn {
 Scene::Scene(JNIEnv * jni, jobject javaObject) :

@@ -20,7 +20,7 @@
 
 #include <jni.h>
 
-#include "importer.h"
+#include "Importer.h"
 
 #include <fstream>
 

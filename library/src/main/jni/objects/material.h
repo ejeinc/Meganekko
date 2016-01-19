@@ -30,7 +30,7 @@
 #include <GLES3/gl3ext.h>
 #endif
 
-#include "objects/hybrid_object.h"
+#include "objects/HybridObject.h"
 
 #include "Kernel/OVR_Math.h"
 #include "SurfaceTexture.h"

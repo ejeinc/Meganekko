@@ -16,14 +16,14 @@
  */
 
 /***************************************************************************
- * Renders a vertically split GL_TEXTURE_EXTERNAL_OES texture.
+ * Renders a horizontally split GL_TEXTURE_EXTERNAL_OES texture.
  ***************************************************************************/
 
-#include "oes_vertical_stereo_shader.h"
+#include "OESHorizontalStereoShader.h"
 
-#include "objects/material.h"
+#include "objects/Material.h"
 #include "objects/mesh.h"
-#include "objects/components/render_data.h"
+#include "objects/components/RenderData.h"
 #include "util/gvr_gl.h"
 
 namespace mgn {
@@ -40,18 +40,18 @@ static const char FRAGMENT_SHADER[] =
         "#extension GL_OES_EGL_image_external : require\n"
                 "precision highp float;\n"
                 "uniform samplerExternalOES u_texture;\n"
-                "uniform vec3 u_color;\n"
                 "uniform float u_opacity;\n"
+                "uniform vec3 u_color;\n"
                 "uniform int u_right;\n"
                 "varying vec2 v_tex_coord;\n"
                 "void main()\n"
                 "{\n"
-                "  vec2 tex_coord = vec2(v_tex_coord.x, 0.5 * (v_tex_coord.y + float(u_right)));\n"
+                "  vec2 tex_coord = vec2(0.5 * (v_tex_coord.x + float(u_right)), v_tex_coord.y);\n"
                 "  vec4 color = texture2D(u_texture, tex_coord);\n"
                 "  gl_FragColor = vec4(color.r * u_color.r * u_opacity, color.g * u_color.g * u_opacity, color.b * u_color.b * u_opacity, color.a * u_opacity);\n"
                 "}\n";
 
-OESVerticalStereoShader::OESVerticalStereoShader() :
+OESHorizontalStereoShader::OESHorizontalStereoShader() :
         a_position_(0), a_tex_coord_(0), u_mvp_(0), u_texture_(0), u_color_(
                 0), u_opacity_(0), u_right_(0) {
     program_ = BuildProgram(VERTEX_SHADER, FRAGMENT_SHADER);
@@ -64,15 +64,15 @@ OESVerticalStereoShader::OESVerticalStereoShader() :
     u_right_ = glGetUniformLocation(program_.program, "u_right");
 }
 
-OESVerticalStereoShader::~OESVerticalStereoShader() {
+OESHorizontalStereoShader::~OESHorizontalStereoShader() {
     recycle();
 }
 
-void OESVerticalStereoShader::recycle() {
+void OESHorizontalStereoShader::recycle() {
     DeleteProgram(program_);
 }
 
-void OESVerticalStereoShader::render(const OVR::Matrix4f& mvp_matrix,
+void OESHorizontalStereoShader::render(const OVR::Matrix4f& mvp_matrix,
         RenderData* render_data, Material* material, bool right) {
     Mesh* mesh = render_data->mesh();
     OVR::Vector3f color = material->getVec3("color");
@@ -80,7 +80,7 @@ void OESVerticalStereoShader::render(const OVR::Matrix4f& mvp_matrix,
 
     mesh->setVertexLoc(a_position_);
     mesh->setTexCoordLoc(a_tex_coord_);
-    mesh->generateVAO(Material::OES_VERTICAL_STEREO_SHADER);
+    mesh->generateVAO(Material::UNLIT_HORIZONTAL_STEREO_SHADER);
 
     glUseProgram(program_.program);
 
@@ -92,12 +92,12 @@ void OESVerticalStereoShader::render(const OVR::Matrix4f& mvp_matrix,
     glUniform1f(u_opacity_, opacity);
     glUniform1i(u_right_, right ? 1 : 0);
 
-    glBindVertexArray(mesh->getVAOId(Material::OES_VERTICAL_STEREO_SHADER));
+    glBindVertexArray(mesh->getVAOId(Material::UNLIT_HORIZONTAL_STEREO_SHADER));
     glDrawElements(GL_TRIANGLES, mesh->triangles().size(), GL_UNSIGNED_SHORT,
             0);
     glBindVertexArray(0);
 
-    GL_CheckErrors("OESVerticalStereoShader::render");
+    GL_CheckErrors("OESHorizontalStereoShader::render");
 }
 
 }

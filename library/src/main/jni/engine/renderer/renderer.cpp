@@ -17,19 +17,19 @@
  * Renders a scene, a screen.
  ***************************************************************************/
 
-#include "renderer.h"
+#include "Renderer.h"
 
-#include "objects/material.h"
-#include "objects/scene.h"
-#include "objects/scene_object.h"
-#include "objects/components/render_data.h"
-#include "shaders/shader_manager.h"
+#include "objects/Material.h"
+#include "objects/Scene.h"
+#include "objects/components/RenderData.h"
+#include "shaders/ShaderManager.h"
 #include "util/gvr_gl.h"
 #include "util/gvr_log.h"
 
 using namespace OVR;
 
 namespace mgn {
+class SceneObject;
 
 void Renderer::RenderEyeView(JNIEnv * jni, Scene* scene, std::vector<SceneObject*> scene_objects, ShaderManager* shader_manager,
         const Matrix4f &eyeViewMatrix, const Matrix4f &eyeProjectionMatrix, const Matrix4f &eyeViewProjection, int eye) {

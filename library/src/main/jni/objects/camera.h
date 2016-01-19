@@ -18,7 +18,7 @@
 
 #include "Kernel/OVR_Math.h"
 
-#include "objects/scene_object.h"
+#include "objects/SceneObject.h"
 
 namespace mgn {
 

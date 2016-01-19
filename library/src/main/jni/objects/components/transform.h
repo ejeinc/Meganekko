@@ -23,8 +23,8 @@
 
 #include <memory>
 
-#include "objects/lazy.h"
-#include "objects/components/component.h"
+#include "objects/Lazy.h"
+#include "objects/components/Component.h"
 
 #include "Kernel/OVR_Math.h"
 

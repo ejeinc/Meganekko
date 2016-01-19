@@ -19,7 +19,7 @@
 
 #include <jni.h>
 
-#include "camera.h"
+#include "Camera.h"
 #include "util/convert.h"
 #include "util/gvr_java_stack_trace.h"
 

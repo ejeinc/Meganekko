@@ -17,13 +17,14 @@
 
 
 /***************************************************************************
- * Renders a horizontally split GL_TEXTURE_EXTERNAL_OES texture.
+ * Renders a GL_TEXTURE_EXTERNAL_OES texture.
  ***************************************************************************/
 
-#ifndef OES_HORIZONTAL_STEREO_SHADER_H_
-#define OES_HORIZONTAL_STEREO_SHADER_H_
+#ifndef OES_SHADER_H_
+#define OES_SHADER_H_
 
 #include <memory>
+#include "GlProgram.h"
 #include "Kernel/OVR_GlUtils.h"
 
 #define __gl2_h_
@@ -31,11 +32,9 @@
 #include "GLES3/gl3.h"
 #endif
 #include <GLES2/gl2ext.h>
-
 #include "Kernel/OVR_Math.h"
-#include "GlProgram.h"
 
-#include "objects/recyclable_object.h"
+#include "objects/RecyclableObject.h"
 
 using namespace OVR;
 
@@ -43,33 +42,24 @@ namespace mgn {
 class RenderData;
 class Material;
 
-class OESHorizontalStereoShader: public RecyclableObject {
+class OESShader: public RecyclableObject {
 public:
-    OESHorizontalStereoShader();
-    ~OESHorizontalStereoShader();
+    OESShader();
+    ~OESShader();
     void recycle();
-    void render(const OVR::Matrix4f& mvp_matrix, RenderData* render_data, Material* material, bool right);
+    void render(const Matrix4f& mvpMatrix, RenderData* renderData, Material* material);
 
 private:
-    OESHorizontalStereoShader(
-            const OESHorizontalStereoShader& oes_horizontal_stereo_shader);
-    OESHorizontalStereoShader(
-            OESHorizontalStereoShader&& oes_horizontal_stereo_shader);
-    OESHorizontalStereoShader& operator=(
-            const OESHorizontalStereoShader& oes_horizontal_stereo_shader);
-    OESHorizontalStereoShader& operator=(
-            OESHorizontalStereoShader&& oes_horizontal_stereo_shader);
+    OESShader(const OESShader& oes_shader);
+    OESShader(OESShader&& oes_shader);
+    OESShader& operator=(const OESShader& oes_shader);
+    OESShader& operator=(OESShader&& oes_shader);
 
 private:
-    GlProgram program_;
-    GLuint a_position_;
-    GLuint a_tex_coord_;
-    GLuint u_mvp_;
-    GLuint u_texture_;
-    GLuint u_color_;
-    GLuint u_opacity_;
-    GLuint u_right_;
+    GlProgram program;
+    GLuint opacity;
 };
 
 }
+
 #endif

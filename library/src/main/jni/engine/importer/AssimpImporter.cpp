@@ -17,7 +17,7 @@
  * Contains a ai_scene of Assimp.
  ***************************************************************************/
 
-#include "assimp_importer.h"
+#include "AssimpImporter.h"
 
 #include "objects/mesh.h"
 

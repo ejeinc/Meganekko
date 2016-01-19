@@ -17,14 +17,13 @@
 
 
 /***************************************************************************
- * Renders a GL_TEXTURE_EXTERNAL_OES texture.
+ * Renders a vertically split GL_TEXTURE_EXTERNAL_OES texture.
  ***************************************************************************/
 
-#ifndef OES_SHADER_H_
-#define OES_SHADER_H_
+#ifndef OES_VERTICAL_STEREO_SHADER_H_
+#define OES_VERTICAL_STEREO_SHADER_H_
 
 #include <memory>
-#include "GlProgram.h"
 #include "Kernel/OVR_GlUtils.h"
 
 #define __gl2_h_
@@ -33,8 +32,9 @@
 #endif
 #include <GLES2/gl2ext.h>
 #include "Kernel/OVR_Math.h"
+#include "GlProgram.h"
 
-#include "objects/recyclable_object.h"
+#include "objects/RecyclableObject.h"
 
 using namespace OVR;
 
@@ -42,24 +42,33 @@ namespace mgn {
 class RenderData;
 class Material;
 
-class OESShader: public RecyclableObject {
+class OESVerticalStereoShader: public RecyclableObject {
 public:
-    OESShader();
-    ~OESShader();
+    OESVerticalStereoShader();
+    ~OESVerticalStereoShader();
     void recycle();
-    void render(const Matrix4f& mvpMatrix, RenderData* renderData, Material* material);
+    void render(const OVR::Matrix4f& mvp_matrix, RenderData* render_data, Material* material, bool right);
 
 private:
-    OESShader(const OESShader& oes_shader);
-    OESShader(OESShader&& oes_shader);
-    OESShader& operator=(const OESShader& oes_shader);
-    OESShader& operator=(OESShader&& oes_shader);
+    OESVerticalStereoShader(
+            const OESVerticalStereoShader& oes_vertical_stereo_shader);
+    OESVerticalStereoShader(
+            OESVerticalStereoShader&& oes_vertical_stereo_shader);
+    OESVerticalStereoShader& operator=(
+            const OESVerticalStereoShader& oes_vertical_stereo_shader);
+    OESVerticalStereoShader& operator=(
+            OESVerticalStereoShader&& oes_vertical_stereo_shader);
 
 private:
-    GlProgram program;
-    GLuint opacity;
+    GlProgram program_;
+    GLuint a_position_;
+    GLuint a_tex_coord_;
+    GLuint u_mvp_;
+    GLuint u_texture_;
+    GLuint u_color_;
+    GLuint u_opacity_;
+    GLuint u_right_;
 };
 
 }
-
 #endif

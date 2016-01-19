@@ -20,9 +20,9 @@
 #include <jni.h>
 #include <VrApi.h>
 #include <VrApi_LocalPrefs.h>
-#include "objects/scene.h"
-#include "objects/scene_object.h"
-#include "objects/components/render_data.h"
+#include "objects/Scene.h"
+#include "objects/SceneObject.h"
+#include "objects/components/RenderData.h"
 #include "Kernel/OVR_Geometry.h"
 
 namespace mgn

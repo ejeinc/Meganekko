@@ -17,7 +17,7 @@
  * The mesh for rendering.
  ***************************************************************************/
 
-#include "mesh.h"
+#include "Mesh.h"
 
 #include <limits>
 

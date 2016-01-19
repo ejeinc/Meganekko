@@ -20,10 +20,10 @@
 #ifndef SHADER_MANAGER_H_
 #define SHADER_MANAGER_H_
 
-#include "objects/hybrid_object.h"
-#include "shaders/material/oes_horizontal_stereo_shader.h"
-#include "shaders/material/oes_shader.h"
-#include "shaders/material/oes_vertical_stereo_shader.h"
+#include "objects/HybridObject.h"
+#include "shaders/material/OESHorizontalStereoShader.h"
+#include "shaders/material/OESShader.h"
+#include "shaders/material/OESVerticalStereoShader.h"
 #include "util/gvr_log.h"
 
 namespace mgn {
