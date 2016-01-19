@@ -115,12 +115,20 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
     protected void onPause() {
         super.onPause();
         mDockEventReceiver.stop();
+
+        if (meganekkoApp != null) {
+            meganekkoApp.onPause();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mDockEventReceiver.start();
+
+        if (meganekkoApp != null) {
+            meganekkoApp.onResume();
+        }
     }
 
     /**
@@ -240,6 +248,7 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
      *
      * @return {@code VrFrame}
      */
+    @Override
     public VrFrame getVrFrame() {
         return vrFrame;
     }

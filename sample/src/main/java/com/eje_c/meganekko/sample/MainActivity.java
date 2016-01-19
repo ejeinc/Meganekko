@@ -51,6 +51,14 @@ public class MainActivity extends MeganekkoActivity {
             @Override
             public void shutdown(Meganekko meganekko) {
             }
+
+            @Override
+            public void onResume() {
+            }
+
+            @Override
+            public void onPause() {
+            }
         };
     }
 }

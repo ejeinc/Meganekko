@@ -6,4 +6,8 @@ public interface MeganekkoApp {
     void update(Meganekko meganekko, VrFrame vrFrame);
 
     void shutdown(Meganekko meganekko);
+
+    void onResume();
+
+    void onPause();
 }

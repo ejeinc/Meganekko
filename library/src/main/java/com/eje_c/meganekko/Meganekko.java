@@ -25,5 +25,7 @@ public interface Meganekko {
 
     Context getContext();
 
+    VrFrame getVrFrame();
+
     boolean isLookingAt(SceneObject object);
 }
