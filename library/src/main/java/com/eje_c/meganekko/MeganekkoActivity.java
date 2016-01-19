@@ -20,6 +20,7 @@ package com.eje_c.meganekko;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -383,5 +384,10 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
                 if (callback != null) runOnGlThread(callback);
             }
         });
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
     }
 }

@@ -1,7 +1,6 @@
 package com.eje_c.meganekko.sample;
 
 import android.animation.ObjectAnimator;
-import android.content.Context;
 
 import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoActivity;
@@ -20,7 +19,7 @@ public class MainActivity extends MeganekkoActivity {
         return new MeganekkoApp() {
             @Override
             public void init(Meganekko meganekko) {
-                setSceneFromXML(R.xml.scene);
+                meganekko.setSceneFromXML(R.xml.scene);
                 obj = findObjectById(R.id.myObject);
             }
 
@@ -53,10 +52,5 @@ public class MainActivity extends MeganekkoActivity {
             public void shutdown(Meganekko meganekko) {
             }
         };
-    }
-
-    @Override
-    public Context getContext() {
-        return this;
     }
 }
