@@ -32,10 +32,11 @@ namespace mgn {
 static const char VERTEX_SHADER[] =
         "attribute vec4 Position;\n"
         "attribute vec2 TexCoord;\n"
-        "uniform mat4 Mvpm;\n"
+        "uniform highp mat4 Mvpm;\n"
+        "uniform highp mat4 Texm;\n"
         "varying highp vec2 oTexCoord;\n"
         "void main() {\n"
-        "  oTexCoord = TexCoord;\n"
+        "  oTexCoord = vec2(Texm * vec4(TexCoord, 0, 1));\n"
         "  gl_Position = Mvpm * Position;\n"
         "}\n";
 
@@ -64,8 +65,8 @@ void OESShader::recycle() {
     DeleteProgram(program);
 }
 
-void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Material * material) {
-    
+void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Material * material, const int eye) {
+
     Mesh * mesh = renderData->mesh();
     Vector3f color = material->getVec3("color");
 
@@ -76,6 +77,7 @@ void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Mate
     glUseProgram(program.program);
 
     glUniformMatrix4fv(program.uMvp, 1, GL_TRUE, mvpMatrix.M[0]);
+    glUniformMatrix4fv(program.uTexm, 1, GL_TRUE, TexmForVideo(material->GetStereoMode(), eye).M[ 0 ] );
     glActiveTexture (GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_EXTERNAL_OES, material->getId());
     glUniform3f(program.uColor, color.x, color.y, color.z);
@@ -91,5 +93,69 @@ void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Mate
     GL_CheckErrors("OESShader::render");
 }
 
+Matrix4f OESShader::TexmForVideo(const Material::StereoMode stereoMode, const int eye )
+{
+    switch (stereoMode) {
+        case Material::StereoMode::TOP_BOTTOM:
+            return eye ?
+               Matrix4f(
+                       1, 0, 0, 0,
+                       0, 0.5f, 0, 0.5f,
+                       0, 0, 1, 0,
+                       0, 0, 0, 1 )
+                   :
+               Matrix4f(
+                       1, 0, 0, 0,
+                       0, 0.5f, 0, 0,
+                       0, 0, 1, 0,
+                       0, 0, 0, 1 );
+
+        case Material::StereoMode::BOTTOM_TOP:
+            return ( !eye ) ?
+               Matrix4f(
+                       1, 0, 0, 0,
+                       0, 0.5f, 0, 0.5f,
+                       0, 0, 1, 0,
+                       0, 0, 0, 1 )
+                        :
+               Matrix4f(
+                       1, 0, 0, 0,
+                       0, 0.5f, 0, 0,
+                       0, 0, 1, 0,
+                       0, 0, 0, 1 );
+
+        case Material::StereoMode::LEFT_RIGHT:
+            return eye ?
+               Matrix4f(
+                       0.5f, 0, 0, 0,
+                       0, 1, 0, 0,
+                       0, 0, 1, 0,
+                       0, 0, 0, 1 )
+                   :
+               Matrix4f(
+                       0.5f, 0, 0, 0.5f,
+                       0, 1, 0, 0,
+                       0, 0, 1, 0,
+                       0, 0, 0, 1 );
+
+        case Material::StereoMode::RIGHT_LEFT:
+            return ( !eye ) ?
+               Matrix4f(
+                       0.5f, 0, 0, 0,
+                       0, 1, 0, 0,
+                       0, 0, 1, 0,
+                       0, 0, 0, 1 )
+                        :
+               Matrix4f(
+                       0.5f, 0, 0, 0.5f,
+                       0, 1, 0, 0,
+                       0, 0, 1, 0,
+                       0, 0, 0, 1 );
+
+        case Material::StereoMode::NORMAL:
+        default:
+            return Matrix4f::Identity();
+    }
+}
 }
 ;

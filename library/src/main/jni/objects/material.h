@@ -55,9 +55,13 @@ public:
         TEXTURE_SHADER_NOLIGHT = 100
     };
 
+    enum StereoMode {
+        NORMAL = 0, TOP_BOTTOM, BOTTOM_TOP, LEFT_RIGHT, RIGHT_LEFT
+    };
+
     explicit Material(JNIEnv * jni, ShaderType shader_type) :
-            shader_type_(shader_type), floats_(), vec2s_(), vec3s_(), vec4s_(), shader_feature_set_(
-                    0) {
+            shader_type_(shader_type), floats_(), vec2s_(), vec3s_(), vec4s_(), shader_feature_set_(0) {;
+        Mode = NORMAL;
         MovieTexture = new SurfaceTexture(jni);
         switch (shader_type) {
         default:
@@ -165,6 +169,14 @@ public:
         return MovieTexture->GetJavaObject();
     }
 
+    StereoMode GetStereoMode() const {
+        return Mode;
+    }
+
+    void SetStereoMode(StereoMode stereoMode) {
+        Mode = stereoMode;
+    }
+
 private:
     Material(const Material& material);
     Material(Material&& material);
@@ -180,6 +192,7 @@ private:
     std::map<std::string, OVR::Vector4f> vec4s_;
     std::map<std::string, OVR::Matrix4f> mat4s_;
     unsigned int shader_feature_set_;
+    StereoMode Mode;
 };
 }
 #endif

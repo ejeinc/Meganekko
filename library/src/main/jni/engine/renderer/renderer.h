@@ -57,13 +57,13 @@ public:
             const OVR::Matrix4f &eyeViewMatrix,
             const OVR::Matrix4f &eyeProjectionMatrix,
             const OVR::Matrix4f &eyeViewProjection,
-            int eye);
+            const int eye);
 
 private:
     static void renderRenderData(RenderData* render_data,
             const OVR::Matrix4f& view_matrix,
             const OVR::Matrix4f& projection_matrix,
-            int render_mask, ShaderManager* shader_manager);
+            int render_mask, ShaderManager* shader_manager, const int eye);
 
     static void occlusion_cull(Scene* scene,
             std::vector<SceneObject*> scene_objects);

@@ -64,6 +64,10 @@ import static com.eje_c.meganekko.utility.Assert.checkStringNotNullOrEmpty;
  */
 public class Material extends HybridObject implements Shaders<MaterialShaderId> {
 
+    public enum StereoMode {
+        NORMAL, TOP_BOTTOM, BOTTOM_TOP, LEFT_RIGHT, RIGHT_LEFT
+    }
+
     private int mShaderFeatureSet;
     private MaterialShaderId shaderId;
 
@@ -414,6 +418,10 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
 
     private native SurfaceTexture getSurfaceTexture(long nativePtr);
 
+    public void setStereoMode(StereoMode stereoMode) {
+        setStereoMode(getNative(), stereoMode.ordinal());
+    }
+
     /**
      * Pre-built shader ids.
      */
@@ -460,4 +468,6 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
                                        float z4, float w4);
 
     private static native void setShaderFeatureSet(long material, int featureSet);
+
+    private static native void setStereoMode(long material, int stereoMode);
 }

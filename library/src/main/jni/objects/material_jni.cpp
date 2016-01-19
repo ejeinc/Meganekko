@@ -187,6 +187,12 @@ Java_com_eje_1c_meganekko_Material_getSurfaceTexture(JNIEnv * env, jobject obj, 
     return material->getSurfaceTexture();
 }
 
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_Material_setStereoMode(JNIEnv * env, jobject obj, jlong jmaterial, jint jstereoMode) {
+    Material* material = reinterpret_cast<Material*>(jmaterial);
+    material->SetStereoMode(static_cast<Material::StereoMode>(jstereoMode));
+}
+
 }
 
 }

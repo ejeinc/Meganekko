@@ -35,19 +35,19 @@
 #include "Kernel/OVR_Math.h"
 
 #include "objects/RecyclableObject.h"
+#include "objects/Material.h"
 
 using namespace OVR;
 
 namespace mgn {
 class RenderData;
-class Material;
 
 class OESShader: public RecyclableObject {
 public:
     OESShader();
     ~OESShader();
     void recycle();
-    void render(const Matrix4f& mvpMatrix, RenderData* renderData, Material* material);
+    void render(const Matrix4f& mvpMatrix, RenderData* renderData, Material* material, const int eye);
 
 private:
     OESShader(const OESShader& oes_shader);
@@ -55,6 +55,7 @@ private:
     OESShader& operator=(const OESShader& oes_shader);
     OESShader& operator=(OESShader&& oes_shader);
 
+    Matrix4f TexmForVideo(const Material::StereoMode stereoMode, const int eye);
 private:
     GlProgram program;
     GLuint opacity;

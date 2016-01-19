@@ -32,7 +32,7 @@ namespace mgn {
 class SceneObject;
 
 void Renderer::RenderEyeView(JNIEnv * jni, Scene* scene, std::vector<SceneObject*> scene_objects, ShaderManager* shader_manager,
-        const Matrix4f &eyeViewMatrix, const Matrix4f &eyeProjectionMatrix, const Matrix4f &eyeViewProjection, int eye) {
+        const Matrix4f &eyeViewMatrix, const Matrix4f &eyeProjectionMatrix, const Matrix4f &eyeViewProjection, const int eye) {
     // there is no need to flat and sort every frame.
     // however let's keep it as is and assume we are not changed
     // This is not right way to do data conversion. However since GVRF doesn't support
@@ -75,7 +75,7 @@ void Renderer::RenderEyeView(JNIEnv * jni, Scene* scene, std::vector<SceneObject
 
     for (auto it = render_data_vector.begin();
             it != render_data_vector.end(); ++it) {
-        renderRenderData(*it, eyeViewMatrix, eyeProjectionMatrix, renderMask, shader_manager);
+        renderRenderData(*it, eyeViewMatrix, eyeProjectionMatrix, renderMask, shader_manager, eye);
     }
 
 }
@@ -343,7 +343,7 @@ bool Renderer::is_cube_in_frustum(float frustum[6][4],
 
 void Renderer::renderRenderData(RenderData* render_data,
         const Matrix4f& view_matrix, const Matrix4f& projection_matrix,
-        int render_mask, ShaderManager* shader_manager) {
+        int render_mask, ShaderManager* shader_manager, const int eye) {
     if (render_mask & render_data->render_mask()) {
 
         if (render_data->offset()) {
@@ -374,7 +374,7 @@ void Renderer::renderRenderData(RenderData* render_data,
                         switch (curr_material->shader_type()) {
                         case Material::ShaderType::OES_SHADER:
                             shader_manager->getOESShader()->render(mvp_matrix,
-                                    render_data, curr_material);
+                                    render_data, curr_material, eye);
                             break;
                         case Material::ShaderType::OES_HORIZONTAL_STEREO_SHADER:
                             shader_manager->getOESHorizontalStereoShader()->render(
