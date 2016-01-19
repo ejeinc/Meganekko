@@ -46,7 +46,6 @@ Java_com_eje_1c_meganekko_Importer_readFileFromAssets(JNIEnv * env,
     AAssetManager* mgr = AAssetManager_fromJava(env, asset_manager);
     AAsset* asset = AAssetManager_open(mgr, native_string, AASSET_MODE_UNKNOWN);
     if (NULL == asset) {
-        LOGE("_ASSET_NOT_FOUND_");
         return JNI_FALSE;
     }
     long size = AAsset_getLength(asset);
