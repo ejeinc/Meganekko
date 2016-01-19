@@ -70,7 +70,6 @@ public class MeganekkoActivity extends VrActivity {
 
     private final Queue<Runnable> mRunnables = new LinkedBlockingQueue<Runnable>();
     private InternalSensorManager mInternalSensorManager;
-    private VrContext mVrContext = null;
     private boolean mDocked;
     private final Runnable mRunOnDock = new Runnable() {
         @Override
@@ -121,7 +120,7 @@ public class MeganekkoActivity extends VrActivity {
         mDockEventReceiver = new DockEventReceiver(this, mRunOnDock, mRunOnUndock);
         mInternalSensorManager = new InternalSensorManager(this, getAppPtr());
 
-        mVrContext = new VrContext(this);
+        new VrContext(this);
         mApp = new App(getAppPtr());
     }
 
@@ -143,13 +142,13 @@ public class MeganekkoActivity extends VrActivity {
     private void oneTimeInit() {
 
         setScene(new Scene());
-        mVrContext.onSurfaceCreated();
+        VrContext.get().onSurfaceCreated();
 
         if (!mDocked) {
             mInternalSensorManager.start();
         }
 
-        oneTimeInit(mVrContext);
+        oneTimeInit(VrContext.get());
     }
 
     /**
@@ -199,7 +198,7 @@ public class MeganekkoActivity extends VrActivity {
             mInternalSensorManager.stop();
         }
 
-        oneTimeShutDown(mVrContext);
+        oneTimeShutDown(VrContext.get());
     }
 
     /**
@@ -365,8 +364,9 @@ public class MeganekkoActivity extends VrActivity {
      *
      * @return {@code VrContext}
      */
+    @Deprecated
     public VrContext getVrContext() {
-        return mVrContext;
+        return VrContext.get();
     }
 
     /**
