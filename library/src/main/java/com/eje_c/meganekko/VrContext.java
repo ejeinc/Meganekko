@@ -20,8 +20,6 @@ import android.content.Context;
 import android.opengl.GLES20;
 
 import com.eje_c.meganekko.AndroidResource.MeshCallback;
-import com.eje_c.meganekko.animation.Animation;
-import com.eje_c.meganekko.animation.AnimationEngine;
 import com.eje_c.meganekko.asynchronous.AsynchronousResourceLoader;
 import com.eje_c.meganekko.periodic.PeriodicEngine;
 import com.eje_c.meganekko.utility.Log;
@@ -512,19 +510,6 @@ public class VrContext {
      */
     public void runOnGlThread(Runnable runnable) {
         getActivity().runOnGlThread(runnable);
-    }
-
-    /**
-     * The {@linkplain AnimationEngine animation engine} singleton.
-     * <p/>
-     * Use the animation engine to start and stop {@linkplain Animation
-     * animations}.
-     *
-     * @return The {@linkplain AnimationEngine animation engine} singleton.
-     */
-    @Deprecated
-    public AnimationEngine getAnimationEngine() {
-        return AnimationEngine.getInstance(this);
     }
 
     /**
