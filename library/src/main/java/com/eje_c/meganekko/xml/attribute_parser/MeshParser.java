@@ -16,21 +16,14 @@ public class MeshParser implements XmlAttributeParser {
     @Override
     public void parse(Context context, SceneObject object, AttributeSet attributeSet) {
 
-        // Already have mesh
-        RenderData renderData = object.getRenderData();
-        if (renderData != null && renderData.getMesh() != null) return;
-
         String mesh = attributeSet.getAttributeValue(NAMESPACE, "mesh");
 
         if (mesh != null) {
-            
-            if (renderData == null) {
-                renderData = new RenderData();
-                object.attachRenderData(renderData);
-            }
+
+            ensureHaveRenderData(object);
 
             try {
-                renderData.setMesh(VrContext.get().loadMesh(new AndroidResource(VrContext.get().getContext(), mesh)));
+                object.getRenderData().setMesh(VrContext.get().loadMesh(new AndroidResource(VrContext.get().getContext(), mesh)));
                 return;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -43,12 +36,15 @@ public class MeshParser implements XmlAttributeParser {
             float w = Float.parseFloat(width);
             float h = Float.parseFloat(height);
 
-            if (renderData == null) {
-                renderData = new RenderData();
-                object.attachRenderData(renderData);
-            }
+            ensureHaveRenderData(object);
 
-            renderData.setMesh(VrContext.get().createQuad(w, h));
+            object.getRenderData().setMesh(VrContext.get().createQuad(w, h));
+        }
+    }
+
+    private void ensureHaveRenderData(SceneObject object) {
+        if (object.getRenderData() == null) {
+            object.attachRenderData(new RenderData());
         }
     }
 }
