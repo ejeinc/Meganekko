@@ -3,7 +3,7 @@ package com.eje_c.meganekko.sample;
 import android.animation.ObjectAnimator;
 
 import com.eje_c.meganekko.Meganekko;
-import com.eje_c.meganekko.MeganekkoActivity;
+import com.eje_c.meganekko.gearvr.MeganekkoActivity;
 import com.eje_c.meganekko.MeganekkoApp;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrFrame;

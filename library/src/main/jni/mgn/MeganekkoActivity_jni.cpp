@@ -31,7 +31,7 @@ namespace mgn
 extern "C"
 {
 
-long Java_com_eje_1c_meganekko_MeganekkoActivity_nativeSetAppInterface(
+long Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_nativeSetAppInterface(
         JNIEnv * jni, jclass clazz, jobject activity,
         jstring fromPackageName, jstring commandString,
         jstring uriString)
@@ -39,44 +39,44 @@ long Java_com_eje_1c_meganekko_MeganekkoActivity_nativeSetAppInterface(
     return (new MeganekkoActivity())->SetActivity( jni, clazz, activity, fromPackageName, commandString, uriString );
 }
 
-void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeHideGazeCursor(JNIEnv * jni, jclass clazz, jlong appPtr)
+void Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_nativeHideGazeCursor(JNIEnv * jni, jclass clazz, jlong appPtr)
 {
     MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
     activity->GuiSys->GetGazeCursor().HideCursor();
 }
 
-void Java_com_eje_1c_meganekko_MeganekkoActivity_nativeShowGazeCursor(JNIEnv * jni, jclass clazz, jlong appPtr)
+void Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_nativeShowGazeCursor(JNIEnv * jni, jclass clazz, jlong appPtr)
 {
     MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
     activity->GuiSys->GetGazeCursor().ShowCursor();
 }
 
-void Java_com_eje_1c_meganekko_MeganekkoActivity_setDebugOptionEnable(JNIEnv * jni, jclass clazz, jboolean enable)
+void Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_setDebugOptionEnable(JNIEnv * jni, jclass clazz, jboolean enable)
 {
     ovr_SetLocalPreferenceValueForKey(LOCAL_PREF_APP_DEBUG_OPTIONS, enable ? "1" : "0");
 }
 
-void Java_com_eje_1c_meganekko_MeganekkoActivity_recenterPose(JNIEnv * jni, jclass clazz, jlong appPtr)
+void Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_recenterPose(JNIEnv * jni, jclass clazz, jlong appPtr)
 {
     ovrMobile * mobile = ((App *)appPtr)->GetOvrMobile();
     vrapi_RecenterPose(mobile);
 }
 
-void Java_com_eje_1c_meganekko_MeganekkoActivity_setScene(JNIEnv * jni, jclass clazz, jlong appPtr, jlong jscene)
+void Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_setScene(JNIEnv * jni, jclass clazz, jlong appPtr, jlong jscene)
 {
     MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
     Scene* scene = reinterpret_cast<Scene*>(jscene);
     activity->scene = scene;
 }
 
-void Java_com_eje_1c_meganekko_MeganekkoActivity_setShaderManager(JNIEnv * jni, jclass clazz, jlong appPtr, jlong jshaderManager)
+void Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_setShaderManager(JNIEnv * jni, jclass clazz, jlong appPtr, jlong jshaderManager)
 {
     MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
     ShaderManager* shaderManager = reinterpret_cast<ShaderManager*>(jshaderManager);
     activity->shaderManager = shaderManager;
 }
 
-jboolean Java_com_eje_1c_meganekko_MeganekkoActivity_isLookingAt(JNIEnv * jni, jclass clazz, jlong appPtr, jlong jsceneObject)
+jboolean Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_isLookingAt(JNIEnv * jni, jclass clazz, jlong appPtr, jlong jsceneObject)
 {
     MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
     SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);

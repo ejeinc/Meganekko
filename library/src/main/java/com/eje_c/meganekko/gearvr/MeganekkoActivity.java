@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.eje_c.meganekko;
+package com.eje_c.meganekko.gearvr;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -27,6 +27,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 
+import com.eje_c.meganekko.Meganekko;
+import com.eje_c.meganekko.MeganekkoApp;
+import com.eje_c.meganekko.Scene;
+import com.eje_c.meganekko.SceneObject;
+import com.eje_c.meganekko.VrFrame;
 import com.eje_c.meganekko.utility.DockEventReceiver;
 import com.eje_c.meganekko.xml.XmlSceneParser;
 import com.eje_c.meganekko.xml.XmlSceneParserFactory;
@@ -321,6 +326,7 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
      * @param object target object.
      * @return true if user is looking at object.
      */
+    @Override
     public boolean isLookingAt(@NonNull SceneObject object) {
         return isLookingAt(getAppPtr(), object.getNative());
     }

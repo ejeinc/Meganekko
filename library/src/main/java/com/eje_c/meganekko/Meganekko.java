@@ -28,4 +28,6 @@ public interface Meganekko {
     void cancel(@NonNull final Animator anim, @Nullable final Runnable endCallback);
 
     Context getContext();
+
+    boolean isLookingAt(SceneObject object);
 }

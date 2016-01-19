@@ -19,8 +19,8 @@
 /**
  * You need to understand key points of this package to create a Meganekko application.
  * <p/>
- * You have to extend {@link com.eje_c.meganekko.MeganekkoActivity} instead of {@code Activity}.
- * Your entry point is {@link com.eje_c.meganekko.MeganekkoActivity#oneTimeInit(com.eje_c.meganekko.VrContext)}.
+ * You have to extend {@link com.eje_c.meganekko.gearvr.MeganekkoActivity} instead of {@code Activity}.
+ * Your entry point is {@link com.eje_c.meganekko.gearvr.MeganekkoActivity#oneTimeInit(com.eje_c.meganekko.VrContext)}.
  * This method is called in GL thread. You will do any initialization in it.
  * You don't need to override {@code onCreate} typically.
  * <p/>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.eje_c.meganekko;
+package com.eje_c.meganekko.gearvr;
 
 import android.content.Context;
 import android.hardware.Sensor;

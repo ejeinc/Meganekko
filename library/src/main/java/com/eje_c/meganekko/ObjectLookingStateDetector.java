@@ -18,6 +18,8 @@ package com.eje_c.meganekko;
 
 import android.support.annotation.NonNull;
 
+import com.eje_c.meganekko.gearvr.MeganekkoActivity;
+
 /**
  * Detects if user is looking at target object automatically.
  * The {@link ObjectLookingStateDetector.ObjectLookingStateListener} callback will notify users
@@ -31,7 +33,7 @@ public class ObjectLookingStateDetector {
 
     private final SceneObject mTarget;
     private final ObjectLookingStateListener mListener;
-    private final MeganekkoActivity mActivity;
+    private final Meganekko mMeganekko;
     private boolean mLooking;
 
     /**
@@ -40,10 +42,10 @@ public class ObjectLookingStateDetector {
      * @param target   the target object.
      * @param listener the listener invoked for all callbacks, this must not be null.
      */
-    public ObjectLookingStateDetector(@NonNull MeganekkoActivity activity, @NonNull SceneObject target, @NonNull ObjectLookingStateListener listener) {
+    public ObjectLookingStateDetector(@NonNull Meganekko meganekko, @NonNull SceneObject target, @NonNull ObjectLookingStateListener listener) {
         this.mTarget = target;
         this.mListener = listener;
-        this.mActivity = activity;
+        this.mMeganekko = meganekko;
     }
 
     public void update(VrFrame vrFrame) {
@@ -55,7 +57,7 @@ public class ObjectLookingStateDetector {
             return;
         }
 
-        boolean lookingNow = mActivity.isLookingAt(mTarget);
+        boolean lookingNow = mMeganekko.isLookingAt(mTarget);
 
         if (lookingNow) {
             if (!mLooking) {
