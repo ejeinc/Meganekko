@@ -36,7 +36,6 @@
 #include "assimp/material.h"
 #include "objects/Scene.h"
 #include "assimp/scene.h"
-#include "util/gvr_log.h"
 #include "assimp/cimport.h"
 
 #include "jassimp.h"
@@ -58,7 +57,6 @@ public:
         if (assimp_importer_->GetScene() != 0) {
             return assimp_importer_->GetScene()->mNumMeshes;
         }
-        LOGE("_ASSIMP_SCENE_NOT_FOUND_");
         return 0;
     }
 

@@ -21,7 +21,6 @@
 #include <jni.h>
 
 #include "Transform.h"
-#include "util/gvr_log.h"
 
 namespace mgn {
 extern "C" {
@@ -304,7 +303,6 @@ Java_com_eje_1c_meganekko_Transform_getModelMatrix(JNIEnv * env,
     OVR::Matrix4f matrix = transform->getModelMatrix();
     jsize size = sizeof(matrix) / sizeof(jfloat);
     if (size != 16) {
-        LOGE("sizeof(matrix) / sizeof(jfloat) != 16");
         throw "sizeof(matrix) / sizeof(jfloat) != 16";
     }
     jfloatArray jmatrix = env->NewFloatArray(size);

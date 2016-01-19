@@ -24,7 +24,6 @@
 #include "shaders/material/OESHorizontalStereoShader.h"
 #include "shaders/material/OESShader.h"
 #include "shaders/material/OESVerticalStereoShader.h"
-#include "util/gvr_log.h"
 
 namespace mgn {
 class ShaderManager: public HybridObject {

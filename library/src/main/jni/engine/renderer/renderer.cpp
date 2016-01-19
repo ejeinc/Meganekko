@@ -17,6 +17,7 @@
  * Renders a scene, a screen.
  ***************************************************************************/
 
+#include <android/log.h>
 #include "Renderer.h"
 
 #include "objects/Material.h"
@@ -24,7 +25,6 @@
 #include "objects/components/RenderData.h"
 #include "shaders/ShaderManager.h"
 #include "util/gvr_gl.h"
-#include "util/gvr_log.h"
 
 using namespace OVR;
 
@@ -388,7 +388,7 @@ void Renderer::renderRenderData(RenderData* render_data,
                             break;
                         }
                     } catch (std::string error) {
-                        LOGE("Error detected in Renderer::renderRenderData; error : %s", error.c_str());
+                        __android_log_print(ANDROID_LOG_ERROR, "mgn", "Error detected in Renderer::renderRenderData; error : %s", error.c_str());
                     }
                 }
             }

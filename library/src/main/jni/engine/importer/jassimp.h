@@ -45,7 +45,6 @@
 #include "assimp/material.h"
 #include "assimp/cimport.h"
 #include "assimp/scene.h"
-#include "util/gvr_log.h"
 
 namespace mgn {
 

@@ -25,7 +25,6 @@
 #include "assimp/mesh.h"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
-#include "util/gvr_log.h"
 #include "util/gvr_gl.h"
 
 namespace mgn {

@@ -450,7 +450,6 @@ jobject mesh_material(JNIEnv *env, const aiScene *assimp_scene, int index) {
 
             if (env->GetDirectBufferCapacity(jassimp_buffer)
                     != assimp_material_property->mDataLength) {
-                LOGE("invalid direct buffer\n");
                 return NULL;
             }
 
@@ -458,7 +457,6 @@ jobject mesh_material(JNIEnv *env, const aiScene *assimp_scene, int index) {
                     jassimp_buffer);
 
             if (NULL == jassimp_buffer_ptr) {
-                LOGE("could not access direct buffer\n");
                 return NULL;
             }
 

@@ -26,7 +26,6 @@ Mesh* AssimpImporter::getMesh(int index) {
     Mesh* mesh = new Mesh();
 
     if (assimp_importer_->GetScene() == 0) {
-        LOGE("_ASSIMP_SCENE_NOT_FOUND_");
         delete mesh;
         return 0;
     }

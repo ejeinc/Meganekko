@@ -23,8 +23,6 @@
 
 #include "objects/HybridObject.h"
 
-#include "util/gvr_log.h"
-
 namespace mgn {
 
 class RecyclableObject: public HybridObject {

@@ -20,7 +20,6 @@
 #include "SceneObject.h"
 
 #include "objects/components/RenderData.h"
-#include "util/gvr_log.h"
 #include "Mesh.h"
 
 namespace mgn {
@@ -91,7 +90,6 @@ void SceneObject::addChildObject(SceneObject* self, SceneObject* child) {
         if (child == parent) {
             std::string error =
                     "SceneObject::addChildObject() : cycle of scene objects is not allowed.";
-            LOGE("%s", error.c_str());
             throw error;
         }
     }

@@ -20,7 +20,6 @@
 #include <jni.h>
 
 #include "SceneObject.h"
-#include "util/gvr_log.h"
 
 namespace mgn {
 extern "C" {

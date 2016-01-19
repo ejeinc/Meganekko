@@ -22,7 +22,6 @@
 
 #include "Mesh.h"
 
-#include "util/gvr_log.h"
 #include "android/asset_manager_jni.h"
 
 namespace mgn {
