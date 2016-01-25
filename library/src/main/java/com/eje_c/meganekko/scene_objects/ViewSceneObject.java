@@ -74,6 +74,15 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
     }
 
     /**
+     * Get view.
+     *
+     * @return View
+     */
+    public View getView() {
+        return mView;
+    }
+
+    /**
      * Set view.
      *
      * @param view View which is used as Texture.
@@ -88,15 +97,6 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
         } else {
             clearOnDrawListener();
         }
-    }
-
-    /**
-     * Get view.
-     *
-     * @return View
-     */
-    public View getView() {
-        return mView;
     }
 
     /**

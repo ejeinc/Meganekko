@@ -232,9 +232,7 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
      * Enqueues a callback to be run in the GL thread.
      * This is how you take data generated on a background thread (or the main
      * (GUI) thread) and pass it to the coprocessor, using calls that must be
-     * made from the GL thread (aka the "GL context"). The callback queue is
-     * processed before any registered
-     * {@linkplain #onFrame(FrameListener)} frame listeners}.
+     * made from the GL thread (aka the "GL context").
      *
      * @param runnable A bit of code that must run on the GL thread
      */
@@ -293,6 +291,16 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
     }
 
     /**
+     * Get current rendering scene.
+     *
+     * @return Current rendering scene.
+     */
+    @Override
+    public Scene getScene() {
+        return mScene;
+    }
+
+    /**
      * Set current rendering scene.
      *
      * @param scene
@@ -311,16 +319,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
 
         mScene = scene;
         setScene(getAppPtr(), scene.getNative());
-    }
-
-    /**
-     * Get current rendering scene.
-     *
-     * @return Current rendering scene.
-     */
-    @Override
-    public Scene getScene() {
-        return mScene;
     }
 
     public App getApp() {

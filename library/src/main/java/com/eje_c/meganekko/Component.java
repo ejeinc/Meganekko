@@ -17,48 +17,13 @@ package com.eje_c.meganekko;
 
 import com.eje_c.meganekko.utility.Exceptions;
 
-import java.util.List;
-
 /**
  * Base class for classes that can be attached to a {@link SceneObject scene
  * object}.
  */
 class Component extends HybridObject {
-    // private static final String TAG = Log.tag(GVRComponent.class);
 
     protected SceneObject owner;
-
-    /**
-     * Normal constructor
-     *
-     * @param nativePointer The native pointer, returned by the native constructor
-     */
-    protected Component(long nativePointer) {
-        super(nativePointer);
-    }
-
-    protected Component() {
-    }
-
-    /**
-     * Special constructor, for descendants like {#link GVRMeshEyePointee} that
-     * need to 'unregister' instances.
-     *
-     * @param nativePointer   The native pointer, returned by the native constructor
-     * @param cleanupHandlers Cleanup handler(s).
-     *                        Normally, this will be a {@code private static} class
-     *                        constant, so that there is only one {@code List} per class.
-     *                        Descendants that supply a {@code List} and <em>also</em> have
-     *                        descendants that supply a {@code List} should use
-     *                        {@link CleanupHandlerListManager} to maintain a
-     *                        {@code Map<List<NativeCleanupHandler>, List<NativeCleanupHandler>>}
-     *                        whose keys are descendant lists and whose values are unique
-     *                        concatenated lists - see {@link EyePointeeHolder} for an
-     *                        example.
-     */
-    protected Component(long nativePointer, List<NativeCleanupHandler> cleanupHandlers) {
-        super(nativePointer, cleanupHandlers);
-    }
 
     /**
      * @return The {@link SceneObject} this object is currently attached to.

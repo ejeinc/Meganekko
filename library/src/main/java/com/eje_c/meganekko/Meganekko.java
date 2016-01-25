@@ -9,9 +9,9 @@ public interface Meganekko {
 
     void setSceneFromXML(int xmlRes);
 
-    void setScene(Scene scene);
-
     Scene getScene();
+
+    void setScene(Scene scene);
 
     void runOnGlThread(Runnable runnable);
 

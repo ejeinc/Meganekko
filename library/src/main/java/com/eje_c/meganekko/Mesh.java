@@ -29,6 +29,13 @@ import static com.eje_c.meganekko.utility.Assert.checkStringNotNullOrEmpty;
  */
 public class Mesh extends HybridObject {
 
+    public Mesh() {
+    }
+
+    Mesh(long ptr) {
+        super(ptr);
+    }
+
     /**
      * Creates a quad consisting of two triangles, with the specified width and
      * height.
@@ -104,12 +111,39 @@ public class Mesh extends HybridObject {
         return assimpImporter.getMesh(0);
     }
 
-    public Mesh() {
-    }
+    private static native float[] getVertices(long mesh);
 
-    Mesh(long ptr) {
-        super(ptr);
-    }
+    private static native void setVertices(long mesh, float[] vertices);
+
+    private static native float[] getNormals(long mesh);
+
+    private static native void setNormals(long mesh, float[] normals);
+
+    private static native float[] getTexCoords(long mesh);
+
+    private static native void setTexCoords(long mesh, float[] texCoords);
+
+    private static native char[] getTriangles(long mesh);
+
+    private static native void setTriangles(long mesh, char[] triangles);
+
+    private static native float[] getFloatVector(long mesh, String key);
+
+    private static native void setFloatVector(long mesh, String key, float[] floatVector);
+
+    private static native float[] getVec2Vector(long mesh, String key);
+
+    private static native void setVec2Vector(long mesh, String key, float[] vec2Vector);
+
+    private static native float[] getVec3Vector(long mesh, String key);
+
+    private static native void setVec3Vector(long mesh, String key, float[] vec3Vector);
+
+    private static native float[] getVec4Vector(long mesh, String key);
+
+    private static native void setVec4Vector(long mesh, String key, float[] vec4Vector);
+
+    private static native long getBoundingBox(long mesh);
 
     @Override
     protected native long initNativeInstance();
@@ -338,38 +372,4 @@ public class Mesh extends HybridObject {
                             numberOfElements, verticesNumber);
         }
     }
-
-    private static native float[] getVertices(long mesh);
-
-    private static native void setVertices(long mesh, float[] vertices);
-
-    private static native float[] getNormals(long mesh);
-
-    private static native void setNormals(long mesh, float[] normals);
-
-    private static native float[] getTexCoords(long mesh);
-
-    private static native void setTexCoords(long mesh, float[] texCoords);
-
-    private static native char[] getTriangles(long mesh);
-
-    private static native void setTriangles(long mesh, char[] triangles);
-
-    private static native float[] getFloatVector(long mesh, String key);
-
-    private static native void setFloatVector(long mesh, String key, float[] floatVector);
-
-    private static native float[] getVec2Vector(long mesh, String key);
-
-    private static native void setVec2Vector(long mesh, String key, float[] vec2Vector);
-
-    private static native float[] getVec3Vector(long mesh, String key);
-
-    private static native void setVec3Vector(long mesh, String key, float[] vec3Vector);
-
-    private static native float[] getVec4Vector(long mesh, String key);
-
-    private static native void setVec4Vector(long mesh, String key, float[] vec4Vector);
-
-    private static native long getBoundingBox(long mesh);
 }

@@ -33,6 +33,12 @@ public class Scene extends SceneObject {
         setMainCamera(camera);
     }
 
+    private static native void setFrustumCulling(long scene, boolean flag);
+
+    private static native void setOcclusionQuery(long scene, boolean flag);
+
+    private static native void setMainCamera(long scene, long camera);
+
     @Override
     protected native long initNativeInstance();
 
@@ -78,10 +84,4 @@ public class Scene extends SceneObject {
      */
     public void onPause() {
     }
-
-    private static native void setFrustumCulling(long scene, boolean flag);
-
-    private static native void setOcclusionQuery(long scene, boolean flag);
-
-    private static native void setMainCamera(long scene, long camera);
 }

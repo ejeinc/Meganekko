@@ -20,6 +20,8 @@ package com.eje_c.meganekko;
  */
 public class Camera extends SceneObject {
 
+    private static native float[] getLookAt(long camera);
+
     @Override
     protected native long initNativeInstance();
 
@@ -33,6 +35,4 @@ public class Camera extends SceneObject {
     public float[] getLookAt() {
         return getLookAt(getNative());
     }
-
-    private static native float[] getLookAt(long camera);
 }

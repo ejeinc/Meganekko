@@ -64,13 +64,8 @@ import static com.eje_c.meganekko.utility.Assert.checkStringNotNullOrEmpty;
  */
 public class Material extends HybridObject implements Shaders<MaterialShaderId> {
 
-    public enum StereoMode {
-        NORMAL, TOP_BOTTOM, BOTTOM_TOP, LEFT_RIGHT, RIGHT_LEFT
-    }
-
     private int mShaderFeatureSet;
     private MaterialShaderId shaderId;
-
     /**
      * A new holder for a shader's uniforms.
      */
@@ -79,9 +74,34 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
         this.mShaderFeatureSet = 0;
     }
 
-    Material(long ptr) {
-        super(ptr);
-    }
+    private static native long ctor();
+
+    private static native void setShaderType(long material, long shaderType);
+
+    private static native float getFloat(long material, String key);
+
+    private static native void setFloat(long material, String key, float value);
+
+    private static native float[] getVec2(long material, String key);
+
+    private static native void setVec2(long material, String key, float x, float y);
+
+    private static native float[] getVec3(long material, String key);
+
+    private static native void setVec3(long material, String key, float x, float y, float z);
+
+    private static native float[] getVec4(long material, String key);
+
+    private static native void setVec4(long material, String key, float x, float y, float z, float w);
+
+    private static native void setMat4(long material, String key, float x1, float y1,
+                                       float z1, float w1, float x2, float y2, float z2, float w2,
+                                       float x3, float y3, float z3, float w3, float x4, float y4,
+                                       float z4, float w4);
+
+    private static native void setShaderFeatureSet(long material, int featureSet);
+
+    private static native void setStereoMode(long material, int stereoMode);
 
     public MaterialShaderId getShaderType() {
         return shaderId;
@@ -408,34 +428,7 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
         setStereoMode(getNative(), stereoMode.ordinal());
     }
 
-    private static native long ctor();
-
-    private static native void setShaderType(long material, long shaderType);
-
-    private static native void setTexture(long material, String key, long texture);
-
-    private static native float getFloat(long material, String key);
-
-    private static native void setFloat(long material, String key, float value);
-
-    private static native float[] getVec2(long material, String key);
-
-    private static native void setVec2(long material, String key, float x, float y);
-
-    private static native float[] getVec3(long material, String key);
-
-    private static native void setVec3(long material, String key, float x, float y, float z);
-
-    private static native float[] getVec4(long material, String key);
-
-    private static native void setVec4(long material, String key, float x, float y, float z, float w);
-
-    private static native void setMat4(long material, String key, float x1, float y1,
-                                       float z1, float w1, float x2, float y2, float z2, float w2,
-                                       float x3, float y3, float z3, float w3, float x4, float y4,
-                                       float z4, float w4);
-
-    private static native void setShaderFeatureSet(long material, int featureSet);
-
-    private static native void setStereoMode(long material, int stereoMode);
+    public enum StereoMode {
+        NORMAL, TOP_BOTTOM, BOTTOM_TOP, LEFT_RIGHT, RIGHT_LEFT
+    }
 }

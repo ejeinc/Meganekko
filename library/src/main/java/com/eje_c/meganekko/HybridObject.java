@@ -21,11 +21,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -72,52 +68,23 @@ public abstract class HybridObject implements Closeable {
      * Normal constructor
      */
     protected HybridObject() {
-        this(null);
-    }
-
-    protected HybridObject(long nativePointer) {
-        this(nativePointer, null);
-    }
-
-    /*
-     * Instance methods
-     */
-
-    /**
-     * Special constructor, for descendants like {#link MeshEyePointee} that
-     * need to 'unregister' instances.
-     *
-     * @param cleanupHandlers Cleanup handler(s).
-     *                        <p/>
-     *                        <p/>
-     *                        Normally, this will be a {@code private static} class
-     *                        constant, so that there is only one {@code List} per class.
-     *                        Descendants that supply a {@code List} and <em>also</em> have
-     *                        descendants that supply a {@code List} should use
-     *                        {@link CleanupHandlerListManager} to maintain a
-     *                        {@code Map<List<NativeCleanupHandler>, List<NativeCleanupHandler>>}
-     *                        whose keys are descendant lists and whose values are unique
-     *                        concatenated lists - see {@link EyePointeeHolder} for an
-     *                        example.
-     */
-    protected HybridObject(List<NativeCleanupHandler> cleanupHandlers) {
         mNativePointer = initNativeInstance();
 
         if (mNativePointer == 0l) {
             throw new IllegalStateException("You must override initNativeInstance to get native pointer.");
         }
 
-        sReferenceSet.add(new Reference(this, mNativePointer, cleanupHandlers));
+        sReferenceSet.add(new Reference(this, mNativePointer));
     }
 
-    protected HybridObject(long nativePointer, List<NativeCleanupHandler> cleanupHandlers) {
+    protected HybridObject(long nativePointer) {
         mNativePointer = nativePointer;
 
         if (mNativePointer == 0l) {
             throw new IllegalStateException("You must pass valid native pointer.");
         }
 
-        sReferenceSet.add(new Reference(this, mNativePointer, cleanupHandlers));
+        sReferenceSet.add(new Reference(this, mNativePointer));
     }
 
     /**
@@ -136,6 +103,8 @@ public abstract class HybridObject implements Closeable {
         return null;
     }
 
+    private static native void delete(long nativePointer);
+
     /**
      * You must override this method if you use constructor that don't take
      * nativePointer.
@@ -145,10 +114,6 @@ public abstract class HybridObject implements Closeable {
     protected long initNativeInstance() {
         return 0l;
     }
-
-    /*
-     * Native memory management
-     */
 
     /**
      * The actual address of the native object.
@@ -210,94 +175,18 @@ public abstract class HybridObject implements Closeable {
         }
     }
 
-    /**
-     * Optional after-finalization callback to 'deregister' native pointers.
-     */
-    protected interface NativeCleanupHandler {
-        /**
-         * Remove the native pointer from any maps or other data structures.
-         * <p/>
-         * Do note that the Java 'owner object' has already been finalized.
-         *
-         * @param nativePointer The native pointer associated with a Java object that has
-         *                      already been garbage collected.
-         */
-        void nativeCleanup(long nativePointer);
-    }
-
-    /**
-     * Small class to help descendants keep the number of lists of native
-     * cleanup handlers to a minimum.
-     * <p/>
-     * Maintains a prefix list (the static list that the descendant class passes
-     * to {@link HybridObject#HybridObject(VrContext, long, List)}) and a
-     * {@code Map} of suffixes: the {@code Map} lets there be one list per
-     * descendant class that adds a list of cleanup handler(s), instead of
-     * (potentially) one list per instance.
-     * <p/>
-     * See the usage in {@link EyePointeeHolder}.
-     */
-    protected static class CleanupHandlerListManager {
-        private final List<NativeCleanupHandler> mPrefixList;
-
-        private final Map<List<NativeCleanupHandler>, List<NativeCleanupHandler>> //
-                mUniqueCopies = new HashMap<List<NativeCleanupHandler>, List<NativeCleanupHandler>>();
-
-        /**
-         * Typically, descendants have a single (static) list of cleanup
-         * handlers: pass that list to this constructor.
-         *
-         * @param prefixList List of cleanup handler(s)
-         */
-        protected CleanupHandlerListManager(List<NativeCleanupHandler> prefixList) {
-            mPrefixList = prefixList;
-        }
-
-        /**
-         * Descendants that add a cleanup handler list use this method to create
-         * unique concatenations of their list with any of <em>their</em>
-         * descendants' list(s).
-         *
-         * @param suffix Descendant's (static) list
-         * @return A unique concatenation
-         */
-        protected List<NativeCleanupHandler> getUniqueConcatenation(List<NativeCleanupHandler> suffix) {
-            if (suffix == null) {
-                return mPrefixList;
-            }
-
-            List<NativeCleanupHandler> concatenation = mUniqueCopies.get(suffix);
-            if (concatenation == null) {
-                concatenation = new ArrayList<NativeCleanupHandler>(mPrefixList.size() + suffix.size());
-                concatenation.addAll(mPrefixList);
-                concatenation.addAll(suffix);
-                mUniqueCopies.put(suffix, concatenation);
-            }
-            return concatenation;
-        }
-    }
-
     private static class Reference extends PhantomReference<HybridObject> {
 
-        // private static final String TAG = Log.tag(Reference.class);
-
-        private final List<NativeCleanupHandler> mCleanupHandlers;
         private long mNativePointer;
 
-        private Reference(HybridObject object, long nativePointer, List<NativeCleanupHandler> cleanupHandlers) {
+        private Reference(HybridObject object, long nativePointer) {
             super(object, sReferenceQueue);
 
             mNativePointer = nativePointer;
-            mCleanupHandlers = cleanupHandlers;
         }
 
         private void close() {
             if (mNativePointer != 0) {
-                if (mCleanupHandlers != null) {
-                    for (NativeCleanupHandler handler : mCleanupHandlers) {
-                        handler.nativeCleanup(mNativePointer);
-                    }
-                }
                 delete(mNativePointer);
             }
 
@@ -306,8 +195,6 @@ public abstract class HybridObject implements Closeable {
     }
 
     private static class FinalizeThread extends Thread {
-
-        // private static final String TAG = Log.tag(MeganekkoinalizeThread.class);
 
         private FinalizeThread() {
             setName("Finalize Thread");
@@ -326,6 +213,4 @@ public abstract class HybridObject implements Closeable {
             }
         }
     }
-
-    private static native void delete(long nativePointer);
 }

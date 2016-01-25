@@ -46,8 +46,6 @@ public class RenderData extends Component {
 
     /**
      * Constructor.
-     *
-     * @param vrContext Current {@link VrContext}
      */
     public RenderData() {
         RenderPass basePass = new RenderPass();
@@ -55,13 +53,41 @@ public class RenderData extends Component {
         addPass(basePass);
     }
 
-    private RenderData(long ptr) {
-        super(ptr);
+    private static native void setMesh(long renderData, long mesh);
 
-        RenderPass basePass = new RenderPass();
-        mRenderPassList = new ArrayList<RenderPass>();
-        addPass(basePass);
-    }
+    private static native void addPass(long renderData, long renderPass);
+
+    private static native int getRenderMask(long renderData);
+
+    private static native void setRenderMask(long renderData, int renderMask);
+
+    private static native int getRenderingOrder(long renderData);
+
+    private static native void setRenderingOrder(long renderData, int renderingOrder);
+
+    private static native boolean getOffset(long renderData);
+
+    private static native void setOffset(long renderData, boolean offset);
+
+    private static native float getOffsetFactor(long renderData);
+
+    private static native void setOffsetFactor(long renderData, float offsetFactor);
+
+    private static native float getOffsetUnits(long renderData);
+
+    private static native void setOffsetUnits(long renderData, float offsetUnits);
+
+    private static native boolean getDepthTest(long renderData);
+
+    private static native void setDepthTest(long renderData, boolean depthTest);
+
+    private static native boolean getAlphaBlend(long renderData);
+
+    private static native void setAlphaBlend(long renderData, boolean alphaBlend);
+
+    private static native int getDrawMode(long renderData);
+
+    private static native void setDrawMode(long renderData, int draw_mode);
 
     @Override
     protected native long initNativeInstance();
@@ -71,6 +97,18 @@ public class RenderData extends Component {
      */
     public Mesh getMesh() {
         return mMesh;
+    }
+
+    /**
+     * Set the {@link Mesh mesh} to be rendered.
+     *
+     * @param mesh The mesh to be rendered.
+     */
+    public void setMesh(Mesh mesh) {
+        synchronized (this) {
+            mMesh = mesh;
+        }
+        setMesh(getNative(), mesh.getNative());
     }
 
     /**
@@ -95,18 +133,6 @@ public class RenderData extends Component {
                 }
             }
         });
-    }
-
-    /**
-     * Set the {@link Mesh mesh} to be rendered.
-     *
-     * @param mesh The mesh to be rendered.
-     */
-    public void setMesh(Mesh mesh) {
-        synchronized (this) {
-            mMesh = mesh;
-        }
-        setMesh(getNative(), mesh.getNative());
     }
 
     /**
@@ -152,7 +178,7 @@ public class RenderData extends Component {
     }
 
     /**
-     * @param The {@link RenderPass pass} index to retrieve material from.
+     * @param passIndex The {@link RenderPass pass} index to retrieve material from.
      * @return The {@link Material material} the {@link Mesh mesh} is
      * being rendered with.
      */
@@ -214,32 +240,6 @@ public class RenderData extends Component {
      */
     public void setRenderingOrder(int renderingOrder) {
         setRenderingOrder(getNative(), renderingOrder);
-    }
-
-    /**
-     * @return {@code true} if {@code GL_CULL_FACE} is enabled, {@code false} if
-     * not.
-     * @see #getCullFace()
-     * @deprecated Use {@code getCullFace() } instead.
-     */
-    public boolean getCullTest() {
-        return getCullFace(0) != CullFaceEnum.None;
-    }
-
-    /**
-     * @param cullTest {@code true} if {@code GL_CULL_FACE} should be enabled,
-     *                 {@code false} if not.
-     * @param pass
-     * @see #setCullFace(int cullFace)
-     * Set the {@code GL_CULL_FACE} option
-     * @deprecated Use {@code setCullFace(GVRCullFaceEnum cullFace)} instead.
-     */
-    public void setCullTest(boolean cullTest) {
-        if (cullTest) {
-            setCullFace(CullFaceEnum.Back);
-        } else {
-            setCullFace(CullFaceEnum.None);
-        }
     }
 
     /**
@@ -462,46 +462,4 @@ public class RenderData extends Component {
          */
         public static final int Right = 0x2;
     }
-
-    private static native void setMesh(long renderData, long mesh);
-
-    private static native void addPass(long renderData, long renderPass);
-
-    private static native void setLight(long renderData, long light);
-
-    private static native void enableLight(long renderData);
-
-    private static native void disableLight(long renderData);
-
-    private static native int getRenderMask(long renderData);
-
-    private static native void setRenderMask(long renderData, int renderMask);
-
-    private static native int getRenderingOrder(long renderData);
-
-    private static native void setRenderingOrder(long renderData, int renderingOrder);
-
-    private static native boolean getOffset(long renderData);
-
-    private static native void setOffset(long renderData, boolean offset);
-
-    private static native float getOffsetFactor(long renderData);
-
-    private static native void setOffsetFactor(long renderData, float offsetFactor);
-
-    private static native float getOffsetUnits(long renderData);
-
-    private static native void setOffsetUnits(long renderData, float offsetUnits);
-
-    private static native boolean getDepthTest(long renderData);
-
-    private static native void setDepthTest(long renderData, boolean depthTest);
-
-    private static native boolean getAlphaBlend(long renderData);
-
-    private static native void setAlphaBlend(long renderData, boolean alphaBlend);
-
-    private static native int getDrawMode(long renderData);
-
-    private static native void setDrawMode(long renderData, int draw_mode);
 }

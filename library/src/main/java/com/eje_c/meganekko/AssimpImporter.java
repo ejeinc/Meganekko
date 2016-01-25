@@ -28,6 +28,16 @@ class AssimpImporter extends HybridObject {
         super(ptr);
     }
 
+    private static native int getNumberOfMeshes(long assimpImporter);
+
+    private static native long getMesh(long assimpImporter, int index);
+
+    private static native AiScene getAssimpScene(long assimpImporter);
+
+    private static native long getNodeMesh(long assimpImporter, String nodeName, int meshIndex);
+
+    private static native AiMaterial getMeshMaterial(long assimpImporter, String nodeName, int meshIndex);
+
     /**
      * @return The number of meshes contained in the imported 3D model.
      */
@@ -72,14 +82,4 @@ class AssimpImporter extends HybridObject {
     AiMaterial getMeshMaterial(String nodeName, int meshIndex) {
         return getMeshMaterial(getNative(), nodeName, meshIndex);
     }
-
-    private static native int getNumberOfMeshes(long assimpImporter);
-
-    private static native long getMesh(long assimpImporter, int index);
-
-    private static native AiScene getAssimpScene(long assimpImporter);
-
-    private static native long getNodeMesh(long assimpImporter, String nodeName, int meshIndex);
-
-    private static native AiMaterial getMeshMaterial(long assimpImporter, String nodeName, int meshIndex);
 }

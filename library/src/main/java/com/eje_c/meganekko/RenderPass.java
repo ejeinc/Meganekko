@@ -32,13 +32,15 @@ public class RenderPass extends HybridObject {
 
     /**
      * Constructor.
-     *
-     * @param vrContext Current {@link VrContext}
      */
     public RenderPass() {
         mMaterial = new Material();
         mCullFace = CullFaceEnum.Back;
     }
+
+    private static native void setMaterial(long renderPass, long material);
+
+    private static native void setCullFace(long renderPass, int cullFace);
 
     @Override
     protected native long initNativeInstance();
@@ -101,7 +103,7 @@ public class RenderPass extends HybridObject {
 
         private final int mValue;
 
-        private CullFaceEnum(int value) {
+        CullFaceEnum(int value) {
             mValue = value;
         }
 
@@ -122,8 +124,4 @@ public class RenderPass extends HybridObject {
             return mValue;
         }
     }
-
-    private static native void setMaterial(long renderPass, long material);
-
-    private static native void setCullFace(long renderPass, int cullFace);
 }

@@ -26,12 +26,66 @@ package com.eje_c.meganekko;
  * components or as Euler angles.
  */
 public class Transform extends Component {
-    Transform() {
-    }
 
-    private Transform(long ptr) {
-        super(ptr);
-    }
+    private static native float getPositionX(long transform);
+
+    private static native float getPositionY(long transform);
+
+    private static native float getPositionZ(long transform);
+
+    private static native void setPosition(long transform, float x, float y, float z);
+
+    private static native void setPositionX(long transform, float x);
+
+    private static native void setPositionY(long transform, float y);
+
+    private static native void setPositionZ(long transform, float z);
+
+    private static native float getRotationW(long transform);
+
+    private static native float getRotationX(long transform);
+
+    private static native float getRotationY(long transform);
+
+    private static native float getRotationZ(long transform);
+
+    private static native float getRotationYaw(long transform);
+
+    private static native float getRotationPitch(long transform);
+
+    private static native float getRotationRoll(long transform);
+
+    private static native void setRotation(long transform, float w, float x, float y, float z);
+
+    private static native float getScaleX(long transform);
+
+    private static native float getScaleY(long transform);
+
+    private static native float getScaleZ(long transform);
+
+    private static native void setScale(long transform, float x, float y, float z);
+
+    private static native void setScaleX(long transform, float x);
+
+    private static native void setScaleY(long transform, float y);
+
+    private static native void setScaleZ(long transform, float z);
+
+    private static native float[] getModelMatrix(long transform);
+
+    private static native void setModelMatrix(long tranform, float[] mat);
+
+    private static native void translate(long transform, float x, float y, float z);
+
+    private static native void setRotationByAxis(long transform, float angle, float x, float y, float z);
+
+    private static native void rotate(long transform, float w, float x, float y, float z);
+
+    private static native void rotateByAxis(long transform, float angle, float x, float y, float z);
+
+    private static native void rotateByAxisWithPivot(long transform, float angle,
+                                                     float axisX, float axisY, float axisZ, float pivotX, float pivotY,
+                                                     float pivotZ);
 
     @Override
     protected native long initNativeInstance();
@@ -360,7 +414,6 @@ public class Transform extends Component {
                 axisZ, pivotX, pivotY, pivotZ);
     }
 
-
     /**
      * Reset the transform
      * <p/>
@@ -381,64 +434,4 @@ public class Transform extends Component {
                 + getRotationX() + ", rotationY = " + getRotationY() + ", rotationZ = "
                 + getRotationZ();
     }
-
-    private static native float getPositionX(long transform);
-
-    private static native float getPositionY(long transform);
-
-    private static native float getPositionZ(long transform);
-
-    private static native void setPosition(long transform, float x, float y, float z);
-
-    private static native void setPositionX(long transform, float x);
-
-    private static native void setPositionY(long transform, float y);
-
-    private static native void setPositionZ(long transform, float z);
-
-    private static native float getRotationW(long transform);
-
-    private static native float getRotationX(long transform);
-
-    private static native float getRotationY(long transform);
-
-    private static native float getRotationZ(long transform);
-
-    private static native float getRotationYaw(long transform);
-
-    private static native float getRotationPitch(long transform);
-
-    private static native float getRotationRoll(long transform);
-
-    private static native void setRotation(long transform, float w, float x, float y, float z);
-
-    private static native float getScaleX(long transform);
-
-    private static native float getScaleY(long transform);
-
-    private static native float getScaleZ(long transform);
-
-    private static native void setScale(long transform, float x, float y, float z);
-
-    private static native void setScaleX(long transform, float x);
-
-    private static native void setScaleY(long transform, float y);
-
-    private static native void setScaleZ(long transform, float z);
-
-    private static native float[] getModelMatrix(long transform);
-
-    private static native void setModelMatrix(long tranform, float[] mat);
-
-    private static native void translate(long transform, float x, float y, float z);
-
-    private static native void setRotationByAxis(long transform, float angle, float x, float y, float z);
-
-    private static native void rotate(long transform, float w, float x, float y, float z);
-
-    private static native void rotateByAxis(long transform, float angle, float x, float y, float z);
-
-    private static native void rotateByAxisWithPivot(long transform, float angle,
-                                                     float axisX, float axisY, float axisZ, float pivotX, float pivotY,
-                                                     float pivotZ);
 }

@@ -22,7 +22,6 @@ import android.media.MediaPlayer;
 import android.view.Surface;
 
 import com.eje_c.meganekko.Material;
-import com.eje_c.meganekko.MaterialShaderId;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;

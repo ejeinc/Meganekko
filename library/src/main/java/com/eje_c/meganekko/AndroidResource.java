@@ -53,6 +53,7 @@ public class AndroidResource {
     private DebugStates debugState;
     // For hint to Assimp
     private String resourceFilePath;
+
     /**
      * Open any file you have permission to read.
      *
@@ -252,10 +253,7 @@ public class AndroidResource {
         } else if (!filePath.equals(other.filePath)) {
             return false;
         }
-        if (resourceId != other.resourceId) {
-            return false;
-        }
-        return true;
+        return resourceId == other.resourceId;
     }
 
     /**

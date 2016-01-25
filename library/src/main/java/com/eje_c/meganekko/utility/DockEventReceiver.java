@@ -12,6 +12,7 @@ public final class DockEventReceiver {
     private final Runnable mRunOnDock;
     private final Runnable mRunOnUndock;
     private boolean mIsStarted;
+
     public DockEventReceiver(final Context context, final Runnable runOnDock, final Runnable runOnUndock) {
         mRunOnDock = runOnDock;
         mRunOnUndock = runOnUndock;
