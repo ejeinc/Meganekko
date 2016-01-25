@@ -29,7 +29,7 @@
 #include "Android/JniUtils.h"
 #include "SoundEffectContext.h"
 #include "objects/Scene.h"
-#include "shaders/ShaderManager.h"
+#include "shaders/material/OESShader.h"
 
 using namespace OVR;
 
@@ -61,6 +61,7 @@ private:
     OvrGuiSys::SoundEffectPlayer * SoundEffectPlayer;
     ovrLocale *                    Locale;
 
+    OESShader *         oesShader;
     ovrMatrix4f         centerViewMatrix;
 
     jmethodID           frameMethodId;

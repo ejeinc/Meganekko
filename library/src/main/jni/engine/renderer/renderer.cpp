@@ -23,7 +23,7 @@
 #include "objects/Material.h"
 #include "objects/Scene.h"
 #include "objects/components/RenderData.h"
-#include "shaders/ShaderManager.h"
+#include "shaders/material/OESShader.h"
 #include "util/gvr_gl.h"
 
 using namespace OVR;
@@ -31,7 +31,7 @@ using namespace OVR;
 namespace mgn {
 class SceneObject;
 
-void Renderer::RenderEyeView(JNIEnv * jni, Scene* scene, std::vector<SceneObject*> scene_objects, ShaderManager* shader_manager,
+void Renderer::RenderEyeView(JNIEnv * jni, Scene* scene, std::vector<SceneObject*> scene_objects, OESShader* oesShader,
         const Matrix4f &eyeViewMatrix, const Matrix4f &eyeProjectionMatrix, const Matrix4f &eyeViewProjection, const int eye) {
     // there is no need to flat and sort every frame.
     // however let's keep it as is and assume we are not changed
@@ -46,7 +46,7 @@ void Renderer::RenderEyeView(JNIEnv * jni, Scene* scene, std::vector<SceneObject
 
     // do frustum culling, if enabled
     frustum_cull(jni, scene, eyeViewMatrix.GetTranslation(), scene_objects, render_data_vector,
-            eyeViewProjection, shader_manager);
+            eyeViewProjection, oesShader);
 
     // do sorting based on render order
     if (!scene->get_frustum_culling()) {
@@ -75,7 +75,7 @@ void Renderer::RenderEyeView(JNIEnv * jni, Scene* scene, std::vector<SceneObject
 
     for (auto it = render_data_vector.begin();
             it != render_data_vector.end(); ++it) {
-        renderRenderData(*it, eyeViewMatrix, eyeProjectionMatrix, renderMask, shader_manager, eye);
+        renderRenderData(*it, eyeViewMatrix, eyeProjectionMatrix, renderMask, oesShader, eye);
     }
 
 }
@@ -122,7 +122,7 @@ void Renderer::occlusion_cull(Scene* scene,
 void Renderer::frustum_cull(JNIEnv * jni, Scene* scene, const Vector3f& camera_position,
         std::vector<SceneObject*> scene_objects,
         std::vector<RenderData*>& render_data_vector, const Matrix4f &vp_matrix,
-        ShaderManager* shader_manager) {
+        OESShader * oesShader) {
     for (auto it = scene_objects.begin(); it != scene_objects.end(); ++it) {
         SceneObject *scene_object = (*it);
         RenderData* render_data = scene_object->render_data();
@@ -343,7 +343,7 @@ bool Renderer::is_cube_in_frustum(float frustum[6][4],
 
 void Renderer::renderRenderData(RenderData* render_data,
         const Matrix4f& view_matrix, const Matrix4f& projection_matrix,
-        int render_mask, ShaderManager* shader_manager, const int eye) {
+        int render_mask, OESShader * oesShader, const int eye) {
     if (render_mask & render_data->render_mask()) {
 
         if (render_data->offset()) {
@@ -369,7 +369,7 @@ void Renderer::renderRenderData(RenderData* render_data,
                     Matrix4f mv_matrix(view_matrix * model_matrix);
                     Matrix4f mvp_matrix = projection_matrix * mv_matrix;
                     try {
-                        shader_manager->getOESShader()->render(mvp_matrix, render_data, curr_material, eye);
+                        oesShader->render(mvp_matrix, render_data, curr_material, eye);
                     } catch (std::string error) {
                         __android_log_print(ANDROID_LOG_ERROR, "mgn", "Error detected in Renderer::renderRenderData; error : %s", error.c_str());
                     }

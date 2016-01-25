@@ -34,6 +34,7 @@
 
 #include "objects/mesh.h"
 #include "Kernel/OVR_Math.h"
+#include "shaders/material/OESShader.h"
 
 namespace mgn
 {
@@ -53,7 +54,7 @@ public:
 
     static void RenderEyeView(JNIEnv* jni,
             Scene* scene, std::vector<SceneObject*>,
-            ShaderManager* shader_manager,
+            OESShader * oesShader,
             const OVR::Matrix4f &eyeViewMatrix,
             const OVR::Matrix4f &eyeProjectionMatrix,
             const OVR::Matrix4f &eyeViewProjection,
@@ -63,14 +64,14 @@ private:
     static void renderRenderData(RenderData* render_data,
             const OVR::Matrix4f& view_matrix,
             const OVR::Matrix4f& projection_matrix,
-            int render_mask, ShaderManager* shader_manager, const int eye);
+            int render_mask, OESShader * oesShader, const int eye);
 
     static void occlusion_cull(Scene* scene,
             std::vector<SceneObject*> scene_objects);
     static void frustum_cull(JNIEnv* jni, Scene* scene, const OVR::Vector3f& camera_position,
             std::vector<SceneObject*> scene_objects,
             std::vector<RenderData*>& render_data_vector, const OVR::Matrix4f &vp_matrix,
-            ShaderManager* shader_manager);
+            OESShader * oesShader);
     static void build_frustum(float frustum[6][4], float mvp_matrix[16]);
     static bool is_cube_in_frustum(float frustum[6][4],
             const float *vertex_limit);

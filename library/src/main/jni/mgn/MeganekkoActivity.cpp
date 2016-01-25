@@ -33,7 +33,6 @@ MeganekkoActivity::MeganekkoActivity() :
       scene(NULL)
 {
     centerViewMatrix = ovrMatrix4f_CreateIdentity();
-    shaderManager = new ShaderManager();
 }
 
 MeganekkoActivity::~MeganekkoActivity()
@@ -57,6 +56,8 @@ void MeganekkoActivity::OneTimeInit(const char * fromPackage, const char * launc
     String fontName;
     GetLocale().GetString( "@string/font_name", "efigs.fnt", fontName );
     GuiSys->Init( this->app, *SoundEffectPlayer, fontName.ToCStr(), &app->GetDebugLines() );
+
+    oesShader = new OESShader();
 
     jmethodID oneTimeInitMethodId = GetMethodID("oneTimeInit", "()V");
     app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, oneTimeInitMethodId);
@@ -89,7 +90,7 @@ Matrix4f MeganekkoActivity::DrawEyeView(const int eye, const float fovDegreesX, 
 	const Matrix4f eyeProjectionMatrix = ovrMatrix4f_CreateProjectionFov( fovDegreesX, fovDegreesY, 0.0f, 0.0f, 1.0f, 0.0f );
 	const Matrix4f eyeViewProjection = eyeProjectionMatrix * eyeViewMatrix;
 
-    Renderer::RenderEyeView(app->GetJava()->Env, scene, sceneObjects, shaderManager, eyeViewMatrix, eyeProjectionMatrix, eyeViewProjection, eye);
+    Renderer::RenderEyeView(app->GetJava()->Env, scene, sceneObjects, oesShader, eyeViewMatrix, eyeProjectionMatrix, eyeViewProjection, eye);
 
     GuiSys->RenderEyeView(centerViewMatrix, eyeViewMatrix, eyeProjectionMatrix);
 
