@@ -62,10 +62,9 @@ import static com.eje_c.meganekko.utility.Assert.checkStringNotNullOrEmpty;
  * material.setMainTexture(texture);
  * </pre>
  */
-public class Material extends HybridObject implements Shaders<MaterialShaderId> {
+public class Material extends HybridObject {
 
     private int mShaderFeatureSet;
-    private MaterialShaderId shaderId;
     /**
      * A new holder for a shader's uniforms.
      */
@@ -102,20 +101,6 @@ public class Material extends HybridObject implements Shaders<MaterialShaderId> 
     private static native void setShaderFeatureSet(long material, int featureSet);
 
     private static native void setStereoMode(long material, int stereoMode);
-
-    public MaterialShaderId getShaderType() {
-        return shaderId;
-    }
-
-    /**
-     * Set shader id
-     *
-     * @param shaderId The new shader id.
-     */
-    public void setShaderType(MaterialShaderId shaderId) {
-        this.shaderId = shaderId;
-        setShaderType(getNative(), shaderId.ID);
-    }
 
     /**
      * Get the {@code color} uniform.
