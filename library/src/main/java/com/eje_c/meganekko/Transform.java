@@ -15,6 +15,9 @@
 
 package com.eje_c.meganekko;
 
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
 /**
  * One of the key Meganekko classes: Encapsulates a 4x4 matrix that controls how GL
  * draws a mesh.
@@ -89,6 +92,30 @@ public class Transform extends Component {
 
     @Override
     protected native long initNativeInstance();
+
+    public void setPosition(Vector3f vec) {
+        setPosition(vec.x, vec.y, vec.z);
+    }
+
+    public Vector3f getPosition() {
+        return new Vector3f(getPositionX(), getPositionY(), getPositionZ());
+    }
+
+    public void setScale(Vector3f vec) {
+        setScale(vec.x, vec.y, vec.z);
+    }
+
+    public Vector3f getScale() {
+        return new Vector3f(getScaleX(), getScaleY(), getScaleZ());
+    }
+
+    public void setRotation(Quaternionf quaternion) {
+        setRotation(quaternion.w, quaternion.x, quaternion.y, quaternion.z);
+    }
+
+    public Quaternionf getRotation() {
+        return new Quaternionf(getRotationW(), getRotationX(), getRotationY(), getRotationZ());
+    }
 
     /**
      * Get the X component of the transform's position.
