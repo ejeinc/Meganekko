@@ -15,6 +15,7 @@
 
 package com.eje_c.meganekko;
 
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -363,6 +364,12 @@ public class Transform extends Component {
             throw new IllegalArgumentException("Size not equal to 16.");
         }
         setModelMatrix(getNative(), mat);
+    }
+
+    public void setModelMatrix(Matrix4f mat) {
+        float[] m = new float[16];
+        mat.get(m);
+        setModelMatrix(getNative(), m);
     }
 
     /**
