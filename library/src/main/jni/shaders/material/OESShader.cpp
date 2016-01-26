@@ -58,10 +58,6 @@ OESShader::OESShader() {
 }
 
 OESShader::~OESShader() {
-    recycle();
-}
-
-void OESShader::recycle() {
     DeleteProgram(program);
 }
 

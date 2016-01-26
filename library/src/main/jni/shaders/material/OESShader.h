@@ -34,7 +34,6 @@
 #include <GLES2/gl2ext.h>
 #include "Kernel/OVR_Math.h"
 
-#include "objects/RecyclableObject.h"
 #include "objects/Material.h"
 
 using namespace OVR;
@@ -42,11 +41,10 @@ using namespace OVR;
 namespace mgn {
 class RenderData;
 
-class OESShader: public RecyclableObject {
+    class OESShader {
 public:
     OESShader();
     ~OESShader();
-    void recycle();
     void render(const Matrix4f& mvpMatrix, RenderData* renderData, Material* material, const int eye);
 
 private:
