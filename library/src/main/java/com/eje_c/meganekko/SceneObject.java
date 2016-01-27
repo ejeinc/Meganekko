@@ -21,7 +21,9 @@ import com.eje_c.meganekko.RenderData.RenderMaskBit;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * One of the key Meganekko classes: a scene object.
@@ -41,6 +43,7 @@ import java.util.List;
 public class SceneObject extends HybridObject {
 
     private final List<SceneObject> mChildren = new ArrayList<>();
+    private final Set<KeyEventListener> mKeyEventListeners = new HashSet<>();
     private int mId;
     private String mName;
     private Transform mTransform;
@@ -490,6 +493,12 @@ public class SceneObject extends HybridObject {
 
     public boolean onKeyShortPress(int keyCode, int repeatCount) {
 
+        for (KeyEventListener l : mKeyEventListeners) {
+            if (l.onKeyShortPress(keyCode, repeatCount)) {
+                return true;
+            }
+        }
+
         for (SceneObject child : mChildren) {
             if (child.onKeyShortPress(keyCode, repeatCount)) {
                 return true;
@@ -500,6 +509,12 @@ public class SceneObject extends HybridObject {
     }
 
     public boolean onKeyDoubleTap(int keyCode, int repeatCount) {
+
+        for (KeyEventListener l : mKeyEventListeners) {
+            if (l.onKeyDoubleTap(keyCode, repeatCount)) {
+                return true;
+            }
+        }
 
         for (SceneObject child : mChildren) {
             if (child.onKeyDoubleTap(keyCode, repeatCount)) {
@@ -512,6 +527,12 @@ public class SceneObject extends HybridObject {
 
     public boolean onKeyLongPress(int keyCode, int repeatCount) {
 
+        for (KeyEventListener l : mKeyEventListeners) {
+            if (l.onKeyLongPress(keyCode, repeatCount)) {
+                return true;
+            }
+        }
+
         for (SceneObject child : mChildren) {
             if (child.onKeyLongPress(keyCode, repeatCount)) {
                 return true;
@@ -522,6 +543,12 @@ public class SceneObject extends HybridObject {
     }
 
     public boolean onKeyDown(int keyCode, int repeatCount) {
+
+        for (KeyEventListener l : mKeyEventListeners) {
+            if (l.onKeyDown(keyCode, repeatCount)) {
+                return true;
+            }
+        }
 
         for (SceneObject child : mChildren) {
             if (child.onKeyDown(keyCode, repeatCount)) {
@@ -534,6 +561,12 @@ public class SceneObject extends HybridObject {
 
     public boolean onKeyUp(int keyCode, int repeatCount) {
 
+        for (KeyEventListener l : mKeyEventListeners) {
+            if (l.onKeyUp(keyCode, repeatCount)) {
+                return true;
+            }
+        }
+
         for (SceneObject child : mChildren) {
             if (child.onKeyUp(keyCode, repeatCount)) {
                 return true;
@@ -545,6 +578,12 @@ public class SceneObject extends HybridObject {
 
     public boolean onKeyMax(int keyCode, int repeatCount) {
 
+        for (KeyEventListener l : mKeyEventListeners) {
+            if (l.onKeyMax(keyCode, repeatCount)) {
+                return true;
+            }
+        }
+
         for (SceneObject child : mChildren) {
             if (child.onKeyMax(keyCode, repeatCount)) {
                 return true;
@@ -552,5 +591,13 @@ public class SceneObject extends HybridObject {
         }
 
         return false;
+    }
+
+    public boolean addKeyEventListener(KeyEventListener listener) {
+        return mKeyEventListeners.add(listener);
+    }
+
+    public boolean removeKeyEventListener(KeyEventListener listener) {
+        return mKeyEventListeners.remove(listener);
     }
 }
