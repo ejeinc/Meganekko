@@ -62,14 +62,14 @@ public:
     explicit Material(JNIEnv * jni) :
             shader_type_(OES_SHADER), floats_(), vec2s_(), vec3s_(), vec4s_(), shader_feature_set_(0) {;
         Mode = NORMAL;
-        MovieTexture = new SurfaceTexture(jni);
+        surfaceTexture = new SurfaceTexture(jni);
         vec3s_["color"] = OVR::Vector3f(1.0f, 1.0f, 1.0f);
         floats_["opacity"] = 1.0f;
     }
 
     ~Material() {
-        delete MovieTexture;
-        MovieTexture = NULL;
+        delete surfaceTexture;
+        surfaceTexture = NULL;
     }
 
     ShaderType shader_type() const {
@@ -158,11 +158,11 @@ public:
     }
 
     GLuint getId() const {
-        return MovieTexture->GetTextureId();
+        return surfaceTexture->GetTextureId();
     }
 
     jobject getSurfaceTexture() {
-        return MovieTexture->GetJavaObject();
+        return surfaceTexture->GetJavaObject();
     }
 
     StereoMode GetStereoMode() const {
@@ -181,7 +181,7 @@ private:
 
 private:
     ShaderType shader_type_;
-    SurfaceTexture *MovieTexture;
+    SurfaceTexture *surfaceTexture;
     std::map<std::string, float> floats_;
     std::map<std::string, OVR::Vector2f> vec2s_;
     std::map<std::string, OVR::Vector3f> vec3s_;
