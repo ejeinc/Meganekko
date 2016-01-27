@@ -256,26 +256,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
         recenterPose(getAppPtr());
     }
 
-    /**
-     * Short hand method for getScene().findObjectByName().
-     *
-     * @param name
-     * @return Found object or null.
-     */
-    public SceneObject findObjectByName(String name) {
-        return mScene.findObjectByName(name);
-    }
-
-    /**
-     * Short hand method for getScene().findObjectById().
-     *
-     * @param id
-     * @return Found object or null.
-     */
-    public SceneObject findObjectById(int id) {
-        return mScene.findObjectById(id);
-    }
-
     @Override
     public void setSceneFromXML(int xmlRes) {
 

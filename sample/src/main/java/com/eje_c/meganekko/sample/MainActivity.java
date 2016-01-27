@@ -20,7 +20,7 @@ public class MainActivity extends MeganekkoActivity {
             @Override
             public void init(Meganekko meganekko) {
                 meganekko.setSceneFromXML(R.xml.scene);
-                obj = findObjectById(R.id.myObject);
+                obj = meganekko.getScene().findObjectById(R.id.myObject);
             }
 
             @Override
