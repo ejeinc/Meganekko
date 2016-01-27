@@ -61,6 +61,9 @@ import com.eje_c.meganekko.utility.Colors;
  */
 public class Material extends HybridObject {
 
+    private static native void setColor(long material, float r, float g, float b, float a);
+
+    private static native float[] getColor(long material);
 
     private static native float getFloat(long material, String key);
 
@@ -110,7 +113,8 @@ public class Material extends HybridObject {
     public void setColor(int color) {
         setColor(Colors.byteToGl(Color.red(color)), //
                 Colors.byteToGl(Color.green(color)), //
-                Colors.byteToGl(Color.blue(color)));
+                Colors.byteToGl(Color.blue(color)), //
+                Colors.byteToGl(Color.alpha(color)));
     }
 
     /**
@@ -135,8 +139,8 @@ public class Material extends HybridObject {
      * @param g Green
      * @param b Blue
      */
-    public void setColor(float r, float g, float b) {
-        setVec3(getNative(), "color", r, g, b);
+    public void setColor(float r, float g, float b, float a) {
+        setColor(getNative(), r, g, b, a);
     }
 
     /**

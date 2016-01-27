@@ -44,12 +44,11 @@ static const char FRAGMENT_SHADER[] =
         "#extension GL_OES_EGL_image_external : require\n"
         "precision highp float;\n"
         "uniform samplerExternalOES Texture0;\n"
-        "uniform vec3 UniformColor;\n"
+        "uniform vec4 UniformColor;\n"
         "uniform float Opacity;\n"
         "varying highp vec2 oTexCoord;\n"
         "void main() {\n"
-        "  vec4 color = texture2D(Texture0, oTexCoord);"
-        "  gl_FragColor = vec4(color.r * UniformColor.r * Opacity, color.g * UniformColor.g * Opacity, color.b * UniformColor.b * Opacity, color.a * Opacity);\n"
+        "  gl_FragColor = texture2D(Texture0, oTexCoord) * UniformColor * Opacity;\n"
         "}\n";
 
 OESShader::OESShader() {
@@ -64,7 +63,7 @@ OESShader::~OESShader() {
 void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Material * material, const int eye) {
 
     Mesh * mesh = renderData->mesh();
-    Vector3f color = material->getVec3("color");
+    Vector4f color = material->GetColor();
 
     mesh->setVertexLoc(VERTEX_ATTRIBUTE_LOCATION_POSITION);
     mesh->setTexCoordLoc(VERTEX_ATTRIBUTE_LOCATION_UV0);
@@ -76,7 +75,7 @@ void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Mate
     glUniformMatrix4fv(program.uTexm, 1, GL_TRUE, TexmForVideo(material->GetStereoMode(), eye).M[ 0 ] );
     glActiveTexture (GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_EXTERNAL_OES, material->getId());
-    glUniform3f(program.uColor, color.x, color.y, color.z);
+    glUniform4f(program.uColor, color.x, color.y, color.z, color.w);
     glUniform1f(opacity, material->getFloat("opacity"));
 
     glBindVertexArray(mesh->getVAOId());

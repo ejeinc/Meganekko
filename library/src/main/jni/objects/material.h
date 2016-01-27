@@ -51,7 +51,7 @@ public:
             floats_(), vec2s_(), vec3s_(), vec4s_(), shader_feature_set_(0) {;
         Mode = NORMAL;
         surfaceTexture = new SurfaceTexture(jni);
-        vec3s_["color"] = OVR::Vector3f(1.0f, 1.0f, 1.0f);
+        color = Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
         floats_["opacity"] = 1.0f;
     }
 
@@ -153,6 +153,18 @@ public:
         Mode = stereoMode;
     }
 
+    const Vector4f & GetColor() const {
+        return color;
+    }
+
+    const Vector4f & GetColor() {
+        return color;
+    }
+
+    void SetColor(const Vector4f & color) {
+        this->color = color;
+    }
+
 private:
     Material(const Material& material);
     Material(Material&& material);
@@ -161,6 +173,7 @@ private:
 
 private:
     SurfaceTexture *surfaceTexture;
+    Vector4f color;
     std::map<std::string, float> floats_;
     std::map<std::string, OVR::Vector2f> vec2s_;
     std::map<std::string, OVR::Vector3f> vec3s_;

@@ -20,6 +20,7 @@
 #include <jni.h>
 
 #include "Material.h"
+#include "util/convert.h"
 
 namespace mgn {
 extern "C" {
@@ -27,6 +28,18 @@ extern "C" {
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_Material_initNativeInstance(JNIEnv * env, jobject obj) {
     return reinterpret_cast<jlong>(new Material(env));
+}
+
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_Material_setColor(JNIEnv * env, jobject obj, jlong jmaterial, jfloat r, jfloat g, jfloat b, jfloat a) {
+    Material* material = reinterpret_cast<Material*>(jmaterial);
+    material->SetColor(Vector4f(r, g, b, a));
+}
+
+JNIEXPORT jfloatArray JNICALL
+Java_com_eje_1c_meganekko_Material_getColor(JNIEnv * env, jobject obj, jlong jmaterial) {
+    Material* material = reinterpret_cast<Material*>(jmaterial);
+    return ToFloatArray(env, material->GetColor());
 }
 
 JNIEXPORT jfloat JNICALL
