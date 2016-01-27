@@ -25,7 +25,7 @@ namespace mgn {
 extern "C" {
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_Material_ctor(JNIEnv * env, jobject obj) {
+Java_com_eje_1c_meganekko_Material_initNativeInstance(JNIEnv * env, jobject obj) {
     return reinterpret_cast<jlong>(new Material(env));
 }
 
