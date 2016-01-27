@@ -60,35 +60,31 @@ public:
     }
 
     void deleteVaos() {
-        for (auto iterator = vaoID_map_.begin(); iterator != vaoID_map_.end();
-                iterator++) {
-            gl_delete.queueVertexArray(iterator->second);
+        
+        if (vaoID != 0) {
+            gl_delete.queueVertexArray(vaoID);
+            vaoID = 0;
         }
-        vaoID_map_.clear();
 
-        for (auto iterator = triangle_vboID_map_.begin();
-                iterator != triangle_vboID_map_.end(); iterator++) {
-            gl_delete.queueBuffer(iterator->second);
+        if (triangle_vboID != 0) {
+            gl_delete.queueBuffer(triangle_vboID);
+            triangle_vboID = 0;
         }
-        triangle_vboID_map_.clear();
 
-        for (auto iterator = vert_vboID_map_.begin();
-                iterator != vert_vboID_map_.end(); iterator++) {
-            gl_delete.queueBuffer(iterator->second);
+        if (vert_vboID != 0) {
+            gl_delete.queueBuffer(vert_vboID);
+            vert_vboID = 0;
         }
-        vert_vboID_map_.clear();
 
-        for (auto iterator = norm_vboID_map_.begin();
-                iterator != norm_vboID_map_.end(); iterator++) {
-            gl_delete.queueBuffer(iterator->second);
+        if (norm_vboID != 0) {
+            gl_delete.queueBuffer(norm_vboID);
+            norm_vboID = 0;
         }
-        norm_vboID_map_.clear();
 
-        for (auto iterator = tex_vboID_map_.begin();
-                iterator != tex_vboID_map_.end(); iterator++) {
-            gl_delete.queueBuffer(iterator->second);
+        if (tex_vboID != 0) {
+            gl_delete.queueBuffer(tex_vboID);
+            tex_vboID = 0;
         }
-        tex_vboID_map_.clear();
         have_bounding_box_ = false;
         have_bounding_sphere_ = false;
     }
@@ -309,11 +305,10 @@ public:
     }
 
     // generate VAO
-    void generateVAO(Material::ShaderType key);
+    void generateVAO();
 
-    const GLuint getVAOId(Material::ShaderType key) const {
-        auto iterator = vaoID_map_.find(key);
-        return iterator != vaoID_map_.end() ? iterator->second : 0;
+    const GLuint getVAOId() const {
+        return vaoID;
     }
 
     GLuint getNumTriangles() {
@@ -343,11 +338,11 @@ private:
     std::map<int, std::string> attribute_vec4_keys_;
 
     // add vertex array object and VBO
-    std::map<Material::ShaderType, GLuint> vaoID_map_;
-    std::map<Material::ShaderType, GLuint> triangle_vboID_map_;
-    std::map<Material::ShaderType, GLuint> vert_vboID_map_;
-    std::map<Material::ShaderType, GLuint> norm_vboID_map_;
-    std::map<Material::ShaderType, GLuint> tex_vboID_map_;
+    GLuint vaoID;
+    GLuint triangle_vboID;
+    GLuint vert_vboID;
+    GLuint norm_vboID;
+    GLuint tex_vboID;
 
     // attribute locations
     GLuint vertexLoc_;

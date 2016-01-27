@@ -29,13 +29,6 @@ Java_com_eje_1c_meganekko_Material_initNativeInstance(JNIEnv * env, jobject obj)
     return reinterpret_cast<jlong>(new Material(env));
 }
 
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Material_setShaderType(JNIEnv * env, jobject obj, jlong jmaterial, jint shader_type) {
-
-    Material* material = reinterpret_cast<Material*>(jmaterial);
-    return material->set_shader_type(static_cast<Material::ShaderType>(shader_type));
-}
-
 JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_Material_getFloat(JNIEnv * env, jobject obj, jlong jmaterial, jstring key) {
 

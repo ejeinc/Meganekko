@@ -61,7 +61,6 @@ import com.eje_c.meganekko.utility.Colors;
  */
 public class Material extends HybridObject {
 
-    private static native void setShaderType(long material, long shaderType);
 
     private static native float getFloat(long material, String key);
 

@@ -42,25 +42,13 @@ class Color;
 
 class Material: public HybridObject {
 public:
-    enum ShaderType {
-        UNLIT_HORIZONTAL_STEREO_SHADER = 0,
-        UNLIT_VERTICAL_STEREO_SHADER = 1,
-        OES_SHADER = 2,
-        OES_HORIZONTAL_STEREO_SHADER = 3,
-        OES_VERTICAL_STEREO_SHADER = 4,
-        CUBEMAP_SHADER = 5,
-        CUBEMAP_REFLECTION_SHADER = 6,
-        TEXTURE_SHADER = 7,
-        ASSIMP_SHADER = 9,
-        TEXTURE_SHADER_NOLIGHT = 100
-    };
 
     enum StereoMode {
         NORMAL = 0, TOP_BOTTOM, BOTTOM_TOP, LEFT_RIGHT, RIGHT_LEFT
     };
 
     explicit Material(JNIEnv * jni) :
-            shader_type_(OES_SHADER), floats_(), vec2s_(), vec3s_(), vec4s_(), shader_feature_set_(0) {;
+            floats_(), vec2s_(), vec3s_(), vec4s_(), shader_feature_set_(0) {;
         Mode = NORMAL;
         surfaceTexture = new SurfaceTexture(jni);
         vec3s_["color"] = OVR::Vector3f(1.0f, 1.0f, 1.0f);
@@ -70,14 +58,6 @@ public:
     ~Material() {
         delete surfaceTexture;
         surfaceTexture = NULL;
-    }
-
-    ShaderType shader_type() const {
-        return shader_type_;
-    }
-
-    void set_shader_type(ShaderType shader_type) {
-        shader_type_ = shader_type;
     }
 
     float getFloat(std::string key) {
@@ -180,7 +160,6 @@ private:
     Material& operator=(Material&& material);
 
 private:
-    ShaderType shader_type_;
     SurfaceTexture *surfaceTexture;
     std::map<std::string, float> floats_;
     std::map<std::string, OVR::Vector2f> vec2s_;

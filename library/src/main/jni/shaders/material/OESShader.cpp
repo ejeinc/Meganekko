@@ -68,7 +68,7 @@ void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Mate
 
     mesh->setVertexLoc(VERTEX_ATTRIBUTE_LOCATION_POSITION);
     mesh->setTexCoordLoc(VERTEX_ATTRIBUTE_LOCATION_UV0);
-    mesh->generateVAO(Material::OES_SHADER);
+    mesh->generateVAO();
 
     glUseProgram(program.program);
 
@@ -79,7 +79,7 @@ void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Mate
     glUniform3f(program.uColor, color.x, color.y, color.z);
     glUniform1f(opacity, material->getFloat("opacity"));
 
-    glBindVertexArray(mesh->getVAOId(Material::OES_SHADER));
+    glBindVertexArray(mesh->getVAOId());
     glDrawElements(GL_TRIANGLES, mesh->triangles().size(), GL_UNSIGNED_SHORT, 0);
     glBindVertexArray(0);
 

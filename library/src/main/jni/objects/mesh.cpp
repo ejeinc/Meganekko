@@ -246,7 +246,7 @@ const float *Mesh::getBoundingSphereInfo() {
 }
 
 // generate vertex array object
-void Mesh::generateVAO(Material::ShaderType key) {
+void Mesh::generateVAO() {
 #if _GVRF_USE_GLES3_
     GLuint tmpID;
 
@@ -254,7 +254,7 @@ void Mesh::generateVAO(Material::ShaderType key) {
         deleteVaos();
     }
 
-    if (vaoID_map_.find(key) != vaoID_map_.end()) {
+    if (vaoID != 0) {
         // already initialized
         return;
     }
@@ -357,11 +357,11 @@ void Mesh::generateVAO(Material::ShaderType key) {
         glVertexAttribPointer(it->first, 4, GL_FLOAT, 0, 0, 0);
     }
 
-    vaoID_map_[key] = vaoID_;
-    triangle_vboID_map_[key] = triangle_vboID_;
-    vert_vboID_map_[key] = vert_vboID_;
-    norm_vboID_map_[key] = norm_vboID_;
-    tex_vboID_map_[key] = tex_vboID_;
+    vaoID = vaoID_;
+    triangle_vboID = triangle_vboID_;
+    vert_vboID = vert_vboID_;
+    norm_vboID = norm_vboID_;
+    tex_vboID = tex_vboID_;
 
     // done generation
     glBindVertexArray(0);
