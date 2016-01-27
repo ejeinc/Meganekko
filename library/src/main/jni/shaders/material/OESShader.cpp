@@ -76,7 +76,7 @@ void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Mate
     glActiveTexture (GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_EXTERNAL_OES, material->getId());
     glUniform4f(program.uColor, color.x, color.y, color.z, color.w);
-    glUniform1f(opacity, material->getFloat("opacity"));
+    glUniform1f(opacity, material->GetOpacity());
 
     glBindVertexArray(mesh->getVAOId());
     glDrawElements(GL_TRIANGLES, mesh->triangles().size(), GL_UNSIGNED_SHORT, 0);

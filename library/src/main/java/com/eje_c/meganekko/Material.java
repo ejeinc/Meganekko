@@ -65,26 +65,9 @@ public class Material extends HybridObject {
 
     private static native float[] getColor(long material);
 
-    private static native float getFloat(long material, String key);
+    private static native void setOpacity(long material, float opacity);
 
-    private static native void setFloat(long material, String key, float value);
-
-    private static native float[] getVec2(long material, String key);
-
-    private static native void setVec2(long material, String key, float x, float y);
-
-    private static native float[] getVec3(long material, String key);
-
-    private static native void setVec3(long material, String key, float x, float y, float z);
-
-    private static native float[] getVec4(long material, String key);
-
-    private static native void setVec4(long material, String key, float x, float y, float z, float w);
-
-    private static native void setMat4(long material, String key, float x1, float y1,
-                                       float z1, float w1, float x2, float y2, float z2, float w2,
-                                       float x3, float y3, float z3, float w3, float x4, float y4,
-                                       float z4, float w4);
+    private static native float getOpacity(long material);
 
     private static native void setStereoMode(long material, int stereoMode);
 
@@ -93,19 +76,15 @@ public class Material extends HybridObject {
 
     /**
      * Get the {@code color} uniform.
-     * <p/>
-     * By convention, Meganekko shaders can use a {@code vec3} uniform named
-     * {@code color}. With the default {@linkplain ShaderType.Unlit 'unlit'
-     * shader,} this allows you to add an overlay color on top of the texture.
      *
-     * @return The current {@code vec3 color} as a three-element array
+     * @return The current {@code vec4 color} as a four-element array
      */
     public float[] getColor() {
-        return getVec3(getNative(), "color");
+        return getColor(getNative());
     }
 
     /**
-     * A convenience overload of {@link #setColor(float, float, float)} that
+     * A convenience overload of {@link #setColor(float, float, float, float)} that
      * lets you use familiar Android {@link Color} values.
      *
      * @param color Any Android {@link Color}; the alpha byte is ignored.
@@ -115,16 +94,6 @@ public class Material extends HybridObject {
                 Colors.byteToGl(Color.green(color)), //
                 Colors.byteToGl(Color.blue(color)), //
                 Colors.byteToGl(Color.alpha(color)));
-    }
-
-    /**
-     * A convenience method that wraps {@link #getColor()} and returns an
-     * Android {@link Color}
-     *
-     * @return An Android {@link Color}
-     */
-    public int getRgbColor() {
-        return Colors.toColor(getColor());
     }
 
     /**
@@ -154,7 +123,7 @@ public class Material extends HybridObject {
      * @return The {@code opacity} uniform used to render this material
      */
     public float getOpacity() {
-        return getFloat(getNative(), "opacity");
+        return getOpacity(getNative());
     }
 
     /**
@@ -188,7 +157,7 @@ public class Material extends HybridObject {
      * @param opacity Value between {@code 0.0f} and {@code 1.0f}, inclusive.
      */
     public void setOpacity(float opacity) {
-        setFloat(getNative(), "opacity", opacity);
+        setOpacity(getNative(), opacity);
     }
 
     public SurfaceTexture getSurfaceTexture() {

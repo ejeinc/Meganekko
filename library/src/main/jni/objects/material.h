@@ -47,94 +47,16 @@ public:
         NORMAL = 0, TOP_BOTTOM, BOTTOM_TOP, LEFT_RIGHT, RIGHT_LEFT
     };
 
-    explicit Material(JNIEnv * jni) :
-            floats_(), vec2s_(), vec3s_(), vec4s_(), shader_feature_set_(0) {;
+    explicit Material(JNIEnv * jni) {
         Mode = NORMAL;
         surfaceTexture = new SurfaceTexture(jni);
         color = Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
-        floats_["opacity"] = 1.0f;
+        opacity = 1.0f;
     }
 
     ~Material() {
         delete surfaceTexture;
         surfaceTexture = NULL;
-    }
-
-    float getFloat(std::string key) {
-        auto it = floats_.find(key);
-        if (it != floats_.end()) {
-            return it->second;
-        } else {
-            std::string error = "Material::getFloat() : " + key + " not found";
-            throw error;
-        }
-    }
-    void setFloat(std::string key, float value) {
-        floats_[key] = value;
-    }
-
-    OVR::Vector2f getVec2(std::string key) {
-        auto it = vec2s_.find(key);
-        if (it != vec2s_.end()) {
-            return it->second;
-        } else {
-            std::string error = "Material::getVec2() : " + key + " not found";
-            throw error;
-        }
-    }
-
-    void setVec2(std::string key, OVR::Vector2f vector) {
-        vec2s_[key] = vector;
-    }
-
-    OVR::Vector3f getVec3(std::string key) {
-        auto it = vec3s_.find(key);
-        if (it != vec3s_.end()) {
-            return it->second;
-        } else {
-            std::string error = "Material::getVec3() : " + key + " not found";
-            throw error;
-        }
-    }
-
-    void setVec3(std::string key, OVR::Vector3f vector) {
-        vec3s_[key] = vector;
-    }
-
-    OVR::Vector4f getVec4(std::string key) {
-        auto it = vec4s_.find(key);
-        if (it != vec4s_.end()) {
-            return it->second;
-        } else {
-            std::string error = "Material::getVec4() : " + key + " not found";
-            throw error;
-        }
-    }
-
-    void setVec4(std::string key, OVR::Vector4f vector) {
-        vec4s_[key] = vector;
-    }
-
-    OVR::Matrix4f getMat4(std::string key) {
-        auto it = mat4s_.find(key);
-        if (it != mat4s_.end()) {
-            return it->second;
-        } else {
-            std::string error = "Material::getMat4() : " + key + " not found";
-            throw error;
-        }
-    }
-
-    void setMat4(std::string key, OVR::Matrix4f matrix) {
-        mat4s_[key] = matrix;
-    }
-
-    int get_shader_feature_set() {
-        return shader_feature_set_;
-    }
-
-    void set_shader_feature_set(int feature_set) {
-        shader_feature_set_ = feature_set;
     }
 
     GLuint getId() const {
@@ -165,6 +87,18 @@ public:
         this->color = color;
     }
 
+    float GetOpacity() const {
+        return opacity;
+    }
+
+    float GetOpacity() {
+        return opacity;
+    }
+
+    void SetOpacity(const float opacity) {
+        this->opacity = opacity;
+    }
+
 private:
     Material(const Material& material);
     Material(Material&& material);
@@ -174,12 +108,7 @@ private:
 private:
     SurfaceTexture *surfaceTexture;
     Vector4f color;
-    std::map<std::string, float> floats_;
-    std::map<std::string, OVR::Vector2f> vec2s_;
-    std::map<std::string, OVR::Vector3f> vec3s_;
-    std::map<std::string, OVR::Vector4f> vec4s_;
-    std::map<std::string, OVR::Matrix4f> mat4s_;
-    unsigned int shader_feature_set_;
+    float opacity;
     StereoMode Mode;
 };
 }
