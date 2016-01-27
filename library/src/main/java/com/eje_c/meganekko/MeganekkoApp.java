@@ -30,13 +30,13 @@ public interface MeganekkoApp {
 
     /**
      * Will be called when user is resumed from sleeping.
-     * Note: This method is called from UI-thread.
+     * Note: This method is called from UI-thread. Cannot perform GL related operations.
      */
     void onResume();
 
     /**
      * Will be called when device is going to sleep mode.
-     * Note: This method is called from UI-thread.
+     * Note: This method is called from UI-thread. Cannot perform GL related operations.
      */
     void onPause();
 }

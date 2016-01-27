@@ -144,8 +144,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
         }
     }
 
-    protected abstract MeganekkoApp createMeganekkoApp();
-
     /**
      * Called from native AppInterface::frame().
      */

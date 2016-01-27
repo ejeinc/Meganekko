@@ -11,6 +11,8 @@ import android.support.annotation.Nullable;
  */
 public interface Meganekko {
 
+    MeganekkoApp createMeganekkoApp();
+
     /**
      * Parse
      *
