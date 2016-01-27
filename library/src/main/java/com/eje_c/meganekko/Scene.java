@@ -74,13 +74,13 @@ public class Scene extends SceneObject {
     }
 
     /**
-     * Called when the scene becomes main scene with {@link MeganekkoActivity#setScene(Scene)}.
+     * Called when the scene becomes main scene with {@link Meganekko#setScene(Scene)}.
      */
     public void onResume() {
     }
 
     /**
-     * Called when the other scene becomes main scene with {@link MeganekkoActivity#setScene(Scene)}.
+     * Called when the other scene becomes main scene with {@link Meganekko#setScene(Scene)}.
      */
     public void onPause() {
     }

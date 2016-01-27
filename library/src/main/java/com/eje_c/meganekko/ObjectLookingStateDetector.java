@@ -18,15 +18,13 @@ package com.eje_c.meganekko;
 
 import android.support.annotation.NonNull;
 
-import com.eje_c.meganekko.gearvr.MeganekkoActivity;
-
 /**
  * Detects if user is looking at target object automatically.
  * The {@link ObjectLookingStateDetector.ObjectLookingStateListener} callback will notify users
  * when start or end looking at target object. To use this class:
  * <ul>
  * <li>Create an instance of the {@code ObjectLookingStateDetector} with {@code ObjectLookingStateListener}.</li>
- * <li>Register {@code ObjectLookingStateDetector} to {@link MeganekkoActivity#onFrame(FrameListener)} or {@link Scene#onFrame(FrameListener)}.</li>
+ * <li>Call {@link ObjectLookingStateDetector#update(VrFrame)} in {@link MeganekkoApp#update(Meganekko, VrFrame)} or {@link Scene#update(VrFrame)}.</li>
  * </ul>
  */
 public class ObjectLookingStateDetector {
