@@ -34,7 +34,7 @@ public class RenderPass extends HybridObject {
      * Constructor.
      */
     public RenderPass() {
-        mMaterial = new Material();
+        setMaterial(new Material());
         mCullFace = CullFaceEnum.Back;
     }
 
