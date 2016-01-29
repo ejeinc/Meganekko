@@ -3,7 +3,6 @@ package com.eje_c.meganekko.animation;
 import android.animation.TypeEvaluator;
 
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 
 public class MatrixEvaluator implements TypeEvaluator {
     private final Matrix4f result = new Matrix4f();
