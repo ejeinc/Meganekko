@@ -113,6 +113,14 @@ public class Material extends HybridObject {
         return texture;
     }
 
+    public void update(VrFrame vrFrame) {
+        if (texture == null) return;
+
+        if (texture.isDirty()) {
+            texture.update(vrFrame);
+        }
+    }
+
     public enum StereoMode {
         NORMAL, TOP_BOTTOM, BOTTOM_TOP, LEFT_RIGHT, RIGHT_LEFT
     }

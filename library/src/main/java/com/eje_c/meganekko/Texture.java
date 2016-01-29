@@ -25,10 +25,12 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.Surface;
 import android.view.View;
+import android.view.ViewGroup;
 
 public class Texture {
 
     private final SurfaceTexture surfaceTexture;
+    private CanvasRenderer renderer;
 
     Texture(SurfaceTexture surfaceTexture) {
         this.surfaceTexture = surfaceTexture;
@@ -47,47 +49,56 @@ public class Texture {
     }
 
     public void set(CanvasRenderer renderer) {
+        this.renderer = renderer;
+    }
 
+    public void update(VrFrame vrFrame) {
+        if (renderer == null) return;
+        
         surfaceTexture.setDefaultBufferSize(renderer.getWidth(), renderer.getHeight());
 
         Surface surface = new Surface(surfaceTexture);
 
         try {
             Canvas canvas = surface.lockCanvas(null);
-            renderer.render(canvas);
+            renderer.render(canvas, vrFrame);
             surface.unlockCanvasAndPost(canvas);
         } finally {
             surface.release();
         }
 
-        update();
-    }
-
-    public void update() {
         surfaceTexture.updateTexImage();
     }
 
+    public boolean isDirty() {
+        return renderer != null && renderer.isDirty();
+    }
+
     public interface CanvasRenderer {
-        void render(Canvas canvas);
+        void render(Canvas canvas, VrFrame vrFrame);
 
         int getWidth();
 
         int getHeight();
+
+        boolean isDirty();
     }
 
-    private static class DrawableRenderer implements CanvasRenderer {
+    public static class DrawableRenderer implements CanvasRenderer {
 
         private final Drawable drawable;
+        private boolean dirty = true;
 
         private DrawableRenderer(Drawable drawable) {
             this.drawable = drawable;
         }
 
         @Override
-        public void render(Canvas canvas) {
+        public void render(Canvas canvas, VrFrame vrFrame) {
             canvas.drawColor(0, PorterDuff.Mode.CLEAR);
             drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
             drawable.draw(canvas);
+            dirty = false;
         }
 
         @Override
@@ -99,9 +110,14 @@ public class Texture {
         public int getHeight() {
             return drawable.getIntrinsicHeight();
         }
+
+        @Override
+        public boolean isDirty() {
+            return dirty;
+        }
     }
 
-    private static class ViewRenderer implements CanvasRenderer {
+    public static class ViewRenderer implements CanvasRenderer {
 
         private final View view;
 
@@ -111,8 +127,30 @@ public class Texture {
             view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
         }
 
+        /**
+         * Check dirty state of view recursively.
+         *
+         * @param view Checked View.
+         * @return Returns true if at least one View is dirty in hierarchy.
+         */
+        private static boolean isDirty(View view) {
+
+            if (view.isDirty()) return true;
+
+            // Apply this method to all children of view if view is ViewGroup
+            if (view instanceof ViewGroup) {
+                final ViewGroup viewGroup = (ViewGroup) view;
+
+                for (int i = 0, count = viewGroup.getChildCount(); i < count; ++i) {
+                    if (isDirty(viewGroup.getChildAt(i))) return true;
+                }
+            }
+
+            return false;
+        }
+
         @Override
-        public void render(Canvas canvas) {
+        public void render(Canvas canvas, VrFrame vrFrame) {
             canvas.drawColor(0, PorterDuff.Mode.CLEAR);
             view.draw(canvas);
         }
@@ -125,6 +163,11 @@ public class Texture {
         @Override
         public int getHeight() {
             return view.getMeasuredHeight();
+        }
+
+        @Override
+        public boolean isDirty() {
+            return isDirty(view);
         }
     }
 }
