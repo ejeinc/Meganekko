@@ -330,33 +330,6 @@ public class SceneObject extends HybridObject {
     }
 
     /**
-     * Add {@code childComponent} as a child of this object (owner object of the
-     * component is added as child). Adding a component will increase the
-     * {@link SceneObject#getChildrenCount() getChildrenCount()} for this scene object.
-     *
-     * @param childComponent {@link Component Component} to add as a child of this object.
-     */
-    public void addChildObject(Component childComponent) {
-        if (childComponent.getOwnerObject() != null) {
-            addChildObject(childComponent.getOwnerObject());
-        }
-    }
-
-    /**
-     * Remove {@code childComponent} as a child of this object (owner object of
-     * the component is removed as child). Removing a component will decrease
-     * the {@link SceneObject#getChildrenCount() getChildrenCount()} for this scene object.
-     *
-     * @param childComponent {@link Component Component} to remove as a child of this
-     *                       object.
-     */
-    public void removeChildObject(Component childComponent) {
-        if (childComponent.getOwnerObject() != null) {
-            removeChildObject(childComponent.getOwnerObject());
-        }
-    }
-
-    /**
      * Get visibility set by {@link SceneObject#setVisible(boolean) setVisible()}.
      *
      * @return Visibility of this object.
