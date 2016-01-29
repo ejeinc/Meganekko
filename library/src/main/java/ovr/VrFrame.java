@@ -14,10 +14,12 @@
  */
 package ovr;
 
+import com.eje_c.meganekko.Frame;
+
 /**
  * Native VrFrame wrapper.
  */
-public class VrFrame implements com.eje_c.meganekko.VrFrame {
+public class VrFrame implements Frame {
 
     private final long nativePtr;
 

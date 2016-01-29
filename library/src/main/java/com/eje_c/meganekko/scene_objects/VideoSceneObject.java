@@ -24,7 +24,7 @@ import android.view.Surface;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.VrFrame;
+import com.eje_c.meganekko.Frame;
 
 /**
  * A {@linkplain SceneObject scene object} that shows video, using the Android
@@ -130,7 +130,7 @@ public class VideoSceneObject extends SceneObject {
     }
 
     @Override
-    public void update(VrFrame vrFrame) {
+    public void update(Frame vrFrame) {
         if (mMediaPlayer != null && mActive) {
             mSurfaceTexture.updateTexImage();
         }

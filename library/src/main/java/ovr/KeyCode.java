@@ -2,8 +2,8 @@ package ovr;
 
 /**
  * Manually coped from VrAppFramework/Input.h enum ovrKeyCode.
- * Use with {@link com.eje_c.meganekko.MeganekkoActivity#onKeyDown(int, int)},
- * {@link com.eje_c.meganekko.MeganekkoActivity#onKeyUp(int, int)} or
+ * Use with {@link com.eje_c.meganekko.KeyEventListener#onKeyDown(int, int)},
+ * {@link com.eje_c.meganekko.KeyEventListener#onKeyUp(int, int)} or
  * some key event related methods.
  */
 public class KeyCode {

@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.VrFrame;
+import com.eje_c.meganekko.Frame;
 import com.eje_c.meganekko.scene_objects.CanvasSceneObject.OnDrawListener;
 
 /**
@@ -137,7 +137,7 @@ public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener
     }
 
     @Override
-    public void onDraw(CanvasSceneObject object, Canvas canvas, VrFrame vrFrame) {
+    public void onDraw(CanvasSceneObject object, Canvas canvas, Frame vrFrame) {
 
         if (mView != null) {
             canvas.drawColor(0, Mode.CLEAR);

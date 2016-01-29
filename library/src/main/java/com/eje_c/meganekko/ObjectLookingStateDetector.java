@@ -24,7 +24,7 @@ import android.support.annotation.NonNull;
  * when start or end looking at target object. To use this class:
  * <ul>
  * <li>Create an instance of the {@code ObjectLookingStateDetector} with {@code ObjectLookingStateListener}.</li>
- * <li>Call {@link ObjectLookingStateDetector#update(VrFrame)} in {@link MeganekkoApp#update(Meganekko, VrFrame)} or {@link Scene#update(VrFrame)}.</li>
+ * <li>Call {@link ObjectLookingStateDetector#update(Frame)} in {@link MeganekkoApp#update(Meganekko, Frame)} or {@link Scene#update(Frame)}.</li>
  * </ul>
  */
 public class ObjectLookingStateDetector {
@@ -46,7 +46,7 @@ public class ObjectLookingStateDetector {
         this.mMeganekko = meganekko;
     }
 
-    public void update(VrFrame vrFrame) {
+    public void update(Frame vrFrame) {
 
         if (!mTarget.isShown()) {
             if (mLooking) {
@@ -92,7 +92,7 @@ public class ObjectLookingStateDetector {
          * @param targetObject
          * @param vrFrame
          */
-        void onLookStart(SceneObject targetObject, VrFrame vrFrame);
+        void onLookStart(SceneObject targetObject, Frame vrFrame);
 
         /**
          * Notified when user is still looking at target object.
@@ -100,7 +100,7 @@ public class ObjectLookingStateDetector {
          * @param targetObject
          * @param vrFrame
          */
-        void onLooking(SceneObject targetObject, VrFrame vrFrame);
+        void onLooking(SceneObject targetObject, Frame vrFrame);
 
         /**
          * Notified when user ends looking at target object.
@@ -108,6 +108,6 @@ public class ObjectLookingStateDetector {
          * @param targetObject
          * @param vrFrame
          */
-        void onLookEnd(SceneObject targetObject, VrFrame vrFrame);
+        void onLookEnd(SceneObject targetObject, Frame vrFrame);
     }
 }

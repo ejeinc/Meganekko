@@ -113,7 +113,7 @@ public class Material extends HybridObject {
         return texture;
     }
 
-    public void update(VrFrame vrFrame) {
+    public void update(Frame vrFrame) {
         if (texture == null) return;
 
         if (texture.isDirty()) {

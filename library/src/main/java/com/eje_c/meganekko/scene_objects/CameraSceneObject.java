@@ -21,7 +21,7 @@ import android.hardware.Camera;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.VrFrame;
+import com.eje_c.meganekko.Frame;
 
 import java.io.IOException;
 
@@ -85,7 +85,7 @@ public class CameraSceneObject extends SceneObject {
     }
 
     @Override
-    public void update(VrFrame vrFrame) {
+    public void update(Frame vrFrame) {
         if (!mPaused) {
             mSurfaceTexture.updateTexImage();
         }

@@ -27,11 +27,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 
+import com.eje_c.meganekko.Frame;
 import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
 import com.eje_c.meganekko.Scene;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.VrFrame;
 import com.eje_c.meganekko.utility.DockEventReceiver;
 import com.eje_c.meganekko.xml.XmlSceneParser;
 import com.eje_c.meganekko.xml.XmlSceneParserFactory;
@@ -44,6 +44,7 @@ import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import ovr.App;
+import ovr.VrFrame;
 
 /**
  * The Meganekko application will have a single Android {@link Activity} which extends {@link MeganekkoActivity},
@@ -74,7 +75,7 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
             mDocked = false;
         }
     };
-    private VrFrame vrFrame;
+    private Frame vrFrame;
     private Scene mScene;
     private App mApp;
     private DockEventReceiver mDockEventReceiver;
@@ -151,7 +152,7 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
 
         // Setup VrFrame
         if (vrFrame == null) {
-            vrFrame = new ovr.VrFrame(vrFramePtr);
+            vrFrame = new VrFrame(vrFramePtr);
         }
 
         // runOnGlThread handling
@@ -240,12 +241,12 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
     }
 
     /**
-     * Get {@link VrFrame}.
+     * Get {@link Frame}.
      *
      * @return {@code VrFrame}
      */
     @Override
-    public VrFrame getVrFrame() {
+    public Frame getFrame() {
         return vrFrame;
     }
 

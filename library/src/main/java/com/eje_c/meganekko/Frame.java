@@ -15,9 +15,9 @@
 package com.eje_c.meganekko;
 
 /**
- * Native VrFrame wrapper.
+ * Represents frame information such as delta time, absolute time or button state.
  */
-public interface VrFrame {
+public interface Frame {
 
     /**
      * Predicted absolute time in seconds this frame will be displayed.

@@ -19,7 +19,7 @@ public interface MeganekkoApp {
      * @param meganekko Meganekko system
      * @param vrFrame   Frame information
      */
-    void update(Meganekko meganekko, VrFrame vrFrame);
+    void update(Meganekko meganekko, Frame vrFrame);
 
     /**
      * Will be called when user leaves from app.

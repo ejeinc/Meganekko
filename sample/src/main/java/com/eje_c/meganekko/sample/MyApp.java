@@ -5,7 +5,7 @@ import android.animation.ObjectAnimator;
 import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.VrFrame;
+import com.eje_c.meganekko.Frame;
 import com.eje_c.meganekko.utility.Log;
 
 import ovr.JoyButton;
@@ -23,7 +23,7 @@ public class MyApp implements MeganekkoApp {
     }
 
     @Override
-    public void update(Meganekko meganekko, VrFrame vrFrame) {
+    public void update(Meganekko meganekko, Frame vrFrame) {
 //        Log.d(TAG, "update");
 
         final int buttonPressedBits = vrFrame.getButtonPressed();

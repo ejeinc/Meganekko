@@ -52,7 +52,7 @@ public class Texture {
         this.renderer = renderer;
     }
 
-    public void update(VrFrame vrFrame) {
+    public void update(Frame vrFrame) {
         if (renderer == null) return;
         
         surfaceTexture.setDefaultBufferSize(renderer.getWidth(), renderer.getHeight());
@@ -75,7 +75,7 @@ public class Texture {
     }
 
     public interface CanvasRenderer {
-        void render(Canvas canvas, VrFrame vrFrame);
+        void render(Canvas canvas, Frame vrFrame);
 
         int getWidth();
 
@@ -94,7 +94,7 @@ public class Texture {
         }
 
         @Override
-        public void render(Canvas canvas, VrFrame vrFrame) {
+        public void render(Canvas canvas, Frame vrFrame) {
             canvas.drawColor(0, PorterDuff.Mode.CLEAR);
             drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
             drawable.draw(canvas);
@@ -150,7 +150,7 @@ public class Texture {
         }
 
         @Override
-        public void render(Canvas canvas, VrFrame vrFrame) {
+        public void render(Canvas canvas, Frame vrFrame) {
             canvas.drawColor(0, PorterDuff.Mode.CLEAR);
             view.draw(canvas);
         }

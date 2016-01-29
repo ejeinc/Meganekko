@@ -24,7 +24,7 @@ import android.view.Surface;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.VrFrame;
+import com.eje_c.meganekko.Frame;
 
 /**
  * A {@linkplain SceneObject scene object} that renders like a standard Android
@@ -61,7 +61,7 @@ public class CanvasSceneObject extends SceneObject {
 
     @SuppressLint("WrongCall")
     @Override
-    public void update(VrFrame vrFrame) {
+    public void update(Frame vrFrame) {
 
         if (mOnDrawListener != null && mOnDrawListener.isDirty()) {
 
@@ -132,6 +132,6 @@ public class CanvasSceneObject extends SceneObject {
          * @param canvas  Rendering canvas.
          * @param vrFrame Current frame information passed from native framework.
          */
-        void onDraw(CanvasSceneObject object, Canvas canvas, VrFrame vrFrame);
+        void onDraw(CanvasSceneObject object, Canvas canvas, Frame vrFrame);
     }
 }

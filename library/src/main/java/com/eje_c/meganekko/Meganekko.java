@@ -74,9 +74,9 @@ public interface Meganekko {
     Context getContext();
 
     /**
-     * @return {@link VrFrame}
+     * @return {@link Frame}
      */
-    VrFrame getVrFrame();
+    Frame getFrame();
 
     /**
      * @param object Target object.
