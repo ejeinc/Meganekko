@@ -29,7 +29,6 @@ SceneObject::SceneObject(JNIEnv * jni, jobject javaObject) :
 
     jni->GetJavaVM(&Java);
     this->JavaObject = jni->NewGlobalRef(javaObject);
-    this->onRenderMethodID = jni->GetMethodID(jni->GetObjectClass(javaObject), "onRender", "()Z");
 
     // Occlusion query setup
 #if _GVRF_USE_GLES3_

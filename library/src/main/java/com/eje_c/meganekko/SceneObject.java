@@ -475,16 +475,6 @@ public class SceneObject extends HybridObject {
         return null;
     }
 
-    /**
-     * Called from native thread just before this object will be render. If this
-     * method returns false, this object is not rendered.
-     *
-     * @return If this object should be rendered.
-     */
-    protected boolean onRender() {
-        return true;
-    }
-
     public void update(VrFrame vrFrame) {
         for (SceneObject child : mChildren) {
             child.update(vrFrame);

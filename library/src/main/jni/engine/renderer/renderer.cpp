@@ -131,7 +131,7 @@ void Renderer::frustum_cull(JNIEnv * jni, Scene* scene, const Vector3f& camera_p
         }
 
         // Check for frustum culling flag
-        if (!scene->get_frustum_culling() && scene_object->onRender(jni)) {
+        if (!scene->get_frustum_culling()) {
             //No occlusion or frustum tests enabled
             render_data_vector.push_back(render_data);
             continue;
@@ -196,7 +196,7 @@ void Renderer::frustum_cull(JNIEnv * jni, Scene* scene, const Vector3f& camera_p
 
         //If visibility flag was set by an earlier occlusion query,
         //turn visibility on for the object
-        if (visible && scene_object->onRender(jni)) {
+        if (visible) {
             render_data_vector.push_back(render_data);
         }
 

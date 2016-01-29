@@ -123,10 +123,6 @@ public:
         return false;
     }
 
-    bool inline onRender(JNIEnv * jni) {
-        return jni->CallBooleanMethod(JavaObject, onRenderMethodID);
-    }
-
 private:
     SceneObject(const SceneObject& scene_object);
     SceneObject(SceneObject&& scene_object);
@@ -136,7 +132,6 @@ private:
 private:
     JavaVM *  Java;
     jobject   JavaObject;
-    jmethodID onRenderMethodID;
 
     Transform* transform_;
     RenderData* render_data_;
