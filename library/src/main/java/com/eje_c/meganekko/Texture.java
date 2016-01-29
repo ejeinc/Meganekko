@@ -36,25 +36,50 @@ public class Texture {
         this.surfaceTexture = surfaceTexture;
     }
 
+    /**
+     * Render with {@code Bitmap}.
+     *
+     * @param bitmap
+     */
     public void set(Bitmap bitmap) {
         set(new DrawableRenderer(new BitmapDrawable(Resources.getSystem(), bitmap)));
     }
 
+    /**
+     * Render with {@code Drawable}.
+     *
+     * @param drawable
+     */
     public void set(Drawable drawable) {
         set(new DrawableRenderer(drawable));
     }
 
+    /**
+     * Render with {@code View}.
+     *
+     * @param view
+     */
     public void set(View view) {
         set(new ViewRenderer(view));
     }
 
+    /**
+     * Render with custom {@linkplain com.eje_c.meganekko.Texture.CanvasRenderer renderer}.
+     *
+     * @param renderer
+     */
     public void set(CanvasRenderer renderer) {
         this.renderer = renderer;
     }
 
+    /**
+     * Called in every frame for update texture image.
+     *
+     * @param vrFrame
+     */
     public void update(Frame vrFrame) {
         if (renderer == null) return;
-        
+
         surfaceTexture.setDefaultBufferSize(renderer.getWidth(), renderer.getHeight());
 
         Surface surface = new Surface(surfaceTexture);
@@ -70,20 +95,48 @@ public class Texture {
         surfaceTexture.updateTexImage();
     }
 
+    /**
+     * Get if redrawing is required.
+     *
+     * @return return true if redrawing is required.
+     */
     public boolean isDirty() {
         return renderer != null && renderer.isDirty();
     }
 
+    /**
+     * Interface for custom texture rendering.
+     */
     public interface CanvasRenderer {
+        /**
+         * Do rendering with {@code Canvas}.
+         *
+         * @param canvas
+         * @param vrFrame
+         */
         void render(Canvas canvas, Frame vrFrame);
 
+        /**
+         * @return {@code Canvas}'s width
+         */
         int getWidth();
 
+        /**
+         * @return {@code Canvas}'s height
+         */
         int getHeight();
 
+        /**
+         * Get if redrawing is required.
+         *
+         * @return return true if redrawing is required.
+         */
         boolean isDirty();
     }
 
+    /**
+     * Basic renderer for Drawable.
+     */
     public static class DrawableRenderer implements CanvasRenderer {
 
         private final Drawable drawable;
@@ -117,6 +170,9 @@ public class Texture {
         }
     }
 
+    /**
+     * Basic renderer for View.
+     */
     public static class ViewRenderer implements CanvasRenderer {
 
         private final View view;

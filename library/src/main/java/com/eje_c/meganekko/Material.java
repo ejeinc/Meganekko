@@ -21,11 +21,11 @@ import android.graphics.SurfaceTexture;
 import com.eje_c.meganekko.utility.Colors;
 
 /**
- * This is one of the key Meganekko classes: it holds shaders with textures.
+ * This is one of the key Meganekko classes: it holds texture, color, opacity information.
  */
 public class Material extends HybridObject {
 
-    private Texture texture;
+    private Texture mTexture;
 
     private static native void setColor(long material, float r, float g, float b, float a);
 
@@ -66,7 +66,7 @@ public class Material extends HybridObject {
      * Set the {@code color} uniform.
      * <p/>
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code UniformColor}. With the default shader, this allows you to add an overlay color on top of the texture.
+     * {@code UniformColor}. With the default shader, this allows you to add an overlay color on top of the mTexture.
      * Values are between {@code 0.0f} and {@code 1.0f}, inclusive.
      *
      * @param r Red
@@ -96,28 +96,39 @@ public class Material extends HybridObject {
         setOpacity(getNative(), opacity);
     }
 
+    /**
+     * Get {@code SurfaceTexture} for direct rendering.
+     * Use {@link Material#getTexture()} more simple rendering.
+     *
+     * @return SurfaceTexture
+     */
     public SurfaceTexture getSurfaceTexture() {
         return getSurfaceTexture(getNative());
     }
 
     private native SurfaceTexture getSurfaceTexture(long nativePtr);
 
+    /**
+     * Use this to render stereo texture.
+     *
+     * @param stereoMode
+     */
     public void setStereoMode(StereoMode stereoMode) {
         setStereoMode(getNative(), stereoMode.ordinal());
     }
 
     public Texture getTexture() {
-        if (texture == null) {
-            texture = new Texture(getSurfaceTexture());
+        if (mTexture == null) {
+            mTexture = new Texture(getSurfaceTexture());
         }
-        return texture;
+        return mTexture;
     }
 
     public void update(Frame vrFrame) {
-        if (texture == null) return;
+        if (mTexture == null) return;
 
-        if (texture.isDirty()) {
-            texture.update(vrFrame);
+        if (mTexture.isDirty()) {
+            mTexture.update(vrFrame);
         }
     }
 
