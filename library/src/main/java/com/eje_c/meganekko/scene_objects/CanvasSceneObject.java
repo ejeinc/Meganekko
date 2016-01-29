@@ -33,7 +33,6 @@ import com.eje_c.meganekko.VrFrame;
  */
 public class CanvasSceneObject extends SceneObject {
 
-    private final Surface mSurface;
     private final SurfaceTexture mSurfaceTexture;
     private OnDrawListener mOnDrawListener;
 
@@ -46,8 +45,6 @@ public class CanvasSceneObject extends SceneObject {
         renderData.setMaterial(material);
 
         attachRenderData(renderData);
-
-        mSurface = new Surface(mSurfaceTexture);
     }
 
     /**
@@ -69,13 +66,19 @@ public class CanvasSceneObject extends SceneObject {
         if (mOnDrawListener != null && mOnDrawListener.isDirty()) {
 
             Canvas canvas = null;
+            Surface surface = null;
 
             try {
-                canvas = mSurface.lockCanvas(null);
+                surface = new Surface(mSurfaceTexture);
+                canvas = surface.lockCanvas(null);
                 mOnDrawListener.onDraw(this, canvas, vrFrame);
             } finally {
-                if (canvas != null)
-                    mSurface.unlockCanvasAndPost(canvas);
+                if (surface != null) {
+                    if (canvas != null) {
+                        surface.unlockCanvasAndPost(canvas);
+                    }
+                    surface.release();
+                }
             }
 
             mSurfaceTexture.updateTexImage();
