@@ -25,6 +25,8 @@ import com.eje_c.meganekko.utility.Colors;
  */
 public class Material extends HybridObject {
 
+    private Texture texture;
+
     private static native void setColor(long material, float r, float g, float b, float a);
 
     private static native float[] getColor(long material);
@@ -102,6 +104,13 @@ public class Material extends HybridObject {
 
     public void setStereoMode(StereoMode stereoMode) {
         setStereoMode(getNative(), stereoMode.ordinal());
+    }
+
+    public Texture getTexture() {
+        if (texture == null) {
+            texture = new Texture(getSurfaceTexture());
+        }
+        return texture;
     }
 
     public enum StereoMode {
