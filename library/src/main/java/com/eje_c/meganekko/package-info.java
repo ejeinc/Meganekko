@@ -17,10 +17,11 @@
 
 
 /**
- * You need to understand key points of this package to create a Meganekko application.
+ * Main classes for Meganekko.
  * <p/>
- * You have to extend {@link com.eje_c.meganekko.gearvr.MeganekkoActivity} instead of {@code Activity}.
- * You have to implement {@link com.eje_c.meganekko.gearvr.MeganekkoActivity#createMeganekkoApp()} and return your own {@link com.eje_c.meganekko.MeganekkoApp}.
+ * You have to extend {@link com.eje_c.meganekko.gearvr.MeganekkoActivity} instead of {@code Activity},
+ * and implement {@link com.eje_c.meganekko.gearvr.MeganekkoActivity#createMeganekkoApp()}
+ * and return your own {@link com.eje_c.meganekko.MeganekkoApp}.
  * You don't need to override {@code onCreate} typically.
  * <p/>
  * A {@linkplain com.eje_c.meganekko.Scene scene graph} contains any number of {@linkplain com.eje_c.meganekko.SceneObject scene objects.}
@@ -45,6 +46,6 @@
  *         layout="@layout/hello_world" /&gt;
  *     &lt;/scene&gt;
  * </pre>
- * Put a file at {@code res/xml/scene.xml} and call {@code parseAndSetScene(R.xml.scene)}.
+ * Put a file at {@code res/xml/scene.xml} and call {@link com.eje_c.meganekko.Meganekko#setSceneFromXML(int)}.
  */
 package com.eje_c.meganekko;
