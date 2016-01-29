@@ -22,7 +22,6 @@ import android.media.MediaPlayer;
 import android.view.Surface;
 
 import com.eje_c.meganekko.Material;
-import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.VrFrame;
@@ -49,26 +48,6 @@ public class VideoSceneObject extends SceneObject {
         RenderData renderData = new RenderData();
         renderData.setMaterial(material);
         attachRenderData(renderData);
-    }
-
-    /**
-     * Play a video on a {@linkplain SceneObject scene object} with an
-     * arbitrarily complex geometry, using the Android {@link MediaPlayer}
-     *
-     * @param mesh        a {@link Mesh} - see
-     *                    {@link #loadMesh(com.eje_c.meganekko.AndroidResource)}
-     *                    and {@link #createQuad(float, float)}
-     * @param mediaPlayer an Android {@link MediaPlayer}
-     * @throws IllegalArgumentException on an invalid {@code videoType} parameter
-     */
-    public VideoSceneObject(Mesh mesh, MediaPlayer mediaPlayer) {
-        super(mesh);
-
-        Material material = new Material();
-        mSurfaceTexture = material.getSurfaceTexture();
-        getRenderData().setMaterial(material);
-
-        mMediaPlayer = mediaPlayer;
     }
 
     /**
@@ -156,12 +135,5 @@ public class VideoSceneObject extends SceneObject {
             mSurfaceTexture.updateTexImage();
         }
         super.update(vrFrame);
-    }
-
-    /**
-     * Video type constants, for use with {@link VideoSceneObject}
-     */
-    public enum VideoType {
-        MONO, HORIZONTAL_STEREO, VERTICAL_STEREO
     }
 }
