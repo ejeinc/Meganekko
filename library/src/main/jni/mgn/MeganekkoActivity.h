@@ -54,7 +54,6 @@ public:
     OvrGuiSys *         GuiSys;
 
     Scene*              scene;
-    ShaderManager*      shaderManager;
 
 private:
     ovrSoundEffectContext *        SoundEffectContext;

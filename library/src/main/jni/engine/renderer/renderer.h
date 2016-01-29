@@ -43,7 +43,6 @@ class Scene;
 class SceneObject;
 class RenderData;
 class RenderTexture;
-class ShaderManager;
 
 class Renderer
 {

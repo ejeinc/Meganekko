@@ -69,13 +69,6 @@ void Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_setScene(JNIEnv * jni, j
     activity->scene = scene;
 }
 
-void Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_setShaderManager(JNIEnv * jni, jclass clazz, jlong appPtr, jlong jshaderManager)
-{
-    MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
-    ShaderManager* shaderManager = reinterpret_cast<ShaderManager*>(jshaderManager);
-    activity->shaderManager = shaderManager;
-}
-
 jboolean Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_isLookingAt(JNIEnv * jni, jclass clazz, jlong appPtr, jlong jsceneObject)
 {
     MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
