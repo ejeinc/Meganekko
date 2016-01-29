@@ -74,9 +74,9 @@ public class RenderPass extends HybridObject {
     /**
      * Set the {@link CullFaceEnum face} to be culled when rendering this {@link RenderPass pass}
      *
-     * @param cullFace {@code GVRCullFaceEnum.Back} Tells Graphics API to discard
-     *                 back faces, {@code GVRCullFaceEnum.Front} Tells Graphics API
-     *                 to discard front faces, {@code GVRCullFaceEnum.None} Tells
+     * @param cullFace {@code CullFaceEnum.Back} Tells Graphics API to discard
+     *                 back faces, {@code CullFaceEnum.Front} Tells Graphics API
+     *                 to discard front faces, {@code CullFaceEnum.None} Tells
      *                 Graphics API to not discard any face
      */
     public void setCullFace(CullFaceEnum cullFace) {
