@@ -78,9 +78,9 @@ private:
     	return ovr_GetMethodID(app->GetJava()->Env, app->GetAppInterface()->ActivityClass, name, signature);
     }
 
-    inline jboolean CallKeyEventMethod(const jmethodID keyEventMethodId, const int keyCode) {
+    inline jboolean CallKeyEventMethod(const jmethodID keyEventMethodId, const int keyCode, const int repeatCount) {
         return app->GetJava()->Env->CallBooleanMethod(app->GetJava()->ActivityObject,
-                keyEventMethodId, keyCode);
+                keyEventMethodId, keyCode, repeatCount);
     }
 };
 

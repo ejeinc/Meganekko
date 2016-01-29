@@ -137,22 +137,22 @@ bool MeganekkoActivity::OnKeyEvent(const int keyCode, const int repeatCount, con
     case KEY_EVENT_NONE:
         break;
     case KEY_EVENT_SHORT_PRESS:
-        handled = CallKeyEventMethod(onKeyShortPressMethodId, keyCode);
+        handled = CallKeyEventMethod(onKeyShortPressMethodId, keyCode, repeatCount);
         break;
     case KEY_EVENT_DOUBLE_TAP:
-        handled = CallKeyEventMethod(onKeyDoubleTapMethodId, keyCode);
+        handled = CallKeyEventMethod(onKeyDoubleTapMethodId, keyCode, repeatCount);
         break;
     case KEY_EVENT_LONG_PRESS:
-        handled = CallKeyEventMethod(onKeyLongPressMethodId, keyCode);
+        handled = CallKeyEventMethod(onKeyLongPressMethodId, keyCode, repeatCount);
         break;
     case KEY_EVENT_DOWN:
-        handled = CallKeyEventMethod(onKeyDownMethodId, keyCode);
+        handled = CallKeyEventMethod(onKeyDownMethodId, keyCode, repeatCount);
         break;
     case KEY_EVENT_UP:
-        handled = CallKeyEventMethod(onKeyUpMethodId, keyCode);
+        handled = CallKeyEventMethod(onKeyUpMethodId, keyCode, repeatCount);
         break;
     case KEY_EVENT_MAX:
-        handled = CallKeyEventMethod(onKeyMaxMethodId, keyCode);
+        handled = CallKeyEventMethod(onKeyMaxMethodId, keyCode, repeatCount);
         break;
     }
 
