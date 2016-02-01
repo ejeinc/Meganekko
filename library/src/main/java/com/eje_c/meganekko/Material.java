@@ -125,9 +125,7 @@ public class Material extends HybridObject {
     }
 
     public void update(Frame vrFrame) {
-        if (mTexture == null) return;
-
-        if (mTexture.isDirty()) {
+        if (mTexture != null) {
             mTexture.update(vrFrame);
         }
     }

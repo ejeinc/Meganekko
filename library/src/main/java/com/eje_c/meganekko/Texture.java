@@ -23,6 +23,7 @@ import android.graphics.PorterDuff;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ public class Texture {
 
     private final SurfaceTexture surfaceTexture;
     private CanvasRenderer renderer;
+    private boolean continuesUpdate;
 
     Texture(SurfaceTexture surfaceTexture) {
         this.surfaceTexture = surfaceTexture;
@@ -69,7 +71,21 @@ public class Texture {
      * @param renderer
      */
     public void set(CanvasRenderer renderer) {
+        this.continuesUpdate = false;
         this.renderer = renderer;
+    }
+
+    /**
+     * Render with {@code MediaPlayer}.
+     *
+     * @param mediaPlayer
+     */
+    public void set(MediaPlayer mediaPlayer) {
+        this.continuesUpdate = true;
+
+        Surface surface = new Surface(surfaceTexture);
+        mediaPlayer.setSurface(surface);
+        surface.release();
     }
 
     /**
@@ -78,30 +94,25 @@ public class Texture {
      * @param vrFrame
      */
     public void update(Frame vrFrame) {
-        if (renderer == null) return;
+        if (renderer != null) {
 
-        surfaceTexture.setDefaultBufferSize(renderer.getWidth(), renderer.getHeight());
+            surfaceTexture.setDefaultBufferSize(renderer.getWidth(), renderer.getHeight());
 
-        Surface surface = new Surface(surfaceTexture);
+            Surface surface = new Surface(surfaceTexture);
 
-        try {
-            Canvas canvas = surface.lockCanvas(null);
-            renderer.render(canvas, vrFrame);
-            surface.unlockCanvasAndPost(canvas);
-        } finally {
-            surface.release();
+            try {
+                Canvas canvas = surface.lockCanvas(null);
+                renderer.render(canvas, vrFrame);
+                surface.unlockCanvasAndPost(canvas);
+            } finally {
+                surface.release();
+            }
+
+            surfaceTexture.updateTexImage();
+
+        } else if (continuesUpdate) {
+            surfaceTexture.updateTexImage();
         }
-
-        surfaceTexture.updateTexImage();
-    }
-
-    /**
-     * Get if redrawing is required.
-     *
-     * @return return true if redrawing is required.
-     */
-    public boolean isDirty() {
-        return renderer != null && renderer.isDirty();
     }
 
     /**
