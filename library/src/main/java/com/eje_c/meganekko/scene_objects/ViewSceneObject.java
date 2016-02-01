@@ -31,6 +31,7 @@ import com.eje_c.meganekko.scene_objects.CanvasSceneObject.OnDrawListener;
 /**
  * A {@linkplain SceneObject scene object} that renders Android's standard {@code View}.
  */
+@Deprecated
 public class ViewSceneObject extends CanvasSceneObject implements OnDrawListener {
 
     public static final float AUTO_SIZE_SCALE = 0.006f;
