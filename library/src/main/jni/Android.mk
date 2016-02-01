@@ -45,6 +45,7 @@ LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrAppSupport/VrModel/Src
 LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrAppSupport/VrSound/Include
 LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrAppSupport/SystemUtils/Include
 
+LOCAL_C_INCLUDES += $(LOCAL_PATH)
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/contrib/assimp
 LOCAL_C_INCLUDES +=	$(LOCAL_PATH)/contrib/assimp/include
 LOCAL_C_INCLUDES +=	$(LOCAL_PATH)/contrib/assimp/include/Compiler
