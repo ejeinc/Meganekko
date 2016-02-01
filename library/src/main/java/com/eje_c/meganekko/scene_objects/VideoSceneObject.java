@@ -21,15 +21,16 @@ import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.view.Surface;
 
+import com.eje_c.meganekko.Frame;
 import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.Frame;
 
 /**
  * A {@linkplain SceneObject scene object} that shows video, using the Android
  * {@link MediaPlayer}.
  */
+@Deprecated
 public class VideoSceneObject extends SceneObject {
     private SurfaceTexture mSurfaceTexture = null;
     private MediaPlayer mMediaPlayer = null;
