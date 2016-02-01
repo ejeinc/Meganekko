@@ -57,7 +57,7 @@ public class MeshParser implements XmlAttributeParser {
         }
     }
 
-    private void ensureHaveRenderData(SceneObject object) {
+    private static void ensureHaveRenderData(SceneObject object) {
         if (object.getRenderData() == null) {
             object.attachRenderData(new RenderData());
         }

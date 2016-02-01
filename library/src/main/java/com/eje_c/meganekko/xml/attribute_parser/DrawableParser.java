@@ -36,7 +36,7 @@ public class DrawableParser implements XmlAttributeParser {
         }
     }
 
-    private void setDrawable(SceneObject object, Drawable d) {
+    private static void setDrawable(SceneObject object, Drawable d) {
         RenderData renderData = object.getRenderData();
 
         if (renderData == null) {

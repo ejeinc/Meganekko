@@ -28,33 +28,35 @@ public class PositionParser implements XmlAttributeParser {
                     e.printStackTrace();
                 }
             }
-        }
 
-        // Simple position
-        String x = attributeSet.getAttributeValue(NAMESPACE, "x");
-        if (x != null) {
-            try {
-                transform.setPositionX(Float.parseFloat(x));
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
+        } else {
+
+            // Simple position
+            String x = attributeSet.getAttributeValue(NAMESPACE, "x");
+            if (x != null) {
+                try {
+                    transform.setPositionX(Float.parseFloat(x));
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        String y = attributeSet.getAttributeValue(NAMESPACE, "y");
-        if (y != null) {
-            try {
-                transform.setPositionY(Float.parseFloat(y));
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
+            String y = attributeSet.getAttributeValue(NAMESPACE, "y");
+            if (y != null) {
+                try {
+                    transform.setPositionY(Float.parseFloat(y));
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        String z = attributeSet.getAttributeValue(NAMESPACE, "z");
-        if (z != null) {
-            try {
-                transform.setPositionZ(Float.parseFloat(z));
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
+            String z = attributeSet.getAttributeValue(NAMESPACE, "z");
+            if (z != null) {
+                try {
+                    transform.setPositionZ(Float.parseFloat(z));
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
