@@ -31,7 +31,7 @@ using namespace OVR;
 namespace mgn {
 class SceneObject;
 
-void Renderer::RenderEyeView(JNIEnv * jni, Scene* scene, std::vector<SceneObject*> scene_objects, OESShader* oesShader,
+void Renderer::RenderEyeView(Scene* scene, std::vector<SceneObject*> scene_objects, OESShader* oesShader,
         const Matrix4f &eyeViewMatrix, const Matrix4f &eyeProjectionMatrix, const Matrix4f &eyeViewProjection, const int eye) {
     // there is no need to flat and sort every frame.
     // however let's keep it as is and assume we are not changed
@@ -45,7 +45,7 @@ void Renderer::RenderEyeView(JNIEnv * jni, Scene* scene, std::vector<SceneObject
     occlusion_cull(scene, scene_objects);
 
     // do frustum culling, if enabled
-    frustum_cull(jni, scene, eyeViewMatrix.GetTranslation(), scene_objects, render_data_vector,
+    frustum_cull(scene, eyeViewMatrix.GetTranslation(), scene_objects, render_data_vector,
             eyeViewProjection, oesShader);
 
     // do sorting based on render order
@@ -119,7 +119,7 @@ void Renderer::occlusion_cull(Scene* scene,
 #endif
 }
 
-void Renderer::frustum_cull(JNIEnv * jni, Scene* scene, const Vector3f& camera_position,
+void Renderer::frustum_cull(Scene* scene, const Vector3f& camera_position,
         std::vector<SceneObject*> scene_objects,
         std::vector<RenderData*>& render_data_vector, const Matrix4f &vp_matrix,
         OESShader * oesShader) {

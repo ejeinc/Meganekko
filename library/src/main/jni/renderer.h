@@ -51,8 +51,7 @@ private:
 
 public:
 
-    static void RenderEyeView(JNIEnv* jni,
-            Scene* scene, std::vector<SceneObject*>,
+    static void RenderEyeView(Scene* scene, std::vector<SceneObject*>,
             OESShader * oesShader,
             const OVR::Matrix4f &eyeViewMatrix,
             const OVR::Matrix4f &eyeProjectionMatrix,
@@ -67,7 +66,7 @@ private:
 
     static void occlusion_cull(Scene* scene,
             std::vector<SceneObject*> scene_objects);
-    static void frustum_cull(JNIEnv* jni, Scene* scene, const OVR::Vector3f& camera_position,
+    static void frustum_cull(Scene* scene, const OVR::Vector3f& camera_position,
             std::vector<SceneObject*> scene_objects,
             std::vector<RenderData*>& render_data_vector, const OVR::Matrix4f &vp_matrix,
             OESShader * oesShader);

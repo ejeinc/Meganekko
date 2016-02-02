@@ -90,7 +90,7 @@ Matrix4f MeganekkoActivity::DrawEyeView(const int eye, const float fovDegreesX, 
 	const Matrix4f eyeProjectionMatrix = ovrMatrix4f_CreateProjectionFov( fovDegreesX, fovDegreesY, 0.0f, 0.0f, 1.0f, 0.0f );
 	const Matrix4f eyeViewProjection = eyeProjectionMatrix * eyeViewMatrix;
 
-    Renderer::RenderEyeView(app->GetJava()->Env, scene, sceneObjects, oesShader, eyeViewMatrix, eyeProjectionMatrix, eyeViewProjection, eye);
+    Renderer::RenderEyeView(scene, sceneObjects, oesShader, eyeViewMatrix, eyeProjectionMatrix, eyeViewProjection, eye);
 
     GuiSys->RenderEyeView(centerViewMatrix, eyeViewMatrix, eyeProjectionMatrix);
 
