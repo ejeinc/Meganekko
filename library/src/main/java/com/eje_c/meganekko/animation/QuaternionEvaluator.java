@@ -4,13 +4,11 @@ import android.animation.TypeEvaluator;
 
 import org.joml.Quaternionf;
 
-public class QuaternionEvaluator implements TypeEvaluator {
+public class QuaternionEvaluator implements TypeEvaluator<Quaternionf> {
     private final Quaternionf result = new Quaternionf();
 
     @Override
-    public Object evaluate(float fraction, Object startValue, Object endValue) {
-        Quaternionf q1 = (Quaternionf) startValue;
-        Quaternionf q2 = (Quaternionf) endValue;
-        return q1.slerp(q2, fraction, result);
+    public Quaternionf evaluate(float fraction, Quaternionf startValue, Quaternionf endValue) {
+        return startValue.slerp(endValue, fraction, result);
     }
 }
