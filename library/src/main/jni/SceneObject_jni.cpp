@@ -44,15 +44,6 @@ Java_com_eje_1c_meganekko_SceneObject_detachRenderData(
         JNIEnv * env, jobject obj, jlong jscene_object);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_attachEyePointeeHolder(
-        JNIEnv * env, jobject obj, jlong jscene_object,
-        jlong jeye_pointee_holder);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_detachEyePointeeHolder(
-        JNIEnv * env, jobject obj, jlong jscene_object);
-
-JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_SceneObject_addChildObject(JNIEnv * env,
         jobject obj, jlong jscene_object, jlong jchild);
 

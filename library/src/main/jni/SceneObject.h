@@ -30,7 +30,6 @@
 
 namespace mgn {
 class Camera;
-class EyePointeeHolder;
 class RenderData;
 
 class SceneObject: public HybridObject {
@@ -71,14 +70,6 @@ public:
 
     RenderData* render_data() const {
         return render_data_;
-    }
-
-    void attachEyePointeeHolder(SceneObject* self,
-            EyePointeeHolder* eye_pointee_holder);
-    void detachEyePointeeHolder();
-
-    EyePointeeHolder* eye_pointee_holder() const {
-        return eye_pointee_holder_;
     }
 
     SceneObject* parent() const {
@@ -135,7 +126,6 @@ private:
 
     Transform* transform_;
     RenderData* render_data_;
-    EyePointeeHolder* eye_pointee_holder_;
     SceneObject* parent_;
     std::vector<SceneObject*> children_;
     float lod_min_range_;
