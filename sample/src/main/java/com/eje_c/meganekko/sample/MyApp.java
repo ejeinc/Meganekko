@@ -10,7 +10,7 @@ import com.eje_c.meganekko.utility.Log;
 
 import ovr.JoyButton;
 
-public class MyApp implements MeganekkoApp {
+public class MyApp extends MeganekkoApp {
     private static final String TAG = "MGN";
     private SceneObject obj;
 
