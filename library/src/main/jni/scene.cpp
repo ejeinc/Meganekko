@@ -25,9 +25,11 @@ namespace mgn {
 Scene::Scene(JNIEnv * jni, jobject javaObject) :
         SceneObject(jni, javaObject), main_camera_(), frustum_flag_(
                 false), dirtyFlag_(0), occlusion_flag_(false) {
+    oesShader = new OESShader();
 }
 
 Scene::~Scene() {
+    delete  oesShader;
 }
 
 std::vector<SceneObject*> Scene::getWholeSceneObjects() {
@@ -40,6 +42,16 @@ std::vector<SceneObject*> Scene::getWholeSceneObjects() {
     }
 
     return scene_objects;
+}
+
+void Scene::PrepareForRendering() {
+    sceneObjects = getWholeSceneObjects();
+}
+
+Matrix4f Scene::Render(const int eye) {
+    const Matrix4f viewProjectionM = projectionM * viewM;
+    Renderer::RenderEyeView(this, sceneObjects, oesShader, viewM, projectionM, viewProjectionM, eye);
+    return viewProjectionM;
 }
 
 }

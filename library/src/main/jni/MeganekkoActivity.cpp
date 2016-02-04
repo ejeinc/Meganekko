@@ -29,8 +29,7 @@ namespace mgn
 
 MeganekkoActivity::MeganekkoActivity() :
       GuiSys( OvrGuiSys::Create() ),
-      Locale( NULL ),
-      scene(NULL)
+      Locale( NULL )
 {
     centerViewMatrix = ovrMatrix4f_CreateIdentity();
 }
@@ -57,8 +56,6 @@ void MeganekkoActivity::OneTimeInit(const char * fromPackage, const char * launc
     GetLocale().GetString( "@string/font_name", "efigs.fnt", fontName );
     GuiSys->Init( this->app, *SoundEffectPlayer, fontName.ToCStr(), &app->GetDebugLines() );
 
-    oesShader = new OESShader();
-
     jmethodID oneTimeInitMethodId = GetMethodID("oneTimeInit", "()V");
     app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, oneTimeInitMethodId);
 
@@ -70,6 +67,7 @@ void MeganekkoActivity::OneTimeInit(const char * fromPackage, const char * launc
     onKeyDownMethodId = GetMethodID("onKeyDown", "(II)Z");
     onKeyUpMethodId = GetMethodID("onKeyUp", "(II)Z");
     onKeyMaxMethodId = GetMethodID("onKeyMax", "(II)Z");
+    getNativeSceneMethodId = GetMethodID("getNativeScene", "()J");
 }
 
 void MeganekkoActivity::OneTimeShutdown()
@@ -88,9 +86,11 @@ Matrix4f MeganekkoActivity::DrawEyeView(const int eye, const float fovDegreesX, 
 {
 	const Matrix4f eyeViewMatrix = vrapi_GetEyeViewMatrix( &app->GetHeadModelParms(), &centerViewMatrix, eye );
 	const Matrix4f eyeProjectionMatrix = ovrMatrix4f_CreateProjectionFov( fovDegreesX, fovDegreesY, 0.0f, 0.0f, 1.0f, 0.0f );
-	const Matrix4f eyeViewProjection = eyeProjectionMatrix * eyeViewMatrix;
 
-    Renderer::RenderEyeView(scene, sceneObjects, oesShader, eyeViewMatrix, eyeProjectionMatrix, eyeViewProjection, eye);
+    Scene* scene = GetScene();
+    scene->SetViewMatrix(eyeViewMatrix);
+    scene->SetProjectionMatrix(eyeProjectionMatrix);
+    const Matrix4f eyeViewProjection = scene->Render(eye);
 
     GuiSys->RenderEyeView(centerViewMatrix, eyeViewMatrix, eyeProjectionMatrix);
 
@@ -101,7 +101,7 @@ Matrix4f MeganekkoActivity::DrawEyeView(const int eye, const float fovDegreesX, 
 Matrix4f MeganekkoActivity::Frame( const VrFrame & vrFrame )
 {
     // Update Camera orientation
-    Camera * camera = const_cast<Camera *>(scene->main_camera());
+    Camera * camera = const_cast<Camera *>(GetScene()->main_camera());
     JNIEnv * jni = app->GetJava()->Env;
 
     if (vrFrame.DeviceStatus.DeviceIsDocked)
@@ -121,9 +121,8 @@ Matrix4f MeganekkoActivity::Frame( const VrFrame & vrFrame )
     GuiSys->Frame( vrFrame, centerViewMatrix);
 
     gl_delete.processQueues();
+    GetScene()->PrepareForRendering();
 
-    // Prepare for rendering
-    sceneObjects = scene->getWholeSceneObjects();
 
     return centerViewMatrix;
 }

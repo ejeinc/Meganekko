@@ -11,7 +11,7 @@ import android.support.annotation.Nullable;
  */
 public interface Meganekko {
 
-    MeganekkoApp createMeganekkoApp();
+    MeganekkoApp createMeganekkoApp(Meganekko meganekko);
 
     /**
      * Parse
@@ -33,13 +33,6 @@ public interface Meganekko {
     void setScene(Scene scene);
 
     /**
-     * Call this when background thread or UI-thread wants to notify callback on GL-thread.
-     *
-     * @param runnable Runnable wants to be run on GL-thread.
-     */
-    void runOnGlThread(Runnable runnable);
-
-    /**
      * Call this when background thread or GL-thread wants to notify callback on UI-thread.
      *
      * @param runnable Runnable wants to be run on UI-thread.
@@ -53,30 +46,9 @@ public interface Meganekko {
     void recenter();
 
     /**
-     * Call this to run {@code Animator} on UI-thread.
-     *
-     * @param anim        Animator
-     * @param endCallback Optional callback. This will called on GL-thread after animation.
-     */
-    void animate(@NonNull final Animator anim, @Nullable final Runnable endCallback);
-
-    /**
-     * Call this to cancel {@code Animator} on UI-thread.
-     *
-     * @param anim        Animator
-     * @param endCallback Optional callback. This will called on GL-thread after cancel.
-     */
-    void cancel(@NonNull final Animator anim, @Nullable final Runnable endCallback);
-
-    /**
      * @return Current {@code Context}
      */
     Context getContext();
-
-    /**
-     * @return {@link Frame}
-     */
-    Frame getFrame();
 
     /**
      * @param object Target object.

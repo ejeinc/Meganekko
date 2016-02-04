@@ -17,14 +17,11 @@
 
 package com.eje_c.meganekko.gearvr;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.KeyEvent;
 
 import com.eje_c.meganekko.Frame;
@@ -40,8 +37,6 @@ import com.oculus.vrappframework.VrActivity;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import ovr.App;
 import ovr.VrFrame;
@@ -53,13 +48,10 @@ import ovr.VrFrame;
  */
 public abstract class MeganekkoActivity extends VrActivity implements Meganekko {
 
-    private static final int MAX_EVENTS_PER_FRAME = 16;
-
     static {
         System.loadLibrary("meganekko");
     }
 
-    private final Queue<Runnable> mRunnables = new LinkedBlockingQueue<Runnable>();
     private InternalSensorManager mInternalSensorManager;
     private boolean mDocked;
     private final Runnable mRunOnDock = new Runnable() {
@@ -75,7 +67,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
             mDocked = false;
         }
     };
-    private Frame vrFrame;
     private Scene mScene;
     private App mApp;
     private DockEventReceiver mDockEventReceiver;
@@ -90,8 +81,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
     public static native void setDebugOptionEnable(boolean enable);
 
     private static native void recenterPose(long appPtr);
-
-    private static native void setScene(long appPtr, long nativeScene);
 
     private static native boolean isLookingAt(long appPtr, long nativeSceneObject);
 
@@ -137,8 +126,7 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
      */
     private void oneTimeInit() {
 
-        meganekkoApp = createMeganekkoApp();
-        meganekkoApp.init(this);
+        meganekkoApp = createMeganekkoApp(this);
 
         if (!mDocked) {
             mInternalSensorManager.start();
@@ -151,18 +139,14 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
     private void frame(long vrFramePtr) {
 
         // Setup VrFrame
+        Frame vrFrame = meganekkoApp.getFrame();
         if (vrFrame == null) {
             vrFrame = new VrFrame(vrFramePtr);
-        }
-
-        // runOnGlThread handling
-        for (int i = 0; !mRunnables.isEmpty() && i < MAX_EVENTS_PER_FRAME; ++i) {
-            Runnable event = mRunnables.poll();
-            event.run();
+            meganekkoApp.setFrame(vrFrame);
         }
 
         mScene.update(vrFrame);
-        meganekkoApp.update(this, vrFrame);
+        meganekkoApp.update();
     }
 
     /**
@@ -227,29 +211,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
         return super.onKeyDown(keyCode, event);
     }
 
-    /**
-     * Enqueues a callback to be run in the GL thread.
-     * This is how you take data generated on a background thread (or the main
-     * (GUI) thread) and pass it to the coprocessor, using calls that must be
-     * made from the GL thread (aka the "GL context").
-     *
-     * @param runnable A bit of code that must run on the GL thread
-     */
-    @Override
-    public void runOnGlThread(@NonNull Runnable runnable) {
-        mRunnables.add(runnable);
-    }
-
-    /**
-     * Get {@link Frame}.
-     *
-     * @return {@code VrFrame}
-     */
-    @Override
-    public Frame getFrame() {
-        return vrFrame;
-    }
-
     @Override
     public void recenter() {
         recenterPose(getAppPtr());
@@ -297,7 +258,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
         scene.onResume();
 
         mScene = scene;
-        setScene(getAppPtr(), scene.getNative());
     }
 
     public App getApp() {
@@ -315,69 +275,12 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
         return isLookingAt(getAppPtr(), object.getNative());
     }
 
-    /**
-     * Run {@link Animator} on UI thread and notify end callback on GL thread.
-     *
-     * @param anim        {@link Animator}.
-     * @param endCallback Callback for animation end. This is <b>not</b> called when animation is canceled.
-     *                    If you require more complicated callbacks, use {@code AnimatorListener} instead of this.
-     */
-    @Override
-    public void animate(@NonNull final Animator anim, @Nullable final Runnable endCallback) {
-
-        if (anim.isRunning()) {
-            cancel(anim, new Runnable() {
-                @Override
-                public void run() {
-                    animate(anim, endCallback);
-                }
-            });
-            return;
-        }
-
-        // Register one time animation end callback
-        if (endCallback != null) {
-            anim.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationCancel(Animator animation) {
-                    anim.removeListener(this);
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    anim.removeListener(this);
-                    runOnGlThread(endCallback);
-                }
-            });
-        }
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                anim.start();
-            }
-        });
-    }
-
-    /**
-     * Cancel {@link Animator} running.
-     *
-     * @param anim     {@link Animator}.
-     * @param callback Callback for canceling operation was called in UI thread.
-     */
-    @Override
-    public void cancel(@NonNull final Animator anim, @Nullable final Runnable callback) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                anim.cancel();
-                if (callback != null) runOnGlThread(callback);
-            }
-        });
-    }
-
     @Override
     public Context getContext() {
         return this;
+    }
+
+    private long getNativeScene() {
+        return mScene.getNative();
     }
 }

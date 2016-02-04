@@ -53,14 +53,19 @@ public:
 
     OvrGuiSys *         GuiSys;
 
-    Scene*              scene;
+    Scene * GetScene() {
+        return GetScene(app->GetJava()->Env);
+    }
+
+    Scene * GetScene(JNIEnv * jni) {
+        return reinterpret_cast<Scene*>(jni->CallLongMethod(app->GetJava()->ActivityObject, getNativeSceneMethodId));
+    }
 
 private:
     ovrSoundEffectContext *        SoundEffectContext;
     OvrGuiSys::SoundEffectPlayer * SoundEffectPlayer;
     ovrLocale *                    Locale;
 
-    OESShader *         oesShader;
     ovrMatrix4f         centerViewMatrix;
 
     jmethodID           frameMethodId;
@@ -70,8 +75,7 @@ private:
     jmethodID           onKeyDownMethodId;
     jmethodID           onKeyUpMethodId;
     jmethodID           onKeyMaxMethodId;
-
-    std::vector<SceneObject*> sceneObjects;
+    jmethodID           getNativeSceneMethodId;
 
     inline jmethodID GetMethodID(const char * name, const char * signature)
     {

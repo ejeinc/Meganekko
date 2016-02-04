@@ -28,6 +28,9 @@
 #include "HybridObject.h"
 #include "Camera.h"
 #include "Renderer.h"
+#include "Kernel/OVR_Math.h"
+
+using namespace OVR;
 
 namespace mgn {
 class SceneObject;
@@ -50,6 +53,18 @@ public:
     void set_occlusion_culling( bool occlusion_flag){ occlusion_flag_ = occlusion_flag; }
     bool get_occlusion_culling(){ return occlusion_flag_; }
 
+    void SetViewMatrix(const Matrix4f & m){
+        viewM = m;
+    }
+
+    void SetProjectionMatrix(const Matrix4f & m){
+        projectionM = m;
+    }
+
+    void PrepareForRendering();
+
+    Matrix4f Render(const int eye);
+
 private:
     Scene(const Scene& scene);
     Scene(Scene&& scene);
@@ -58,6 +73,11 @@ private:
 
 private:
     Camera* main_camera_;
+    OESShader* oesShader;
+
+    Matrix4f viewM;
+    Matrix4f projectionM;
+    std::vector<SceneObject*> sceneObjects; // will be rendererd
 
     int dirtyFlag_;
     bool frustum_flag_;

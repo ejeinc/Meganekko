@@ -31,12 +31,12 @@ static const Quatf COORDINATE_QUATERNION = Quatf(0.0f, 0.0f, -sqrtf(0.5), sqrtf(
 static const Quatf OFFSET_QUATERNION     = Quatf(0.0f, sqrtf(0.5f), 0.0f, sqrtf(0.5f));
 static const Quatf CONSTANT_EXPRESSION   = COORDINATE_QUATERNION.Inverted() * OFFSET_QUATERNION;
 
-void Java_com_eje_1c_meganekko_gearvr_InternalSensorManager_setSensorValues(const JNIEnv * jni, const jclass clazz, const jlong appPtr, const jfloat x, const jfloat y, const jfloat z, const jfloat w)
+void Java_com_eje_1c_meganekko_gearvr_InternalSensorManager_setSensorValues(JNIEnv * jni, const jclass clazz, const jlong appPtr, const jfloat x, const jfloat y, const jfloat z, const jfloat w)
 {
     const Quatf quaternion = CONSTANT_EXPRESSION * Quatf(x, y, z, w) * COORDINATE_QUATERNION;
 
     MeganekkoActivity* activity = (MeganekkoActivity*) ((App *) appPtr)->GetAppInterface();
-    Camera * camera = const_cast<Camera *>(activity->scene->main_camera());
+    Camera * camera = const_cast<Camera *>(activity->GetScene(jni)->main_camera());
     camera->transform()->setRotation(quaternion);
 }
 
