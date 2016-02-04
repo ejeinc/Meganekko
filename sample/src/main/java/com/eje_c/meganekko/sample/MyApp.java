@@ -2,10 +2,10 @@ package com.eje_c.meganekko.sample;
 
 import android.animation.ObjectAnimator;
 
+import com.eje_c.meganekko.Frame;
 import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.Frame;
 import com.eje_c.meganekko.utility.Log;
 
 import ovr.JoyButton;
@@ -51,7 +51,7 @@ public class MyApp extends MeganekkoApp {
     }
 
     @Override
-    public void shutdown(Meganekko meganekko) {
+    public void shutdown() {
         Log.d(TAG, "shutdown");
     }
 

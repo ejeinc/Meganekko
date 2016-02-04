@@ -49,10 +49,8 @@ public abstract class MeganekkoApp {
 
     /**
      * Will be called when user leaves from app.
-     *
-     * @param meganekko Meganekko system
      */
-    public void shutdown(Meganekko meganekko) {
+    public void shutdown() {
     }
 
     /**

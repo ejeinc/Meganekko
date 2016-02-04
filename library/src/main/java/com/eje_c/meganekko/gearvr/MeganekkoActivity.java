@@ -152,7 +152,7 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
      */
     private void oneTimeShutDown() {
 
-        meganekkoApp.shutdown(this);
+        meganekkoApp.shutdown();
 
         if (!mDocked) {
             mInternalSensorManager.stop();
