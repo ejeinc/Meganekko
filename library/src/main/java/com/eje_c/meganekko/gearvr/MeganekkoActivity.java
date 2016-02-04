@@ -21,22 +21,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 
 import com.eje_c.meganekko.Frame;
 import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
-import com.eje_c.meganekko.Scene;
-import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.utility.DockEventReceiver;
-import com.eje_c.meganekko.xml.XmlSceneParser;
-import com.eje_c.meganekko.xml.XmlSceneParserFactory;
 import com.oculus.vrappframework.VrActivity;
-
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.IOException;
 
 import ovr.App;
 import ovr.VrFrame;
@@ -80,8 +71,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
     public static native void setDebugOptionEnable(boolean enable);
 
     private static native void recenterPose(long appPtr);
-
-    private static native boolean isLookingAt(long appPtr, long nativeSceneObject);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,17 +205,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
 
     public App getApp() {
         return mApp;
-    }
-
-    /**
-     * Check if user is looking at target object.
-     *
-     * @param object target object.
-     * @return true if user is looking at object.
-     */
-    @Override
-    public boolean isLookingAt(@NonNull SceneObject object) {
-        return isLookingAt(getAppPtr(), object.getNative());
     }
 
     @Override

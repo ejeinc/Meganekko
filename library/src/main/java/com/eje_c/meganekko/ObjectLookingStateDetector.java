@@ -24,14 +24,14 @@ import android.support.annotation.NonNull;
  * when start or end looking at target object. To use this class:
  * <ul>
  * <li>Create an instance of the {@code ObjectLookingStateDetector} with {@code ObjectLookingStateListener}.</li>
- * <li>Call {@link ObjectLookingStateDetector#update(Frame)} in {@link MeganekkoApp#update(Meganekko, Frame)} or {@link Scene#update(Frame)}.</li>
+ * <li>Call {@link ObjectLookingStateDetector#update(Frame)} in {@link MeganekkoApp#update()} or {@link Scene#update(Frame)}.</li>
  * </ul>
  */
 public class ObjectLookingStateDetector {
 
     private final SceneObject mTarget;
     private final ObjectLookingStateListener mListener;
-    private final Meganekko mMeganekko;
+    private final MeganekkoApp mApp;
     private boolean mLooking;
 
     /**
@@ -40,10 +40,10 @@ public class ObjectLookingStateDetector {
      * @param target   the target object.
      * @param listener the listener invoked for all callbacks, this must not be null.
      */
-    public ObjectLookingStateDetector(@NonNull Meganekko meganekko, @NonNull SceneObject target, @NonNull ObjectLookingStateListener listener) {
+    public ObjectLookingStateDetector(@NonNull MeganekkoApp app, @NonNull SceneObject target, @NonNull ObjectLookingStateListener listener) {
         this.mTarget = target;
         this.mListener = listener;
-        this.mMeganekko = meganekko;
+        this.mApp = app;
     }
 
     public void update(Frame vrFrame) {
@@ -55,7 +55,7 @@ public class ObjectLookingStateDetector {
             return;
         }
 
-        boolean lookingNow = mMeganekko.isLookingAt(mTarget);
+        boolean lookingNow = mApp.getScene().isLookingAt(mTarget);
 
         if (lookingNow) {
             if (!mLooking) {

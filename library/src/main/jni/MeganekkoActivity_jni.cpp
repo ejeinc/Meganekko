@@ -62,26 +62,6 @@ void Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_recenterPose(JNIEnv * jn
     vrapi_RecenterPose(mobile);
 }
 
-jboolean Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_isLookingAt(JNIEnv * jni, jclass clazz, jlong appPtr, jlong jsceneObject)
-{
-    MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
-    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
-
-    Matrix4f m = sceneObject->transform()->getModelMatrix().InvertedHomogeneousTransform();
-    const Vector3f rayStart = m.Transform(activity->GetScene()->main_camera()->transform()->getPosition());
-    const Vector3f rayDir = activity->GetScene()->main_camera()->getLookAt();
-    const float* boundingBoxInfo = sceneObject->render_data()->mesh()->getBoundingBoxInfo();
-    const Vector3f mins(boundingBoxInfo[0], boundingBoxInfo[1], boundingBoxInfo[2]);
-    const Vector3f maxs(boundingBoxInfo[3], boundingBoxInfo[4], boundingBoxInfo[5]);
-    float t0 = 0.0f;
-    float t1 = 0.0f;
-
-    return Intersect_RayBounds(rayStart, rayDir, mins, maxs, t0, t1);
-//    if (Intersect_RayBounds(rayStart, rayDir, mins, maxs, t0, t1)) {
-//        return rayStart + t0 * rayDir;
-//    }
-}
-
 } // extern "C"
 
 } // namespace mgn

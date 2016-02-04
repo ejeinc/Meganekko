@@ -27,10 +27,4 @@ public interface Meganekko {
      * @return Current {@code Context}
      */
     Context getContext();
-
-    /**
-     * @param object Target object.
-     * @return If user is looking at object, return true. Otherwise false.
-     */
-    boolean isLookingAt(SceneObject object);
 }

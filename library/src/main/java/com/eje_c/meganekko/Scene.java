@@ -39,6 +39,8 @@ public class Scene extends SceneObject {
 
     private static native void setMainCamera(long scene, long camera);
 
+    private static native boolean isLookingAt(long scene, long sceneObject);
+
     @Override
     protected native long initNativeInstance();
 
@@ -83,5 +85,9 @@ public class Scene extends SceneObject {
      * Called when the other scene becomes main scene with {@link Meganekko#setScene(Scene)}.
      */
     public void onPause() {
+    }
+
+    public boolean isLookingAt(SceneObject target) {
+        return isLookingAt(getNative(), target.getNative());
     }
 }

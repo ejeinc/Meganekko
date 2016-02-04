@@ -65,6 +65,8 @@ public:
 
     Matrix4f Render(const int eye);
 
+    bool IsLookingAt(const SceneObject * target);
+
 private:
     Scene(const Scene& scene);
     Scene(Scene&& scene);

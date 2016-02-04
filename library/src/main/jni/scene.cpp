@@ -20,6 +20,8 @@
 #include "Scene.h"
 
 #include "SceneObject.h"
+#include "RenderData.h"
+#include "Kernel/OVR_Geometry.h"
 
 namespace mgn {
 Scene::Scene(JNIEnv * jni, jobject javaObject) :
@@ -52,6 +54,20 @@ Matrix4f Scene::Render(const int eye) {
     const Matrix4f viewProjectionM = projectionM * viewM;
     Renderer::RenderEyeView(this, sceneObjects, oesShader, viewM, projectionM, viewProjectionM, eye);
     return viewProjectionM;
+}
+
+bool Scene::IsLookingAt(const SceneObject *target) {
+
+    Matrix4f m = target->transform()->getModelMatrix().InvertedHomogeneousTransform();
+    const Vector3f rayStart = m.Transform(main_camera()->transform()->getPosition());
+    const Vector3f rayDir = main_camera()->getLookAt();
+    const float* boundingBoxInfo = target->render_data()->mesh()->getBoundingBoxInfo();
+    const Vector3f mins(boundingBoxInfo[0], boundingBoxInfo[1], boundingBoxInfo[2]);
+    const Vector3f maxs(boundingBoxInfo[3], boundingBoxInfo[4], boundingBoxInfo[5]);
+    float t0 = 0.0f;
+    float t1 = 0.0f;
+
+    return Intersect_RayBounds(rayStart, rayDir, mins, maxs, t0, t1);
 }
 
 }
