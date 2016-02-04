@@ -6,6 +6,12 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.eje_c.meganekko.xml.XmlSceneParser;
+import com.eje_c.meganekko.xml.XmlSceneParserFactory;
+
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -18,6 +24,7 @@ public abstract class MeganekkoApp {
 
     private final Meganekko meganekko;
     private final Queue<Runnable> mRunnables = new LinkedBlockingQueue<>();
+    private Scene mScene;
     private Frame frame;
 
     protected MeganekkoApp(Meganekko meganekko) {
@@ -36,6 +43,8 @@ public abstract class MeganekkoApp {
             Runnable event = mRunnables.poll();
             event.run();
         }
+
+        mScene.update(frame);
     }
 
     /**
@@ -149,5 +158,70 @@ public abstract class MeganekkoApp {
 
     public final Context getContext() {
         return meganekko.getContext();
+    }
+
+    public boolean onKeyShortPress(int keyCode, int repeatCount) {
+        return mScene.onKeyShortPress(keyCode, repeatCount);
+    }
+
+    public boolean onKeyDoubleTap(int keyCode, int repeatCount) {
+        return mScene.onKeyDoubleTap(keyCode, repeatCount);
+    }
+
+    public boolean onKeyLongPress(int keyCode, int repeatCount) {
+        return mScene.onKeyLongPress(keyCode, repeatCount);
+    }
+
+    public boolean onKeyDown(int keyCode, int repeatCount) {
+        return mScene.onKeyLongPress(keyCode, repeatCount);
+    }
+
+    public boolean onKeyUp(int keyCode, int repeatCount) {
+        return mScene.onKeyUp(keyCode, repeatCount);
+    }
+
+    public boolean onKeyMax(int keyCode, int repeatCount) {
+        return mScene.onKeyMax(keyCode, repeatCount);
+    }
+
+    /**
+     * Get current rendering scene.
+     *
+     * @return Current rendering scene.
+     */
+    public Scene getScene() {
+        return mScene;
+    }
+
+    /**
+     * Set current rendering scene.
+     *
+     * @param scene
+     */
+    public synchronized void setScene(@NonNull Scene scene) {
+
+        if (scene == mScene)
+            return;
+
+        if (mScene != null) {
+            mScene.onPause();
+        }
+
+        scene.onResume();
+
+        mScene = scene;
+    }
+
+    public void setSceneFromXML(int xmlRes) {
+
+        XmlSceneParser parser = XmlSceneParserFactory.getInstance(meganekko.getContext()).getSceneParser();
+
+        try {
+            Scene scene = parser.parse(meganekko.getContext().getResources().getXml(xmlRes), null);
+            setScene(scene);
+        } catch (XmlPullParserException | IOException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException(e);
+        }
     }
 }

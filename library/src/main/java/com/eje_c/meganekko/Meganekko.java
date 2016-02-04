@@ -1,9 +1,6 @@
 package com.eje_c.meganekko;
 
-import android.animation.Animator;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 /**
  * The interface to Meganekko Framework system.
@@ -12,25 +9,6 @@ import android.support.annotation.Nullable;
 public interface Meganekko {
 
     MeganekkoApp createMeganekkoApp(Meganekko meganekko);
-
-    /**
-     * Parse
-     *
-     * @param xmlRes
-     */
-    void setSceneFromXML(int xmlRes);
-
-    /**
-     * @return Current {@link Scene}.
-     */
-    Scene getScene();
-
-    /**
-     * Set {@link Scene}.
-     *
-     * @param scene
-     */
-    void setScene(Scene scene);
 
     /**
      * Call this when background thread or GL-thread wants to notify callback on UI-thread.

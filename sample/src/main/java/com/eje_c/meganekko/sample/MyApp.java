@@ -17,12 +17,13 @@ public class MyApp extends MeganekkoApp {
     public MyApp(Meganekko meganekko) {
         super(meganekko);
 
-        meganekko.setSceneFromXML(R.xml.scene);
-        obj = meganekko.getScene().findObjectById(R.id.myObject);
+        setSceneFromXML(R.xml.scene);
+        obj = getScene().findObjectById(R.id.myObject);
     }
 
     @Override
     public void update() {
+        super.update();
 //        Log.d(TAG, "update");
 
         Frame frame = getFrame();

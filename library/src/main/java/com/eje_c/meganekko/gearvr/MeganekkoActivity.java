@@ -67,7 +67,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
             mDocked = false;
         }
     };
-    private Scene mScene;
     private App mApp;
     private DockEventReceiver mDockEventReceiver;
     private MeganekkoApp meganekkoApp;
@@ -145,7 +144,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
             meganekkoApp.setFrame(vrFrame);
         }
 
-        mScene.update(vrFrame);
         meganekkoApp.update();
     }
 
@@ -170,27 +168,27 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
     }
 
     public boolean onKeyShortPress(int keyCode, int repeatCount) {
-        return mScene.onKeyShortPress(keyCode, repeatCount);
+        return meganekkoApp.onKeyShortPress(keyCode, repeatCount);
     }
 
     public boolean onKeyDoubleTap(int keyCode, int repeatCount) {
-        return mScene.onKeyDoubleTap(keyCode, repeatCount);
+        return meganekkoApp.onKeyDoubleTap(keyCode, repeatCount);
     }
 
     public boolean onKeyLongPress(int keyCode, int repeatCount) {
-        return mScene.onKeyLongPress(keyCode, repeatCount);
+        return meganekkoApp.onKeyLongPress(keyCode, repeatCount);
     }
 
     public boolean onKeyDown(int keyCode, int repeatCount) {
-        return mScene.onKeyLongPress(keyCode, repeatCount);
+        return meganekkoApp.onKeyLongPress(keyCode, repeatCount);
     }
 
     public boolean onKeyUp(int keyCode, int repeatCount) {
-        return mScene.onKeyUp(keyCode, repeatCount);
+        return meganekkoApp.onKeyUp(keyCode, repeatCount);
     }
 
     public boolean onKeyMax(int keyCode, int repeatCount) {
-        return mScene.onKeyMax(keyCode, repeatCount);
+        return meganekkoApp.onKeyMax(keyCode, repeatCount);
     }
 
     @Deprecated
@@ -216,50 +214,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
         recenterPose(getAppPtr());
     }
 
-    @Override
-    public void setSceneFromXML(int xmlRes) {
-
-        XmlSceneParser parser = XmlSceneParserFactory.getInstance(this).getSceneParser();
-
-        try {
-            Scene scene = parser.parse(getResources().getXml(xmlRes), null);
-            setScene(scene);
-        } catch (XmlPullParserException | IOException e) {
-            e.printStackTrace();
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    /**
-     * Get current rendering scene.
-     *
-     * @return Current rendering scene.
-     */
-    @Override
-    public Scene getScene() {
-        return mScene;
-    }
-
-    /**
-     * Set current rendering scene.
-     *
-     * @param scene
-     */
-    @Override
-    public synchronized void setScene(@NonNull Scene scene) {
-
-        if (scene == mScene)
-            return;
-
-        if (mScene != null) {
-            mScene.onPause();
-        }
-
-        scene.onResume();
-
-        mScene = scene;
-    }
-
     public App getApp() {
         return mApp;
     }
@@ -281,6 +235,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
     }
 
     private long getNativeScene() {
-        return mScene.getNative();
+        return meganekkoApp.getScene().getNative();
     }
 }
