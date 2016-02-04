@@ -70,5 +70,39 @@ Java_com_eje_1c_meganekko_Scene_isLookingAt(JNIEnv * env, jobject obj, jlong jsc
     return scene->IsLookingAt(sceneObject);
 }
 
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_Scene_setViewMatrix(JNIEnv * jni, jobject obj, jlong jscene, jfloatArray jarray) {
+    Scene* scene = reinterpret_cast<Scene*>(jscene);
+    jfloat tmp[16];
+    jni->GetFloatArrayRegion(jarray, 0, 16, tmp);
+
+    scene->SetViewMatrix(Matrix4f(
+        tmp[0], tmp[1], tmp[2], tmp[3],
+        tmp[4], tmp[5], tmp[6], tmp[7],
+        tmp[8], tmp[9], tmp[10], tmp[11],
+        tmp[12], tmp[13], tmp[14], tmp[15]
+    ));
+}
+
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_Scene_setProjectionMatrix(JNIEnv * jni, jobject obj, jlong jscene, jfloatArray jarray) {
+    Scene* scene = reinterpret_cast<Scene*>(jscene);
+    jfloat tmp[16];
+    jni->GetFloatArrayRegion(jarray, 0, 16, tmp);
+
+    scene->SetProjectionMatrix(Matrix4f(
+        tmp[0], tmp[1], tmp[2], tmp[3],
+        tmp[4], tmp[5], tmp[6], tmp[7],
+        tmp[8], tmp[9], tmp[10], tmp[11],
+        tmp[12], tmp[13], tmp[14], tmp[15]
+    ));
+}
+
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_Scene_render(JNIEnv * jni, jobject obj, jlong jscene, jint eye) {
+    Scene* scene = reinterpret_cast<Scene*>(jscene);
+    scene->Render(eye);
+}
+
 }
 }

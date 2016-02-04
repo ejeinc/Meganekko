@@ -41,6 +41,12 @@ public class Scene extends SceneObject {
 
     private static native boolean isLookingAt(long scene, long sceneObject);
 
+    private static native void setViewMatrix(long scene, float[] m);
+
+    private static native void setProjectionMatrix(long scene, float[] m);
+
+    private static native void render(long scene, int eye);
+
     @Override
     protected native long initNativeInstance();
 
@@ -89,5 +95,17 @@ public class Scene extends SceneObject {
 
     public boolean isLookingAt(SceneObject target) {
         return isLookingAt(getNative(), target.getNative());
+    }
+
+    public void setViewMatrix(float[] viewM) {
+        setViewMatrix(getNative(), viewM);
+    }
+
+    public void setProjectionMatrix(float[] projectionM) {
+        setProjectionMatrix(getNative(), projectionM);
+    }
+
+    public void render(int eye) {
+        render(getNative(), eye);
     }
 }
