@@ -18,13 +18,9 @@
 package com.eje_c.meganekko.gearvr;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 
 import com.eje_c.meganekko.Frame;
@@ -32,9 +28,6 @@ import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
 import com.eje_c.meganekko.utility.DockEventReceiver;
 import com.oculus.vrappframework.VrActivity;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 import ovr.App;
 import ovr.VrFrame;
@@ -44,7 +37,7 @@ import ovr.VrFrame;
  * not directly from {@code Activity}. {@code MeganekkoActivity} creates and manages the internal classes which use
  * sensor data to manage a viewpoint, and thus present an appropriate stereoscopic view of your scene graph.
  */
-public class MeganekkoActivity extends VrActivity implements Meganekko {
+public abstract class MeganekkoActivity extends VrActivity implements Meganekko {
 
     static {
         System.loadLibrary("meganekko");
@@ -114,30 +107,6 @@ public class MeganekkoActivity extends VrActivity implements Meganekko {
         if (meganekkoApp != null) {
             meganekkoApp.onResume();
         }
-    }
-
-    @Override
-    public MeganekkoApp createMeganekkoApp(Meganekko meganekko) {
-        try {
-            //
-            final String packageName = getPackageName();
-            ActivityInfo appliInfo = getPackageManager().getActivityInfo(new ComponentName(packageName, getClass().getName()), PackageManager.GET_META_DATA);
-
-            if (appliInfo.metaData != null) {
-                String appClassName = appliInfo.metaData.getString("com.eje_c.meganekko.app");
-
-                if (appClassName != null) {
-                    Class<? extends MeganekkoApp> clazz = (Class<? extends MeganekkoApp>) Class.forName(appClassName);
-                    Constructor<? extends MeganekkoApp> constructor = clazz.getConstructor(Meganekko.class);
-                    return constructor.newInstance(meganekko);
-                }
-            }
-        } catch (PackageManager.NameNotFoundException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        Log.e(TAG, "<meta-data android:name=\"com.eje_c.meganekko.app\" android:value=\"YOUR APP CLASS\" /> is not specified!");
-        return null;
     }
 
     /**
