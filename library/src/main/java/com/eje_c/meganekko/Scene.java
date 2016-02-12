@@ -17,27 +17,16 @@
 
 package com.eje_c.meganekko;
 
+import org.joml.Vector3f;
+
 /**
  * The scene graph
  */
 public class Scene extends SceneObject {
 
-    private Camera mMainCamera;
-
-    /**
-     * Constructs a scene with a camera rig holding left & right cameras in it.
-     */
-    public Scene() {
-        Camera camera = new Camera();
-        addChildObject(camera);
-        setMainCamera(camera);
-    }
-
     private static native void setFrustumCulling(long scene, boolean flag);
 
     private static native void setOcclusionQuery(long scene, boolean flag);
-
-    private static native void setMainCamera(long scene, long camera);
 
     private static native boolean isLookingAt(long scene, long sceneObject);
 
@@ -47,25 +36,14 @@ public class Scene extends SceneObject {
 
     private static native void render(long scene, int eye);
 
+    private static native void setViewPosition(long scene, float x, float y, float z);
+
+    private static native float[] getViewPosition(long scene);
+
+    private static native float[] getViewOrientation(long scene);
+
     @Override
     protected native long initNativeInstance();
-
-    /**
-     * @return The {@link Camera camera rig} used for rendering the scene on the screen.
-     */
-    public Camera getMainCamera() {
-        return mMainCamera;
-    }
-
-    /**
-     * Set the {@link Camera camera} used for rendering the scene on the screen.
-     *
-     * @param camera The {@link Camera camera} to render with.
-     */
-    public void setMainCamera(Camera camera) {
-        mMainCamera = camera;
-        setMainCamera(getNative(), camera.getNative());
-    }
 
     /**
      * Sets the frustum culling for the {@link Scene}.
@@ -107,5 +85,21 @@ public class Scene extends SceneObject {
 
     public void render(int eye) {
         render(getNative(), eye);
+    }
+
+    public void setViewPosition(float x, float y, float z) {
+        setViewPosition(getNative(), x, y, z);
+    }
+
+    public void setViewPosition(Vector3f pos) {
+        setViewPosition(getNative(), pos.x, pos.y, pos.z);
+    }
+
+    public float[] getViewPosition() {
+        return getViewPosition(getNative());
+    }
+
+    public float[] getViewOrientation() {
+        return getViewOrientation(getNative());
     }
 }

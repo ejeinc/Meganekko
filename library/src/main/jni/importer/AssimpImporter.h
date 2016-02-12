@@ -26,7 +26,6 @@
 #include <string>
 #include <map>
 
-#include "camera.h"
 #include "transform.h"
 #include "Component.h"
 #include "HybridObject.h"

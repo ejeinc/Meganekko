@@ -20,6 +20,7 @@
 #include <jni.h>
 
 #include "Scene.h"
+#include "util/convert.h"
 
 namespace mgn {
 extern "C" {
@@ -102,6 +103,25 @@ JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_Scene_render(JNIEnv * jni, jobject obj, jlong jscene, jint eye) {
     Scene* scene = reinterpret_cast<Scene*>(jscene);
     scene->Render(eye);
+}
+
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_Scene_setViewPosition(JNIEnv * jni, jobject obj, jlong jscene, jfloat x, jfloat y, jfloat z) {
+    Scene* scene = reinterpret_cast<Scene*>(jscene);
+    scene->SetViewPosition(Vector3f(x, y, z));
+}
+
+JNIEXPORT jfloatArray JNICALL
+Java_com_eje_1c_meganekko_Scene_getViewPosition(JNIEnv * jni, jobject obj, jlong jscene) {
+    Scene* scene = reinterpret_cast<Scene*>(jscene);
+    return ToFloatArray(jni, scene->GetViewPosition());
+}
+
+JNIEXPORT jfloatArray JNICALL
+Java_com_eje_1c_meganekko_Scene_getViewOrientation(JNIEnv * jni, jobject obj, jlong jscene) {
+    Scene* scene = reinterpret_cast<Scene*>(jscene);
+    Quatf orientation = Quatf(scene->GetCenterViewMatrix().InvertedHomogeneousTransform());
+    return ToFloatArray(jni, orientation);
 }
 
 }

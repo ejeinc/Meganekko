@@ -61,10 +61,16 @@ public:
         return reinterpret_cast<Scene*>(jni->CallLongMethod(app->GetJava()->ActivityObject, getNativeSceneMethodId));
     }
 
+    void SetInternalSensorRotation(const Quatf & q) {
+        internalSensorRotation = q;
+    }
+
 private:
     ovrSoundEffectContext *        SoundEffectContext;
     OvrGuiSys::SoundEffectPlayer * SoundEffectPlayer;
     ovrLocale *                    Locale;
+
+    Quatf internalSensorRotation;
 
     jmethodID           frameMethodId;
     jmethodID           onKeyShortPressMethodId;

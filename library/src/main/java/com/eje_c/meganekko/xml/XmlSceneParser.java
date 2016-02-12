@@ -19,7 +19,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Xml;
 
-import com.eje_c.meganekko.Camera;
 import com.eje_c.meganekko.Scene;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.xml.attribute_parser.BasicParser;
@@ -181,23 +180,10 @@ public class XmlSceneParser {
 
                 case XmlPullParser.START_TAG:
 
-                    if ("camera".equals(parser.getName())) {
+                    SceneObject object = mObjectParser.parse(parser, parsers);
 
-                        Camera camera = scene.getMainCamera();
-
-                        while (parser.nextTag() == XmlPullParser.START_TAG) {
-                            SceneObject object = mObjectParser.parse(parser, parsers);
-                            if (object != null) {
-                                camera.addChildObject(object);
-                            }
-                        }
-                    } else {
-
-                        SceneObject object = mObjectParser.parse(parser, parsers);
-
-                        if (object != null) {
-                            scene.addChildObject(object);
-                        }
+                    if (object != null) {
+                        scene.addChildObject(object);
                     }
                     break;
 

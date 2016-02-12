@@ -25,8 +25,7 @@
 #include <vector>
 
 
-#include "HybridObject.h"
-#include "Camera.h"
+#include "SceneObject.h"
 #include "Renderer.h"
 #include "Kernel/OVR_Math.h"
 
@@ -79,6 +78,18 @@ public:
 
     bool IsLookingAt(const SceneObject * target);
 
+    void SetViewPosition(const Vector3f & pos) {
+        viewPosition = pos;
+    }
+
+    const Vector3f & GetViewPosition() {
+        return viewPosition;
+    }
+
+    const Vector3f & GetViewPosition() const {
+        return viewPosition;
+    }
+
 private:
     Scene(const Scene& scene);
     Scene(Scene&& scene);
@@ -89,6 +100,7 @@ private:
     Camera* main_camera_;
     OESShader* oesShader;
 
+    Vector3f viewPosition;
     Matrix4f centerViewM;
     Matrix4f viewM;
     Matrix4f projectionM;

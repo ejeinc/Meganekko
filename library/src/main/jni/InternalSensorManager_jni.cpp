@@ -36,8 +36,7 @@ void Java_com_eje_1c_meganekko_gearvr_InternalSensorManager_setSensorValues(JNIE
     const Quatf quaternion = CONSTANT_EXPRESSION * Quatf(x, y, z, w) * COORDINATE_QUATERNION;
 
     MeganekkoActivity* activity = (MeganekkoActivity*) ((App *) appPtr)->GetAppInterface();
-    Camera * camera = const_cast<Camera *>(activity->GetScene(jni)->main_camera());
-    camera->transform()->setRotation(quaternion);
+    activity->SetInternalSensorRotation(quaternion);
 }
 
 } // extern "C"
