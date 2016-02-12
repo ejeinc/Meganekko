@@ -111,10 +111,10 @@ Java_com_eje_1c_meganekko_Scene_setViewPosition(JNIEnv * jni, jobject obj, jlong
     scene->SetViewPosition(Vector3f(x, y, z));
 }
 
-JNIEXPORT jfloatArray JNICALL
+JNIEXPORT jobject JNICALL
 Java_com_eje_1c_meganekko_Scene_getViewPosition(JNIEnv * jni, jobject obj, jlong jscene) {
     Scene* scene = reinterpret_cast<Scene*>(jscene);
-    return ToFloatArray(jni, scene->GetViewPosition());
+    return ToJava(jni, scene->GetViewPosition());
 }
 
 JNIEXPORT jfloatArray JNICALL

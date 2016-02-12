@@ -21,5 +21,10 @@ namespace mgn {
         return array;
     }
 
+    static inline jobject ToJava(JNIEnv * jni, Vector3f vec) {
+        const jclass clazz = jni->FindClass("org/joml/Vector3f");
+        const jmethodID constructor = jni->GetMethodID(clazz, "<init>", "(FFF)V" );
+        return jni->NewObject(clazz, constructor, vec.x, vec.y, vec.z);
+    }
 }
 #endif

@@ -38,7 +38,7 @@ public class Scene extends SceneObject {
 
     private static native void setViewPosition(long scene, float x, float y, float z);
 
-    private static native float[] getViewPosition(long scene);
+    private static native Vector3f getViewPosition(long scene);
 
     private static native float[] getViewOrientation(long scene);
 
@@ -95,7 +95,7 @@ public class Scene extends SceneObject {
         setViewPosition(getNative(), pos.x, pos.y, pos.z);
     }
 
-    public float[] getViewPosition() {
+    public Vector3f getViewPosition() {
         return getViewPosition(getNative());
     }
 
