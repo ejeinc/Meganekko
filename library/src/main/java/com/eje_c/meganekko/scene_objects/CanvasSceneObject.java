@@ -39,13 +39,9 @@ public class CanvasSceneObject extends SceneObject {
 
     public CanvasSceneObject() {
 
-        Material material = new Material();
-        mSurfaceTexture = material.getSurfaceTexture();
-
         RenderData renderData = new RenderData();
-        renderData.setMaterial(material);
-
         attachRenderData(renderData);
+        mSurfaceTexture = getRenderData().getMaterial().getSurfaceTexture();
     }
 
     /**

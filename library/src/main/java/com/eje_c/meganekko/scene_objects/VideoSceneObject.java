@@ -43,12 +43,9 @@ public class VideoSceneObject extends SceneObject {
      * play video.
      */
     public VideoSceneObject() {
-        // Setup material
-        Material material = new Material();
-        mSurfaceTexture = material.getSurfaceTexture();
         RenderData renderData = new RenderData();
-        renderData.setMaterial(material);
         attachRenderData(renderData);
+        mSurfaceTexture = getRenderData().getMaterial().getSurfaceTexture();
     }
 
     /**

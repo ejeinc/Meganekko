@@ -46,10 +46,7 @@ public class CameraSceneObject extends SceneObject {
     public CameraSceneObject(Mesh mesh, Camera camera) {
         super(mesh);
 
-        Material material = new Material();
-        mSurfaceTexture = material.getSurfaceTexture();
-
-        getRenderData().setMaterial(material);
+        mSurfaceTexture = getRenderData().getMaterial().getSurfaceTexture();
 
         try {
             camera.setPreviewTexture(mSurfaceTexture);
