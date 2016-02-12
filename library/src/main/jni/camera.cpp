@@ -24,8 +24,8 @@
 
 namespace mgn {
 
-Camera::Camera(JNIEnv * jni, jobject javaObject) :
-        SceneObject(jni, javaObject){
+Camera::Camera() :
+        SceneObject(){
 }
 
 Camera::~Camera() {

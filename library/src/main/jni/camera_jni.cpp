@@ -37,7 +37,7 @@ Java_com_eje_1c_meganekko_Camera_getLookAt(JNIEnv * env, jobject obj, jlong jcam
 
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_Camera_initNativeInstance(JNIEnv * env, jobject obj) {
-    return reinterpret_cast<jlong>(new Camera(env, obj));
+    return reinterpret_cast<jlong>(new Camera());
 }
 
 JNIEXPORT jfloatArray JNICALL

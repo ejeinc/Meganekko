@@ -34,7 +34,7 @@ class RenderData;
 
 class SceneObject: public HybridObject {
 public:
-    SceneObject(JNIEnv * jni, jobject javaObject);
+    SceneObject();
     ~SceneObject();
 
     void set_in_frustum(bool in_frustum = true) {
@@ -121,8 +121,6 @@ private:
     SceneObject& operator=(SceneObject&& scene_object);
 
 private:
-    JavaVM *  Java;
-    jobject   JavaObject;
 
     Transform* transform_;
     RenderData* render_data_;

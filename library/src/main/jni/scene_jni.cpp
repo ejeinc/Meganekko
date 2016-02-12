@@ -38,7 +38,7 @@ Java_com_eje_1c_meganekko_Scene_setOcclusionQuery(JNIEnv * env,
 
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_Scene_initNativeInstance(JNIEnv * env, jobject obj) {
-    return reinterpret_cast<jlong>(new Scene(env, obj));
+    return reinterpret_cast<jlong>(new Scene());
 }
 
 JNIEXPORT void JNICALL

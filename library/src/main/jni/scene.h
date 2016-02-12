@@ -37,7 +37,7 @@ class SceneObject;
 
 class Scene: public SceneObject {
 public:
-    Scene(JNIEnv * jni, jobject javaObject);
+    Scene();
     virtual ~Scene();
     const Camera* main_camera() {
         return main_camera_;
