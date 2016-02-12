@@ -31,6 +31,8 @@ import org.joml.Vector3f;
  */
 public class Transform extends Component {
 
+    private static native Vector3f getPosition(long transform);
+
     private static native float getPositionX(long transform);
 
     private static native float getPositionY(long transform);
@@ -44,6 +46,8 @@ public class Transform extends Component {
     private static native void setPositionY(long transform, float y);
 
     private static native void setPositionZ(long transform, float z);
+
+    private static native Quaternionf getRotation(long transform);
 
     private static native float getRotationW(long transform);
 
@@ -60,6 +64,8 @@ public class Transform extends Component {
     private static native float getRotationRoll(long transform);
 
     private static native void setRotation(long transform, float w, float x, float y, float z);
+
+    private static native Vector3f getScale(long transform);
 
     private static native float getScaleX(long transform);
 
@@ -99,7 +105,7 @@ public class Transform extends Component {
     }
 
     public Vector3f getPosition() {
-        return new Vector3f(getPositionX(), getPositionY(), getPositionZ());
+        return getPosition(getNative());
     }
 
     public void setScale(Vector3f vec) {
@@ -107,7 +113,7 @@ public class Transform extends Component {
     }
 
     public Vector3f getScale() {
-        return new Vector3f(getScaleX(), getScaleY(), getScaleZ());
+        return getScale(getNative());
     }
 
     public void setRotation(Quaternionf quaternion) {
@@ -115,7 +121,7 @@ public class Transform extends Component {
     }
 
     public Quaternionf getRotation() {
-        return new Quaternionf(getRotationW(), getRotationX(), getRotationY(), getRotationZ());
+        return getRotation(getNative());
     }
 
     /**

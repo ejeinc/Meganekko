@@ -26,5 +26,11 @@ namespace mgn {
         const jmethodID constructor = jni->GetMethodID(clazz, "<init>", "(FFF)V" );
         return jni->NewObject(clazz, constructor, vec.x, vec.y, vec.z);
     }
+
+    static inline jobject ToJava(JNIEnv * jni, Quatf q) {
+        const jclass clazz = jni->FindClass("org/joml/Quaternionf");
+        const jmethodID constructor = jni->GetMethodID(clazz, "<init>", "(FFFF)V" );
+        return jni->NewObject(clazz, constructor, q.x, q.y, q.z, q.w);
+    }
 }
 #endif
