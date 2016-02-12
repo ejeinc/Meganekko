@@ -100,8 +100,9 @@ Matrix4f MeganekkoActivity::DrawEyeView(const int eye, const float fovDegreesX, 
 
 Matrix4f MeganekkoActivity::Frame( const VrFrame & vrFrame )
 {
+    Scene * scene = GetScene();
     // Update Camera orientation
-    Camera * camera = const_cast<Camera *>(GetScene()->main_camera());
+    Camera * camera = const_cast<Camera *>(scene->main_camera());
     JNIEnv * jni = app->GetJava()->Env;
 
     if (vrFrame.DeviceStatus.DeviceIsDocked)
@@ -117,13 +118,13 @@ Matrix4f MeganekkoActivity::Frame( const VrFrame & vrFrame )
             : camera->transform()->getModelMatrix();
     Matrix4f centerViewMatrix = vrapi_GetCenterEyeViewMatrix( &app->GetHeadModelParms(), &vrFrame.Tracking, &input );
 
-    GetScene()->SetCenterViewMatrix(centerViewMatrix);
+    scene->SetCenterViewMatrix(centerViewMatrix);
 
     // Update GUI systems last, but before rendering anything.
     GuiSys->Frame( vrFrame, centerViewMatrix);
 
     gl_delete.processQueues();
-    GetScene()->PrepareForRendering();
+    scene->PrepareForRendering();
 
 
     return centerViewMatrix;
