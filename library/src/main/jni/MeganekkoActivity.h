@@ -66,8 +66,6 @@ private:
     OvrGuiSys::SoundEffectPlayer * SoundEffectPlayer;
     ovrLocale *                    Locale;
 
-    ovrMatrix4f         centerViewMatrix;
-
     jmethodID           frameMethodId;
     jmethodID           onKeyShortPressMethodId;
     jmethodID           onKeyDoubleTapMethodId;

@@ -53,6 +53,18 @@ public:
     void set_occlusion_culling( bool occlusion_flag){ occlusion_flag_ = occlusion_flag; }
     bool get_occlusion_culling(){ return occlusion_flag_; }
 
+    void SetCenterViewMatrix(const Matrix4f & m){
+        centerViewM = m;
+    }
+
+    const Matrix4f & GetCenterViewMatrix() {
+        return centerViewM;
+    }
+
+    const Matrix4f & GetCenterViewMatrix() const {
+        return centerViewM;
+    }
+
     void SetViewMatrix(const Matrix4f & m){
         viewM = m;
     }
@@ -77,6 +89,7 @@ private:
     Camera* main_camera_;
     OESShader* oesShader;
 
+    Matrix4f centerViewM;
     Matrix4f viewM;
     Matrix4f projectionM;
     std::vector<SceneObject*> sceneObjects; // will be rendererd

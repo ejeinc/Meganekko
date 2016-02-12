@@ -31,7 +31,6 @@ MeganekkoActivity::MeganekkoActivity() :
       GuiSys( OvrGuiSys::Create() ),
       Locale( NULL )
 {
-    centerViewMatrix = ovrMatrix4f_CreateIdentity();
 }
 
 MeganekkoActivity::~MeganekkoActivity()
@@ -84,10 +83,11 @@ void MeganekkoActivity::OneTimeShutdown()
 
 Matrix4f MeganekkoActivity::DrawEyeView(const int eye, const float fovDegreesX, const float fovDegreesY, ovrFrameParms & frameParms)
 {
-	const Matrix4f eyeViewMatrix = vrapi_GetEyeViewMatrix( &app->GetHeadModelParms(), &centerViewMatrix, eye );
+    Scene* scene = GetScene();
+    ovrMatrix4f centerViewMatrix = scene->GetCenterViewMatrix();
+    const Matrix4f eyeViewMatrix = vrapi_GetEyeViewMatrix( &app->GetHeadModelParms(), &centerViewMatrix, eye );
 	const Matrix4f eyeProjectionMatrix = ovrMatrix4f_CreateProjectionFov( fovDegreesX, fovDegreesY, 0.0f, 0.0f, 1.0f, 0.0f );
 
-    Scene* scene = GetScene();
     scene->SetViewMatrix(eyeViewMatrix);
     scene->SetProjectionMatrix(eyeProjectionMatrix);
     const Matrix4f eyeViewProjection = scene->Render(eye);
@@ -115,7 +115,9 @@ Matrix4f MeganekkoActivity::Frame( const VrFrame & vrFrame )
     ovrMatrix4f input = vrFrame.DeviceStatus.DeviceIsDocked
             ? Matrix4f::Translation(camera->transform()->getPosition())
             : camera->transform()->getModelMatrix();
-    centerViewMatrix = vrapi_GetCenterEyeViewMatrix( &app->GetHeadModelParms(), &vrFrame.Tracking, &input );
+    Matrix4f centerViewMatrix = vrapi_GetCenterEyeViewMatrix( &app->GetHeadModelParms(), &vrFrame.Tracking, &input );
+
+    GetScene()->SetCenterViewMatrix(centerViewMatrix);
 
     // Update GUI systems last, but before rendering anything.
     GuiSys->Frame( vrFrame, centerViewMatrix);
