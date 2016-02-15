@@ -169,7 +169,7 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
     }
 
     public boolean onKeyDown(int keyCode, int repeatCount) {
-        return meganekkoApp.onKeyLongPress(keyCode, repeatCount);
+        return meganekkoApp.onKeyDown(keyCode, repeatCount);
     }
 
     public boolean onKeyUp(int keyCode, int repeatCount) {
