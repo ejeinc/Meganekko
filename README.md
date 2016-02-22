@@ -1,42 +1,136 @@
 # Meganekko
 
-VR rendering framework built on Oculus Mobile SDK. Forked from [GearVRf](http://www.gearvrf.org/).
+3D rendering framework for Gear VR built on Oculus Mobile SDK.
 
-**Currently, this repository is in significant refactoring. Almost old features are removed in future.**
+## How to Use
 
-## Using Meganekko
+Make new project with Android Studio.
 
-Modify your **app/build.gradle** to include dependency.
+### Add dependency
+
+Add repository URL in project's root **build.gradle**.
 
 ```gradle
-apply plugin: 'com.android.application'
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-android {
-    ...
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.0.0-beta5'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
 }
 
-// 1. Add this block
-repositories {
-    maven { url = 'http://ejeinc.github.io/Meganekko/repository' }
+allprojects {
+    repositories {
+        jcenter()
+        maven { url = 'http://ejeinc.github.io/Meganekko/repository' } // Add this line
+    }
 }
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.eje_c:meganekko:1.0.+' // 2. Add this line
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
 ```
 
-`repositories` block can be put in PROJECT_ROOT/build.gradle
+Add dependency in module's **build.gradle**.
 
-### AndroidManifest.xml
+```gradle
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.eje_c:meganekko:2.0.0' // Add this line
+}
+```
 
-`android.permission.ACCESS_NETWORK_STATE` permission is required from Oculus SDK Mobile.
+(You can put `repositories` block in module's **build.gradle**)
+
+Click "Sync Now".
+
+### Hello World
+
+Meganekko app is started from subclass of `MeganekkoApp`.
+
+```java
+import com.eje_c.meganekko.Meganekko;
+import com.eje_c.meganekko.MeganekkoApp;
+
+public class MyApp extends MeganekkoApp {
+
+    public MyApp(Meganekko meganekko) {
+        super(meganekko);
+    }
+}
+```
+
+Create VR scene with XML. XML file is localed at*res/xml/scene.xml*. File name is arbitrary.
+
+```xml
+<scene>
+    <object
+        layout="@layout/hello_world"
+        z="-5.0" />
+</scene>
+```
+
+`@layout/hello_world` is normal layout file.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello World!"
+        android:textColor="#fff" />
+</FrameLayout>
+```
+
+Call `setSceneFromXML` in `MyApp`.
+
+```java
+import com.eje_c.meganekko.Meganekko;
+import com.eje_c.meganekko.MeganekkoApp;
+
+public class MyApp extends MeganekkoApp {
+
+    public MyApp(Meganekko meganekko) {
+        super(meganekko);
+        setSceneFromXML(R.xml.scene); // Add this line
+    }
+}
+```
+
+Finally, create `MainActivity` extends `MeganekkoActivity` and implement abstract `createMeganekkoApp` method.
+
+```java
+import com.eje_c.meganekko.Meganekko;
+import com.eje_c.meganekko.MeganekkoApp;
+import com.eje_c.meganekko.gearvr.MeganekkoActivity;
+
+public class MainActivity extends MeganekkoActivity {
+    @Override
+    public MeganekkoApp createMeganekkoApp(Meganekko meganekko) {
+        return new MyApp(meganekko);
+    }
+}
+```
+
+You have to modify AndroidManifest.
+
+Add `android.permission.ACCESS_NETWORK_STATE` permission.
 
 ```xml
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 ```
 
-There are some required/recommended attributes and elements. See also [Oculus developer document](https://developer.oculus.com/documentation/mobilesdk/latest/concepts/mobile-new-apps-intro/#mobile-native-manifest).
+And other recommended attributes and elements. See [Oculus developer document](https://developer.oculus.com/documentation/mobilesdk/latest/concepts/mobile-new-apps-intro/#mobile-native-manifest).
 
 ```xml
 <application
@@ -56,54 +150,34 @@ There are some required/recommended attributes and elements. See also [Oculus de
         android:label="@string/app_name"
         android:launchMode="singleTask"
         android:screenOrientation="landscape">
+
+        <!-- Only in debugging. Remove this when upload to Oculus Store. -->
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
 
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
+
     </activity>
 </application>
 ```
 
-`MainActivity` is your entry point. It have to extend `MeganekkoActivity`.
+osig file is required to launch Meganekko app in Gear VR. See [Oculus developer document](https://developer.oculus.com/osig/) for more information.
 
-```java
-import com.eje_c.meganekko.MeganekkoActivity;
+Put your osig file in `app/src/main/assets`.
 
-public class MainActivity extends MeganekkoActivity {
+That's all! Build, Connect Galaxy device to PC, install APK, and launch app. You will see white text "Hello World!".
 
-    @Override
-    protected void oneTimeInit(VrContext context) {
-        // Do something on initial setup
-        // In most cases create scene here
-        
-        // If you want to do something on every frame, use FrameListener
-        onFrame(new FrameListener() {
-            public void onEvent(VrFrame vrFrame) {
-                // Do something on frame update
-                float deltaTime = vrFrame.getDeltaSeconds();
-                double currentTime = vrFrame.getPredictedDisplayTimeInSeconds();
-            }
-        });
-    }
-}
-```
+## Build Meganekko
 
-### osig
+If you wish customize Meganekko, follow these steps:
 
-You have to put osig file into apk to debug Gear VR app. See also https://developer.oculus.com/osig/
+1. Download [Oculus Mobile SDK 1.0.0.0](https://developer.oculus.com/downloads/).
+2. Extract Oculus Mobile SDK.
+3. Create environment variable `OVR_SDK_MOBILE` and point it to Oculus Mobile SDK directory.
+4. Launch Android Studio.
+5. Open Meganekko repository's root directory.
 
-1. Create `app/src/main/assets` directory.
-2. Put your osig file into `app/src/main/assets` directory.
+Put your osig file in **sample/src/main/assets** and build sample module.
 
-## For local development
-
-If you want to build customized Meganekko, please follow these steps.
-
-1. Download Oculus Mobile SDK 1.0.0.0
-2. Extract Oculus Mobile SDK 1.0.0.0
-3. Set environment variable `OVR_SDK_MOBILE` to point extracted Oculus Mobile SDK directory
-4. Launch Android Studio
-5. Open Meganekko directory
-
-And run `sample` module. (confirmation for correct setup)
+Pull request is welcome!
