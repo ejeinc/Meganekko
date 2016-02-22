@@ -67,12 +67,17 @@ public abstract class MeganekkoApp {
     public void onPause() {
     }
 
-    public void setFrame(Frame frame) {
-        this.frame = frame;
-    }
-
     public Frame getFrame() {
         return frame;
+    }
+
+    /**
+     * For internal use purpose.
+     *
+     * @param frame
+     */
+    public void setFrame(Frame frame) {
+        this.frame = frame;
     }
 
     /**
@@ -87,10 +92,18 @@ public abstract class MeganekkoApp {
         mRunnables.add(action);
     }
 
+    /**
+     * Enqueues a callback to be run in the UI thread.
+     *
+     * @param action A bit of code that must run on the UI thread
+     */
     public final void runOnUiThread(@NonNull Runnable action) {
         meganekko.runOnUiThread(action);
     }
 
+    /**
+     * Request recenter. This only work with Gear VR hardware.
+     */
     public void recenter() {
         meganekko.recenter();
     }

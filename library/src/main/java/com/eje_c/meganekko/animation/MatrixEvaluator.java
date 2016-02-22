@@ -4,6 +4,9 @@ import android.animation.TypeEvaluator;
 
 import org.joml.Matrix4f;
 
+/**
+ * This evaluator can be used to perform type interpolation between {@link Matrix4f} values.
+ */
 public class MatrixEvaluator implements TypeEvaluator<Matrix4f> {
     private final Matrix4f result = new Matrix4f();
 

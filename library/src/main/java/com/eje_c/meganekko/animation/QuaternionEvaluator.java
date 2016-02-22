@@ -4,6 +4,9 @@ import android.animation.TypeEvaluator;
 
 import org.joml.Quaternionf;
 
+/**
+ * This evaluator can be used to perform type interpolation between {@link Quaternionf} values.
+ */
 public class QuaternionEvaluator implements TypeEvaluator<Quaternionf> {
     private final Quaternionf result = new Quaternionf();
 
