@@ -117,11 +117,11 @@ Java_com_eje_1c_meganekko_Scene_getViewPosition(JNIEnv * jni, jobject obj, jlong
     return ToJava(jni, scene->GetViewPosition());
 }
 
-JNIEXPORT jfloatArray JNICALL
+JNIEXPORT jobject JNICALL
 Java_com_eje_1c_meganekko_Scene_getViewOrientation(JNIEnv * jni, jobject obj, jlong jscene) {
     Scene* scene = reinterpret_cast<Scene*>(jscene);
     Quatf orientation = Quatf(scene->GetCenterViewMatrix().InvertedHomogeneousTransform());
-    return ToFloatArray(jni, orientation);
+    return ToJava(jni, orientation);
 }
 
 }

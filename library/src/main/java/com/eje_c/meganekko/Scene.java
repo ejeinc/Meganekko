@@ -17,6 +17,7 @@
 
 package com.eje_c.meganekko;
 
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 /**
@@ -40,7 +41,7 @@ public class Scene extends SceneObject {
 
     private static native Vector3f getViewPosition(long scene);
 
-    private static native float[] getViewOrientation(long scene);
+    private static native Quaternionf getViewOrientation(long scene);
 
     @Override
     protected native long initNativeInstance();
@@ -99,7 +100,7 @@ public class Scene extends SceneObject {
         return getViewPosition(getNative());
     }
 
-    public float[] getViewOrientation() {
+    public Quaternionf getViewOrientation() {
         return getViewOrientation(getNative());
     }
 }
