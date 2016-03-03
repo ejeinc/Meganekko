@@ -36,7 +36,7 @@ public class ViewParser implements XmlAttributeParser {
                 } else {
 
                     // For normal object
-                    int res = attributeSet.getAttributeResourceValue(NAMESPACE, "layout", 0);
+                    int res = attributeSet.getAttributeResourceValue(NAMESPACE, attr, 0);
                     View view = LayoutInflater.from(context).inflate(res, null);
                     ensureHaveRenderData(object);
                     final RenderData renderData = object.getRenderData();
