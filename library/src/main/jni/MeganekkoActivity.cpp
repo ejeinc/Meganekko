@@ -59,6 +59,8 @@ void MeganekkoActivity::OneTimeInit(const char * fromPackage, const char * launc
     app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, oneTimeInitMethodId);
 
     // cache method IDs
+    enteredVrModeMethodId = GetMethodID("enteredVrMode", "()V");
+    leavingVrModeMethodId = GetMethodID("leavingVrMode", "()V");
     frameMethodId = GetMethodID("frame", "(J)V");
     onKeyShortPressMethodId = GetMethodID("onKeyShortPress", "(II)Z");
     onKeyDoubleTapMethodId = GetMethodID("onKeyDoubleTap", "(II)Z");
@@ -79,6 +81,16 @@ void MeganekkoActivity::OneTimeShutdown()
 
     jmethodID oneTimeShutdownMethodId = GetMethodID("oneTimeShutDown", "()V");
     app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, oneTimeShutdownMethodId);
+}
+
+void MeganekkoActivity::EnteredVrMode()
+{
+    app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, enteredVrModeMethodId);
+}
+
+void MeganekkoActivity::LeavingVrMode()
+{
+    app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, leavingVrModeMethodId);
 }
 
 Matrix4f MeganekkoActivity::DrawEyeView(const int eye, const float fovDegreesX, const float fovDegreesY, ovrFrameParms & frameParms)
