@@ -29,7 +29,8 @@ namespace mgn
 
 MeganekkoActivity::MeganekkoActivity() :
       GuiSys( OvrGuiSys::Create() ),
-      Locale( NULL )
+      Locale( NULL ),
+      HmdMounted(false)
 {
 }
 
@@ -59,6 +60,10 @@ void MeganekkoActivity::OneTimeInit(const char * fromPackage, const char * launc
     app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, oneTimeInitMethodId);
 
     // cache method IDs
+    enteredVrModeMethodId = GetMethodID("enteredVrMode", "()V");
+    leavingVrModeMethodId = GetMethodID("leavingVrMode", "()V");
+    onHmdMountedMethodId = GetMethodID("onHmdMounted", "()V");
+    onHmdUnmountedMethodId = GetMethodID("onHmdUnmounted", "()V");
     frameMethodId = GetMethodID("frame", "(J)V");
     onKeyShortPressMethodId = GetMethodID("onKeyShortPress", "(II)Z");
     onKeyDoubleTapMethodId = GetMethodID("onKeyDoubleTap", "(II)Z");
@@ -79,6 +84,16 @@ void MeganekkoActivity::OneTimeShutdown()
 
     jmethodID oneTimeShutdownMethodId = GetMethodID("oneTimeShutDown", "()V");
     app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, oneTimeShutdownMethodId);
+}
+
+void MeganekkoActivity::EnteredVrMode()
+{
+    app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, enteredVrModeMethodId);
+}
+
+void MeganekkoActivity::LeavingVrMode()
+{
+    app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, leavingVrModeMethodId);
 }
 
 Matrix4f MeganekkoActivity::DrawEyeView(const int eye, const float fovDegreesX, const float fovDegreesY, ovrFrameParms & frameParms)
@@ -104,6 +119,14 @@ Matrix4f MeganekkoActivity::Frame( const VrFrame & vrFrame )
     JNIEnv * jni = app->GetJava()->Env;
 
     jni->CallVoidMethod(app->GetJava()->ActivityObject, frameMethodId, (jlong)(intptr_t)&vrFrame);
+
+    const bool headsetIsMounted = vrFrame.DeviceStatus.HeadsetIsMounted;
+    if (!HmdMounted && headsetIsMounted) {
+        jni->CallVoidMethod(app->GetJava()->ActivityObject, onHmdMountedMethodId);
+    } else if (HmdMounted && !headsetIsMounted) {
+        jni->CallVoidMethod(app->GetJava()->ActivityObject, onHmdUnmountedMethodId);
+    }
+    HmdMounted = headsetIsMounted;
 
     // Apply Camera movement to centerViewMatrix
     ovrMatrix4f input = vrFrame.DeviceStatus.DeviceIsDocked

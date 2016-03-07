@@ -1,5 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.eje_c.meganekko">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <uses-sdk android:minSdkVersion="19" />
+
+    <application android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+
+        <meta-data
+            android:name="com.samsung.android.vr.application.mode"
+            android:value="vr_only" />
+
+    </application>
 </manifest>

@@ -3,6 +3,8 @@ package com.eje_c.meganekko;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -24,6 +26,7 @@ public abstract class MeganekkoApp {
 
     private final Meganekko meganekko;
     private final Queue<Runnable> mRunnables = new LinkedBlockingQueue<>();
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private Scene mScene;
     private Frame frame;
 
@@ -93,12 +96,42 @@ public abstract class MeganekkoApp {
     }
 
     /**
+     * Delayed version of {@link #runOnGlThread(Runnable)}.
+     *
+     * @param action      A bit of code that must run on the GL thread
+     * @param delayMillis Milli seconds delay before executing action.
+     */
+    public final void runOnGlThread(@NonNull final Runnable action, long delayMillis) {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                runOnGlThread(action);
+            }
+        }, delayMillis);
+    }
+
+    /**
      * Enqueues a callback to be run in the UI thread.
      *
      * @param action A bit of code that must run on the UI thread
      */
     public final void runOnUiThread(@NonNull Runnable action) {
         meganekko.runOnUiThread(action);
+    }
+
+    /**
+     * Delayed version of {@link #runOnUiThread(Runnable)}.
+     *
+     * @param action      A bit of code that must run on the UI thread
+     * @param delayMillis Milli seconds delay before executing action.
+     */
+    public final void runOnUiThread(@NonNull final Runnable action, long delayMillis) {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(action);
+            }
+        }, delayMillis);
     }
 
     /**
