@@ -29,7 +29,8 @@ namespace mgn
 
 MeganekkoActivity::MeganekkoActivity() :
       GuiSys( OvrGuiSys::Create() ),
-      Locale( NULL )
+      Locale( NULL ),
+      HmdMounted(false)
 {
 }
 
@@ -61,6 +62,8 @@ void MeganekkoActivity::OneTimeInit(const char * fromPackage, const char * launc
     // cache method IDs
     enteredVrModeMethodId = GetMethodID("enteredVrMode", "()V");
     leavingVrModeMethodId = GetMethodID("leavingVrMode", "()V");
+    onHmdMountedMethodId = GetMethodID("onHmdMounted", "()V");
+    onHmdUnmountedMethodId = GetMethodID("onHmdUnmounted", "()V");
     frameMethodId = GetMethodID("frame", "(J)V");
     onKeyShortPressMethodId = GetMethodID("onKeyShortPress", "(II)Z");
     onKeyDoubleTapMethodId = GetMethodID("onKeyDoubleTap", "(II)Z");
@@ -116,6 +119,14 @@ Matrix4f MeganekkoActivity::Frame( const VrFrame & vrFrame )
     JNIEnv * jni = app->GetJava()->Env;
 
     jni->CallVoidMethod(app->GetJava()->ActivityObject, frameMethodId, (jlong)(intptr_t)&vrFrame);
+
+    const bool headsetIsMounted = vrFrame.DeviceStatus.HeadsetIsMounted;
+    if (!HmdMounted && headsetIsMounted) {
+        jni->CallVoidMethod(app->GetJava()->ActivityObject, onHmdMountedMethodId);
+    } else if (HmdMounted && !headsetIsMounted) {
+        jni->CallVoidMethod(app->GetJava()->ActivityObject, onHmdUnmountedMethodId);
+    }
+    HmdMounted = headsetIsMounted;
 
     // Apply Camera movement to centerViewMatrix
     ovrMatrix4f input = vrFrame.DeviceStatus.DeviceIsDocked

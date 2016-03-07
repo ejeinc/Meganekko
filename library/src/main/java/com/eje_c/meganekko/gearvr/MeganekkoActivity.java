@@ -160,6 +160,12 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
     protected void leavingVrMode() {
     }
 
+    protected void onHmdMounted() {
+    }
+
+    protected void onHmdUnmounted() {
+    }
+
     public void hideGazeCursor() {
         nativeHideGazeCursor(getAppPtr());
     }

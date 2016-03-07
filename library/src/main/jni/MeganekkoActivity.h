@@ -74,8 +74,12 @@ private:
 
     Quatf internalSensorRotation;
 
+    bool                HmdMounted; // true if the HMT was mounted on the previous frame
+
     jmethodID           enteredVrModeMethodId;
     jmethodID           leavingVrModeMethodId;
+    jmethodID           onHmdMountedMethodId;
+    jmethodID           onHmdUnmountedMethodId;
     jmethodID           frameMethodId;
     jmethodID           onKeyShortPressMethodId;
     jmethodID           onKeyDoubleTapMethodId;
