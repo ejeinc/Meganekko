@@ -96,19 +96,22 @@ public class Texture {
     public void update(Frame vrFrame) {
         if (renderer != null) {
 
-            surfaceTexture.setDefaultBufferSize(renderer.getWidth(), renderer.getHeight());
+            if (renderer.isDirty()) {
 
-            Surface surface = new Surface(surfaceTexture);
+                surfaceTexture.setDefaultBufferSize(renderer.getWidth(), renderer.getHeight());
 
-            try {
-                Canvas canvas = surface.lockCanvas(null);
-                renderer.render(canvas, vrFrame);
-                surface.unlockCanvasAndPost(canvas);
-            } finally {
-                surface.release();
+                Surface surface = new Surface(surfaceTexture);
+
+                try {
+                    Canvas canvas = surface.lockCanvas(null);
+                    renderer.render(canvas, vrFrame);
+                    surface.unlockCanvasAndPost(canvas);
+                } finally {
+                    surface.release();
+                }
+
+                surfaceTexture.updateTexImage();
             }
-
-            surfaceTexture.updateTexImage();
 
         } else if (continuesUpdate) {
             surfaceTexture.updateTexImage();
