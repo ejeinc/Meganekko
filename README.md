@@ -18,7 +18,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.0.0-beta5'
+        classpath 'com.android.tools.build:gradle:2.0.0-beta6'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -42,7 +42,7 @@ Add dependency in module's **build.gradle**.
 ```gradle
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.eje_c:meganekko:2.0.0' // Add this line
+    compile 'com.eje_c:meganekko:2.0.2' // Add this line
 }
 ```
 
@@ -123,14 +123,7 @@ public class MainActivity extends MeganekkoActivity {
 ```
 
 You have to modify AndroidManifest.
-
-Add `android.permission.ACCESS_NETWORK_STATE` permission.
-
-```xml
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-```
-
-And other recommended attributes and elements. See [Oculus developer document](https://developer.oculus.com/documentation/mobilesdk/latest/concepts/mobile-new-apps-intro/#mobile-native-manifest).
+Add recommended attributes and elements. See [Oculus developer document](https://developer.oculus.com/documentation/mobilesdk/latest/concepts/mobile-new-apps-intro/#mobile-native-manifest).
 
 ```xml
 <application
@@ -138,10 +131,6 @@ And other recommended attributes and elements. See [Oculus developer document](h
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name"
     android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
-
-    <meta-data
-        android:name="com.samsung.android.vr.application.mode"
-        android:value="vr_only" />
 
     <activity
         android:name=".MainActivity"
@@ -161,6 +150,8 @@ And other recommended attributes and elements. See [Oculus developer document](h
     </activity>
 </application>
 ```
+
+`<meta-data android:name="com.samsung.android.vr.application.mode" android:value="vr_only" />` is added by Meganekko so you don't have to put it in AndroidManifest. 
 
 osig file is required to launch Meganekko app in Gear VR. See [Oculus developer document](https://developer.oculus.com/osig/) for more information.
 
