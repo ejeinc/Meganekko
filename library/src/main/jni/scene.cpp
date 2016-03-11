@@ -58,13 +58,13 @@ Matrix4f Scene::Render(const int eye) {
 
 bool Scene::IsLookingAt(const SceneObject *target) {
 
-    Matrix4f worldToModelM = target->transform()->getModelMatrix().InvertedHomogeneousTransform();
-    Matrix4f invertedCenterViewM = centerViewM.InvertedHomogeneousTransform();
+    Matrix4f worldToModelM = target->transform()->getModelMatrix().Inverted();
+    Matrix4f invertedCenterViewM = centerViewM.Inverted();
     Vector3f inWorldCenterViewPos = invertedCenterViewM.GetTranslation();
     Quatf centerViewRot = Quatf(invertedCenterViewM);
 
     const Vector3f rayStart = worldToModelM.Transform(inWorldCenterViewPos);
-    const Vector3f rayDir = centerViewRot.Rotate(Vector3f(0.0f, 0.0f, -1.0f));
+    const Vector3f rayDir = worldToModelM.Transform(centerViewRot.Rotate(Vector3f(0.0f, 0.0f, -1.0f))) - rayStart;
     const float* boundingBoxInfo = target->render_data()->mesh()->getBoundingBoxInfo();
     const Vector3f mins(boundingBoxInfo[0], boundingBoxInfo[1], boundingBoxInfo[2]);
     const Vector3f maxs(boundingBoxInfo[3], boundingBoxInfo[4], boundingBoxInfo[5]);
