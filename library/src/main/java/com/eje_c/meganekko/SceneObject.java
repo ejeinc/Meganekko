@@ -229,6 +229,7 @@ public class SceneObject extends HybridObject {
     public void addChildObject(SceneObject child) {
         mChildren.add(child);
         child.mParent = this;
+        child.updateOpacity();
         addChildObject(getNative(), child.getNative());
     }
 
