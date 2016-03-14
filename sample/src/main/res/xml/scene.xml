@@ -1,20 +1,20 @@
 <scene>
-    <view
+    <object
         height="1.0"
         id="@+id/myObject"
-        layout="@layout/hello_world"
+        texture="@layout/hello_world"
         width="1.0"
         z="-3.0">
 
-        <view
+        <object
             id="@+id/autoSizedObject"
-            layout="@layout/hello_world"
+            texture="@layout/hello_world"
             position="1 1.5 1"
             rotation="-45 0 1 0" />
 
-    </view>
-    <view
-        layout="@layout/hello_world"
+    </object>
+    <object
+        texture="@layout/hello_world"
         position="-1 -1.5 -5"
         rotation="45 0 1 0"
         scale="2 1 1" />
