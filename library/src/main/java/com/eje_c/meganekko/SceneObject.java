@@ -94,6 +94,26 @@ public class SceneObject extends HybridObject {
     @Override
     protected native long initNativeInstance();
 
+    @Override
+    public void delete() {
+
+        if (mTransform != null) {
+            mTransform.delete();
+            mTransform = null;
+        }
+
+        if (mRenderData != null) {
+            mRenderData.delete();
+            mRenderData = null;
+        }
+
+        for (SceneObject child : getChildren()) {
+            child.delete();
+        }
+
+        super.delete();
+    }
+
     /**
      * Get the (optional) ID of the object.
      *
@@ -458,7 +478,7 @@ public class SceneObject extends HybridObject {
                 material.update(vrFrame);
             }
         }
-        
+
         for (SceneObject child : mChildren) {
             child.update(vrFrame);
         }

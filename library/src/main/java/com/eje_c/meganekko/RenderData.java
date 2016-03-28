@@ -92,6 +92,23 @@ public class RenderData extends Component {
     @Override
     protected native long initNativeInstance();
 
+    @Override
+    public void delete() {
+        if (mMesh != null) {
+            mMesh.delete();
+            mMesh = null;
+        }
+
+        if (mRenderPassList != null) {
+            for (RenderPass renderPass : mRenderPassList) {
+                renderPass.delete();
+            }
+            mRenderPassList = null;
+        }
+
+        super.delete();
+    }
+
     /**
      * @return The {@link Mesh mesh} being rendered.
      */
