@@ -45,6 +45,17 @@ public class RenderPass extends HybridObject {
     @Override
     protected native long initNativeInstance();
 
+    @Override
+    public void delete() {
+
+        if (mMaterial != null) {
+            mMaterial.delete();
+            mMaterial = null;
+        }
+
+        super.delete();
+    }
+
     /**
      * @return The {@link Material material} this {@link RenderPass pass} will
      * being rendered with.
