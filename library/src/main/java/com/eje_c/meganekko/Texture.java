@@ -38,6 +38,10 @@ public class Texture {
         this.surfaceTexture = surfaceTexture;
     }
 
+    void release() {
+        surfaceTexture.release();
+    }
+
     /**
      * Render with {@code Bitmap}.
      *
