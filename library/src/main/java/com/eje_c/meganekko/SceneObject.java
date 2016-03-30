@@ -19,6 +19,9 @@ package com.eje_c.meganekko;
 
 import com.eje_c.meganekko.RenderData.RenderMaskBit;
 
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -592,5 +595,41 @@ public class SceneObject extends HybridObject {
 
     public boolean removeKeyEventListener(KeyEventListener listener) {
         return mKeyEventListeners.remove(listener);
+    }
+
+    /*
+     * Simple APIs
+     */
+
+    public void position(Vector3f position) {
+        getTransform().setPosition(position);
+    }
+
+    public Vector3f position() {
+        return getTransform().getPosition();
+    }
+
+    public void scale(Vector3f scale) {
+        getTransform().setScale(scale);
+    }
+
+    public Vector3f scale() {
+        return getTransform().getScale();
+    }
+
+    public void rotation(Quaternionf rotation) {
+        getTransform().setRotation(rotation);
+    }
+
+    public Quaternionf rotation() {
+        return getTransform().getRotation();
+    }
+
+    public Material material() {
+        return mRenderData != null ? getRenderData().getMaterial() : null;
+    }
+
+    public Mesh mesh() {
+        return mRenderData != null ? getRenderData().getMesh() : null;
     }
 }
