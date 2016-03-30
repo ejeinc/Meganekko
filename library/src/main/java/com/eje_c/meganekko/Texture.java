@@ -38,6 +38,10 @@ public class Texture {
         this.surfaceTexture = surfaceTexture;
     }
 
+    void release() {
+        surfaceTexture.release();
+    }
+
     /**
      * Render with {@code Bitmap}.
      *
@@ -86,6 +90,15 @@ public class Texture {
         Surface surface = new Surface(surfaceTexture);
         mediaPlayer.setSurface(surface);
         surface.release();
+    }
+
+    /**
+     * Retrieve CanvasRenderer.
+     *
+     * @return CanvasRenderer
+     */
+    public CanvasRenderer getRenderer() {
+        return renderer;
     }
 
     /**
@@ -182,6 +195,10 @@ public class Texture {
         public boolean isDirty() {
             return dirty;
         }
+
+        public Drawable getDrawable() {
+            return drawable;
+        }
     }
 
     /**
@@ -238,6 +255,10 @@ public class Texture {
         @Override
         public boolean isDirty() {
             return isDirty(view);
+        }
+
+        public View getView() {
+            return view;
         }
     }
 }
