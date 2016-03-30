@@ -83,7 +83,7 @@ public:
 
     Matrix4f Render(const int eye);
 
-    IntersectRayBoundsResult IntersectRayBounds(const SceneObject * target);
+    IntersectRayBoundsResult IntersectRayBounds(const SceneObject * target, bool axisInWorld);
 
     void SetViewPosition(const Vector3f & pos) {
         viewPosition = pos;
