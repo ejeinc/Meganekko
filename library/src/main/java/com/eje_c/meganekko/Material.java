@@ -118,6 +118,10 @@ public class Material extends HybridObject {
     }
 
     public Texture getTexture() {
+        return texture();
+    }
+
+    public Texture texture() {
         if (mTexture == null) {
             mTexture = new Texture(getSurfaceTexture());
         }
