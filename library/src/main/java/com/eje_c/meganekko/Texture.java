@@ -93,6 +93,15 @@ public class Texture {
     }
 
     /**
+     * Retrieve CanvasRenderer.
+     *
+     * @return CanvasRenderer
+     */
+    public CanvasRenderer getRenderer() {
+        return renderer;
+    }
+
+    /**
      * Called in every frame for update texture image.
      *
      * @param vrFrame
@@ -186,6 +195,10 @@ public class Texture {
         public boolean isDirty() {
             return dirty;
         }
+
+        public Drawable getDrawable() {
+            return drawable;
+        }
     }
 
     /**
@@ -242,6 +255,10 @@ public class Texture {
         @Override
         public boolean isDirty() {
             return isDirty(view);
+        }
+
+        public View getView() {
+            return view;
         }
     }
 }
