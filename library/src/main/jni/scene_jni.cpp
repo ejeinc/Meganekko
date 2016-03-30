@@ -68,7 +68,8 @@ JNIEXPORT jboolean JNICALL
 Java_com_eje_1c_meganekko_Scene_isLookingAt(JNIEnv * env, jobject obj, jlong jscene, jlong jsceneObject) {
     Scene* scene = reinterpret_cast<Scene*>(jscene);
     SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
-    return scene->IsLookingAt(sceneObject);
+    IntersectRayBoundsResult result = scene->IntersectRayBounds(sceneObject);
+    return result.intersected;
 }
 
 JNIEXPORT void JNICALL

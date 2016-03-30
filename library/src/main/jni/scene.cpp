@@ -56,7 +56,7 @@ Matrix4f Scene::Render(const int eye) {
     return viewProjectionM;
 }
 
-bool Scene::IsLookingAt(const SceneObject *target) {
+IntersectRayBoundsResult Scene::IntersectRayBounds(const SceneObject *target) {
 
     Matrix4f worldToModelM = target->transform()->getModelMatrix().Inverted();
     Matrix4f invertedCenterViewM = centerViewM.Inverted();
@@ -71,7 +71,17 @@ bool Scene::IsLookingAt(const SceneObject *target) {
     float t0 = 0.0f;
     float t1 = 0.0f;
 
-    return Intersect_RayBounds(rayStart, rayDir, mins, maxs, t0, t1);
+    bool intersected = Intersect_RayBounds(rayStart, rayDir, mins, maxs, t0, t1);
+
+    IntersectRayBoundsResult result;
+    result.intersected = intersected;
+
+    if (intersected) {
+        result.first = rayStart + t0 * rayDir;
+        result.second = rayStart + t1 * rayDir;
+    }
+
+    return result;
 }
 
 }

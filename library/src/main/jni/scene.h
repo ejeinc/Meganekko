@@ -34,6 +34,13 @@ using namespace OVR;
 namespace mgn {
 class SceneObject;
 
+class IntersectRayBoundsResult {
+public:
+    bool intersected;
+    Vector3f first;
+    Vector3f second;
+};
+
 class Scene: public SceneObject {
 public:
     Scene();
@@ -76,7 +83,7 @@ public:
 
     Matrix4f Render(const int eye);
 
-    bool IsLookingAt(const SceneObject * target);
+    IntersectRayBoundsResult IntersectRayBounds(const SceneObject * target);
 
     void SetViewPosition(const Vector3f & pos) {
         viewPosition = pos;
