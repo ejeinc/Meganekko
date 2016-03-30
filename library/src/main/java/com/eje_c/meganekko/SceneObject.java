@@ -17,7 +17,17 @@
 
 package com.eje_c.meganekko;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.TimeInterpolator;
+import android.animation.ValueAnimator;
+
 import com.eje_c.meganekko.RenderData.RenderMaskBit;
+import com.eje_c.meganekko.animation.PositionUpdateListener;
+import com.eje_c.meganekko.animation.QuaternionEvaluator;
+import com.eje_c.meganekko.animation.RotationUpdateListener;
+import com.eje_c.meganekko.animation.ScaleUpdateListener;
+import com.eje_c.meganekko.animation.VectorEvaluator;
 
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -631,5 +641,108 @@ public class SceneObject extends HybridObject {
 
     public Mesh mesh() {
         return mRenderData != null ? getRenderData().getMesh() : null;
+    }
+
+    public SceneObjectAnimator animate() {
+        return new SceneObjectAnimator();
+    }
+
+    public class SceneObjectAnimator {
+        private Runnable callback;
+        private List<Animator> animators = new ArrayList<>();
+        private long duration = -1;
+        private TimeInterpolator interpolator;
+        private boolean sequential;
+
+        public SceneObjectAnimator moveTo(Vector3f position) {
+            ValueAnimator animator = ValueAnimator.ofObject(new VectorEvaluator(), position(), position);
+            animator.addUpdateListener(new PositionUpdateListener(getTransform()));
+            animators.add(animator);
+            return this;
+        }
+
+        public SceneObjectAnimator moveBy(Vector3f translation) {
+            Vector3f toPosition = new Vector3f();
+            position().add(translation, toPosition);
+            return moveTo(toPosition);
+        }
+
+        public SceneObjectAnimator scaleTo(Vector3f scale) {
+            ValueAnimator animator = ValueAnimator.ofObject(new VectorEvaluator(), scale(), scale);
+            animator.addUpdateListener(new ScaleUpdateListener(getTransform()));
+            animators.add(animator);
+            return this;
+        }
+
+        public SceneObjectAnimator scaleBy(Vector3f scale) {
+            Vector3f toScale = new Vector3f();
+            scale().mul(scale, toScale);
+            return scaleTo(toScale);
+        }
+
+        public SceneObjectAnimator rotateTo(Quaternionf rotation) {
+            ValueAnimator animator = ValueAnimator.ofObject(new QuaternionEvaluator(), rotation(), rotation);
+            animator.addUpdateListener(new RotationUpdateListener(getTransform()));
+            animators.add(animator);
+            return this;
+        }
+
+        public SceneObjectAnimator rotateTo(float x, float y, float z) {
+            Quaternionf q = new Quaternionf();
+            q.rotate(x, y, z);
+            return rotateTo(q);
+        }
+
+        public SceneObjectAnimator rotateBy(Quaternionf rotate) {
+            Quaternionf toRotation = new Quaternionf();
+            rotation().mul(rotate, toRotation);
+            return rotateTo(toRotation);
+        }
+
+        public SceneObjectAnimator rotateBy(float x, float y, float z) {
+            Quaternionf q = new Quaternionf();
+            q.rotate(x, y, z);
+            return rotateBy(q);
+        }
+
+        public SceneObjectAnimator onEnd(Runnable callback) {
+            this.callback = callback;
+            return this;
+        }
+
+        public SceneObjectAnimator interpolator(TimeInterpolator interpolator) {
+            this.interpolator = interpolator;
+            return this;
+        }
+
+        public SceneObjectAnimator duration(long duration) {
+            this.duration = duration;
+            return this;
+        }
+
+        public SceneObjectAnimator sequential(boolean sequential) {
+            this.sequential = sequential;
+            return this;
+        }
+
+        public void start(MeganekkoApp app) {
+            AnimatorSet set = new AnimatorSet();
+
+            if (sequential) {
+                set.playSequentially(animators);
+            } else {
+                set.playTogether(animators);
+            }
+
+            if (duration >= 0) {
+                set.setDuration(duration);
+            }
+
+            if (interpolator != null) {
+                set.setInterpolator(interpolator);
+            }
+
+            app.animate(set, callback);
+        }
     }
 }
