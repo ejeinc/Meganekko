@@ -8,6 +8,8 @@ import com.eje_c.meganekko.MeganekkoApp;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.utility.Log;
 
+import org.joml.Vector3f;
+
 import ovr.JoyButton;
 
 public class MyApp extends MeganekkoApp {
@@ -33,20 +35,43 @@ public class MyApp extends MeganekkoApp {
             animate(anim, null);
         } else if (JoyButton.contains(buttonPressedBits, JoyButton.BUTTON_TOUCH_DOUBLE)) {
             recenter();
+            obj.animate()
+                    .scaleBy(new Vector3f(1.5f, 1, 1))
+                    .duration(1000)
+                    .rotateBy(0.5f, 0.5f, 0)
+                    .onEnd(new Runnable() {
+                        @Override
+                        public void run() {
+                            System.out.println("End");
+                        }
+                    })
+                    .start(this);
         }
 
         if (JoyButton.contains(buttonPressedBits, JoyButton.BUTTON_SWIPE_UP)) {
-            ObjectAnimator anim = ObjectAnimator.ofFloat(obj.getTransform(), "positionY", obj.getTransform().getPositionY(), obj.getTransform().getPositionY() + 1.0f);
-            animate(anim, null);
+            obj.animate().moveBy(new Vector3f(0, 1, 0)).start(this);
+
+            // Equivalent animation
+//            ObjectAnimator anim = ObjectAnimator.ofFloat(obj.getTransform(), "positionY", obj.getTransform().getPositionY(), obj.getTransform().getPositionY() + 1.0f);
+//            animate(anim, null);
         } else if (JoyButton.contains(buttonPressedBits, JoyButton.BUTTON_SWIPE_DOWN)) {
-            ObjectAnimator anim = ObjectAnimator.ofFloat(obj.getTransform(), "positionY", obj.getTransform().getPositionY(), obj.getTransform().getPositionY() - 1.0f);
-            animate(anim, null);
+            obj.animate().moveBy(new Vector3f(0, -1, 0)).start(this);
+
+            // Equivalent animation
+//            ObjectAnimator anim = ObjectAnimator.ofFloat(obj.getTransform(), "positionY", obj.getTransform().getPositionY(), obj.getTransform().getPositionY() - 1.0f);
+//            animate(anim, null);
         } else if (JoyButton.contains(buttonPressedBits, JoyButton.BUTTON_SWIPE_FORWARD)) {
-            ObjectAnimator anim = ObjectAnimator.ofFloat(obj.getTransform(), "positionZ", obj.getTransform().getPositionZ(), obj.getTransform().getPositionZ() - 1.0f);
-            animate(anim, null);
+            obj.animate().moveBy(new Vector3f(0, 0, -1)).start(this);
+
+            // Equivalent animation
+//            ObjectAnimator anim = ObjectAnimator.ofFloat(obj.getTransform(), "positionZ", obj.getTransform().getPositionZ(), obj.getTransform().getPositionZ() - 1.0f);
+//            animate(anim, null);
         } else if (JoyButton.contains(buttonPressedBits, JoyButton.BUTTON_SWIPE_BACK)) {
-            ObjectAnimator anim = ObjectAnimator.ofFloat(obj.getTransform(), "positionZ", obj.getTransform().getPositionZ(), obj.getTransform().getPositionZ() + 1.0f);
-            animate(anim, null);
+            obj.animate().moveBy(new Vector3f(0, 0, 1)).start(this);
+
+            // Equivalent animation
+//            ObjectAnimator anim = ObjectAnimator.ofFloat(obj.getTransform(), "positionZ", obj.getTransform().getPositionZ(), obj.getTransform().getPositionZ() + 1.0f);
+//            animate(anim, null);
         }
     }
 
