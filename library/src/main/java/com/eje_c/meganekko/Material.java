@@ -40,6 +40,17 @@ public class Material extends HybridObject {
     @Override
     protected native long initNativeInstance();
 
+    @Override
+    public void delete() {
+
+        if (mTexture != null) {
+            mTexture.release();
+            mTexture = null;
+        }
+
+        super.delete();
+    }
+
     /**
      * Get the {@code color} uniform.
      *
@@ -118,6 +129,10 @@ public class Material extends HybridObject {
     }
 
     public Texture getTexture() {
+        return texture();
+    }
+
+    public Texture texture() {
         if (mTexture == null) {
             mTexture = new Texture(getSurfaceTexture());
         }
