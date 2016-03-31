@@ -31,6 +31,8 @@ public class Scene extends SceneObject {
 
     private static native boolean isLookingAt(long scene, long sceneObject);
 
+    private static native Vector3f getLookingPoint(long scene, long sceneObject, boolean axisInWorld);
+
     private static native void setViewMatrix(long scene, float[] m);
 
     private static native void setProjectionMatrix(long scene, float[] m);
@@ -74,6 +76,10 @@ public class Scene extends SceneObject {
 
     public boolean isLookingAt(SceneObject target) {
         return isLookingAt(getNative(), target.getNative());
+    }
+
+    public Vector3f getLookingPoint(SceneObject target, boolean axisInWorld) {
+        return getLookingPoint(getNative(), target.getNative(), axisInWorld);
     }
 
     public void setViewMatrix(float[] viewM) {
