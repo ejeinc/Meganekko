@@ -217,7 +217,7 @@ public abstract class MeganekkoApp {
     }
 
     public boolean onKeyDown(int keyCode, int repeatCount) {
-        return mScene.onKeyLongPress(keyCode, repeatCount);
+        return mScene.onKeyDown(keyCode, repeatCount);
     }
 
     public boolean onKeyUp(int keyCode, int repeatCount) {
