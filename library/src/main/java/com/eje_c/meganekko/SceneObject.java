@@ -19,6 +19,7 @@ package com.eje_c.meganekko;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 
@@ -703,6 +704,12 @@ public class SceneObject extends HybridObject {
             Quaternionf q = new Quaternionf();
             q.rotate(x, y, z);
             return rotateBy(q);
+        }
+
+        public SceneObjectAnimator opacity(float opacity) {
+            ObjectAnimator animator = ObjectAnimator.ofFloat(SceneObject.this, "opacity", getOpacity(), opacity);
+            animators.add(animator);
+            return this;
         }
 
         public SceneObjectAnimator onEnd(Runnable callback) {
