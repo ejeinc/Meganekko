@@ -48,7 +48,10 @@ static const char FRAGMENT_SHADER[] =
         "uniform float Opacity;\n"
         "varying highp vec2 oTexCoord;\n"
         "void main() {\n"
-        "  gl_FragColor = texture2D(Texture0, oTexCoord) * UniformColor * Opacity;\n"
+        "  vec4 texel = texture2D(Texture0, oTexCoord) * UniformColor * Opacity;\n"
+        "  if (texel.a < 0.1)\n"
+        "    discard;\n"
+        "  gl_FragColor = texel;\n"
         "}\n";
 
 OESShader::OESShader() {
