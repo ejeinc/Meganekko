@@ -91,68 +91,36 @@ void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Mate
     GL_CheckErrors("OESShader::render");
 }
 
-Matrix4f OESShader::TexmForVideo(const Material::StereoMode stereoMode, const int eye )
+const Matrix4f & OESShader::TexmForVideo(const Material::StereoMode stereoMode, const int eye )
 {
     switch (stereoMode) {
         case Material::StereoMode::TOP_BOTTOM:
-            return eye ?
-               Matrix4f(
-                       1, 0, 0, 0,
-                       0, 0.5f, 0, 0.5f,
-                       0, 0, 1, 0,
-                       0, 0, 0, 1 )
-                   :
-               Matrix4f(
-                       1, 0, 0, 0,
-                       0, 0.5f, 0, 0,
-                       0, 0, 1, 0,
-                       0, 0, 0, 1 );
+            return eye ? bottomM : topM;
 
         case Material::StereoMode::BOTTOM_TOP:
-            return ( !eye ) ?
-               Matrix4f(
-                       1, 0, 0, 0,
-                       0, 0.5f, 0, 0.5f,
-                       0, 0, 1, 0,
-                       0, 0, 0, 1 )
-                        :
-               Matrix4f(
-                       1, 0, 0, 0,
-                       0, 0.5f, 0, 0,
-                       0, 0, 1, 0,
-                       0, 0, 0, 1 );
+            return eye ? topM : bottomM;
 
         case Material::StereoMode::LEFT_RIGHT:
-            return eye ?
-               Matrix4f(
-                       0.5f, 0, 0, 0,
-                       0, 1, 0, 0,
-                       0, 0, 1, 0,
-                       0, 0, 0, 1 )
-                   :
-               Matrix4f(
-                       0.5f, 0, 0, 0.5f,
-                       0, 1, 0, 0,
-                       0, 0, 1, 0,
-                       0, 0, 0, 1 );
+            return eye ? rightM : leftM;
 
         case Material::StereoMode::RIGHT_LEFT:
-            return ( !eye ) ?
-               Matrix4f(
-                       0.5f, 0, 0, 0,
-                       0, 1, 0, 0,
-                       0, 0, 1, 0,
-                       0, 0, 0, 1 )
-                        :
-               Matrix4f(
-                       0.5f, 0, 0, 0.5f,
-                       0, 1, 0, 0,
-                       0, 0, 1, 0,
-                       0, 0, 0, 1 );
+            return eye ? leftM : rightM;
+
+        case Material::StereoMode::TOP_ONLY:
+            return topM;
+
+        case Material::StereoMode::BOTTOM_ONLY:
+            return bottomM;
+
+        case Material::StereoMode::LEFT_ONLY:
+            return leftM;
+
+        case Material::StereoMode::RIGHT_ONLY:
+            return rightM;
 
         case Material::StereoMode::NORMAL:
         default:
-            return Matrix4f::Identity();
+            return normalM;
     }
 }
 }

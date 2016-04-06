@@ -53,10 +53,32 @@ private:
     OESShader& operator=(const OESShader& oes_shader);
     OESShader& operator=(OESShader&& oes_shader);
 
-    Matrix4f TexmForVideo(const Material::StereoMode stereoMode, const int eye);
+    const Matrix4f & TexmForVideo(const Material::StereoMode stereoMode, const int eye);
 private:
     GlProgram program;
     GLuint opacity;
+
+    Matrix4f normalM = Matrix4f::Identity();
+    Matrix4f topM = Matrix4f(
+            1, 0, 0, 0,
+            0, 0.5f, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1 );
+    Matrix4f bottomM = Matrix4f(
+            1, 0, 0, 0,
+            0, 0.5f, 0, 0.5f,
+            0, 0, 1, 0,
+            0, 0, 0, 1 );
+    Matrix4f leftM = Matrix4f(
+            0.5f, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1 );
+    Matrix4f rightM = Matrix4f(
+            0.5f, 0, 0, 0.5f,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1 );
 };
 
 }
