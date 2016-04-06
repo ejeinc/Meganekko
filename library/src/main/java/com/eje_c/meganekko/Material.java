@@ -146,6 +146,7 @@ public class Material extends HybridObject {
     }
 
     public enum StereoMode {
-        NORMAL, TOP_BOTTOM, BOTTOM_TOP, LEFT_RIGHT, RIGHT_LEFT
+        NORMAL, TOP_BOTTOM, BOTTOM_TOP, LEFT_RIGHT, RIGHT_LEFT,
+        TOP_ONLY, BOTTOM_ONLY, LEFT_ONLY, RIGHT_ONLY
     }
 }

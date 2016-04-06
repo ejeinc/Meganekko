@@ -44,7 +44,8 @@ class Material: public HybridObject {
 public:
 
     enum StereoMode {
-        NORMAL = 0, TOP_BOTTOM, BOTTOM_TOP, LEFT_RIGHT, RIGHT_LEFT
+        NORMAL = 0, TOP_BOTTOM, BOTTOM_TOP, LEFT_RIGHT, RIGHT_LEFT,
+        TOP_ONLY, BOTTOM_ONLY, LEFT_ONLY, RIGHT_ONLY
     };
 
     explicit Material(JNIEnv * jni) {
