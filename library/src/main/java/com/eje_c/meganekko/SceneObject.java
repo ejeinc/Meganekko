@@ -697,10 +697,17 @@ public class SceneObject extends HybridObject {
         private TimeInterpolator interpolator;
         private boolean sequential;
 
+        // For sequential animation
+        private Vector3f lastPos, lastScale;
+        private Quaternionf lastRotation;
+        private float lastOpacity = getOpacity();
+
         public SceneObjectAnimator moveTo(Vector3f position) {
-            ValueAnimator animator = ValueAnimator.ofObject(new VectorEvaluator(), position(), position);
+            Vector3f fromPos = lastPos != null ? lastPos : position();
+            ValueAnimator animator = ValueAnimator.ofObject(new VectorEvaluator(), fromPos, position);
             animator.addUpdateListener(new PositionUpdateListener(getTransform()));
             animators.add(animator);
+            lastPos = position;
             return this;
         }
 
@@ -711,9 +718,11 @@ public class SceneObject extends HybridObject {
         }
 
         public SceneObjectAnimator scaleTo(Vector3f scale) {
-            ValueAnimator animator = ValueAnimator.ofObject(new VectorEvaluator(), scale(), scale);
+            Vector3f fromScale = lastScale != null ? lastScale : scale();
+            ValueAnimator animator = ValueAnimator.ofObject(new VectorEvaluator(), fromScale, scale);
             animator.addUpdateListener(new ScaleUpdateListener(getTransform()));
             animators.add(animator);
+            lastScale = scale;
             return this;
         }
 
@@ -724,9 +733,11 @@ public class SceneObject extends HybridObject {
         }
 
         public SceneObjectAnimator rotateTo(Quaternionf rotation) {
-            ValueAnimator animator = ValueAnimator.ofObject(new QuaternionEvaluator(), rotation(), rotation);
+            Quaternionf fromRotation = lastRotation != null ? lastRotation : rotation();
+            ValueAnimator animator = ValueAnimator.ofObject(new QuaternionEvaluator(), fromRotation, rotation);
             animator.addUpdateListener(new RotationUpdateListener(getTransform()));
             animators.add(animator);
+            lastRotation = rotation;
             return this;
         }
 
@@ -749,8 +760,9 @@ public class SceneObject extends HybridObject {
         }
 
         public SceneObjectAnimator opacity(float opacity) {
-            ObjectAnimator animator = ObjectAnimator.ofFloat(SceneObject.this, "opacity", getOpacity(), opacity);
+            ObjectAnimator animator = ObjectAnimator.ofFloat(SceneObject.this, "opacity", lastOpacity, opacity);
             animators.add(animator);
+            lastOpacity = opacity;
             return this;
         }
 
