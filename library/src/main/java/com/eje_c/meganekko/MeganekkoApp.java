@@ -251,7 +251,7 @@ public abstract class MeganekkoApp {
             mScene.onPause();
         }
 
-        scene.onResume();
+        scene.onResume(this);
 
         mScene = scene;
     }

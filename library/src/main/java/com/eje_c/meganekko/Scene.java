@@ -25,6 +25,9 @@ import org.joml.Vector3f;
  */
 public class Scene extends SceneObject {
 
+    private boolean mInitialized;
+    private MeganekkoApp mApp;
+
     private static native void setFrustumCulling(long scene, boolean flag);
 
     private static native void setOcclusionQuery(long scene, boolean flag);
@@ -60,6 +63,29 @@ public class Scene extends SceneObject {
      */
     public void setOcclusionQuery(boolean flag) {
         setOcclusionQuery(getNative(), flag);
+    }
+
+    /**
+     * This is called just before this scene is first rendered.
+     * Usually, you should keep reference to {@link SceneObject} by {@link #findObjectById(int)}
+     * in this method.
+     * You must call {@code super.initialize(app)} if you override this method.
+     *
+     * @param app
+     */
+    protected void initialize(MeganekkoApp app) {
+        mApp = app;
+    }
+
+    void onResume(MeganekkoApp app) {
+
+        // Call initialize first time only
+        if (!mInitialized) {
+            initialize(app);
+            mInitialized = true;
+        }
+
+        onResume();
     }
 
     /**
@@ -108,5 +134,9 @@ public class Scene extends SceneObject {
 
     public Quaternionf getViewOrientation() {
         return getViewOrientation(getNative());
+    }
+
+    public MeganekkoApp getApp() {
+        return mApp;
     }
 }
