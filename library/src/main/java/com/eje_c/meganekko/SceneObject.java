@@ -640,8 +640,30 @@ public class SceneObject extends HybridObject {
         return mRenderData != null ? getRenderData().getMaterial() : null;
     }
 
+    public void material(Material material) {
+
+        // Ensure to have RenderData
+        if (mRenderData == null) {
+            attachRenderData(new RenderData());
+        }
+
+        Material old = mRenderData.getMaterial();
+        old.delete();
+        mRenderData.setMaterial(material);
+    }
+
     public Mesh mesh() {
         return mRenderData != null ? getRenderData().getMesh() : null;
+    }
+
+    public void mesh(Mesh mesh) {
+
+        // Ensure to have RenderData
+        if (mRenderData == null) {
+            attachRenderData(new RenderData());
+        }
+
+        mRenderData.setMesh(mesh);
     }
 
     public SceneObjectAnimator animate() {
