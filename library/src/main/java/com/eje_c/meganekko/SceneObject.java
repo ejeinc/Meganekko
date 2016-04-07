@@ -498,6 +498,26 @@ public class SceneObject extends HybridObject {
         }
     }
 
+    /**
+     * Get {@link Scene}. If this object is not in scene, return null.
+     * This method uses recursive call. So you should not call it in render loop.
+     *
+     * @return
+     */
+    public Scene getScene() {
+
+        if (this instanceof Scene) {
+            return (Scene) this;
+        }
+
+        SceneObject parent = getParent();
+        if (parent == null) {
+            return null;
+        }
+
+        return parent.getScene();
+    }
+
     public boolean onKeyShortPress(int keyCode, int repeatCount) {
 
         for (KeyEventListener l : mKeyEventListeners) {
@@ -640,8 +660,30 @@ public class SceneObject extends HybridObject {
         return mRenderData != null ? getRenderData().getMaterial() : null;
     }
 
+    public void material(Material material) {
+
+        // Ensure to have RenderData
+        if (mRenderData == null) {
+            attachRenderData(new RenderData());
+        }
+
+        Material old = mRenderData.getMaterial();
+        old.delete();
+        mRenderData.setMaterial(material);
+    }
+
     public Mesh mesh() {
         return mRenderData != null ? getRenderData().getMesh() : null;
+    }
+
+    public void mesh(Mesh mesh) {
+
+        // Ensure to have RenderData
+        if (mRenderData == null) {
+            attachRenderData(new RenderData());
+        }
+
+        mRenderData.setMesh(mesh);
     }
 
     public SceneObjectAnimator animate() {
