@@ -1,7 +1,5 @@
 package com.eje_c.meganekko.sample;
 
-import android.animation.ObjectAnimator;
-
 import com.eje_c.meganekko.Frame;
 import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
@@ -31,8 +29,28 @@ public class MyApp extends MeganekkoApp {
         Frame frame = getFrame();
         final int buttonPressedBits = frame.getButtonPressed();
         if (JoyButton.contains(buttonPressedBits, JoyButton.BUTTON_TOUCH_SINGLE)) {
-            ObjectAnimator anim = ObjectAnimator.ofFloat(obj, "opacity", 1, 0, 1);
-            animate(anim, null);
+            obj.animate()
+                    .sequential(true)
+                    .duration(500)
+                    .moveBy(new Vector3f(0, 0, 1))
+                    .rotateBy(0, 0, (float) Math.PI)
+                    .scaleBy(new Vector3f(2, 1, 1))
+                    .opacity(0)
+                    .opacity(1)
+                    .moveTo(new Vector3f(1, 2, -6))
+                    .moveTo(new Vector3f(0, 0, -4))
+                    .onEnd(new Runnable() {
+                        @Override
+                        public void run() {
+                            obj.animate()
+                                    .sequential(false) // default
+                                    .rotateTo(0, 0, 0)
+                                    .scaleTo(new Vector3f(1, 1, 1))
+                                    .moveTo(new Vector3f(0, 0, -5))
+                                    .start(MyApp.this);
+                        }
+                    })
+                    .start(this);
         } else if (JoyButton.contains(buttonPressedBits, JoyButton.BUTTON_TOUCH_DOUBLE)) {
             recenter();
             obj.animate()
