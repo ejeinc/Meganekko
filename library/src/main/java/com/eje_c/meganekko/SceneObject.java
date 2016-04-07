@@ -498,6 +498,26 @@ public class SceneObject extends HybridObject {
         }
     }
 
+    /**
+     * Get {@link Scene}. If this object is not in scene, return null.
+     * This method uses recursive call. So you should not call it in render loop.
+     *
+     * @return
+     */
+    public Scene getScene() {
+
+        if (this instanceof Scene) {
+            return (Scene) this;
+        }
+
+        SceneObject parent = getParent();
+        if (parent == null) {
+            return null;
+        }
+
+        return parent.getScene();
+    }
+
     public boolean onKeyShortPress(int keyCode, int repeatCount) {
 
         for (KeyEventListener l : mKeyEventListeners) {
