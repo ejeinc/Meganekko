@@ -247,7 +247,6 @@ const float *Mesh::getBoundingSphereInfo() {
 
 // generate vertex array object
 void Mesh::generateVAO() {
-#if _GVRF_USE_GLES3_
     GLuint tmpID;
 
     if (vao_dirty_) {
@@ -369,7 +368,6 @@ void Mesh::generateVAO() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     vao_dirty_ = false;
-#endif
 }
 
 }

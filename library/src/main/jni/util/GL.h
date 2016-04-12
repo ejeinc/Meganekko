@@ -30,7 +30,4 @@
 #include <GLES3/gl3.h>
 #include <GLES3/gl3ext.h>
 #endif
-
-#define _GVRF_USE_GLES3_  1
-
 #endif
