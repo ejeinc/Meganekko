@@ -24,10 +24,7 @@
 #include "Material.h"
 #include "mesh.h"
 #include "RenderData.h"
-#include "util/GL.h"
 #include "SurfaceTexture.h"
-
-#define GL( func )  func; GL_CheckErrors(#func);
 
 namespace mgn {
 

@@ -25,7 +25,6 @@
 #include "assimp/mesh.h"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
-#include "util/GL.h"
 
 namespace mgn {
 Mesh* Mesh::getBoundingBox() {

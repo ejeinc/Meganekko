@@ -25,11 +25,7 @@
 #include <memory>
 #include <string>
 
-#ifndef GL_ES_VERSION_3_0
-#include <GLES3/gl3.h>
-#include <GLES3/gl3ext.h>
-#endif
-
+#include "util/GL.h"
 #include "HybridObject.h"
 
 #include "Kernel/OVR_Math.h"

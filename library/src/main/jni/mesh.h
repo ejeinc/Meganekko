@@ -25,14 +25,9 @@
 #include <vector>
 #include <string>
 
-#ifndef GL_ES_VERSION_3_0
-#include "GLES3/gl3.h"
-#endif
-
 #include "HybridObject.h"
 #include "Material.h"
-
-#include "util/GlDelete.h"
+#include "util/GL.h"
 
 namespace mgn {
 class Mesh: public HybridObject {

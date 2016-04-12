@@ -23,15 +23,7 @@
 #include <vector>
 #include <memory>
 
-#define __gl2_h_
-#include "EGL/egl.h"
-#include "EGL/eglext.h"
-#ifndef GL_ES_VERSION_3_0
-#include "GLES3/gl3.h"
-#endif
-#include <GLES2/gl2ext.h>
-#include "GLES3/gl3ext.h"
-
+#include "util/GL.h"
 #include "mesh.h"
 #include "Kernel/OVR_Math.h"
 #include "OESShader.h"

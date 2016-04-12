@@ -23,13 +23,10 @@
 #include "Material.h"
 #include "Scene.h"
 #include "RenderData.h"
-#include "OESShader.h"
-#include "util/GL.h"
 
 using namespace OVR;
 
 namespace mgn {
-class SceneObject;
 
 void Renderer::RenderEyeView(Scene* scene, std::vector<SceneObject*> scene_objects, OESShader* oesShader,
         const Matrix4f &eyeViewMatrix, const Matrix4f &eyeProjectionMatrix, const Matrix4f &eyeViewProjection, const int eye) {

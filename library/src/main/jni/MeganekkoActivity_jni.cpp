@@ -20,8 +20,6 @@
 #include <jni.h>
 #include <VrApi.h>
 #include <VrApi_LocalPrefs.h>
-#include "Scene.h"
-#include "SceneObject.h"
 #include "RenderData.h"
 #include "Kernel/OVR_Geometry.h"
 
