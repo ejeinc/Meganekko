@@ -24,7 +24,6 @@
 #include "Material.h"
 #include "mesh.h"
 #include "RenderData.h"
-#include "util/GL.h"
 #include "SurfaceTexture.h"
 
 namespace mgn {
@@ -68,27 +67,26 @@ void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Mate
     Mesh * mesh = renderData->mesh();
     Vector4f color = material->GetColor();
 
-    mesh->setVertexLoc(VERTEX_ATTRIBUTE_LOCATION_POSITION);
-    mesh->setTexCoordLoc(VERTEX_ATTRIBUTE_LOCATION_UV0);
-    mesh->generateVAO();
+    GL(mesh->setVertexLoc(VERTEX_ATTRIBUTE_LOCATION_POSITION));
+    GL(mesh->setNormalLoc(VERTEX_ATTRIBUTE_LOCATION_NORMAL));
+    GL(mesh->setTexCoordLoc(VERTEX_ATTRIBUTE_LOCATION_UV0));
+    GL(mesh->generateVAO());
 
-    glUseProgram(program.program);
+    GL(glUseProgram(program.program));
 
-    glUniformMatrix4fv(program.uMvp, 1, GL_TRUE, mvpMatrix.M[0]);
-    glUniformMatrix4fv(program.uTexm, 1, GL_TRUE, TexmForVideo(material->GetStereoMode(), eye).M[ 0 ] );
-    glActiveTexture (GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_EXTERNAL_OES, material->getId());
-    glUniform4f(program.uColor, color.x, color.y, color.z, color.w);
-    glUniform1f(opacity, material->GetOpacity());
+    GL(glUniformMatrix4fv(program.uMvp, 1, GL_TRUE, mvpMatrix.M[0]));
+    GL(glUniformMatrix4fv(program.uTexm, 1, GL_TRUE, TexmForVideo(material->GetStereoMode(), eye).M[ 0 ] ));
+    GL(glActiveTexture (GL_TEXTURE0));
+    GL(glBindTexture(GL_TEXTURE_EXTERNAL_OES, material->getId()));
+    GL(glUniform4f(program.uColor, color.x, color.y, color.z, color.w));
+    GL(glUniform1f(opacity, material->GetOpacity()));
 
-    glBindVertexArray(mesh->getVAOId());
-    glDrawElements(GL_TRIANGLES, mesh->triangles().size(), GL_UNSIGNED_SHORT, 0);
-    glBindVertexArray(0);
+    GL(glBindVertexArray(mesh->getVAOId()));
+    GL(glDrawElements(GL_TRIANGLES, mesh->triangles().size(), GL_UNSIGNED_SHORT, 0));
+    GL(glBindVertexArray(0));
 
-    glActiveTexture( GL_TEXTURE0 );
-    glBindTexture( GL_TEXTURE_EXTERNAL_OES, 0 );
-    
-    GL_CheckErrors("OESShader::render");
+    GL(glActiveTexture( GL_TEXTURE0 ));
+    GL(glBindTexture( GL_TEXTURE_EXTERNAL_OES, 0 ));
 }
 
 const Matrix4f & OESShader::TexmForVideo(const Material::StereoMode stereoMode, const int eye )

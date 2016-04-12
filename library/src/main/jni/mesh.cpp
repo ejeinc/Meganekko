@@ -25,7 +25,6 @@
 #include "assimp/mesh.h"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
-#include "util/GL.h"
 
 namespace mgn {
 Mesh* Mesh::getBoundingBox() {
@@ -247,7 +246,6 @@ const float *Mesh::getBoundingSphereInfo() {
 
 // generate vertex array object
 void Mesh::generateVAO() {
-#if _GVRF_USE_GLES3_
     GLuint tmpID;
 
     if (vao_dirty_) {
@@ -276,85 +274,85 @@ void Mesh::generateVAO() {
     GLuint vaoID_ = 0;
     GLuint triangle_vboID_, vert_vboID_, norm_vboID_, tex_vboID_;
 
-    glGenVertexArrays(1, &vaoID_);
-    glBindVertexArray(vaoID_);
+    GL(glGenVertexArrays(1, &vaoID_));
+    GL(glBindVertexArray(vaoID_));
 
-    glGenBuffers(1, &triangle_vboID_);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, triangle_vboID_);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+    GL(glGenBuffers(1, &triangle_vboID_));
+    GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, triangle_vboID_));
+    GL(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
             sizeof(unsigned short) * triangles_.size(), &triangles_[0],
-            GL_STATIC_DRAW);
+            GL_STATIC_DRAW));
     numTriangles_ = triangles_.size() / 3;
 
     if (vertices_.size()) {
-        glGenBuffers(1, &vert_vboID_);
-        glBindBuffer(GL_ARRAY_BUFFER, vert_vboID_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(OVR::Vector3f) * vertices_.size(),
-                &vertices_[0], GL_STATIC_DRAW);
-        glEnableVertexAttribArray(getVertexLoc());
-        glVertexAttribPointer(getVertexLoc(), 3, GL_FLOAT, 0, 0, 0);
+        GL(glGenBuffers(1, &vert_vboID_));
+        GL(glBindBuffer(GL_ARRAY_BUFFER, vert_vboID_));
+        GL(glBufferData(GL_ARRAY_BUFFER, sizeof(OVR::Vector3f) * vertices_.size(),
+                &vertices_[0], GL_STATIC_DRAW));
+        GL(glEnableVertexAttribArray(getVertexLoc()));
+        GL(glVertexAttribPointer(getVertexLoc(), 3, GL_FLOAT, 0, 0, 0));
     }
 
     if (normals_.size()) {
-        glGenBuffers(1, &norm_vboID_);
-        glBindBuffer(GL_ARRAY_BUFFER, norm_vboID_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(OVR::Vector3f) * normals_.size(),
+        GL(glGenBuffers(1, &norm_vboID_));
+        GL(glBindBuffer(GL_ARRAY_BUFFER, norm_vboID_));
+        GL(glBufferData(GL_ARRAY_BUFFER, sizeof(OVR::Vector3f) * normals_.size(),
                 &normals_[0], GL_STATIC_DRAW);
-        glEnableVertexAttribArray(getNormalLoc());
-        glVertexAttribPointer(getNormalLoc(), 3, GL_FLOAT, 0, 0, 0);
+        GL(glEnableVertexAttribArray(getNormalLoc())));
+        GL(glVertexAttribPointer(getNormalLoc(), 3, GL_FLOAT, 0, 0, 0));
     }
 
     if (tex_coords_.size()) {
-        glGenBuffers(1, &tex_vboID_);
-        glBindBuffer(GL_ARRAY_BUFFER, tex_vboID_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(OVR::Vector2f) * tex_coords_.size(),
+        GL(glGenBuffers(1, &tex_vboID_));
+        GL(glBindBuffer(GL_ARRAY_BUFFER, tex_vboID_));
+        GL(glBufferData(GL_ARRAY_BUFFER, sizeof(OVR::Vector2f) * tex_coords_.size(),
                 &tex_coords_[0], GL_STATIC_DRAW);
-        glEnableVertexAttribArray(getTexCoordLoc());
-        glVertexAttribPointer(getTexCoordLoc(), 2, GL_FLOAT, 0, 0, 0);
+        GL(glEnableVertexAttribArray(getTexCoordLoc())));
+        GL(glVertexAttribPointer(getTexCoordLoc(), 2, GL_FLOAT, 0, 0, 0));
     }
 
     for (auto it = attribute_float_keys_.begin();
             it != attribute_float_keys_.end(); ++it) {
-        glGenBuffers(1, &tmpID);
-        glBindBuffer(GL_ARRAY_BUFFER, tmpID);
-        glBufferData(GL_ARRAY_BUFFER,
+        GL(glGenBuffers(1, &tmpID));
+        GL(glBindBuffer(GL_ARRAY_BUFFER, tmpID));
+        GL(glBufferData(GL_ARRAY_BUFFER,
                 sizeof(GLfloat) * getFloatVector(it->second).size(),
-                getFloatVector(it->second).data(), GL_STATIC_DRAW);
-        glEnableVertexAttribArray(it->first);
-        glVertexAttribPointer(it->first, 1, GL_FLOAT, 0, 0, 0);
+                getFloatVector(it->second).data(), GL_STATIC_DRAW));
+        GL(glEnableVertexAttribArray(it->first));
+        GL(glVertexAttribPointer(it->first, 1, GL_FLOAT, 0, 0, 0));
     }
 
     for (auto it = attribute_vec2_keys_.begin();
             it != attribute_vec2_keys_.end(); ++it) {
-        glGenBuffers(1, &tmpID);
-        glBindBuffer(GL_ARRAY_BUFFER, tmpID);
-        glBufferData(GL_ARRAY_BUFFER,
+        GL(glGenBuffers(1, &tmpID));
+        GL(glBindBuffer(GL_ARRAY_BUFFER, tmpID));
+        GL(glBufferData(GL_ARRAY_BUFFER,
                 sizeof(OVR::Vector2f) * getVec2Vector(it->second).size(),
-                getVec2Vector(it->second).data(), GL_STATIC_DRAW);
-        glEnableVertexAttribArray(it->first);
-        glVertexAttribPointer(it->first, 2, GL_FLOAT, 0, 0, 0);
+                getVec2Vector(it->second).data(), GL_STATIC_DRAW));
+        GL(glEnableVertexAttribArray(it->first));
+        GL(glVertexAttribPointer(it->first, 2, GL_FLOAT, 0, 0, 0));
     }
 
     for (auto it = attribute_vec3_keys_.begin();
             it != attribute_vec3_keys_.end(); ++it) {
-        glGenBuffers(1, &tmpID);
-        glBindBuffer(GL_ARRAY_BUFFER, tmpID);
-        glBufferData(GL_ARRAY_BUFFER,
+        GL(glGenBuffers(1, &tmpID));
+        GL(glBindBuffer(GL_ARRAY_BUFFER, tmpID));
+        GL(glBufferData(GL_ARRAY_BUFFER,
                 sizeof(OVR::Vector3f) * getVec3Vector(it->second).size(),
-                getVec3Vector(it->second).data(), GL_STATIC_DRAW);
-        glEnableVertexAttribArray(it->first);
-        glVertexAttribPointer(it->first, 3, GL_FLOAT, 0, 0, 0);
+                getVec3Vector(it->second).data(), GL_STATIC_DRAW));
+        GL(glEnableVertexAttribArray(it->first));
+        GL(glVertexAttribPointer(it->first, 3, GL_FLOAT, 0, 0, 0));
     }
 
     for (auto it = attribute_vec4_keys_.begin();
             it != attribute_vec4_keys_.end(); ++it) {
-        glGenBuffers(1, &tmpID);
-        glBindBuffer(GL_ARRAY_BUFFER, tmpID);
-        glBufferData(GL_ARRAY_BUFFER,
+        GL(glGenBuffers(1, &tmpID));
+        GL(glBindBuffer(GL_ARRAY_BUFFER, tmpID));
+        GL(glBufferData(GL_ARRAY_BUFFER,
                 sizeof(OVR::Vector4f) * getVec4Vector(it->second).size(),
-                getVec4Vector(it->second).data(), GL_STATIC_DRAW);
-        glEnableVertexAttribArray(it->first);
-        glVertexAttribPointer(it->first, 4, GL_FLOAT, 0, 0, 0);
+                getVec4Vector(it->second).data(), GL_STATIC_DRAW));
+        GL(glEnableVertexAttribArray(it->first));
+        GL(glVertexAttribPointer(it->first, 4, GL_FLOAT, 0, 0, 0));
     }
 
     vaoID = vaoID_;
@@ -364,12 +362,11 @@ void Mesh::generateVAO() {
     tex_vboID = tex_vboID_;
 
     // done generation
-    glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    GL(glBindVertexArray(0));
+    GL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 
     vao_dirty_ = false;
-#endif
 }
 
 }

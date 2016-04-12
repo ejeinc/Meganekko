@@ -23,13 +23,10 @@
 #include "Material.h"
 #include "Scene.h"
 #include "RenderData.h"
-#include "OESShader.h"
-#include "util/GL.h"
 
 using namespace OVR;
 
 namespace mgn {
-class SceneObject;
 
 void Renderer::RenderEyeView(Scene* scene, std::vector<SceneObject*> scene_objects, OESShader* oesShader,
         const Matrix4f &eyeViewMatrix, const Matrix4f &eyeProjectionMatrix, const Matrix4f &eyeViewProjection, const int eye) {
@@ -82,7 +79,6 @@ void Renderer::RenderEyeView(Scene* scene, std::vector<SceneObject*> scene_objec
 
 void Renderer::occlusion_cull(Scene* scene,
         std::vector<SceneObject*> scene_objects) {
-#if _GVRF_USE_GLES3_
     if (!scene->get_occlusion_culling()) {
         return;
     }
@@ -116,7 +112,6 @@ void Renderer::occlusion_cull(Scene* scene,
             (*it)->set_query_issued(false);
         }
     }
-#endif
 }
 
 void Renderer::frustum_cull(Scene* scene, const Vector3f& camera_position,

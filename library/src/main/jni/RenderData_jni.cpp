@@ -20,7 +20,6 @@
 #include <jni.h>
 
 #include "RenderData.h"
-#include "mesh.h"
 #include "Material.h"
 
 namespace mgn {

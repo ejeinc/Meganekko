@@ -28,16 +28,12 @@ SceneObject::SceneObject() :
                 true), in_frustum_(false), query_currently_issued_(false), vis_count_(0), lod_min_range_(0), lod_max_range_(MAXFLOAT), using_lod_(false) {
 
     // Occlusion query setup
-#if _GVRF_USE_GLES3_
     queries_ = new GLuint[1];
     glGenQueries(1, queries_);
-#endif
 }
 
 SceneObject::~SceneObject() {
-#if _GVRF_USE_GLES3_
     delete queries_;
-#endif
 }
 
 void SceneObject::attachTransform(SceneObject* self, Transform* transform) {
