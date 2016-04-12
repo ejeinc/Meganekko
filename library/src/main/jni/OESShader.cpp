@@ -68,6 +68,7 @@ void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Mate
     Vector4f color = material->GetColor();
 
     GL(mesh->setVertexLoc(VERTEX_ATTRIBUTE_LOCATION_POSITION));
+    GL(mesh->setNormalLoc(VERTEX_ATTRIBUTE_LOCATION_NORMAL));
     GL(mesh->setTexCoordLoc(VERTEX_ATTRIBUTE_LOCATION_UV0));
     GL(mesh->generateVAO());
 
