@@ -35,15 +35,6 @@ Java_com_eje_1c_meganekko_RenderData_setMesh(JNIEnv * env, jobject obj, jlong jr
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_RenderData_addPass(JNIEnv* env, jobject obj, jlong jrenderData, jlong jrenderPass);
 
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_setLight(JNIEnv * env, jobject obj, jlong jrenderData, jlong jlight);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_enableLight(JNIEnv * env, jobject obj, jlong jrenderData);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_disableLight(JNIEnv * env, jobject obj, jlong jrenderData);
-
 JNIEXPORT jint JNICALL
 Java_com_eje_1c_meganekko_RenderData_getRenderMask(JNIEnv * env, jobject obj, jlong jrenderData);
 
@@ -111,25 +102,6 @@ Java_com_eje_1c_meganekko_RenderData_addPass(JNIEnv* env, jobject obj, jlong jre
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
     RenderPass* render_pass = reinterpret_cast<RenderPass*>(jrenderPass);
     render_data->add_pass(render_pass);
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_setLight(JNIEnv * env, jobject obj, jlong jrenderData, jlong jlight) {
-    RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    Light* light = reinterpret_cast<Light*>(jlight);
-    render_data->set_light(light);
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_enableLight(JNIEnv * env, jobject obj, jlong jrenderData) {
-    RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    render_data->enable_light();
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_disableLight(JNIEnv * env, jobject obj, jlong jrenderData) {
-    RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    render_data->disable_light();
 }
 
 JNIEXPORT jint JNICALL
