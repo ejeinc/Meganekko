@@ -66,6 +66,6 @@ Java_com_eje_1c_meganekko_Material_setStereoMode(JNIEnv * env, jobject obj, jlon
     material->SetStereoMode(static_cast<Material::StereoMode>(jstereoMode));
 }
 
-}
+} // extern C
 
-}
+} // namespace mgn

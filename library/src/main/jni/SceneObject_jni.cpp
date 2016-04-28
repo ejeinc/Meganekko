@@ -24,50 +24,37 @@
 namespace mgn {
 extern "C" {
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_SceneObject_initNativeInstance(JNIEnv * env,
-        jobject obj);
+Java_com_eje_1c_meganekko_SceneObject_initNativeInstance(JNIEnv * env, jobject obj);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_attachTransform(JNIEnv * env,
-        jobject obj, jlong jscene_object, jlong jtransform);
+Java_com_eje_1c_meganekko_SceneObject_attachTransform(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jtransform);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_detachTransform(JNIEnv * env,
-        jobject obj, jlong jscene_object);
+Java_com_eje_1c_meganekko_SceneObject_detachTransform(JNIEnv * env, jobject obj, jlong jsceneObject);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_attachRenderData(
-        JNIEnv * env, jobject obj, jlong jscene_object, jlong jrender_data);
+Java_com_eje_1c_meganekko_SceneObject_attachRenderData(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jrenderData);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_detachRenderData(
-        JNIEnv * env, jobject obj, jlong jscene_object);
+Java_com_eje_1c_meganekko_SceneObject_detachRenderData(JNIEnv * env, jobject obj, jlong jsceneObject);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_addChildObject(JNIEnv * env,
-        jobject obj, jlong jscene_object, jlong jchild);
+Java_com_eje_1c_meganekko_SceneObject_addChildObject(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jchild);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_removeChildObject(
-        JNIEnv * env, jobject obj, jlong jscene_object, jlong jchild);
+Java_com_eje_1c_meganekko_SceneObject_removeChildObject(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jchild);
 
 JNIEXPORT bool JNICALL
-Java_com_eje_1c_meganekko_SceneObject_isColliding(
-        JNIEnv * env, jobject obj, jlong jscene_object, jlong jother_object);
+Java_com_eje_1c_meganekko_SceneObject_isColliding(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jotherObject);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_setLODRange(
-        JNIEnv * env, jobject obj, jlong jscene_object, jfloat min_range, jfloat max_range);
+Java_com_eje_1c_meganekko_SceneObject_setLODRange(JNIEnv * env, jobject obj, jlong jsceneObject, jfloat minRange, jfloat maxRange);
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_SceneObject_getLODMinRange(
-        JNIEnv * env, jobject obj, jlong jscene_object);
+Java_com_eje_1c_meganekko_SceneObject_getLODMinRange(JNIEnv * env, jobject obj, jlong jsceneObject);
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_SceneObject_getLODMaxRange(
-        JNIEnv * env, jobject obj, jlong jscene_object);
-
-
+Java_com_eje_1c_meganekko_SceneObject_getLODMaxRange(JNIEnv * env, jobject obj, jlong jsceneObject);
 
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_SceneObject_initNativeInstance(JNIEnv * env, jobject obj) {
@@ -75,78 +62,68 @@ Java_com_eje_1c_meganekko_SceneObject_initNativeInstance(JNIEnv * env, jobject o
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_attachTransform(JNIEnv * env,
-        jobject obj, jlong jscene_object, jlong jtransform) {
-    SceneObject* scene_object = reinterpret_cast<SceneObject*>(jscene_object);
+Java_com_eje_1c_meganekko_SceneObject_attachTransform(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jtransform) {
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
     Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    scene_object->attachTransform(scene_object, transform);
+    sceneObject->attachTransform(sceneObject, transform);
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_detachTransform(JNIEnv * env,
-        jobject obj, jlong jscene_object) {
-    SceneObject* scene_object = reinterpret_cast<SceneObject*>(jscene_object);
-    scene_object->detachTransform();
+Java_com_eje_1c_meganekko_SceneObject_detachTransform(JNIEnv * env, jobject obj, jlong jsceneObject) {
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    sceneObject->detachTransform();
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_attachRenderData(
-        JNIEnv * env, jobject obj, jlong jscene_object, jlong jrender_data) {
-    SceneObject* scene_object = reinterpret_cast<SceneObject*>(jscene_object);
-    RenderData* render_data = reinterpret_cast<RenderData*>(jrender_data);
-    scene_object->attachRenderData(scene_object, render_data);
+Java_com_eje_1c_meganekko_SceneObject_attachRenderData(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jrenderData) {
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
+    sceneObject->attachRenderData(sceneObject, render_data);
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_detachRenderData(
-        JNIEnv * env, jobject obj, jlong jscene_object) {
-    SceneObject* scene_object = reinterpret_cast<SceneObject*>(jscene_object);
-    scene_object->detachRenderData();
+Java_com_eje_1c_meganekko_SceneObject_detachRenderData(JNIEnv * env, jobject obj, jlong jsceneObject) {
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    sceneObject->detachRenderData();
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_addChildObject(JNIEnv * env,
-        jobject obj, jlong jscene_object, jlong jchild) {
-    SceneObject* scene_object = reinterpret_cast<SceneObject*>(jscene_object);
+Java_com_eje_1c_meganekko_SceneObject_addChildObject(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jchild) {
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
     SceneObject* child = reinterpret_cast<SceneObject*>(jchild);
-    scene_object->addChildObject(scene_object, child);
+    sceneObject->addChildObject(sceneObject, child);
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_removeChildObject(
-        JNIEnv * env, jobject obj, jlong jscene_object, jlong jchild) {
-    SceneObject* scene_object = reinterpret_cast<SceneObject*>(jscene_object);
+Java_com_eje_1c_meganekko_SceneObject_removeChildObject(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jchild) {
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
     SceneObject* child = reinterpret_cast<SceneObject*>(jchild);
-    scene_object->removeChildObject(child);
+    sceneObject->removeChildObject(child);
 }
 
 JNIEXPORT bool JNICALL
-Java_com_eje_1c_meganekko_SceneObject_isColliding(
-        JNIEnv * env, jobject obj, jlong jscene_object, jlong jother_object) {
-    SceneObject* scene_object = reinterpret_cast<SceneObject*>(jscene_object);
-    SceneObject* other_object = reinterpret_cast<SceneObject*>(jother_object);
-    return scene_object->isColliding(other_object);
+Java_com_eje_1c_meganekko_SceneObject_isColliding(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jotherObject) {
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    SceneObject* other_object = reinterpret_cast<SceneObject*>(jotherObject);
+    return sceneObject->isColliding(other_object);
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_setLODRange(
-        JNIEnv * env, jobject obj, jlong jscene_object, jfloat min_range, jfloat max_range) {
-    SceneObject* scene_object = reinterpret_cast<SceneObject*>(jscene_object);
-    scene_object->setLODRange(min_range, max_range);
+Java_com_eje_1c_meganekko_SceneObject_setLODRange(JNIEnv * env, jobject obj, jlong jsceneObject, jfloat minRange, jfloat maxRange) {
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    sceneObject->setLODRange(minRange, maxRange);
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_SceneObject_getLODMinRange(
-        JNIEnv * env, jobject obj, jlong jscene_object) {
-    SceneObject* scene_object = reinterpret_cast<SceneObject*>(jscene_object);
-    return scene_object->getLODMinRange();
+Java_com_eje_1c_meganekko_SceneObject_getLODMinRange(JNIEnv * env, jobject obj, jlong jsceneObject) {
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    return sceneObject->getLODMinRange();
 }
 
 JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_SceneObject_getLODMaxRange(
-        JNIEnv * env, jobject obj, jlong jscene_object) {
-    SceneObject* scene_object = reinterpret_cast<SceneObject*>(jscene_object);
-    return scene_object->getLODMaxRange();
+Java_com_eje_1c_meganekko_SceneObject_getLODMaxRange(JNIEnv * env, jobject obj, jlong jsceneObject) {
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    return sceneObject->getLODMaxRange();
 }
 
 } // extern "C"

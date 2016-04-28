@@ -42,10 +42,10 @@ public:
     void render(const Matrix4f& mvpMatrix, RenderData* renderData, Material* material, const int eye);
 
 private:
-    OESShader(const OESShader& oes_shader);
-    OESShader(OESShader&& oes_shader);
-    OESShader& operator=(const OESShader& oes_shader);
-    OESShader& operator=(OESShader&& oes_shader);
+    OESShader(const OESShader& oesShader);
+    OESShader(OESShader&& oesShader);
+    OESShader& operator=(const OESShader& oesShader);
+    OESShader& operator=(OESShader&& oesShader);
 
     const Matrix4f & TexmForVideo(const Material::StereoMode stereoMode, const int eye);
 private:

@@ -25,39 +25,34 @@
 namespace mgn {
 
 extern "C" {
-JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_RenderPass_initNativeInstance(JNIEnv * env,
-        jobject obj);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderPass_setMaterial(JNIEnv* env,
-        jobject obj, jlong jrender_pass, jlong jmaterial);
-
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderPass_setCullFace(JNIEnv* env,
-        jobject obj, jlong jrender_pass, jint jcull_face);
-}
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_RenderPass_initNativeInstance(JNIEnv * env,
-        jobject obj) {
+Java_com_eje_1c_meganekko_RenderPass_initNativeInstance(JNIEnv * env, jobject obj);
+
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_RenderPass_setMaterial(JNIEnv* env, jobject obj, jlong jrenderPass, jlong jmaterial);
+
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_RenderPass_setCullFace(JNIEnv* env, jobject obj, jlong jrenderPass, jint jcullFace);
+
+} // extern C
+
+JNIEXPORT jlong JNICALL
+Java_com_eje_1c_meganekko_RenderPass_initNativeInstance(JNIEnv * env, jobject obj) {
     return reinterpret_cast<jlong>(new RenderPass());
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderPass_setMaterial(JNIEnv* env,
-        jobject obj, jlong jrender_pass, jlong jmaterial) {
-    RenderPass* pass = reinterpret_cast<RenderPass*>(jrender_pass);
+Java_com_eje_1c_meganekko_RenderPass_setMaterial(JNIEnv* env, jobject obj, jlong jrenderPass, jlong jmaterial) {
+    RenderPass* pass = reinterpret_cast<RenderPass*>(jrenderPass);
     Material* material = reinterpret_cast<Material*>(jmaterial);
     pass->set_material(material);
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderPass_setCullFace(JNIEnv* env,
-        jobject obj, jlong jrender_pass, jint jcull_face) {
-    RenderPass* pass = reinterpret_cast<RenderPass*>(jrender_pass);
-    pass->set_cull_face(static_cast<int>(jcull_face));
+Java_com_eje_1c_meganekko_RenderPass_setCullFace(JNIEnv* env, jobject obj, jlong jrenderPass, jint jcullFace) {
+    RenderPass* pass = reinterpret_cast<RenderPass*>(jrenderPass);
+    pass->set_cull_face(static_cast<int>(jcullFace));
 }
 
-}
+} // namespace mgn

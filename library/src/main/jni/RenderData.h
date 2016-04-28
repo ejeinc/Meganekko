@@ -46,12 +46,18 @@ public:
         CullBack = 0, CullFront, CullNone
     };
 
-    RenderData() :
-            Component(), mesh_(0), light_(0), use_light_(false), render_mask_(
-                    DEFAULT_RENDER_MASK), rendering_order_(
-                    DEFAULT_RENDERING_ORDER), offset_(false), offset_factor_(
-                    0.0f), offset_units_(0.0f), depth_test_(true), alpha_blend_(
-                    true), draw_mode_(GL_TRIANGLES) {
+    RenderData() : Component(),
+        mesh_(0),
+        light_(0),
+        use_light_(false),
+        render_mask_(DEFAULT_RENDER_MASK),
+        rendering_order_(DEFAULT_RENDERING_ORDER),
+        offset_(false),
+        offset_factor_(0.0f),
+        offset_units_(0.0f),
+        depth_test_(true),
+        alpha_blend_(true),
+        draw_mode_(GL_TRIANGLES) {
     }
 
     ~RenderData() {
@@ -205,10 +211,10 @@ public:
     }
 
 private:
-    RenderData(const RenderData& render_data);
-    RenderData(RenderData&& render_data);
-    RenderData& operator=(const RenderData& render_data);
-    RenderData& operator=(RenderData&& render_data);
+    RenderData(const RenderData& renderData);
+    RenderData(RenderData&& renderData);
+    RenderData& operator=(const RenderData& renderData);
+    RenderData& operator=(RenderData&& renderData);
 
 private:
     static const int DEFAULT_RENDER_MASK = Left | Right;

@@ -24,8 +24,10 @@
 #include "Kernel/OVR_Geometry.h"
 
 namespace mgn {
-Scene::Scene() :
-        SceneObject(), frustum_flag_(false), dirtyFlag_(0), occlusion_flag_(false) {
+    Scene::Scene() : SceneObject(),
+        frustum_flag_(false),
+        dirtyFlag_(0),
+        occlusion_flag_(false) {
     oesShader = new OESShader();
 }
 
