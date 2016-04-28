@@ -25,13 +25,12 @@
 
 namespace mgn {
 Scene::Scene() :
-        SceneObject(), main_camera_(), frustum_flag_(
-                false), dirtyFlag_(0), occlusion_flag_(false) {
+        SceneObject(), frustum_flag_(false), dirtyFlag_(0), occlusion_flag_(false) {
     oesShader = new OESShader();
 }
 
 Scene::~Scene() {
-    delete  oesShader;
+    delete oesShader;
 }
 
 std::vector<SceneObject*> Scene::getWholeSceneObjects() {

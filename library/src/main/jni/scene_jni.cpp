@@ -28,9 +28,6 @@ JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_Scene_initNativeInstance(JNIEnv * env, jobject obj);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Scene_setMainCamera(JNIEnv * env,
-        jobject obj, jlong jscene, jlong jcamera);
-JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_Scene_setFrustumCulling(JNIEnv * env,
         jobject obj, jlong jscene, jboolean flag);
 JNIEXPORT void JNICALL
@@ -40,14 +37,6 @@ Java_com_eje_1c_meganekko_Scene_setOcclusionQuery(JNIEnv * env,
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_Scene_initNativeInstance(JNIEnv * env, jobject obj) {
     return reinterpret_cast<jlong>(new Scene());
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Scene_setMainCamera(JNIEnv * env,
-        jobject obj, jlong jscene, jlong jcamera) {
-    Scene* scene = reinterpret_cast<Scene*>(jscene);
-    Camera* camera = reinterpret_cast<Camera*>(jcamera);
-    scene->set_main_camera(camera);
 }
 
 JNIEXPORT void JNICALL
