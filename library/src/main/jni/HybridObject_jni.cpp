@@ -19,15 +19,15 @@
 
 namespace mgn {
 extern "C" {
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_HybridObject_delete(JNIEnv * env,
-        jobject obj, jlong jhybrid_object);
-}
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_HybridObject_delete(JNIEnv * env,
-        jobject obj, jlong jhybrid_object) {
-    delete reinterpret_cast<HybridObject*>(jhybrid_object);
-}
+Java_com_eje_1c_meganekko_HybridObject_delete(JNIEnv * env, jobject obj, jlong jhybridObject);
+
+} // extern C
+
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_HybridObject_delete(JNIEnv * env, jobject obj, jlong jhybridObject) {
+    delete reinterpret_cast<HybridObject*>(jhybridObject);
 }
 
+} // namespace mgn

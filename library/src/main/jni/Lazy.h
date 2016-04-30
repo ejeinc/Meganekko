@@ -26,15 +26,15 @@ template<class T>
 class Lazy {
 public:
     explicit Lazy(T element, bool valid = false) :
-            element_(element), valid_(valid) {
+        element_(element), valid_(valid) {
     }
 
     Lazy(const Lazy& lazy) :
-            element_(lazy.element_), valid_(lazy.valid_) {
+        element_(lazy.element_), valid_(lazy.valid_) {
     }
 
     Lazy(Lazy&& lazy) :
-            element_(lazy.element_), valid_(lazy.valid_) {
+        element_(lazy.element_), valid_(lazy.valid_) {
     }
 
     ~Lazy() {

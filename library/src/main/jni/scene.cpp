@@ -24,14 +24,15 @@
 #include "Kernel/OVR_Geometry.h"
 
 namespace mgn {
-Scene::Scene() :
-        SceneObject(), main_camera_(), frustum_flag_(
-                false), dirtyFlag_(0), occlusion_flag_(false) {
+    Scene::Scene() : SceneObject(),
+        frustum_flag_(false),
+        dirtyFlag_(0),
+        occlusion_flag_(false) {
     oesShader = new OESShader();
 }
 
 Scene::~Scene() {
-    delete  oesShader;
+    delete oesShader;
 }
 
 std::vector<SceneObject*> Scene::getWholeSceneObjects() {
@@ -74,7 +75,7 @@ IntersectRayBoundsResult Scene::IntersectRayBounds(const SceneObject *target, bo
     bool intersected = Intersect_RayBounds(rayStart, rayDir, mins, maxs, t0, t1);
 
     IntersectRayBoundsResult result;
-    result.intersected = intersected;
+    result.intersected = intersected && t0 > 0;
 
     if (intersected) {
         result.first = rayStart + t0 * rayDir;

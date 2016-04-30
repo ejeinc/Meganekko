@@ -28,14 +28,10 @@ JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_Scene_initNativeInstance(JNIEnv * env, jobject obj);
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Scene_setMainCamera(JNIEnv * env,
-        jobject obj, jlong jscene, jlong jcamera);
+Java_com_eje_1c_meganekko_Scene_setFrustumCulling(JNIEnv * env, jobject obj, jlong jscene, jboolean flag);
+
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Scene_setFrustumCulling(JNIEnv * env,
-        jobject obj, jlong jscene, jboolean flag);
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Scene_setOcclusionQuery(JNIEnv * env,
-        jobject obj, jlong jscene, jboolean flag);
+Java_com_eje_1c_meganekko_Scene_setOcclusionQuery(JNIEnv * env, jobject obj, jlong jscene, jboolean flag);
 
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_Scene_initNativeInstance(JNIEnv * env, jobject obj) {
@@ -43,23 +39,13 @@ Java_com_eje_1c_meganekko_Scene_initNativeInstance(JNIEnv * env, jobject obj) {
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Scene_setMainCamera(JNIEnv * env,
-        jobject obj, jlong jscene, jlong jcamera) {
-    Scene* scene = reinterpret_cast<Scene*>(jscene);
-    Camera* camera = reinterpret_cast<Camera*>(jcamera);
-    scene->set_main_camera(camera);
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Scene_setFrustumCulling(JNIEnv * env,
-        jobject obj, jlong jscene, jboolean flag) {
+Java_com_eje_1c_meganekko_Scene_setFrustumCulling(JNIEnv * env, jobject obj, jlong jscene, jboolean flag) {
     Scene* scene = reinterpret_cast<Scene*>(jscene);
     scene->set_frustum_culling(static_cast<bool>(flag));
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Scene_setOcclusionQuery(JNIEnv * env,
-        jobject obj, jlong jscene, jboolean flag) {
+Java_com_eje_1c_meganekko_Scene_setOcclusionQuery(JNIEnv * env, jobject obj, jlong jscene, jboolean flag) {
     Scene* scene = reinterpret_cast<Scene*>(jscene);
     scene->set_occlusion_culling(static_cast<bool>(flag));
 }
@@ -133,5 +119,5 @@ Java_com_eje_1c_meganekko_Scene_getViewOrientation(JNIEnv * jni, jobject obj, jl
     return ToJava(jni, orientation);
 }
 
-}
-}
+} // extern C
+} // namespace mgn

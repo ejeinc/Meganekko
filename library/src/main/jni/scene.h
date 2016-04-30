@@ -45,12 +45,6 @@ class Scene: public SceneObject {
 public:
     Scene();
     virtual ~Scene();
-    const Camera* main_camera() {
-        return main_camera_;
-    }
-    void set_main_camera(Camera* camera) {
-        main_camera_ = camera;
-    }
     std::vector<SceneObject*> getWholeSceneObjects();
 
     void set_frustum_culling( bool frustum_flag){ frustum_flag_ = frustum_flag; }
@@ -104,7 +98,6 @@ private:
     Scene& operator=(Scene&& scene);
 
 private:
-    Camera* main_camera_;
     OESShader* oesShader;
 
     Vector3f viewPosition;

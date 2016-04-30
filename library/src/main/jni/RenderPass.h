@@ -33,7 +33,8 @@ public:
     };
 
     RenderPass() :
-            material_(0), cull_face_(DEFAULT_CULL_FACE) {
+        material_(0),
+        cull_face_(DEFAULT_CULL_FACE) {
     }
 
     Material* material() const {
