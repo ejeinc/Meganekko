@@ -75,7 +75,7 @@ IntersectRayBoundsResult Scene::IntersectRayBounds(const SceneObject *target, bo
     bool intersected = Intersect_RayBounds(rayStart, rayDir, mins, maxs, t0, t1);
 
     IntersectRayBoundsResult result;
-    result.intersected = intersected;
+    result.intersected = intersected && t0 > 0;
 
     if (intersected) {
         result.first = rayStart + t0 * rayDir;
