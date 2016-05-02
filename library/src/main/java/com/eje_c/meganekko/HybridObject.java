@@ -55,7 +55,10 @@ public abstract class HybridObject {
 
     private static native void delete(long nativePointer);
 
-    public void delete() {
+    /**
+     * Delete associated native pointer. You must call super.delete() if you override this method.
+     */
+    protected void delete() {
         if (mNativePointer != 0) {
             delete(mNativePointer);
             mNativePointer = 0;

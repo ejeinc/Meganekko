@@ -27,6 +27,7 @@ public abstract class MeganekkoApp {
     private final Meganekko meganekko;
     private final Queue<Runnable> mRunnables = new LinkedBlockingQueue<>();
     private final Handler handler = new Handler(Looper.getMainLooper());
+    private final Queue<HybridObject> mDeleteQueue = new LinkedBlockingQueue<>();
     private Scene mScene;
     private Frame frame;
 
@@ -48,6 +49,11 @@ public abstract class MeganekkoApp {
         }
 
         mScene.update(frame);
+
+        // Delete objects
+        while (!mDeleteQueue.isEmpty()) {
+            mDeleteQueue.poll().delete();
+        }
     }
 
     /**
@@ -267,5 +273,14 @@ public abstract class MeganekkoApp {
             e.printStackTrace();
             throw new IllegalArgumentException(e);
         }
+    }
+
+    /**
+     * Mark object will be deleted.
+     *
+     * @param object
+     */
+    public void delete(HybridObject object) {
+        mDeleteQueue.add(object);
     }
 }
