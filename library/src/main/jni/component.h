@@ -12,6 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ 
+#include "includes.h"
 
 /***************************************************************************
  * Things which can be attached to a scene object.
@@ -19,8 +21,6 @@
 
 #ifndef COMPONENT_H_
 #define COMPONENT_H_
-
-#include <memory>
 
 #include "HybridObject.h"
 

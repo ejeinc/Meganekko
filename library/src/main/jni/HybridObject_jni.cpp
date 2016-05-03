@@ -13,8 +13,7 @@
  * limitations under the License.
  */
 
-#include <jni.h>
-
+#include "includes.h"
 #include "HybridObject.h"
 
 namespace mgn {

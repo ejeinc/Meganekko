@@ -15,13 +15,9 @@
  * limitations under the License.
  */
 
+#include "includes.h"
 #include "MeganekkoActivity.h"
-
-#include <jni.h>
-#include <VrApi.h>
-#include <VrApi_LocalPrefs.h>
 #include "RenderData.h"
-#include "Kernel/OVR_Geometry.h"
 
 namespace mgn
 {

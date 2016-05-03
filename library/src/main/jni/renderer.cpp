@@ -17,7 +17,7 @@
  * Renders a scene, a screen.
  ***************************************************************************/
 
-#include <android/log.h>
+#include "includes.h"
 #include "Renderer.h"
 
 #include "Material.h"

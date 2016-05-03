@@ -13,12 +13,7 @@
  * limitations under the License.
  */
 
-/***************************************************************************
- * JNI
- ***************************************************************************/
-
-#include <jni.h>
-
+#include "includes.h"
 #include "Scene.h"
 #include "util/convert.h"
 

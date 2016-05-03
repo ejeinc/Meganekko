@@ -13,9 +13,7 @@
  * limitations under the License.
  */
 
-/***************************************************************************
- * Containing data about material and per pass configurations.             *
- ***************************************************************************/
+#include "includes.h"
 
 #ifndef RENDER_PASS_H_
 #define RENDER_PASS_H_

@@ -13,15 +13,14 @@
  * limitations under the License.
  */
 
+#include "includes.h"
+
 /***************************************************************************
  * Containing data about how to render an object.
  ***************************************************************************/
 
 #ifndef RENDER_DATA_H_
 #define RENDER_DATA_H_
-
-#include <memory>
-#include <vector>
 
 #include "Component.h"
 #include "RenderPass.h"

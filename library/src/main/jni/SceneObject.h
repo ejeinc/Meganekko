@@ -16,15 +16,11 @@
 /***************************************************************************
  * Objects in a scene.
  ***************************************************************************/
+#include "includes.h"
 
 #ifndef SCENE_OBJECT_H_
 #define SCENE_OBJECT_H_
 
-#include <algorithm>
-#include <vector>
-#include <memory>
-
-#include "Kernel/OVR_Math.h"
 #include "HybridObject.h"
 #include "util/GL.h"
 

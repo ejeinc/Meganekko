@@ -17,11 +17,11 @@
  * Holds scene objects. Can be used by engines.
  ***************************************************************************/
 
+#include "includes.h"
 #include "Scene.h"
 
 #include "SceneObject.h"
 #include "RenderData.h"
-#include "Kernel/OVR_Geometry.h"
 
 namespace mgn {
     Scene::Scene() : SceneObject(),

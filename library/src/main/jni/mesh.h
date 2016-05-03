@@ -16,14 +16,10 @@
 /***************************************************************************
  * The mesh for rendering.
  ***************************************************************************/
+#include "includes.h"
 
 #ifndef MESH_H_
 #define MESH_H_
-
-#include <map>
-#include <memory>
-#include <vector>
-#include <string>
 
 #include "HybridObject.h"
 #include "Material.h"

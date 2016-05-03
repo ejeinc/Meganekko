@@ -12,13 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/***************************************************************************
- * JNI
- ***************************************************************************/
-
-#include <jni.h>
-
+ 
+#include "includes.h"
 #include "SceneObject.h"
 #include "util/convert.h"
 

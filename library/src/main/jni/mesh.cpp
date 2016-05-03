@@ -13,14 +13,8 @@
  * limitations under the License.
  */
 
-/***************************************************************************
- * The mesh for rendering.
- ***************************************************************************/
-
+#include "includes.h"
 #include "Mesh.h"
-
-#include <limits>
-
 #include "assimp/Importer.hpp"
 #include "assimp/mesh.h"
 #include "assimp/postprocess.h"

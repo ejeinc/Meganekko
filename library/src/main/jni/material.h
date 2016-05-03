@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 
+#include "includes.h"
+
 /***************************************************************************
  * Links textures and shaders.
  ***************************************************************************/
@@ -20,16 +22,8 @@
 #ifndef MATERIAL_H_
 #define MATERIAL_H_
 
-#include <jni.h>
-#include <map>
-#include <memory>
-#include <string>
-
 #include "util/GL.h"
 #include "HybridObject.h"
-
-#include "Kernel/OVR_Math.h"
-#include "SurfaceTexture.h"
 
 using namespace OVR;
 

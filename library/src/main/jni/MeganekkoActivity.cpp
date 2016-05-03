@@ -15,14 +15,10 @@
  * limitations under the License.
  */
 
+#include "includes.h"
 #include "MeganekkoActivity.h"
-
-#include <VrApi.h>
-#include <VrApi_Helpers.h>
-
 #include "Scene.h"
 #include "SceneObject.h"
-#include "Input.h"
 
 namespace mgn
 {

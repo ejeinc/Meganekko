@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
+#include "includes.h"
+
 /***************************************************************************
  * Renders a GL_TEXTURE_EXTERNAL_OES texture.
  ***************************************************************************/
 
 #include "OESShader.h"
-
 #include "Material.h"
 #include "mesh.h"
 #include "RenderData.h"
-#include "SurfaceTexture.h"
 
 namespace mgn {
 

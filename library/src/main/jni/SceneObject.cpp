@@ -17,6 +17,7 @@
  * Objects in a scene.
  ***************************************************************************/
 
+#include "includes.h"
 #include "SceneObject.h"
 
 #include "RenderData.h"

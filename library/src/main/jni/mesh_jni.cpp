@@ -13,16 +13,8 @@
  * limitations under the License.
  */
 
-
-/***************************************************************************
- * JNI
- ***************************************************************************/
-
-#include <jni.h>
-
+#include "includes.h"
 #include "Mesh.h"
-
-#include "android/asset_manager_jni.h"
 
 namespace mgn {
 extern "C" {

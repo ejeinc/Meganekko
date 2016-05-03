@@ -17,17 +17,13 @@
 /***************************************************************************
  * Holds scene objects. Can be used by engines.
  ***************************************************************************/
+#include "includes.h"
 
 #ifndef SCENE_H_
 #define SCENE_H_
 
-#include <memory>
-#include <vector>
-
-
 #include "SceneObject.h"
 #include "Renderer.h"
-#include "Kernel/OVR_Math.h"
 
 using namespace OVR;
 

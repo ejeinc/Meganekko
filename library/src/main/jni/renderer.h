@@ -16,16 +16,13 @@
 /***************************************************************************
  * Renders a scene, a screen.
  ***************************************************************************/
+#include "includes.h"
 
 #ifndef RENDERER_H_
 #define RENDERER_H_
 
-#include <vector>
-#include <memory>
-
 #include "util/GL.h"
 #include "mesh.h"
-#include "Kernel/OVR_Math.h"
 #include "OESShader.h"
 
 namespace mgn
