@@ -15,8 +15,6 @@
 
 package com.eje_c.meganekko;
 
-import android.util.Log;
-
 import com.eje_c.meganekko.utility.Threads;
 
 import java.util.concurrent.Future;
@@ -82,15 +80,22 @@ public class RenderData extends Component {
     protected native long initNativeInstance();
 
     @Override
-    public void delete() {
-        if (mMesh != null) {
-            mMesh.delete();
-            mMesh = null;
-        }
+    protected void delete() {
 
-        if (mMaterial != null) {
-            mMaterial.delete();
-            mMaterial = null;
+        long nativePtr = getNative();
+        if (nativePtr != 0) {
+
+            if (mMesh != null) {
+                mMesh.delete();
+                mMesh = null;
+                setMesh(nativePtr, 0);
+            }
+
+            if (mMaterial != null) {
+                mMaterial.delete();
+                mMaterial = null;
+                setMaterial(nativePtr, 0);
+            }
         }
 
         super.delete();

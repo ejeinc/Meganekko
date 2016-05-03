@@ -44,7 +44,7 @@ public class Material extends HybridObject {
     protected native long initNativeInstance();
 
     @Override
-    public void delete() {
+    protected void delete() {
 
         if (mTexture != null) {
             mTexture.release();
