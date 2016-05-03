@@ -89,7 +89,7 @@ void Renderer::occlusion_cull(Scene* scene,
             continue;
         }
 
-        if (render_data->pass(0)->material() == 0) {
+        if (render_data->GetMaterial() == 0) {
             continue;
         }
 
@@ -121,7 +121,7 @@ void Renderer::frustum_cull(Scene* scene, const Vector3f& camera_position,
     for (auto it = scene_objects.begin(); it != scene_objects.end(); ++it) {
         SceneObject *scene_object = (*it);
         RenderData* render_data = scene_object->render_data();
-        if (render_data == 0 || render_data->pass(0)->material() == 0) {
+        if (render_data == 0 || render_data->GetMaterial() == 0) {
             continue;
         }
 
@@ -195,7 +195,7 @@ void Renderer::frustum_cull(Scene* scene, const Vector3f& camera_position,
             render_data_vector.push_back(render_data);
         }
 
-        if (render_data->pass(0)->material() == 0
+        if (render_data->GetMaterial() == 0
                 || !scene->get_occlusion_culling()) {
             continue;
         }
@@ -353,21 +353,17 @@ void Renderer::renderRenderData(RenderData* render_data,
             glDisable (GL_BLEND);
         }
         if (render_data->mesh() != 0) {
-            for (int curr_pass = 0; curr_pass < render_data->pass_count();
-                    ++curr_pass) {
+            Material* curr_material = render_data->GetMaterial();
+            if (curr_material != nullptr) {
+                set_face_culling(curr_material->GetCullFace());
 
-                set_face_culling(render_data->pass(curr_pass)->cull_face());
-                Material* curr_material = render_data->pass(curr_pass)->material();
-
-                if (curr_material != nullptr) {
-                    Matrix4f model_matrix = render_data->owner_object()->GetModelMatrix();
-                    Matrix4f mv_matrix(view_matrix * model_matrix);
-                    Matrix4f mvp_matrix = projection_matrix * mv_matrix;
-                    try {
-                        oesShader->render(mvp_matrix, render_data, curr_material, eye);
-                    } catch (std::string error) {
-                        __android_log_print(ANDROID_LOG_ERROR, "mgn", "Error detected in Renderer::renderRenderData; error : %s", error.c_str());
-                    }
+                Matrix4f model_matrix = render_data->owner_object()->GetModelMatrix();
+                Matrix4f mv_matrix(view_matrix * model_matrix);
+                Matrix4f mvp_matrix = projection_matrix * mv_matrix;
+                try {
+                    oesShader->render(mvp_matrix, render_data, curr_material, eye);
+                } catch (std::string error) {
+                    __android_log_print(ANDROID_LOG_ERROR, "mgn", "Error detected in Renderer::renderRenderData; error : %s", error.c_str());
                 }
             }
         }
@@ -375,7 +371,7 @@ void Renderer::renderRenderData(RenderData* render_data,
         // Restoring to Default.
         // TODO: There's a lot of redundant state changes. If on every render face culling is being set there's no need to
         // restore defaults. Possibly later we could add a OpenGL state wrapper to avoid redundant api calls.
-        if (render_data->cull_face() != RenderData::CullBack) {
+        if (render_data->GetMaterial()->GetCullFace() != Material::CullBack) {
             glEnable (GL_CULL_FACE);
             glCullFace (GL_BACK);
         }
@@ -394,12 +390,12 @@ void Renderer::renderRenderData(RenderData* render_data,
 
 void Renderer::set_face_culling(int cull_face) {
     switch (cull_face) {
-    case RenderData::CullFront:
+    case Material::CullFront:
         glEnable (GL_CULL_FACE);
         glCullFace (GL_FRONT);
         break;
 
-    case RenderData::CullNone:
+    case Material::CullNone:
         glDisable(GL_CULL_FACE);
         break;
 

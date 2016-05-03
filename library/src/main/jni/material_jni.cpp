@@ -63,6 +63,12 @@ Java_com_eje_1c_meganekko_Material_setStereoMode(JNIEnv * env, jobject obj, jlon
     material->SetStereoMode(static_cast<Material::StereoMode>(jstereoMode));
 }
 
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_Material_setCullFace(JNIEnv* env, jobject obj, jlong jmaterial, jint jcullFace) {
+    Material* material = reinterpret_cast<Material*>(jmaterial);
+    material->SetCullFace(static_cast<int>(jcullFace));
+}
+
 #ifdef __cplusplus 
 } // extern C
 #endif

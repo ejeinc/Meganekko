@@ -35,10 +35,10 @@ Java_com_eje_1c_meganekko_RenderData_setMesh(JNIEnv * env, jobject obj, jlong jr
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_addPass(JNIEnv* env, jobject obj, jlong jrenderData, jlong jrenderPass) {
+Java_com_eje_1c_meganekko_RenderData_setMaterial(JNIEnv * env, jobject obj, jlong jrenderData, jlong jmaterial) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    RenderPass* render_pass = reinterpret_cast<RenderPass*>(jrenderPass);
-    render_data->add_pass(render_pass);
+    Material* material = reinterpret_cast<Material*>(jmaterial);
+    render_data->SetMaterial(material);
 }
 
 JNIEXPORT jint JNICALL
