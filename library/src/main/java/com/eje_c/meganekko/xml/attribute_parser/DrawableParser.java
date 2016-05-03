@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 
+import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.xml.XmlAttributeParser;
@@ -44,6 +45,8 @@ public class DrawableParser implements XmlAttributeParser {
             object.attachRenderData(renderData);
         }
 
-        renderData.getMaterial().getTexture().set(d);
+        Material material = new Material();
+        material.texture().set(d);
+        renderData.setMaterial(material);
     }
 }
