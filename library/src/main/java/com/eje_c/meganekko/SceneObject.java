@@ -640,8 +640,6 @@ public class SceneObject extends HybridObject {
             attachRenderData(new RenderData());
         }
 
-        Material old = mRenderData.getMaterial();
-        old.delete();
         mRenderData.setMaterial(material);
     }
 
