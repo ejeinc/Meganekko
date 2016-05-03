@@ -143,7 +143,7 @@ void Renderer::frustum_cull(Scene* scene, const Vector3f& camera_position,
             continue;
         }
 
-        Matrix4f model_matrix_tmp = render_data->owner_object()->transform()->getModelMatrix();
+        Matrix4f model_matrix_tmp = render_data->owner_object()->GetModelMatrix();
         Matrix4f mvp_matrix_tmp(vp_matrix * model_matrix_tmp);
 
         // Frustum
@@ -360,7 +360,7 @@ void Renderer::renderRenderData(RenderData* render_data,
                 Material* curr_material = render_data->pass(curr_pass)->material();
 
                 if (curr_material != nullptr) {
-                    Matrix4f model_matrix = render_data->owner_object()->transform()->getModelMatrix();
+                    Matrix4f model_matrix = render_data->owner_object()->GetModelMatrix();
                     Matrix4f mv_matrix(view_matrix * model_matrix);
                     Matrix4f mvp_matrix = projection_matrix * mv_matrix;
                     try {

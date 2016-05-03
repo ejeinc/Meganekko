@@ -20,17 +20,12 @@
 #include <jni.h>
 
 #include "SceneObject.h"
+#include "util/convert.h"
 
 namespace mgn {
 extern "C" {
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_SceneObject_initNativeInstance(JNIEnv * env, jobject obj);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_attachTransform(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jtransform);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_detachTransform(JNIEnv * env, jobject obj, jlong jsceneObject);
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_SceneObject_attachRenderData(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jrenderData);
@@ -56,22 +51,27 @@ Java_com_eje_1c_meganekko_SceneObject_getLODMinRange(JNIEnv * env, jobject obj, 
 JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_SceneObject_getLODMaxRange(JNIEnv * env, jobject obj, jlong jsceneObject);
 
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_SceneObject_setPosition(JNIEnv * env, jobject obj, jlong jsceneObject, jfloat x, jfloat y, jfloat z);
+
+JNIEXPORT jobject JNICALL
+Java_com_eje_1c_meganekko_SceneObject_getPosition(JNIEnv * env, jobject obj, jlong jsceneObject);
+
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_SceneObject_setScale(JNIEnv * env, jobject obj, jlong jsceneObject, jfloat x, jfloat y, jfloat z);
+
+JNIEXPORT jobject JNICALL
+Java_com_eje_1c_meganekko_SceneObject_getScale(JNIEnv * env, jobject obj, jlong jsceneObject);
+
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_SceneObject_setRotation(JNIEnv * env, jobject obj, jlong jsceneObject, jfloat x, jfloat y, jfloat z, jfloat w);
+
+JNIEXPORT jobject JNICALL
+Java_com_eje_1c_meganekko_SceneObject_getRotation(JNIEnv * env, jobject obj, jlong jsceneObject);
+
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_SceneObject_initNativeInstance(JNIEnv * env, jobject obj) {
     return reinterpret_cast<jlong>(new SceneObject());
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_attachTransform(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jtransform) {
-    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
-    Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    sceneObject->attachTransform(sceneObject, transform);
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_detachTransform(JNIEnv * env, jobject obj, jlong jsceneObject) {
-    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
-    sceneObject->detachTransform();
 }
 
 JNIEXPORT void JNICALL
@@ -124,6 +124,42 @@ JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_SceneObject_getLODMaxRange(JNIEnv * env, jobject obj, jlong jsceneObject) {
     SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
     return sceneObject->getLODMaxRange();
+}
+
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_SceneObject_setPosition(JNIEnv * env, jobject obj, jlong jsceneObject, jfloat x, jfloat y, jfloat z){
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    sceneObject->SetPosition(Vector3f(x, y, z));
+}
+
+JNIEXPORT jobject JNICALL
+Java_com_eje_1c_meganekko_SceneObject_getPosition(JNIEnv * env, jobject obj, jlong jsceneObject){
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    return ToJava(env, sceneObject->GetPosition());
+}
+
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_SceneObject_setScale(JNIEnv * env, jobject obj, jlong jsceneObject, jfloat x, jfloat y, jfloat z){
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    sceneObject->SetScale(Vector3f(x, y, z));
+}
+
+JNIEXPORT jobject JNICALL
+Java_com_eje_1c_meganekko_SceneObject_getScale(JNIEnv * env, jobject obj, jlong jsceneObject){
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    return ToJava(env, sceneObject->GetScale());
+}
+
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_SceneObject_setRotation(JNIEnv * env, jobject obj, jlong jsceneObject, jfloat x, jfloat y, jfloat z, jfloat w){
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    sceneObject->SetRotation(Quatf(x, y, z, w));
+}
+
+JNIEXPORT jobject JNICALL
+Java_com_eje_1c_meganekko_SceneObject_getRotation(JNIEnv * env, jobject obj, jlong jsceneObject){
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    return ToJava(env, sceneObject->GetRotation());
 }
 
 } // extern "C"

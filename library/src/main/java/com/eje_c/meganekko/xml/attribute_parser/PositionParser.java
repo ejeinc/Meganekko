@@ -4,14 +4,13 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.Transform;
 import com.eje_c.meganekko.xml.XmlAttributeParser;
+
+import org.joml.Vector3f;
 
 public class PositionParser implements XmlAttributeParser {
     @Override
     public void parse(Context context, SceneObject object, AttributeSet attributeSet) {
-
-        final Transform transform = object.getTransform();
 
         String position = attributeSet.getAttributeValue(NAMESPACE, "position");
         if (position != null) {
@@ -22,7 +21,7 @@ public class PositionParser implements XmlAttributeParser {
                     float x = Float.parseFloat(arr[0]);
                     float y = Float.parseFloat(arr[1]);
                     float z = Float.parseFloat(arr[2]);
-                    transform.setPosition(x, y, z);
+                    object.position(new Vector3f(x, y, z));
                     return;
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
@@ -33,9 +32,10 @@ public class PositionParser implements XmlAttributeParser {
 
             // Simple position
             String x = attributeSet.getAttributeValue(NAMESPACE, "x");
+            Vector3f vec = new Vector3f();
             if (x != null) {
                 try {
-                    transform.setPositionX(Float.parseFloat(x));
+                    vec.x = Float.parseFloat(x);
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
@@ -44,7 +44,7 @@ public class PositionParser implements XmlAttributeParser {
             String y = attributeSet.getAttributeValue(NAMESPACE, "y");
             if (y != null) {
                 try {
-                    transform.setPositionY(Float.parseFloat(y));
+                    vec.y = Float.parseFloat(y);
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
@@ -53,11 +53,12 @@ public class PositionParser implements XmlAttributeParser {
             String z = attributeSet.getAttributeValue(NAMESPACE, "z");
             if (z != null) {
                 try {
-                    transform.setPositionZ(Float.parseFloat(z));
+                    vec.z = Float.parseFloat(z);
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
             }
+            object.position(vec);
         }
     }
 }

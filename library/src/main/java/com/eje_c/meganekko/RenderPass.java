@@ -20,7 +20,7 @@ package com.eje_c.meganekko;
  * A RenderPass let one render the same scene object multiple times with different settings. This is useful to
  * achieve effects like outline in cartoon-ish rendering or computing addictive lights for instance.
  * <p/>
- * The benefit of using a render pass over duplicating the object and rendering twice is that like culling, transform and
+ * The benefit of using a render pass over duplicating the object and rendering twice is that like culling, target and
  * skinning are performed only once.
  * <p/>
  * A render pass encapsulates a material and all rendering states that can be set per pass.
