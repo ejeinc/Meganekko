@@ -22,6 +22,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
+import android.view.View;
 
 import com.eje_c.meganekko.RenderData.RenderMaskBit;
 import com.eje_c.meganekko.animation.PositionUpdateListener;
@@ -29,6 +30,7 @@ import com.eje_c.meganekko.animation.QuaternionEvaluator;
 import com.eje_c.meganekko.animation.RotationUpdateListener;
 import com.eje_c.meganekko.animation.ScaleUpdateListener;
 import com.eje_c.meganekko.animation.VectorEvaluator;
+import com.eje_c.meganekko.utility.Log;
 
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -55,6 +57,7 @@ import java.util.Set;
  */
 public class SceneObject extends HybridObject {
 
+    private static final String TAG = SceneObject.class.getSimpleName();
     private final List<SceneObject> mChildren = new ArrayList<>();
     private final Set<KeyEventListener> mKeyEventListeners = new HashSet<>();
     private int mId;
@@ -650,6 +653,48 @@ public class SceneObject extends HybridObject {
         }
 
         mRenderData.setMesh(mesh);
+    }
+
+    /**
+     * Get attached view.
+     *
+     * @return
+     */
+    public View view() {
+
+        Material material = material();
+        if (material == null) {
+            Log.d(TAG, "Material is not attached");
+            return null;
+        }
+
+        Texture.CanvasRenderer renderer = material.texture().getRenderer();
+        if (renderer == null) {
+            Log.d(TAG, "Texture renderer is not attached");
+            return null;
+        } else if (!(renderer instanceof Texture.ViewRenderer)) {
+            Log.d(TAG, "Texture renderer is not an instance of ViewRenderer");
+            return null;
+        }
+
+        return ((Texture.ViewRenderer) renderer).getView();
+    }
+
+    /**
+     * Attach view as Texture.
+     *
+     * @param view
+     */
+    public void view(View view) {
+
+        // Ensure SceneObject has material
+        Material material = material();
+        if (material == null) {
+            attachRenderData(new RenderData());
+            material = material();
+        }
+
+        material.texture().set(view);
     }
 
     public SceneObjectAnimator animate() {
