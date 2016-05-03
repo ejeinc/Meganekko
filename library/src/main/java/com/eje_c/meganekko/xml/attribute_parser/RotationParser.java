@@ -22,7 +22,7 @@ public class RotationParser implements XmlAttributeParser {
                     float axisX = Float.parseFloat(arr[1]);
                     float axisY = Float.parseFloat(arr[2]);
                     float axisZ = Float.parseFloat(arr[3]);
-                    object.rotation(new Quaternionf().rotateAxis(angle, axisX, axisY, axisZ));
+                    object.rotation(new Quaternionf().rotateAxis((float) Math.toRadians(angle), axisX, axisY, axisZ));
                     return;
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
