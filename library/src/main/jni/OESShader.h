@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+#include "includes.h"
 
 /***************************************************************************
  * Renders a GL_TEXTURE_EXTERNAL_OES texture.
@@ -23,11 +24,7 @@
 #ifndef OES_SHADER_H_
 #define OES_SHADER_H_
 
-#include <memory>
 #include "util/GL.h"
-
-#include "Kernel/OVR_Math.h"
-
 #include "Material.h"
 
 using namespace OVR;

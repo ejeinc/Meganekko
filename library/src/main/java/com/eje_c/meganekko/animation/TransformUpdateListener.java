@@ -2,12 +2,12 @@ package com.eje_c.meganekko.animation;
 
 import android.animation.ValueAnimator;
 
-import com.eje_c.meganekko.Transform;
+import com.eje_c.meganekko.SceneObject;
 
 public abstract class TransformUpdateListener implements ValueAnimator.AnimatorUpdateListener {
-    protected final Transform transform;
+    protected final SceneObject target;
 
-    public TransformUpdateListener(Transform transform) {
-        this.transform = transform;
+    public TransformUpdateListener(SceneObject target) {
+        this.target = target;
     }
 }

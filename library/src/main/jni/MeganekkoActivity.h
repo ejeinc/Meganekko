@@ -15,19 +15,11 @@
  * limitations under the License.
  */
 
+#include "includes.h"
+
 #ifndef ACTIVITY_JNI_H
 #define ACTIVITY_JNI_H
 
-#include "Kernel/OVR_Math.h"
-#include "App.h"
-#include "AppLocal.h"
-#include "GuiSys.h"
-#include "GazeCursor.h"
-#include "OVR_Locale.h"
-#include "SoundEffectContext.h"
-#include "Input.h"
-#include "Android/JniUtils.h"
-#include "SoundEffectContext.h"
 #include "Scene.h"
 #include "OESShader.h"
 

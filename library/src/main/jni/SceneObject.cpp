@@ -17,6 +17,7 @@
  * Objects in a scene.
  ***************************************************************************/
 
+#include "includes.h"
 #include "SceneObject.h"
 
 #include "RenderData.h"
@@ -24,7 +25,9 @@
 
 namespace mgn {
     SceneObject::SceneObject() : HybridObject(),
-        transform_(),
+        position(Vector3f()),
+        scale(Vector3f(1, 1, 1)),
+        rotation(Quatf()),
         render_data_(),
         parent_(),
         children_(),
@@ -43,25 +46,6 @@ namespace mgn {
 
 SceneObject::~SceneObject() {
     delete queries_;
-}
-
-void SceneObject::attachTransform(SceneObject* self, Transform* transform) {
-    if (transform_) {
-        detachTransform();
-    }
-    SceneObject* owner_object(transform->owner_object());
-    if (owner_object) {
-        owner_object->detachRenderData();
-    }
-    transform_ = transform;
-    transform_->set_owner_object(self);
-}
-
-void SceneObject::detachTransform() {
-    if (transform_) {
-        transform_->removeOwnerObject();
-        transform_ = NULL;
-    }
 }
 
 void SceneObject::attachRenderData(SceneObject* self, RenderData* render_data) {
@@ -93,7 +77,6 @@ void SceneObject::addChildObject(SceneObject* self, SceneObject* child) {
     }
     children_.push_back(child);
     child->parent_ = self;
-    child->transform()->invalidate(false);
 }
 
 void SceneObject::removeChildObject(SceneObject* child) {
@@ -147,10 +130,10 @@ bool SceneObject::isColliding(SceneObject *scene_object) {
 
     float this_object_bounding_box[6], check_object_bounding_box[6];
 
-    OVR::Matrix4f this_object_model_matrix = this->render_data()->owner_object()->transform()->getModelMatrix();
+    OVR::Matrix4f this_object_model_matrix = this->render_data()->owner_object()->GetModelMatrix();
     this->render_data()->mesh()->getTransformedBoundingBoxInfo(&this_object_model_matrix, this_object_bounding_box);
 
-    OVR::Matrix4f check_object_model_matrix = scene_object->render_data()->owner_object()->transform()->getModelMatrix();
+    OVR::Matrix4f check_object_model_matrix = scene_object->render_data()->owner_object()->GetModelMatrix();
     scene_object->render_data()->mesh()->getTransformedBoundingBoxInfo(&check_object_model_matrix, check_object_bounding_box);
 
     bool result = (this_object_bounding_box[3] > check_object_bounding_box[0]
@@ -161,6 +144,93 @@ bool SceneObject::isColliding(SceneObject *scene_object) {
             && this_object_bounding_box[2] < check_object_bounding_box[5]);
 
     return result;
+}
+
+void SceneObject::SetPosition(const Vector3f& position) {
+    this->position = position;
+    Invalidate(false);
+}
+
+void SceneObject::SetScale(const Vector3f& scale) {
+    this->scale = scale;
+    Invalidate(false);
+}
+
+void SceneObject::SetRotation(const Quatf& rotation) {
+    this->rotation = rotation;
+    Invalidate(true);
+}
+
+const Matrix4f & SceneObject::GetModelMatrix() {
+    
+    if (modelMatrixInvalidated) {
+        UpdateModelMatrix();
+        modelMatrixInvalidated = false;
+    }
+        
+    return modelMatrix;
+}
+
+void SceneObject::UpdateModelMatrix() {
+    Matrix4f translationMatrix = Matrix4f::Translation(position);
+    Matrix4f rotationMatrix = Matrix4f(rotation);
+    Matrix4f scaleMatrix = Matrix4f::Scaling(scale);
+    Matrix4f localMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+
+    if (parent() != 0) {
+        Matrix4f matrix = parent()->GetModelMatrix() * localMatrix;
+        this->modelMatrix = matrix;
+    } else {
+        this->modelMatrix = localMatrix;
+    }
+}
+
+float inline sign(float a) {
+    return a >= 0 ? 1.0f : -1.0f;
+}
+
+void SceneObject::SetModelMatrix(const Matrix4f & matrix) {
+
+    float xs = sign(matrix.M[0][0] * matrix.M[1][0] * matrix.M[2][0] * matrix.M[3][0]);
+    float ys = sign(matrix.M[0][1] * matrix.M[1][1] * matrix.M[2][1] * matrix.M[3][1]);
+    float zs = sign(matrix.M[0][2] * matrix.M[1][2] * matrix.M[2][2] * matrix.M[3][2]);
+
+    Vector3f newScale(
+            xs * Vector3f(matrix.M[0][0], matrix.M[1][0], matrix.M[2][0]).Length(),
+            ys * Vector3f(matrix.M[0][1], matrix.M[1][1], matrix.M[2][1]).Length(),
+            zs * Vector3f(matrix.M[0][2], matrix.M[1][2], matrix.M[2][2]).Length());
+
+    Matrix3f rotationMatrix(
+            matrix.M[0][0] / newScale.x, matrix.M[0][1] / newScale.y, matrix.M[0][2] / newScale.z,
+            matrix.M[1][0] / newScale.x, matrix.M[1][1] / newScale.y, matrix.M[1][2] / newScale.z,
+            matrix.M[2][0] / newScale.x, matrix.M[2][1] / newScale.y, matrix.M[2][2] / newScale.z);
+
+    position = matrix.GetTranslation();
+    scale = newScale;
+    rotation = Quatf(rotationMatrix);
+}
+
+void SceneObject::Invalidate(bool rotationUpdated) {
+    if (!modelMatrixInvalidated) {
+        modelMatrixInvalidated = true;
+        std::vector<SceneObject*> objects = children();
+        for (auto it = objects.begin(); it != objects.end(); ++it) {
+            (*it)->Invalidate(false);
+        }
+    }
+    
+    if (rotationUpdated) {
+        // scale rotation if needed to avoid overflow
+        static const float threshold = sqrt(FLT_MAX) / 2.0f;
+        static const float scale_factor = 0.5f / sqrt(FLT_MAX);
+        if (rotation.w > threshold || rotation.x > threshold
+                || rotation.y > threshold || rotation.z > threshold) {
+            rotation.w *= scale_factor;
+            rotation.x *= scale_factor;
+            rotation.y *= scale_factor;
+            rotation.z *= scale_factor;
+        }
+    }
 }
 
 }

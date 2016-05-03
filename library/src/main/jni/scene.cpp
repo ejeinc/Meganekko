@@ -17,11 +17,11 @@
  * Holds scene objects. Can be used by engines.
  ***************************************************************************/
 
+#include "includes.h"
 #include "Scene.h"
 
 #include "SceneObject.h"
 #include "RenderData.h"
-#include "Kernel/OVR_Geometry.h"
 
 namespace mgn {
     Scene::Scene() : SceneObject(),
@@ -57,9 +57,9 @@ Matrix4f Scene::Render(const int eye) {
     return viewProjectionM;
 }
 
-IntersectRayBoundsResult Scene::IntersectRayBounds(const SceneObject *target, bool axisInWorld) {
+IntersectRayBoundsResult Scene::IntersectRayBounds(SceneObject *target, bool axisInWorld) {
 
-    Matrix4f worldToModelM = target->transform()->getModelMatrix().Inverted();
+    Matrix4f worldToModelM = target->GetModelMatrix().Inverted();
     Matrix4f invertedCenterViewM = centerViewM.Inverted();
     Vector3f inWorldCenterViewPos = invertedCenterViewM.GetTranslation();
     Quatf centerViewRot = Quatf(invertedCenterViewM);
@@ -82,8 +82,8 @@ IntersectRayBoundsResult Scene::IntersectRayBounds(const SceneObject *target, bo
         result.second = rayStart + t1 * rayDir;
 
         if (axisInWorld) {
-            result.first = target->transform()->getModelMatrix().Transform(result.first);
-            result.second = target->transform()->getModelMatrix().Transform(result.second);
+            result.first = target->GetModelMatrix().Transform(result.first);
+            result.second = target->GetModelMatrix().Transform(result.second);
         }
     }
 

@@ -16,17 +16,15 @@
 /***************************************************************************
  * Objects in a scene.
  ***************************************************************************/
+#include "includes.h"
 
 #ifndef SCENE_OBJECT_H_
 #define SCENE_OBJECT_H_
 
-#include <algorithm>
-#include <vector>
-#include <memory>
-
 #include "HybridObject.h"
-#include "Transform.h"
 #include "util/GL.h"
+
+using namespace OVR;
 
 namespace mgn {
 class Camera;
@@ -56,13 +54,6 @@ public:
 
     bool is_query_issued() {
         return query_currently_issued_;
-    }
-
-    void attachTransform(SceneObject* self, Transform* transform);
-    void detachTransform();
-
-    Transform* transform() const {
-        return transform_;
     }
 
     void attachRenderData(SceneObject* self, RenderData* render_data);
@@ -113,6 +104,44 @@ public:
         }
         return false;
     }
+    
+    const Vector3f & GetPosition() const {
+        return position;
+    }
+    
+    const Vector3f & GetPosition() {
+        return position;
+    }
+    
+    const Vector3f & GetScale() const {
+        return scale;
+    }
+    
+    const Vector3f & GetScale() {
+        return scale;
+    }
+    
+    const Quatf & GetRotation() const {
+        return rotation;
+    }
+    
+    const Quatf & GetRotation() {
+        return rotation;
+    }
+    
+    void SetPosition(const Vector3f& position);
+    
+    void SetScale(const Vector3f& scale);
+    
+    void SetRotation(const Quatf& rotation);
+    
+    const Matrix4f & GetModelMatrix();
+    
+    void UpdateModelMatrix();
+    
+    void SetModelMatrix(const Matrix4f & matrix);
+    
+    void Invalidate(bool rotationUpdated);
 
 private:
     SceneObject(const SceneObject& scene_object);
@@ -122,7 +151,12 @@ private:
 
 private:
 
-    Transform* transform_;
+    Vector3f position;
+    Vector3f scale;
+    Quatf rotation;
+    Matrix4f modelMatrix;
+    bool modelMatrixInvalidated = true;
+    
     RenderData* render_data_;
     SceneObject* parent_;
     std::vector<SceneObject*> children_;

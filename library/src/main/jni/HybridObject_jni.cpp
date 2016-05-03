@@ -13,21 +13,20 @@
  * limitations under the License.
  */
 
-#include <jni.h>
-
+#include "includes.h"
 #include "HybridObject.h"
 
 namespace mgn {
+#ifdef __cplusplus
 extern "C" {
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_HybridObject_delete(JNIEnv * env, jobject obj, jlong jhybridObject);
-
-} // extern C
+#endif
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_HybridObject_delete(JNIEnv * env, jobject obj, jlong jhybridObject) {
     delete reinterpret_cast<HybridObject*>(jhybridObject);
 }
 
+#ifdef __cplusplus 
+} // extern C
+#endif
 } // namespace mgn

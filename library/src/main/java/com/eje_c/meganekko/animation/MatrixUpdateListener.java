@@ -2,18 +2,16 @@ package com.eje_c.meganekko.animation;
 
 import android.animation.ValueAnimator;
 
-import com.eje_c.meganekko.Transform;
-
-import org.joml.Matrix4f;
+import com.eje_c.meganekko.SceneObject;
 
 public class MatrixUpdateListener extends TransformUpdateListener {
 
-    public MatrixUpdateListener(Transform transform) {
-        super(transform);
+    public MatrixUpdateListener(SceneObject target) {
+        super(target);
     }
 
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
-        transform.setModelMatrix((Matrix4f) animation.getAnimatedValue());
+//        target.setModelMatrix((Matrix4f) animation.getAnimatedValue());
     }
 }

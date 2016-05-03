@@ -15,12 +15,8 @@
 
 package com.eje_c.meganekko;
 
-import android.util.Log;
-
-import com.eje_c.meganekko.RenderPass.CullFaceEnum;
 import com.eje_c.meganekko.utility.Threads;
 
-import java.util.ArrayList;
 import java.util.concurrent.Future;
 
 import static android.opengl.GLES30.GL_LINES;
@@ -42,20 +38,11 @@ public class RenderData extends Component {
 
     private static final String TAG = "Meganekko";
     private Mesh mMesh;
-    private ArrayList<RenderPass> mRenderPassList;
-
-    /**
-     * Constructor.
-     */
-    public RenderData() {
-        RenderPass basePass = new RenderPass();
-        mRenderPassList = new ArrayList<RenderPass>();
-        addPass(basePass);
-    }
+    private Material mMaterial;
 
     private static native void setMesh(long renderData, long mesh);
 
-    private static native void addPass(long renderData, long renderPass);
+    private static native void setMaterial(long renderData, long material);
 
     private static native int getRenderMask(long renderData);
 
@@ -93,17 +80,22 @@ public class RenderData extends Component {
     protected native long initNativeInstance();
 
     @Override
-    public void delete() {
-        if (mMesh != null) {
-            mMesh.delete();
-            mMesh = null;
-        }
+    protected void delete() {
 
-        if (mRenderPassList != null) {
-            for (RenderPass renderPass : mRenderPassList) {
-                renderPass.delete();
+        long nativePtr = getNative();
+        if (nativePtr != 0) {
+
+            if (mMesh != null) {
+                mMesh.delete();
+                mMesh = null;
+                setMesh(nativePtr, 0);
             }
-            mRenderPassList = null;
+
+            if (mMaterial != null) {
+                mMaterial.delete();
+                mMaterial = null;
+                setMaterial(nativePtr, 0);
+            }
         }
 
         super.delete();
@@ -153,36 +145,11 @@ public class RenderData extends Component {
     }
 
     /**
-     * Add a render {@link RenderPass pass} to this RenderData.
-     *
-     * @param pass
-     */
-    public void addPass(RenderPass pass) {
-        mRenderPassList.add(pass);
-        addPass(getNative(), pass.getNative());
-    }
-
-    /**
-     * Get a Rendering {@link RenderPass Pass} for this Mesh
-     *
-     * @param passIndex The index of the RenderPass to get.
-     * @return
-     */
-    public RenderPass getPass(int passIndex) {
-        if (passIndex < mRenderPassList.size()) {
-            return mRenderPassList.get(passIndex);
-        } else {
-            Log.e(TAG, "Trying to get invalid pass. Pass " + passIndex + " was not created.");
-            return null;
-        }
-    }
-
-    /**
      * @return The {@link Material material} the {@link Mesh mesh} is
      * being rendered with.
      */
     public Material getMaterial() {
-        return getMaterial(0);
+        return mMaterial;
     }
 
     /**
@@ -191,35 +158,8 @@ public class RenderData extends Component {
      * @param material The {@link Material material} for rendering.
      */
     public void setMaterial(Material material) {
-        setMaterial(material, 0);
-    }
-
-    /**
-     * @param passIndex The {@link RenderPass pass} index to retrieve material from.
-     * @return The {@link Material material} the {@link Mesh mesh} is
-     * being rendered with.
-     */
-    public Material getMaterial(int passIndex) {
-        if (passIndex < mRenderPassList.size()) {
-            return mRenderPassList.get(passIndex).getMaterial();
-        } else {
-            Log.e(TAG, "Trying to get material from invalid pass. Pass " + passIndex + " was not created.");
-            return null;
-        }
-    }
-
-    /**
-     * Set the {@link Material material} this pass will be rendered with.
-     *
-     * @param material  The {@link Material material} for rendering.
-     * @param passIndex The rendering pass this material will be assigned to.
-     */
-    public void setMaterial(Material material, int passIndex) {
-        if (passIndex < mRenderPassList.size()) {
-            mRenderPassList.get(passIndex).setMaterial(material);
-        } else {
-            Log.e(TAG, "Trying to set material from invalid pass. Pass " + passIndex + " was not created.");
-        }
+        this.mMaterial = material;
+        setMaterial(getNative(), material.getNative());
     }
 
     /**
@@ -257,55 +197,6 @@ public class RenderData extends Component {
      */
     public void setRenderingOrder(int renderingOrder) {
         setRenderingOrder(getNative(), renderingOrder);
-    }
-
-    /**
-     * @return current face to be culled See {@link CullFaceEnum}.
-     */
-    public CullFaceEnum getCullFace() {
-        return getCullFace(0);
-    }
-
-    /**
-     * Set the face to be culled
-     *
-     * @param cullFace {@code CullFaceEnum.Back} Tells Graphics API to discard
-     *                 back faces, {@code CullFaceEnum.Front} Tells Graphics API
-     *                 to discard front faces, {@code CullFaceEnum.None} Tells
-     *                 Graphics API to not discard any face
-     */
-    public void setCullFace(CullFaceEnum cullFace) {
-        setCullFace(cullFace, 0);
-    }
-
-    /**
-     * @param passIndex The rendering pass index to query cull face state.
-     * @return current face to be culled See {@link CullFaceEnum}.
-     */
-    public CullFaceEnum getCullFace(int passIndex) {
-        if (passIndex < mRenderPassList.size()) {
-            return mRenderPassList.get(passIndex).getCullFace();
-        } else {
-            Log.e(TAG, "Trying to get cull face from invalid pass. Pass " + passIndex + " was not created.");
-            return CullFaceEnum.Back;
-        }
-    }
-
-    /**
-     * Set the face to be culled
-     *
-     * @param cullFace  {@code CullFaceEnum.Back} Tells Graphics API to discard
-     *                  back faces, {@code CullFaceEnum.Front} Tells Graphics API
-     *                  to discard front faces, {@code CullFaceEnum.None} Tells
-     *                  Graphics API to not discard any face
-     * @param passIndex The rendering pass to set cull face state
-     */
-    public void setCullFace(CullFaceEnum cullFace, int passIndex) {
-        if (passIndex < mRenderPassList.size()) {
-            mRenderPassList.get(passIndex).setCullFace(cullFace);
-        } else {
-            Log.e(TAG, "Trying to set cull face to a invalid pass. Pass " + passIndex + " was not created.");
-        }
     }
 
     /**

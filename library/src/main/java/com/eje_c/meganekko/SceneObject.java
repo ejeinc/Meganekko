@@ -22,6 +22,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
+import android.view.View;
 
 import com.eje_c.meganekko.RenderData.RenderMaskBit;
 import com.eje_c.meganekko.animation.PositionUpdateListener;
@@ -29,6 +30,7 @@ import com.eje_c.meganekko.animation.QuaternionEvaluator;
 import com.eje_c.meganekko.animation.RotationUpdateListener;
 import com.eje_c.meganekko.animation.ScaleUpdateListener;
 import com.eje_c.meganekko.animation.VectorEvaluator;
+import com.eje_c.meganekko.utility.Log;
 
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -42,8 +44,7 @@ import java.util.Set;
 /**
  * One of the key Meganekko classes: a scene object.
  * <p/>
- * Every scene object has a {@linkplain #getTransform() location}, and can have
- * children. An invisible scene object can be used to
+ * Every scene object has children. An invisible scene object can be used to
  * move a set of scene as a unit, preserving their relative geometry. Invisible
  * scene objects don't need any {@linkplain SceneObject#getRenderData() render
  * data.}
@@ -56,22 +57,20 @@ import java.util.Set;
  */
 public class SceneObject extends HybridObject {
 
+    private static final String TAG = SceneObject.class.getSimpleName();
     private final List<SceneObject> mChildren = new ArrayList<>();
     private final Set<KeyEventListener> mKeyEventListeners = new HashSet<>();
     private int mId;
     private String mName;
-    private Transform mTransform;
     private RenderData mRenderData;
     private SceneObject mParent;
     private float mOpacity = 1.0f;
     private boolean mVisible = true;
 
     /**
-     * Constructs an empty scene object with a default {@link Transform
-     * transform}.
+     * Constructs an empty scene object with a default transform.
      */
     public SceneObject() {
-        attachTransform(new Transform());
     }
 
     /**
@@ -84,10 +83,6 @@ public class SceneObject extends HybridObject {
         attachRenderData(renderData);
         renderData.setMesh(mesh);
     }
-
-    private static native void attachTransform(long sceneObject, long transform);
-
-    private static native void detachTransform(long sceneObject);
 
     private static native void attachRenderData(long sceneObject, long renderData);
 
@@ -105,24 +100,35 @@ public class SceneObject extends HybridObject {
 
     private static native float getLODMaxRange(long sceneObject);
 
+    private static native void setPosition(long sceneObject, float x, float y, float z);
+
+    private static native void setScale(long sceneObject, float x, float y, float z);
+
+    private static native void setRotation(long sceneObject, float x, float y, float z, float w);
+
+    private static native Vector3f getPosition(long sceneObject);
+
+    private static native Vector3f getScale(long sceneObject);
+
+    private static native Quaternionf getRotation(long sceneObject);
+
     @Override
     protected native long initNativeInstance();
 
     @Override
-    public void delete() {
+    protected void delete() {
 
-        if (mTransform != null) {
-            mTransform.delete();
-            mTransform = null;
+        // Delete children first
+        while (getChildrenCount() > 0) {
+            SceneObject child = getChildByIndex(0);
+            removeChildObject(child);
+            child.delete();
         }
 
+        // Delete self
         if (mRenderData != null) {
             mRenderData.delete();
             mRenderData = null;
-        }
-
-        for (SceneObject child : getChildren()) {
-            child.delete();
         }
 
         super.delete();
@@ -169,39 +175,6 @@ public class SceneObject extends HybridObject {
      */
     public void setName(String name) {
         mName = name;
-    }
-
-    /**
-     * Replace the current {@link Transform transform}
-     *
-     * @param transform New transform.
-     */
-    void attachTransform(Transform transform) {
-        mTransform = transform;
-        attachTransform(getNative(), transform.getNative());
-    }
-
-    /**
-     * Remove the object's {@link Transform transform}. After this call, the
-     * object will have no transformations associated with it.
-     */
-    void detachTransform() {
-        mTransform = null;
-        detachTransform(getNative());
-    }
-
-    /**
-     * Get the {@link Transform}.
-     * <p/>
-     * A {@link Transform} encapsulates a 4x4 matrix that specifies how to
-     * render the {@linkplain Mesh GL mesh:} transform methods let you move,
-     * rotate, and scale your scene object.
-     *
-     * @return The current {@link Transform transform}. If no transform is
-     * currently attached to the object, returns {@code null}.
-     */
-    public Transform getTransform() {
-        return mTransform;
     }
 
     /**
@@ -633,27 +606,27 @@ public class SceneObject extends HybridObject {
      */
 
     public void position(Vector3f position) {
-        getTransform().setPosition(position);
+        setPosition(getNative(), position.x, position.y, position.z);
     }
 
     public Vector3f position() {
-        return getTransform().getPosition();
+        return getPosition(getNative());
     }
 
     public void scale(Vector3f scale) {
-        getTransform().setScale(scale);
+        setScale(getNative(), scale.x, scale.y, scale.z);
     }
 
     public Vector3f scale() {
-        return getTransform().getScale();
+        return getScale(getNative());
     }
 
     public void rotation(Quaternionf rotation) {
-        getTransform().setRotation(rotation);
+        setRotation(getNative(), rotation.x, rotation.y, rotation.z, rotation.w);
     }
 
     public Quaternionf rotation() {
-        return getTransform().getRotation();
+        return getRotation(getNative());
     }
 
     public Material material() {
@@ -686,6 +659,48 @@ public class SceneObject extends HybridObject {
         mRenderData.setMesh(mesh);
     }
 
+    /**
+     * Get attached view.
+     *
+     * @return
+     */
+    public View view() {
+
+        Material material = material();
+        if (material == null) {
+            Log.d(TAG, "Material is not attached");
+            return null;
+        }
+
+        Texture.CanvasRenderer renderer = material.texture().getRenderer();
+        if (renderer == null) {
+            Log.d(TAG, "Texture renderer is not attached");
+            return null;
+        } else if (!(renderer instanceof Texture.ViewRenderer)) {
+            Log.d(TAG, "Texture renderer is not an instance of ViewRenderer");
+            return null;
+        }
+
+        return ((Texture.ViewRenderer) renderer).getView();
+    }
+
+    /**
+     * Attach view as Texture.
+     *
+     * @param view
+     */
+    public void view(View view) {
+
+        // Ensure SceneObject has material
+        Material material = material();
+        if (material == null) {
+            attachRenderData(new RenderData());
+            material = material();
+        }
+
+        material.texture().set(view);
+    }
+
     public SceneObjectAnimator animate() {
         return new SceneObjectAnimator();
     }
@@ -705,7 +720,7 @@ public class SceneObject extends HybridObject {
         public SceneObjectAnimator moveTo(Vector3f position) {
             Vector3f fromPos = lastPos != null ? lastPos : position();
             ValueAnimator animator = ValueAnimator.ofObject(new VectorEvaluator(), fromPos, position);
-            animator.addUpdateListener(new PositionUpdateListener(getTransform()));
+            animator.addUpdateListener(new PositionUpdateListener(SceneObject.this));
             animators.add(animator);
             lastPos = position;
             return this;
@@ -720,7 +735,7 @@ public class SceneObject extends HybridObject {
         public SceneObjectAnimator scaleTo(Vector3f scale) {
             Vector3f fromScale = lastScale != null ? lastScale : scale();
             ValueAnimator animator = ValueAnimator.ofObject(new VectorEvaluator(), fromScale, scale);
-            animator.addUpdateListener(new ScaleUpdateListener(getTransform()));
+            animator.addUpdateListener(new ScaleUpdateListener(SceneObject.this));
             animators.add(animator);
             lastScale = scale;
             return this;
@@ -735,7 +750,7 @@ public class SceneObject extends HybridObject {
         public SceneObjectAnimator rotateTo(Quaternionf rotation) {
             Quaternionf fromRotation = lastRotation != null ? lastRotation : rotation();
             ValueAnimator animator = ValueAnimator.ofObject(new QuaternionEvaluator(), fromRotation, rotation);
-            animator.addUpdateListener(new RotationUpdateListener(getTransform()));
+            animator.addUpdateListener(new RotationUpdateListener(SceneObject.this));
             animators.add(animator);
             lastRotation = rotation;
             return this;

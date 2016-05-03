@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.eje_c.meganekko.Material;
 import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
@@ -40,7 +41,9 @@ public class ViewParser implements XmlAttributeParser {
                     View view = LayoutInflater.from(context).inflate(res, null);
                     ensureHaveRenderData(object);
                     final RenderData renderData = object.getRenderData();
-                    renderData.getMaterial().getTexture().set(view);
+                    Material material = new Material();
+                    material.texture().set(view);
+                    renderData.setMaterial(material);
 
                     // Set auto sized view
                     if (attributeSet.getAttributeValue(NAMESPACE, "width") == null

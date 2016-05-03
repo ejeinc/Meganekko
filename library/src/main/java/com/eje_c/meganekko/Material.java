@@ -26,6 +26,7 @@ import com.eje_c.meganekko.utility.Colors;
 public class Material extends HybridObject {
 
     private Texture mTexture;
+    private CullFace cullFace;
 
     private static native void setColor(long material, float r, float g, float b, float a);
 
@@ -37,11 +38,13 @@ public class Material extends HybridObject {
 
     private static native void setStereoMode(long material, int stereoMode);
 
+    private static native void setCullFace(long material, int cullFace);
+
     @Override
     protected native long initNativeInstance();
 
     @Override
-    public void delete() {
+    protected void delete() {
 
         if (mTexture != null) {
             mTexture.release();
@@ -145,8 +148,21 @@ public class Material extends HybridObject {
         }
     }
 
+    public void setCullFace(CullFace cullFace) {
+        this.cullFace = cullFace;
+        setCullFace(getNative(), cullFace.ordinal());
+    }
+
+    public CullFace getCullFace() {
+        return cullFace;
+    }
+
     public enum StereoMode {
         NORMAL, TOP_BOTTOM, BOTTOM_TOP, LEFT_RIGHT, RIGHT_LEFT,
         TOP_ONLY, BOTTOM_ONLY, LEFT_ONLY, RIGHT_ONLY
+    }
+
+    public enum CullFace {
+        CullBack, CullFront, CullNone
     }
 }

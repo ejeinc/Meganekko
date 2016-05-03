@@ -4,14 +4,13 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.Transform;
 import com.eje_c.meganekko.xml.XmlAttributeParser;
+
+import org.joml.Quaternionf;
 
 public class RotationParser implements XmlAttributeParser {
     @Override
     public void parse(Context context, SceneObject object, AttributeSet attributeSet) {
-
-        final Transform transform = object.getTransform();
 
         String rotation = attributeSet.getAttributeValue(NAMESPACE, "rotation");
         if (rotation != null) {
@@ -23,7 +22,7 @@ public class RotationParser implements XmlAttributeParser {
                     float axisX = Float.parseFloat(arr[1]);
                     float axisY = Float.parseFloat(arr[2]);
                     float axisZ = Float.parseFloat(arr[3]);
-                    transform.setRotationByAxis(angle, axisX, axisY, axisZ);
+                    object.rotation(new Quaternionf().rotateAxis(angle, axisX, axisY, axisZ));
                     return;
                 } catch (NumberFormatException e) {
                     e.printStackTrace();

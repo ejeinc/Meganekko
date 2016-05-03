@@ -13,17 +13,14 @@
  * limitations under the License.
  */
 
-/***************************************************************************
- * JNI
- ***************************************************************************/
-
-#include <jni.h>
-
+#include "includes.h"
 #include "Material.h"
 #include "util/convert.h"
 
 namespace mgn {
+#ifdef __cplusplus
 extern "C" {
+#endif
 
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_Material_initNativeInstance(JNIEnv * env, jobject obj) {
@@ -66,6 +63,13 @@ Java_com_eje_1c_meganekko_Material_setStereoMode(JNIEnv * env, jobject obj, jlon
     material->SetStereoMode(static_cast<Material::StereoMode>(jstereoMode));
 }
 
-} // extern C
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_Material_setCullFace(JNIEnv* env, jobject obj, jlong jmaterial, jint jcullFace) {
+    Material* material = reinterpret_cast<Material*>(jmaterial);
+    material->SetCullFace(static_cast<int>(jcullFace));
+}
 
+#ifdef __cplusplus 
+} // extern C
+#endif
 } // namespace mgn

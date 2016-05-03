@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 
+#include "includes.h"
+
 /***************************************************************************
  * Containing data about how to render an object.
  ***************************************************************************/
@@ -20,16 +22,12 @@
 #ifndef RENDER_DATA_H_
 #define RENDER_DATA_H_
 
-#include <memory>
-#include <vector>
-
 #include "Component.h"
-#include "RenderPass.h"
+#include "Material.h"
 #include "util/GL.h"
 
 namespace mgn {
 class Mesh;
-class Material;
 
 class RenderData: public Component {
 public:
@@ -39,10 +37,6 @@ public:
 
     enum RenderMaskBit {
         Left = 0x1, Right = 0x2
-    };
-
-    enum CullFace {
-        CullBack = 0, CullFront, CullNone
     };
 
     RenderData() : Component(),
@@ -58,7 +52,6 @@ public:
     }
 
     ~RenderData() {
-        render_pass_list_.clear();
     }
 
     Mesh* mesh() const {
@@ -69,34 +62,20 @@ public:
         mesh_ = mesh;
     }
 
-    void add_pass(RenderPass* render_pass) {
-        render_pass_list_.push_back(render_pass);
-    }
-
-    const RenderPass* pass(int pass) const {
-        if (pass >= 0 && pass < render_pass_list_.size()) {
-            return render_pass_list_[pass];
-        }
-
-        return nullptr;
-    }
-
-    const int pass_count() const {
-        return render_pass_list_.size();
-    }
-
     Material* material(int pass) const {
-        if (pass >= 0 && pass < render_pass_list_.size()) {
-            return render_pass_list_[pass]->material();
-        }
-
-        return nullptr;
+        return material_;
     }
 
-    void set_material(Material* material, int pass) {
-        if (pass >= 0 && pass < render_pass_list_.size()) {
-            render_pass_list_[pass]->set_material(material);
-        }
+    void SetMaterial(Material* material) {
+        this->material_ = material;
+    }
+    
+    Material* GetMaterial() const {
+        return material_;
+    }
+    
+    Material* GetMaterial() {
+        return material_;
     }
 
     int render_mask() const {
@@ -113,20 +92,6 @@ public:
 
     void set_rendering_order(int rendering_order) {
         rendering_order_ = rendering_order;
-    }
-
-    bool cull_face(int pass = 0) const {
-        if (pass >= 0 && pass < render_pass_list_.size()) {
-            return render_pass_list_[pass]->cull_face();
-        }
-
-        return nullptr;
-    }
-
-    void set_cull_face(int cull_face, int pass) {
-        if (pass >= 0 && pass < render_pass_list_.size()) {
-            render_pass_list_[pass]->set_cull_face(cull_face);
-        }
     }
 
     bool offset() const {
@@ -196,7 +161,7 @@ private:
     static const int DEFAULT_RENDER_MASK = Left | Right;
     static const int DEFAULT_RENDERING_ORDER = Geometry;
     Mesh* mesh_;
-    std::vector<RenderPass*> render_pass_list_;
+    Material * material_;
     int render_mask_;
     int rendering_order_;
     bool offset_;

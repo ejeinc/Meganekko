@@ -17,17 +17,13 @@
 /***************************************************************************
  * Holds scene objects. Can be used by engines.
  ***************************************************************************/
+#include "includes.h"
 
 #ifndef SCENE_H_
 #define SCENE_H_
 
-#include <memory>
-#include <vector>
-
-
 #include "SceneObject.h"
 #include "Renderer.h"
-#include "Kernel/OVR_Math.h"
 
 using namespace OVR;
 
@@ -77,7 +73,7 @@ public:
 
     Matrix4f Render(const int eye);
 
-    IntersectRayBoundsResult IntersectRayBounds(const SceneObject * target, bool axisInWorld);
+    IntersectRayBoundsResult IntersectRayBounds(SceneObject * target, bool axisInWorld);
 
     void SetViewPosition(const Vector3f & pos) {
         viewPosition = pos;

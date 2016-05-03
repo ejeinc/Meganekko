@@ -78,7 +78,7 @@ public final class AiNode {
      * Constructor.
      *
      * @param parent         the parent node, may be null
-     * @param transform      the transform matrix
+     * @param transform      the target matrix
      * @param meshReferences array of mesh references
      * @param name           the name of the node
      */

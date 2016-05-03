@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 
+#include "includes.h"
+
 /***************************************************************************
  * Links textures and shaders.
  ***************************************************************************/
@@ -20,16 +22,8 @@
 #ifndef MATERIAL_H_
 #define MATERIAL_H_
 
-#include <jni.h>
-#include <map>
-#include <memory>
-#include <string>
-
 #include "util/GL.h"
 #include "HybridObject.h"
-
-#include "Kernel/OVR_Math.h"
-#include "SurfaceTexture.h"
 
 using namespace OVR;
 
@@ -39,6 +33,10 @@ class Color;
 class Material: public HybridObject {
 public:
 
+    enum CullFace : int {
+        CullBack = 0, CullFront, CullNone
+    };
+    
     enum StereoMode {
         NORMAL = 0, TOP_BOTTOM, BOTTOM_TOP, LEFT_RIGHT, RIGHT_LEFT,
         TOP_ONLY, BOTTOM_ONLY, LEFT_ONLY, RIGHT_ONLY
@@ -46,6 +44,7 @@ public:
 
     explicit Material(JNIEnv * jni) {
         Mode = NORMAL;
+        cullFace = DEFAULT_CULL_FACE;
         surfaceTexture = new SurfaceTexture(jni);
         color = Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
         opacity = 1.0f;
@@ -95,6 +94,18 @@ public:
     void SetOpacity(const float opacity) {
         this->opacity = opacity;
     }
+    
+    int GetCullFace() const {
+        return cullFace;
+    }
+    
+    int GetCullFace() {
+        return cullFace;
+    }
+    
+    void SetCullFace(int cullFace) {
+        this->cullFace = cullFace;
+    }
 
 private:
     Material(const Material& material);
@@ -103,10 +114,12 @@ private:
     Material& operator=(Material&& material);
 
 private:
+    static const int DEFAULT_CULL_FACE = CullBack;
     SurfaceTexture *surfaceTexture;
     Vector4f color;
     float opacity;
     StereoMode Mode;
+    int cullFace;
 };
 }
 #endif

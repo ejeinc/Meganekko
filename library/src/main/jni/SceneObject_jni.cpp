@@ -12,66 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/***************************************************************************
- * JNI
- ***************************************************************************/
-
-#include <jni.h>
-
+ 
+#include "includes.h"
 #include "SceneObject.h"
+#include "util/convert.h"
 
 namespace mgn {
+#ifdef __cplusplus
 extern "C" {
-JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_SceneObject_initNativeInstance(JNIEnv * env, jobject obj);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_attachTransform(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jtransform);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_detachTransform(JNIEnv * env, jobject obj, jlong jsceneObject);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_attachRenderData(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jrenderData);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_detachRenderData(JNIEnv * env, jobject obj, jlong jsceneObject);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_addChildObject(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jchild);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_removeChildObject(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jchild);
-
-JNIEXPORT bool JNICALL
-Java_com_eje_1c_meganekko_SceneObject_isColliding(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jotherObject);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_setLODRange(JNIEnv * env, jobject obj, jlong jsceneObject, jfloat minRange, jfloat maxRange);
-
-JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_SceneObject_getLODMinRange(JNIEnv * env, jobject obj, jlong jsceneObject);
-
-JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_SceneObject_getLODMaxRange(JNIEnv * env, jobject obj, jlong jsceneObject);
+#endif
 
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_SceneObject_initNativeInstance(JNIEnv * env, jobject obj) {
     return reinterpret_cast<jlong>(new SceneObject());
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_attachTransform(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jtransform) {
-    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
-    Transform* transform = reinterpret_cast<Transform*>(jtransform);
-    sceneObject->attachTransform(sceneObject, transform);
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_detachTransform(JNIEnv * env, jobject obj, jlong jsceneObject) {
-    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
-    sceneObject->detachTransform();
 }
 
 JNIEXPORT void JNICALL
@@ -126,6 +79,43 @@ Java_com_eje_1c_meganekko_SceneObject_getLODMaxRange(JNIEnv * env, jobject obj, 
     return sceneObject->getLODMaxRange();
 }
 
-} // extern "C"
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_SceneObject_setPosition(JNIEnv * env, jobject obj, jlong jsceneObject, jfloat x, jfloat y, jfloat z){
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    sceneObject->SetPosition(Vector3f(x, y, z));
+}
 
+JNIEXPORT jobject JNICALL
+Java_com_eje_1c_meganekko_SceneObject_getPosition(JNIEnv * env, jobject obj, jlong jsceneObject){
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    return ToJava(env, sceneObject->GetPosition());
+}
+
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_SceneObject_setScale(JNIEnv * env, jobject obj, jlong jsceneObject, jfloat x, jfloat y, jfloat z){
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    sceneObject->SetScale(Vector3f(x, y, z));
+}
+
+JNIEXPORT jobject JNICALL
+Java_com_eje_1c_meganekko_SceneObject_getScale(JNIEnv * env, jobject obj, jlong jsceneObject){
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    return ToJava(env, sceneObject->GetScale());
+}
+
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_SceneObject_setRotation(JNIEnv * env, jobject obj, jlong jsceneObject, jfloat x, jfloat y, jfloat z, jfloat w){
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    sceneObject->SetRotation(Quatf(x, y, z, w));
+}
+
+JNIEXPORT jobject JNICALL
+Java_com_eje_1c_meganekko_SceneObject_getRotation(JNIEnv * env, jobject obj, jlong jsceneObject){
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    return ToJava(env, sceneObject->GetRotation());
+}
+
+#ifdef __cplusplus 
+} // extern C
+#endif
 } // namespace mgn
