@@ -18,67 +18,9 @@
 #include "Material.h"
 
 namespace mgn {
-
+#ifdef __cplusplus
 extern "C" {
-
-JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_RenderData_initNativeInstance(JNIEnv * env, jobject obj);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_setMesh(JNIEnv * env, jobject obj, jlong jrenderData, jlong jmesh);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_addPass(JNIEnv* env, jobject obj, jlong jrenderData, jlong jrenderPass);
-
-JNIEXPORT jint JNICALL
-Java_com_eje_1c_meganekko_RenderData_getRenderMask(JNIEnv * env, jobject obj, jlong jrenderData);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_setRenderMask(JNIEnv * env, jobject obj, jlong jrenderData, jint render_mask);
-
-JNIEXPORT jint JNICALL
-Java_com_eje_1c_meganekko_RenderData_getRenderingOrder( JNIEnv * env, jobject obj, jlong jrenderData);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_setRenderingOrder( JNIEnv * env, jobject obj, jlong jrenderData, jint renderingOrder);
-
-JNIEXPORT jboolean JNICALL
-Java_com_eje_1c_meganekko_RenderData_getOffset(JNIEnv * env, jobject obj, jlong jrenderData);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_setOffset(JNIEnv * env, jobject obj, jlong jrenderData, jboolean offset);
-
-JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_RenderData_getOffsetFactor(JNIEnv * env, jobject obj, jlong jrenderData);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_setOffsetFactor(JNIEnv * env, jobject obj, jlong jrenderData, jfloat offsetFactor);
-
-JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_RenderData_getOffsetUnits(JNIEnv * env, jobject obj, jlong jrenderData);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_setOffsetUnits(JNIEnv * env, jobject obj, jlong jrenderData, jfloat offsetUnits);
-
-JNIEXPORT jboolean JNICALL
-Java_com_eje_1c_meganekko_RenderData_getDepthTest(JNIEnv * env, jobject obj, jlong jrenderData);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_setDepthTest(JNIEnv * env, jobject obj, jlong jrenderData, jboolean depthTest);
-
-JNIEXPORT jboolean JNICALL
-Java_com_eje_1c_meganekko_RenderData_getAlphaBlend(JNIEnv * env, jobject obj, jlong jrenderData);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_setAlphaBlend(JNIEnv * env, jobject obj, jlong jrenderData, jboolean alpha_blend);
-
-JNIEXPORT jint JNICALL
-Java_com_eje_1c_meganekko_RenderData_getDrawMode( JNIEnv * env, jobject obj, jlong jrenderData);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_setDrawMode( JNIEnv * env, jobject obj, jlong jrenderData, jint draw_mode);
-
-}
+#endif
 
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_RenderData_initNativeInstance(JNIEnv * env, jobject obj) {
@@ -195,4 +137,7 @@ Java_com_eje_1c_meganekko_RenderData_getDrawMode(JNIEnv * env, jobject obj, jlon
     return render_data->draw_mode();
 }
 
-}
+#ifdef __cplusplus 
+} // extern C
+#endif
+} // namespace mgn

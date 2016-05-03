@@ -18,15 +18,9 @@
 #include "util/convert.h"
 
 namespace mgn {
+#ifdef __cplusplus
 extern "C" {
-JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_Scene_initNativeInstance(JNIEnv * env, jobject obj);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Scene_setFrustumCulling(JNIEnv * env, jobject obj, jlong jscene, jboolean flag);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Scene_setOcclusionQuery(JNIEnv * env, jobject obj, jlong jscene, jboolean flag);
+#endif
 
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_Scene_initNativeInstance(JNIEnv * env, jobject obj) {
@@ -114,5 +108,7 @@ Java_com_eje_1c_meganekko_Scene_getViewOrientation(JNIEnv * jni, jobject obj, jl
     return ToJava(jni, orientation);
 }
 
+#ifdef __cplusplus 
 } // extern C
+#endif
 } // namespace mgn

@@ -19,11 +19,10 @@
 
 using namespace OVR;
 
-namespace mgn
-{
-
-extern "C"
-{
+namespace mgn {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 static const Quatf COORDINATE_QUATERNION = Quatf(0.0f, 0.0f, -sqrtf(0.5), sqrtf(0.5f));
 static const Quatf OFFSET_QUATERNION     = Quatf(0.0f, sqrtf(0.5f), 0.0f, sqrtf(0.5f));
@@ -37,6 +36,7 @@ void Java_com_eje_1c_meganekko_gearvr_InternalSensorManager_setSensorValues(JNIE
     activity->SetInternalSensorRotation(quaternion);
 }
 
-} // extern "C"
-
+#ifdef __cplusplus 
+} // extern C
+#endif
 } // namespace mgn

@@ -17,62 +17,9 @@
 #include "Mesh.h"
 
 namespace mgn {
+#ifdef __cplusplus
 extern "C" {
-JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_Mesh_initNativeInstance(JNIEnv* env, jobject obj);
-
-JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_Mesh_getVertices(JNIEnv * env, jobject obj, jlong jmesh);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Mesh_setVertices(JNIEnv * env, jobject obj, jlong jmesh, jfloatArray vertices);
-
-JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_Mesh_getNormals(JNIEnv * env, jobject obj, jlong jmesh);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Mesh_setNormals(JNIEnv * env, jobject obj, jlong jmesh, jfloatArray normals);
-
-JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_Mesh_getTexCoords(JNIEnv * env, jobject obj, jlong jmesh);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Mesh_setTexCoords(JNIEnv * env, jobject obj, jlong jmesh, jfloatArray tex_coords);
-
-JNIEXPORT jcharArray JNICALL
-Java_com_eje_1c_meganekko_Mesh_getTriangles(JNIEnv * env, jobject obj, jlong jmesh);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Mesh_setTriangles(JNIEnv * env, jobject obj, jlong jmesh, jcharArray triangles);
-
-JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_Mesh_getFloatVector(JNIEnv * env, jobject obj, jlong jmesh, jstring key);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Mesh_setFloatVector(JNIEnv * env, jobject obj, jlong jmesh, jstring key, jfloatArray float_vector);
-
-JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_Mesh_getVec2Vector(JNIEnv * env, jobject obj, jlong jmesh, jstring key);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Mesh_setVec2Vector(JNIEnv * env, jobject obj, jlong jmesh, jstring key, jfloatArray vec2_vector);
-
-JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_Mesh_getVec3Vector(JNIEnv * env, jobject obj, jlong jmesh, jstring key);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Mesh_setVec3Vector(JNIEnv * env, jobject obj, jlong jmesh, jstring key, jfloatArray vec3Vector);
-
-JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_Mesh_getVec4Vector(JNIEnv * env, jobject obj, jlong jmesh, jstring key);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Mesh_setVec4Vector(JNIEnv * env, jobject obj, jlong jmesh, jstring key, jfloatArray vec4Vector);
-
-JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_Mesh_getBoundingBox(JNIEnv * env, jobject obj, jlong jmesh);
-
-} // extern C
+#endif
 
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_Mesh_initNativeInstance(JNIEnv* env, jobject obj) {
@@ -293,4 +240,7 @@ Java_com_eje_1c_meganekko_Mesh_getBoundingBox(JNIEnv * env, jobject obj, jlong j
     return reinterpret_cast<jlong>(mesh->getBoundingBox());
 }
 
-}
+#ifdef __cplusplus 
+} // extern C
+#endif
+} // namespace mgn

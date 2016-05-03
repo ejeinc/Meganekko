@@ -18,19 +18,9 @@
 #include "Material.h"
 
 namespace mgn {
-
+#ifdef __cplusplus
 extern "C" {
-
-JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_RenderPass_initNativeInstance(JNIEnv * env, jobject obj);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderPass_setMaterial(JNIEnv* env, jobject obj, jlong jrenderPass, jlong jmaterial);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderPass_setCullFace(JNIEnv* env, jobject obj, jlong jrenderPass, jint jcullFace);
-
-} // extern C
+#endif
 
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_RenderPass_initNativeInstance(JNIEnv * env, jobject obj) {
@@ -50,4 +40,7 @@ Java_com_eje_1c_meganekko_RenderPass_setCullFace(JNIEnv* env, jobject obj, jlong
     pass->set_cull_face(static_cast<int>(jcullFace));
 }
 
+#ifdef __cplusplus 
+} // extern C
+#endif
 } // namespace mgn

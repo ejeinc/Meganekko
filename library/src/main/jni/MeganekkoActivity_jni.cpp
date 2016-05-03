@@ -19,11 +19,10 @@
 #include "MeganekkoActivity.h"
 #include "RenderData.h"
 
-namespace mgn
-{
-
-extern "C"
-{
+namespace mgn {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 long Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_nativeSetAppInterface(
         JNIEnv * jni, jclass clazz, jobject activity,
@@ -56,6 +55,7 @@ void Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_recenterPose(JNIEnv * jn
     vrapi_RecenterPose(mobile);
 }
 
-} // extern "C"
-
+#ifdef __cplusplus 
+} // extern C
+#endif
 } // namespace mgn

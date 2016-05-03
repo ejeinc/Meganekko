@@ -18,51 +18,9 @@
 #include "util/convert.h"
 
 namespace mgn {
+#ifdef __cplusplus
 extern "C" {
-JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_SceneObject_initNativeInstance(JNIEnv * env, jobject obj);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_attachRenderData(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jrenderData);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_detachRenderData(JNIEnv * env, jobject obj, jlong jsceneObject);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_addChildObject(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jchild);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_removeChildObject(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jchild);
-
-JNIEXPORT bool JNICALL
-Java_com_eje_1c_meganekko_SceneObject_isColliding(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jotherObject);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_setLODRange(JNIEnv * env, jobject obj, jlong jsceneObject, jfloat minRange, jfloat maxRange);
-
-JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_SceneObject_getLODMinRange(JNIEnv * env, jobject obj, jlong jsceneObject);
-
-JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_SceneObject_getLODMaxRange(JNIEnv * env, jobject obj, jlong jsceneObject);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_setPosition(JNIEnv * env, jobject obj, jlong jsceneObject, jfloat x, jfloat y, jfloat z);
-
-JNIEXPORT jobject JNICALL
-Java_com_eje_1c_meganekko_SceneObject_getPosition(JNIEnv * env, jobject obj, jlong jsceneObject);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_setScale(JNIEnv * env, jobject obj, jlong jsceneObject, jfloat x, jfloat y, jfloat z);
-
-JNIEXPORT jobject JNICALL
-Java_com_eje_1c_meganekko_SceneObject_getScale(JNIEnv * env, jobject obj, jlong jsceneObject);
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_setRotation(JNIEnv * env, jobject obj, jlong jsceneObject, jfloat x, jfloat y, jfloat z, jfloat w);
-
-JNIEXPORT jobject JNICALL
-Java_com_eje_1c_meganekko_SceneObject_getRotation(JNIEnv * env, jobject obj, jlong jsceneObject);
+#endif
 
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_SceneObject_initNativeInstance(JNIEnv * env, jobject obj) {
@@ -157,6 +115,7 @@ Java_com_eje_1c_meganekko_SceneObject_getRotation(JNIEnv * env, jobject obj, jlo
     return ToJava(env, sceneObject->GetRotation());
 }
 
-} // extern "C"
-
+#ifdef __cplusplus 
+} // extern C
+#endif
 } // namespace mgn

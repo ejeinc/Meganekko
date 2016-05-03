@@ -18,7 +18,9 @@
 #include "util/convert.h"
 
 namespace mgn {
+#ifdef __cplusplus
 extern "C" {
+#endif
 
 JNIEXPORT jlong JNICALL
 Java_com_eje_1c_meganekko_Material_initNativeInstance(JNIEnv * env, jobject obj) {
@@ -61,6 +63,7 @@ Java_com_eje_1c_meganekko_Material_setStereoMode(JNIEnv * env, jobject obj, jlon
     material->SetStereoMode(static_cast<Material::StereoMode>(jstereoMode));
 }
 
+#ifdef __cplusplus 
 } // extern C
-
+#endif
 } // namespace mgn
