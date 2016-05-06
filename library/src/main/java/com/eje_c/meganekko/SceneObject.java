@@ -701,6 +701,8 @@ public class SceneObject extends HybridObject {
         private long duration = -1;
         private TimeInterpolator interpolator;
         private boolean sequential;
+        private long delay;
+        private AnimatorSet animator;
 
         // For sequential animation
         private Vector3f lastPos, lastScale;
@@ -791,24 +793,54 @@ public class SceneObject extends HybridObject {
             return this;
         }
 
-        public void start(MeganekkoApp app) {
-            AnimatorSet set = new AnimatorSet();
+        public SceneObjectAnimator delay(long delay) {
+            this.delay = delay;
+            return this;
+        }
+
+        public SceneObjectAnimator start(MeganekkoApp app) {
+
+            if (animator == null) {
+                setupAnimator();
+            }
+
+            app.animate(animator, callback);
+            return this;
+        }
+
+        public SceneObjectAnimator setupAnimator() {
+            this.animator = new AnimatorSet();
 
             if (sequential) {
-                set.playSequentially(animators);
+                animator.playSequentially(animators);
             } else {
-                set.playTogether(animators);
+                animator.playTogether(animators);
             }
 
             if (duration >= 0) {
-                set.setDuration(duration);
+                animator.setDuration(duration);
             }
 
             if (interpolator != null) {
-                set.setInterpolator(interpolator);
+                animator.setInterpolator(interpolator);
             }
 
-            app.animate(set, callback);
+            if (delay > 0) {
+                animator.setStartDelay(delay);
+            }
+
+            return this;
+        }
+
+        /**
+         * Get {@code Animator} of this.
+         * Until {@link #start(MeganekkoApp)} or {@link #setupAnimator()} was called,
+         * this method always return null.
+         *
+         * @return
+         */
+        public Animator getAnimator() {
+            return animator;
         }
     }
 }
