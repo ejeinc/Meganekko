@@ -32,6 +32,7 @@ import com.eje_c.meganekko.animation.ScaleUpdateListener;
 import com.eje_c.meganekko.animation.VectorEvaluator;
 import com.eje_c.meganekko.utility.Log;
 
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -111,6 +112,14 @@ public class SceneObject extends HybridObject {
     private static native Vector3f getScale(long sceneObject);
 
     private static native Quaternionf getRotation(long sceneObject);
+
+    private static native void setModelMatrix(long sceneObject,
+                                              float m11, float m12, float m13, float m14,
+                                              float m21, float m22, float m23, float m24,
+                                              float m31, float m32, float m33, float m34,
+                                              float m41, float m42, float m43, float m44);
+
+    private static native Matrix4f getModelMatrix(long sceneObject);
 
     @Override
     protected native long initNativeInstance();
@@ -608,6 +617,19 @@ public class SceneObject extends HybridObject {
 
     public Quaternionf rotation() {
         return getRotation(getNative());
+    }
+
+    public void modelMatrix(Matrix4f m) {
+        setModelMatrix(getNative(),
+                m.m00, m.m01, m.m02, m.m03,
+                m.m10, m.m11, m.m12, m.m13,
+                m.m20, m.m21, m.m22, m.m23,
+                m.m30, m.m31, m.m32, m.m33
+        );
+    }
+
+    public Matrix4f modelMatrix() {
+        return getModelMatrix(getNative());
     }
 
     public Material material() {
