@@ -115,25 +115,6 @@ public class SceneObject extends HybridObject {
     @Override
     protected native long initNativeInstance();
 
-    @Override
-    protected void delete() {
-
-        // Delete children first
-        while (getChildrenCount() > 0) {
-            SceneObject child = getChildByIndex(0);
-            removeChildObject(child);
-            child.delete();
-        }
-
-        // Delete self
-        if (mRenderData != null) {
-            mRenderData.delete();
-            mRenderData = null;
-        }
-
-        super.delete();
-    }
-
     /**
      * Get the (optional) ID of the object.
      *

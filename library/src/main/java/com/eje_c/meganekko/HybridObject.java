@@ -17,6 +17,11 @@ package com.eje_c.meganekko;
 
 import com.eje_c.meganekko.utility.Log;
 
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Root of the Meganekko object hierarchy.
  * <p/>
@@ -25,44 +30,58 @@ import com.eje_c.meganekko.utility.Log;
  */
 public abstract class HybridObject {
 
+    static final ReferenceQueue<HybridObject> referenceQueue = new ReferenceQueue<>();
+    private static final Set<NativeReference> NATIVE_REFERENCES = new HashSet<>();
     private static final String TAG = Log.tag(HybridObject.class);
+    private final NativeReference nativeReference;
+
+    private static native void delete(long nativePointer);
 
     /**
-     * This is not {@code final}: the first call to {@link #delete()} sets
-     * {@link #mNativePointer} to 0, so that {@link #delete()} can safely be
-     * called multiple times.
+     * Holds native pointer.
      */
-    private long mNativePointer;
+    static class NativeReference extends WeakReference<HybridObject> {
+        private long mNativePointer;
+
+        public NativeReference(HybridObject r, long nativePointer, ReferenceQueue<? super HybridObject> q) {
+            super(r, q);
+            this.mNativePointer = nativePointer;
+        }
+
+        /**
+         * Called from {@link MeganekkoApp#update()} when {@link HybridObject} was Garbage Collected.
+         */
+        synchronized void delete() {
+            if (mNativePointer != 0) {
+                HybridObject.delete(mNativePointer);
+                mNativePointer = 0;
+            }
+            NATIVE_REFERENCES.remove(this);
+        }
+    }
 
     /**
      * Normal constructor
      */
     protected HybridObject() {
-        mNativePointer = initNativeInstance();
+        long nativePointer = initNativeInstance();
 
-        if (mNativePointer == 0l) {
+        if (nativePointer == 0l) {
             throw new IllegalStateException("You must override initNativeInstance to get native pointer.");
         }
+
+        nativeReference = new NativeReference(this, nativePointer, referenceQueue);
+        NATIVE_REFERENCES.add(nativeReference);
     }
 
     protected HybridObject(long nativePointer) {
-        mNativePointer = nativePointer;
 
-        if (mNativePointer == 0l) {
+        if (nativePointer == 0l) {
             throw new IllegalStateException("You must pass valid native pointer.");
         }
-    }
 
-    private static native void delete(long nativePointer);
-
-    /**
-     * Delete associated native pointer. You must call super.delete() if you override this method.
-     */
-    protected void delete() {
-        if (mNativePointer != 0) {
-            delete(mNativePointer);
-            mNativePointer = 0;
-        }
+        nativeReference = new NativeReference(this, nativePointer, referenceQueue);
+        NATIVE_REFERENCES.add(nativeReference);
     }
 
     /**
@@ -81,7 +100,7 @@ public abstract class HybridObject {
      * This is an internal method that may be useful in diagnostic code.
      */
     public long getNative() {
-        return mNativePointer;
+        return nativeReference.mNativePointer;
     }
 
     @Override

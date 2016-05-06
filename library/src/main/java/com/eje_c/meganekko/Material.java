@@ -43,16 +43,16 @@ public class Material extends HybridObject {
     @Override
     protected native long initNativeInstance();
 
-    @Override
-    protected void delete() {
-
-        if (mTexture != null) {
-            mTexture.release();
-            mTexture = null;
-        }
-
-        super.delete();
-    }
+//    @Override
+//    protected void delete() {
+//
+//        if (mTexture != null) {
+//            mTexture.release();
+//            mTexture = null;
+//        }
+//
+//        super.delete();
+//    }
 
     /**
      * Get the {@code color} uniform.

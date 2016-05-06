@@ -79,28 +79,6 @@ public class RenderData extends Component {
     @Override
     protected native long initNativeInstance();
 
-    @Override
-    protected void delete() {
-
-        long nativePtr = getNative();
-        if (nativePtr != 0) {
-
-            if (mMesh != null) {
-                mMesh.delete();
-                mMesh = null;
-                setMesh(nativePtr, 0);
-            }
-
-            if (mMaterial != null) {
-                mMaterial.delete();
-                mMaterial = null;
-                setMaterial(nativePtr, 0);
-            }
-        }
-
-        super.delete();
-    }
-
     /**
      * @return The {@link Mesh mesh} being rendered.
      */
