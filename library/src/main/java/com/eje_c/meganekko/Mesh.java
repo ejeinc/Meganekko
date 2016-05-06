@@ -15,6 +15,9 @@
 
 package com.eje_c.meganekko;
 
+import android.graphics.drawable.Drawable;
+import android.view.View;
+
 import com.eje_c.meganekko.utility.Exceptions;
 
 import java.util.EnumSet;
@@ -75,6 +78,26 @@ public class Mesh extends HybridObject {
         mesh.setTriangles(triangles);
 
         return mesh;
+    }
+
+    public static Mesh from(View view) {
+        return from(view, getDefaultScaleFactor());
+    }
+
+    public static Mesh from(View view, float scaleFactor) {
+        return createQuad(scaleFactor * view.getMeasuredWidth(), scaleFactor * view.getMeasuredHeight());
+    }
+
+    public static Mesh from(Drawable drawable) {
+        return from(drawable, getDefaultScaleFactor());
+    }
+
+    public static Mesh from(Drawable drawable, float scaleFactor) {
+        return createQuad(scaleFactor * drawable.getIntrinsicWidth(), scaleFactor * drawable.getIntrinsicHeight());
+    }
+
+    public static float getDefaultScaleFactor() {
+        return 0.006f;
     }
 
     /**

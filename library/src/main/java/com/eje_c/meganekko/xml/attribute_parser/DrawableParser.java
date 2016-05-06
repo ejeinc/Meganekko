@@ -6,6 +6,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 
 import com.eje_c.meganekko.Material;
+import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.xml.XmlAttributeParser;
@@ -20,7 +21,7 @@ public class DrawableParser implements XmlAttributeParser {
         if (drawable != null) {
             if (drawable.startsWith("@drawable/") || drawable.startsWith("@mipmap/")) {
                 int res = attributeSet.getAttributeResourceValue(NAMESPACE, "drawable", 0);
-                setDrawable(object, ContextCompat.getDrawable(context, res));
+                setDrawable(object, ContextCompat.getDrawable(context, res), attributeSet);
                 return;
             }
         }
@@ -31,13 +32,13 @@ public class DrawableParser implements XmlAttributeParser {
         if (drawable != null) {
             if (drawable.startsWith("@drawable/") || drawable.startsWith("@mipmap/")) {
                 int res = attributeSet.getAttributeResourceValue(NAMESPACE, "texture", 0);
-                setDrawable(object, ContextCompat.getDrawable(context, res));
+                setDrawable(object, ContextCompat.getDrawable(context, res), attributeSet);
                 return;
             }
         }
     }
 
-    private static void setDrawable(SceneObject object, Drawable d) {
+    private static void setDrawable(SceneObject object, Drawable d, AttributeSet attributeSet) {
         RenderData renderData = object.getRenderData();
 
         if (renderData == null) {
@@ -48,5 +49,14 @@ public class DrawableParser implements XmlAttributeParser {
         Material material = new Material();
         material.texture().set(d);
         renderData.setMaterial(material);
+
+        // Set auto sized mesh
+        if (attributeSet.getAttributeValue(NAMESPACE, "width") == null
+                && attributeSet.getAttributeValue(NAMESPACE, "height") == null
+                && attributeSet.getAttributeValue(NAMESPACE, "mesh") == null) {
+
+            Mesh mesh = Mesh.from(d);
+            renderData.setMesh(mesh);
+        }
     }
 }

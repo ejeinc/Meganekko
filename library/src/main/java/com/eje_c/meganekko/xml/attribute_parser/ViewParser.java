@@ -50,7 +50,7 @@ public class ViewParser implements XmlAttributeParser {
                             && attributeSet.getAttributeValue(NAMESPACE, "height") == null
                             && attributeSet.getAttributeValue(NAMESPACE, "mesh") == null) {
 
-                        Mesh mesh = Mesh.createQuad(AUTO_SIZE_SCALE * view.getMeasuredWidth(), AUTO_SIZE_SCALE * view.getMeasuredHeight());
+                        Mesh mesh = Mesh.from(view);
                         renderData.setMesh(mesh);
                     }
                 }
