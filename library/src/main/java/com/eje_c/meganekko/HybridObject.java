@@ -17,11 +17,6 @@ package com.eje_c.meganekko;
 
 import com.eje_c.meganekko.utility.Log;
 
-import java.lang.ref.ReferenceQueue;
-import java.lang.ref.WeakReference;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Root of the Meganekko object hierarchy.
  * <p/>
@@ -30,35 +25,8 @@ import java.util.Set;
  */
 public abstract class HybridObject {
 
-    static final ReferenceQueue<HybridObject> referenceQueue = new ReferenceQueue<>();
-    private static final Set<NativeReference> NATIVE_REFERENCES = new HashSet<>();
     private static final String TAG = Log.tag(HybridObject.class);
     private final NativeReference nativeReference;
-
-    private static native void delete(long nativePointer);
-
-    /**
-     * Holds native pointer.
-     */
-    static class NativeReference extends WeakReference<HybridObject> {
-        private long mNativePointer;
-
-        public NativeReference(HybridObject r, long nativePointer, ReferenceQueue<? super HybridObject> q) {
-            super(r, q);
-            this.mNativePointer = nativePointer;
-        }
-
-        /**
-         * Called from {@link MeganekkoApp#update()} when {@link HybridObject} was Garbage Collected.
-         */
-        synchronized void delete() {
-            if (mNativePointer != 0) {
-                HybridObject.delete(mNativePointer);
-                mNativePointer = 0;
-            }
-            NATIVE_REFERENCES.remove(this);
-        }
-    }
 
     /**
      * Normal constructor
@@ -70,8 +38,7 @@ public abstract class HybridObject {
             throw new IllegalStateException("You must override initNativeInstance to get native pointer.");
         }
 
-        nativeReference = new NativeReference(this, nativePointer, referenceQueue);
-        NATIVE_REFERENCES.add(nativeReference);
+        nativeReference = NativeReference.get(this, nativePointer);
     }
 
     protected HybridObject(long nativePointer) {
@@ -80,8 +47,7 @@ public abstract class HybridObject {
             throw new IllegalStateException("You must pass valid native pointer.");
         }
 
-        nativeReference = new NativeReference(this, nativePointer, referenceQueue);
-        NATIVE_REFERENCES.add(nativeReference);
+        nativeReference = NativeReference.get(this, nativePointer);
     }
 
     /**
@@ -100,7 +66,7 @@ public abstract class HybridObject {
      * This is an internal method that may be useful in diagnostic code.
      */
     public long getNative() {
-        return nativeReference.mNativePointer;
+        return nativeReference.getNativePointer();
     }
 
     @Override

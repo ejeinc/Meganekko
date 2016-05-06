@@ -53,9 +53,9 @@ public abstract class MeganekkoApp {
 
         // Delete native resources related with Garbage Collected objects
         Reference<? extends HybridObject> ref;
-        while ((ref = HybridObject.referenceQueue.poll()) != null) {
-            if (ref instanceof HybridObject.NativeReference) {
-                ((HybridObject.NativeReference) ref).delete();
+        while ((ref = NativeReference.referenceQueue.poll()) != null) {
+            if (ref instanceof NativeReference) {
+                ((NativeReference) ref).delete();
             }
         }
     }

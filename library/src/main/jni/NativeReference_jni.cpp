@@ -1,4 +1,5 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/* 
+ * Copyright 2016 eje inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +23,8 @@ extern "C" {
 #endif
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_HybridObject_delete(JNIEnv * env, jobject obj, jlong jhybridObject) {
-    delete reinterpret_cast<HybridObject*>(jhybridObject);
+Java_com_eje_1c_meganekko_NativeReference_delete(JNIEnv * env, jobject obj, jlong nativePointer) {
+    delete reinterpret_cast<HybridObject*>(nativePointer);
 }
 
 #ifdef __cplusplus 
