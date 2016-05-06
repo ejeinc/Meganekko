@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include "includes.h"
 
 /***************************************************************************
  * OpenGL related utility functions.
@@ -24,20 +25,6 @@
 #define GL( func )  func; GL_CheckErrors(#func);
 #define __gl2_h_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <android/bitmap.h>
-
-#include "EGL/egl.h"
-#include "EGL/eglext.h"
-#include "Kernel/OVR_GlUtils.h"
-#include "GlProgram.h"
 #include "util/GlDelete.h"
-
-#ifndef GL_ES_VERSION_3_0
-#include <GLES3/gl3.h>
-#include <GLES3/gl3ext.h>
-#endif
 
 #endif

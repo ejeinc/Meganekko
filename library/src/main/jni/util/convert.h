@@ -1,8 +1,8 @@
+
+#include "includes.h"
+
 #ifndef CONVERT_H_
 #define CONVERT_H_
-
-#include "jni.h"
-#include "Kernel/OVR_Math.h"
 
 using namespace OVR;
 

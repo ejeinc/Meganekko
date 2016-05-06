@@ -55,6 +55,7 @@
  */
 #include "App.h"
 #include "AppLocal.h"
+#include "EyeBuffers.h"
 #include "Input.h"
 #include "SurfaceTexture.h"
 

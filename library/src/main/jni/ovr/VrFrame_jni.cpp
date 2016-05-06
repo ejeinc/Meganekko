@@ -1,7 +1,4 @@
-#include <jni.h>
-#include <VrApi.h>
-#include "Kernel/OVR_Math.h"
-#include <Input.h>
+#include "includes.h"
 
 using namespace OVR;
 

@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-#include <jni.h>
-#include <Android/JniUtils.h>
-#include "App.h"
+#include "includes.h"
 
 using namespace OVR;
 
