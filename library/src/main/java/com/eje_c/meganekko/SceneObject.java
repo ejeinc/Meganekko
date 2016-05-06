@@ -680,6 +680,17 @@ public class SceneObject extends HybridObject {
         material.texture().set(view);
     }
 
+    /**
+     * Call this when you update {@code View} size after rendered.
+     */
+    public void updateViewLayout() {
+        View view = view();
+        if (view == null) return;
+
+        view.measure(0, 0);
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+    }
+
     public SceneObjectAnimator animate() {
         return new SceneObjectAnimator();
     }
