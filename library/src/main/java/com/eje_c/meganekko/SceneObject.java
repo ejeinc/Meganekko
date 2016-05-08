@@ -26,6 +26,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
+import android.support.annotation.XmlRes;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,11 +38,14 @@ import com.eje_c.meganekko.animation.RotationUpdateListener;
 import com.eje_c.meganekko.animation.ScaleUpdateListener;
 import com.eje_c.meganekko.animation.VectorEvaluator;
 import com.eje_c.meganekko.utility.Log;
+import com.eje_c.meganekko.xml.XmlSceneObjectParser;
 
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -140,6 +144,20 @@ public class SceneObject extends HybridObject {
     public static SceneObject fromDrawable(Context context, @DrawableRes int drawableRes) {
         Drawable drawable = ContextCompat.getDrawable(context, drawableRes);
         return from(drawable);
+    }
+
+    /**
+     * Create {@link SceneObject} from XML.
+     *
+     * @param context
+     * @param xmlRes
+     * @return
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
+    public static SceneObject fromXML(Context context, @XmlRes int xmlRes) throws IOException, XmlPullParserException {
+        XmlSceneObjectParser parser = new XmlSceneObjectParser(context);
+        return parser.parse(context.getResources().getXml(xmlRes));
     }
 
     private static native void attachRenderData(long sceneObject, long renderData);
