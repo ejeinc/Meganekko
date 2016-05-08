@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Meganekko Sample</string>
+    <string name="text">Press back key to return to previous scene</string>
 </resources>
