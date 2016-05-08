@@ -15,8 +15,11 @@
 
 package com.eje_c.meganekko;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.view.View;
 
 import com.eje_c.meganekko.utility.Colors;
@@ -38,6 +41,42 @@ public class Material extends HybridObject {
     public static Material from(View view) {
         Material material = new Material();
         material.texture().set(view);
+        return material;
+    }
+
+    /**
+     * Create {@link Material} from {@code Drawable}.
+     *
+     * @param drawable
+     * @return
+     */
+    public static Material from(Drawable drawable) {
+        Material material = new Material();
+        material.texture().set(drawable);
+        return material;
+    }
+
+    /**
+     * Create {@link Material} from {@code Bitmap}.
+     *
+     * @param bitmap
+     * @return
+     */
+    public static Material from(Bitmap bitmap) {
+        Material material = new Material();
+        material.texture().set(bitmap);
+        return material;
+    }
+
+    /**
+     * Create {@link Material} from {@code MediaPlayer}.
+     *
+     * @param mediaPlayer
+     * @return
+     */
+    public static Material from(MediaPlayer mediaPlayer) {
+        Material material = new Material();
+        material.texture().set(mediaPlayer);
         return material;
     }
 
