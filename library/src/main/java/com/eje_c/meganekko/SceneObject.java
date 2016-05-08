@@ -22,6 +22,12 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.LayoutRes;
+import android.support.v4.content.ContextCompat;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import com.eje_c.meganekko.RenderData.RenderMaskBit;
@@ -92,14 +98,48 @@ public class SceneObject extends HybridObject {
      * @return
      */
     public static SceneObject from(View view) {
-
-        view.measure(0, 0);
-        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
-
         SceneObject sceneObject = new SceneObject();
-        sceneObject.mesh(Mesh.from(view));
         sceneObject.material(Material.from(view));
+        sceneObject.updateViewLayout();
+        sceneObject.mesh(Mesh.from(view));
         return sceneObject;
+    }
+
+    /**
+     * Create {@link SceneObject} from layout XML.
+     *
+     * @param context
+     * @param layoutRes
+     * @return
+     */
+    public static SceneObject fromLayout(Context context, @LayoutRes int layoutRes) {
+        View view = LayoutInflater.from(context).inflate(layoutRes, null);
+        return from(view);
+    }
+
+    /**
+     * Create {@link SceneObject} from {@code Drawable}.
+     *
+     * @param drawable
+     * @return
+     */
+    public static SceneObject from(Drawable drawable) {
+        SceneObject sceneObject = new SceneObject();
+        sceneObject.mesh(Mesh.from(drawable));
+        sceneObject.material(Material.from(drawable));
+        return sceneObject;
+    }
+
+    /**
+     * Create {@link SceneObject} from drawable XML.
+     *
+     * @param context
+     * @param drawableRes
+     * @return
+     */
+    public static SceneObject fromDrawable(Context context, @DrawableRes int drawableRes) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableRes);
+        return from(drawable);
     }
 
     private static native void attachRenderData(long sceneObject, long renderData);
@@ -719,15 +759,25 @@ public class SceneObject extends HybridObject {
         material.texture().set(view);
     }
 
+    public void updateViewLayout() {
+        updateViewLayout(false);
+    }
+
     /**
      * Call this when you update {@code View} size after rendered.
+     *
+     * @param updateMeshToView Update mesh to new View size.
      */
-    public void updateViewLayout() {
+    public void updateViewLayout(boolean updateMeshToView) {
         View view = view();
         if (view == null) return;
 
         view.measure(0, 0);
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        if (updateMeshToView) {
+            mesh(Mesh.from(view));
+        }
     }
 
     public SceneObjectAnimator animate() {
