@@ -85,6 +85,23 @@ public class SceneObject extends HybridObject {
         renderData.setMesh(mesh);
     }
 
+    /**
+     * Create {@link SceneObject} from {@code View}.
+     *
+     * @param view
+     * @return
+     */
+    public static SceneObject from(View view) {
+
+        view.measure(0, 0);
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        SceneObject sceneObject = new SceneObject();
+        sceneObject.mesh(Mesh.from(view));
+        sceneObject.material(Material.from(view));
+        return sceneObject;
+    }
+
     private static native void attachRenderData(long sceneObject, long renderData);
 
     private static native void detachRenderData(long sceneObject);

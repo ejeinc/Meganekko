@@ -17,6 +17,7 @@ package com.eje_c.meganekko;
 
 import android.graphics.Color;
 import android.graphics.SurfaceTexture;
+import android.view.View;
 
 import com.eje_c.meganekko.utility.Colors;
 
@@ -27,6 +28,18 @@ public class Material extends HybridObject {
 
     private Texture mTexture;
     private CullFace cullFace;
+
+    /**
+     * Create {@link Material} from {@code View}.
+     *
+     * @param view
+     * @return
+     */
+    public static Material from(View view) {
+        Material material = new Material();
+        material.texture().set(view);
+        return material;
+    }
 
     private static native void setColor(long material, float r, float g, float b, float a);
 

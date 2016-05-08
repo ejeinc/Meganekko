@@ -39,31 +39,19 @@ public class ViewParser implements XmlAttributeParser {
                     // For normal object
                     int res = attributeSet.getAttributeResourceValue(NAMESPACE, attr, 0);
                     View view = LayoutInflater.from(context).inflate(res, null);
-                    ensureHaveRenderData(object);
-                    final RenderData renderData = object.getRenderData();
-                    Material material = new Material();
-                    material.texture().set(view);
-                    renderData.setMaterial(material);
+                    object.material(Material.from(view));
 
                     // Set auto sized view
                     if (attributeSet.getAttributeValue(NAMESPACE, "width") == null
                             && attributeSet.getAttributeValue(NAMESPACE, "height") == null
                             && attributeSet.getAttributeValue(NAMESPACE, "mesh") == null) {
 
-                        Mesh mesh = Mesh.from(view);
-                        renderData.setMesh(mesh);
+                        object.mesh(Mesh.from(view));
                     }
                 }
 
                 return;
             }
-        }
-
-    }
-
-    private static void ensureHaveRenderData(SceneObject object) {
-        if (object.getRenderData() == null) {
-            object.attachRenderData(new RenderData());
         }
     }
 }
