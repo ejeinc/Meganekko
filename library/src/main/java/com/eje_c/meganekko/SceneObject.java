@@ -521,18 +521,18 @@ public class SceneObject extends HybridObject {
         return null;
     }
 
-    public void update(Frame vrFrame) {
+    public void update(Frame frame) {
 
         if (mRenderData != null) {
             Material material = mRenderData.getMaterial();
 
             if (material != null) {
-                material.update(vrFrame);
+                material.update(frame);
             }
         }
 
         for (SceneObject child : mChildren) {
-            child.update(vrFrame);
+            child.update(frame);
         }
     }
 
