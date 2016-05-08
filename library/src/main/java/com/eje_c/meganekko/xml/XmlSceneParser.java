@@ -22,7 +22,6 @@ import android.util.Xml;
 import com.eje_c.meganekko.Scene;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.xml.attribute_parser.BasicParser;
-import com.eje_c.meganekko.xml.attribute_parser.CanvasParser;
 import com.eje_c.meganekko.xml.attribute_parser.DrawableParser;
 import com.eje_c.meganekko.xml.attribute_parser.MeshParser;
 import com.eje_c.meganekko.xml.attribute_parser.PositionParser;
@@ -55,7 +54,6 @@ public class XmlSceneParser {
             ScaleParser.class,
             RotationParser.class,
             MeshParser.class,
-            CanvasParser.class,
             ViewParser.class,
             DrawableParser.class
     );

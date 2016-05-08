@@ -20,13 +20,10 @@ import android.util.AttributeSet;
 import android.util.Xml;
 
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.scene_objects.CanvasSceneObject;
 import com.eje_c.meganekko.scene_objects.ConeSceneObject;
 import com.eje_c.meganekko.scene_objects.CubeSceneObject;
 import com.eje_c.meganekko.scene_objects.CylinderSceneObject;
 import com.eje_c.meganekko.scene_objects.SphereSceneObject;
-import com.eje_c.meganekko.scene_objects.VideoSceneObject;
-import com.eje_c.meganekko.scene_objects.ViewSceneObject;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -145,12 +142,6 @@ public class XmlSceneObjectParser {
                     return new ConeSceneObject();
                 case "cylinder":
                     return new CylinderSceneObject();
-                case "video":
-                    return new VideoSceneObject();
-                case "canvas":
-                    return new CanvasSceneObject();
-                case "view":
-                    return new ViewSceneObject();
                 default:
                     return ObjectFactory.newInstance(name);
             }
