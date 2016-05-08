@@ -51,7 +51,8 @@ public class DrawableParser implements XmlAttributeParser {
         renderData.setMaterial(material);
 
         // Set auto sized mesh
-        if (attributeSet.getAttributeValue(NAMESPACE, "width") == null
+        if (object.mesh() == null
+                && attributeSet.getAttributeValue(NAMESPACE, "width") == null
                 && attributeSet.getAttributeValue(NAMESPACE, "height") == null
                 && attributeSet.getAttributeValue(NAMESPACE, "mesh") == null) {
 
