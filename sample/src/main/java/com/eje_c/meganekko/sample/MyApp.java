@@ -48,9 +48,19 @@ public class MyApp extends MeganekkoApp {
     }
 
     /**
-     * Called from {@link SecondScene}.
+     * Called from {@link FirstScene}.
      */
-    public void onBackFromSecondScene() {
+    public void onTapVideocam() {
+        if (getScene() instanceof FirstScene) {
+            firstScene = (FirstScene) getScene();
+            setSceneFromXML(R.xml.video_scene);
+        }
+    }
+
+    /**
+     * Called from {@link SecondScene} and {@link VideoScene}.
+     */
+    public void returnToHome() {
         setScene(firstScene);
     }
 }

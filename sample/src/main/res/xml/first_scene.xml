@@ -8,12 +8,18 @@
         <object
             id="@+id/button"
             texture="@layout/button"
-            x="3" />
+            x="3"/>
 
     </object>
 
+    <object
+        id="@+id/ic_videocam"
+        position="-5 0 -5"
+        rotation="45 0 1 0"
+        texture="@drawable/ic_videocam"/>
+
     <globe
         renderingOrder="1"
-        texture="@drawable/background" />
+        texture="@drawable/background"/>
 
 </scene>

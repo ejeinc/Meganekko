@@ -17,7 +17,7 @@ public class SecondScene extends Scene {
     public boolean onKeyShortPress(int keyCode, int repeatCount) {
         if (keyCode == KeyCode.OVR_KEY_BACK) {
             MyApp app = (MyApp) getApp();
-            app.onBackFromSecondScene();
+            app.returnToHome();
             return true;
         }
         return super.onKeyShortPress(keyCode, repeatCount);
