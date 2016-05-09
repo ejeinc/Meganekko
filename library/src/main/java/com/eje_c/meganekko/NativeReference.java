@@ -7,9 +7,9 @@ import java.util.Set;
 
 public class NativeReference extends WeakReference<HybridObject> {
 
-    static final ReferenceQueue<HybridObject> referenceQueue = new ReferenceQueue<>();
+    static final ReferenceQueue<HybridObject> sReferenceQueue = new ReferenceQueue<>();
 
-    private static final Set<NativeReference> NATIVE_REFERENCES = new HashSet<>();
+    private static final Set<NativeReference> sNativeReferences = new HashSet<>();
     private long mNativePointer;
 
     private static native void delete(long nativePointer);
@@ -28,14 +28,14 @@ public class NativeReference extends WeakReference<HybridObject> {
      */
     public static NativeReference get(HybridObject hybridObject, long nativePointer) {
 
-        for (NativeReference ref : NATIVE_REFERENCES) {
+        for (NativeReference ref : sNativeReferences) {
             if (ref.mNativePointer == nativePointer) {
                 return ref;
             }
         }
 
-        NativeReference ref = new NativeReference(hybridObject, nativePointer, referenceQueue);
-        NATIVE_REFERENCES.add(ref);
+        NativeReference ref = new NativeReference(hybridObject, nativePointer, sReferenceQueue);
+        sNativeReferences.add(ref);
 
         return ref;
     }
@@ -48,7 +48,7 @@ public class NativeReference extends WeakReference<HybridObject> {
             delete(mNativePointer);
             mNativePointer = 0;
         }
-        NATIVE_REFERENCES.remove(this);
+        sNativeReferences.remove(this);
     }
 
     /**

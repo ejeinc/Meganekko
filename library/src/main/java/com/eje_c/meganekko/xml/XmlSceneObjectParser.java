@@ -46,12 +46,12 @@ import java.util.List;
  */
 public class XmlSceneObjectParser {
 
-    private static final List<Class<? extends XmlAttributeParser>> ATTRIBUTE_PARSERS = new ArrayList<>();
+    private static final List<Class<? extends XmlAttributeParser>> sAttributeParsers = new ArrayList<>();
     private final Context mContext;
     private final List<XmlAttributeParser> mAttributeParsers = new ArrayList<>();
 
     static {
-        ATTRIBUTE_PARSERS.addAll(Arrays.asList(
+        sAttributeParsers.addAll(Arrays.asList(
                 BasicParser.class,
                 PositionParser.class,
                 ScaleParser.class,
@@ -63,13 +63,13 @@ public class XmlSceneObjectParser {
     }
 
     public static void installAttributeParser(Class<? extends XmlAttributeParser> attributeParserClass) {
-        ATTRIBUTE_PARSERS.add(attributeParserClass);
+        sAttributeParsers.add(attributeParserClass);
     }
 
     public XmlSceneObjectParser(Context context) {
         this.mContext = context;
 
-        for (Class<? extends XmlAttributeParser> clazz : ATTRIBUTE_PARSERS) {
+        for (Class<? extends XmlAttributeParser> clazz : sAttributeParsers) {
             try {
                 mAttributeParsers.add(clazz.newInstance());
             } catch (InstantiationException | IllegalAccessException e) {

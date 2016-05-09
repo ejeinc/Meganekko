@@ -26,7 +26,7 @@ import com.eje_c.meganekko.utility.Log;
 public abstract class HybridObject {
 
     private static final String TAG = Log.tag(HybridObject.class);
-    private final NativeReference nativeReference;
+    private final NativeReference mNativeReference;
 
     /**
      * Normal constructor
@@ -38,7 +38,7 @@ public abstract class HybridObject {
             throw new IllegalStateException("You must override initNativeInstance to get native pointer.");
         }
 
-        nativeReference = NativeReference.get(this, nativePointer);
+        mNativeReference = NativeReference.get(this, nativePointer);
     }
 
     protected HybridObject(long nativePointer) {
@@ -47,7 +47,7 @@ public abstract class HybridObject {
             throw new IllegalStateException("You must pass valid native pointer.");
         }
 
-        nativeReference = NativeReference.get(this, nativePointer);
+        mNativeReference = NativeReference.get(this, nativePointer);
     }
 
     /**
@@ -66,7 +66,7 @@ public abstract class HybridObject {
      * This is an internal method that may be useful in diagnostic code.
      */
     public long getNative() {
-        return nativeReference.getNativePointer();
+        return mNativeReference.getNativePointer();
     }
 
     @Override

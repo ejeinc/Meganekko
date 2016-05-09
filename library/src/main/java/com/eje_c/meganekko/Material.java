@@ -30,7 +30,7 @@ import com.eje_c.meganekko.utility.Colors;
 public class Material extends HybridObject {
 
     private Texture mTexture;
-    private CullFace cullFace;
+    private CullFace mCullFace;
 
     /**
      * Create {@link Material} from {@code View}.
@@ -203,12 +203,12 @@ public class Material extends HybridObject {
     }
 
     public void setCullFace(CullFace cullFace) {
-        this.cullFace = cullFace;
+        this.mCullFace = cullFace;
         setCullFace(getNative(), cullFace.ordinal());
     }
 
     public CullFace getCullFace() {
-        return cullFace;
+        return mCullFace;
     }
 
     public enum StereoMode {

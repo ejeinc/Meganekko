@@ -23,20 +23,20 @@ import com.eje_c.meganekko.utility.Exceptions;
  */
 class Component extends HybridObject {
 
-    protected SceneObject owner;
+    protected SceneObject mOwner;
 
     /**
      * @return The {@link SceneObject} this object is currently attached to.
      */
     protected SceneObject getOwnerObject() {
-        if (owner != null) {
-            return owner;
+        if (mOwner != null) {
+            return mOwner;
         }
 
         throw Exceptions.RuntimeAssertion("No Java owner: %s", getClass().getSimpleName());
     }
 
     protected void setOwnerObject(SceneObject owner) {
-        this.owner = owner;
+        this.mOwner = owner;
     }
 }

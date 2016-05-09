@@ -30,16 +30,16 @@ import android.view.ViewGroup;
 
 public class Texture {
 
-    private final SurfaceTexture surfaceTexture;
-    private CanvasRenderer renderer;
-    private boolean continuesUpdate;
+    private final SurfaceTexture mSurfaceTexture;
+    private CanvasRenderer mRenderer;
+    private boolean mContinuesUpdate;
 
     Texture(SurfaceTexture surfaceTexture) {
-        this.surfaceTexture = surfaceTexture;
+        this.mSurfaceTexture = surfaceTexture;
     }
 
     void release() {
-        surfaceTexture.release();
+        mSurfaceTexture.release();
     }
 
     /**
@@ -75,8 +75,8 @@ public class Texture {
      * @param renderer
      */
     public void set(CanvasRenderer renderer) {
-        this.continuesUpdate = false;
-        this.renderer = renderer;
+        this.mContinuesUpdate = false;
+        this.mRenderer = renderer;
     }
 
     /**
@@ -85,9 +85,9 @@ public class Texture {
      * @param mediaPlayer
      */
     public void set(MediaPlayer mediaPlayer) {
-        this.continuesUpdate = true;
+        this.mContinuesUpdate = true;
 
-        Surface surface = new Surface(surfaceTexture);
+        Surface surface = new Surface(mSurfaceTexture);
         mediaPlayer.setSurface(surface);
         surface.release();
     }
@@ -98,7 +98,7 @@ public class Texture {
      * @return CanvasRenderer
      */
     public CanvasRenderer getRenderer() {
-        return renderer;
+        return mRenderer;
     }
 
     /**
@@ -107,27 +107,27 @@ public class Texture {
      * @param vrFrame
      */
     public void update(Frame vrFrame) {
-        if (renderer != null) {
+        if (mRenderer != null) {
 
-            if (renderer.isDirty()) {
+            if (mRenderer.isDirty()) {
 
-                surfaceTexture.setDefaultBufferSize(renderer.getWidth(), renderer.getHeight());
+                mSurfaceTexture.setDefaultBufferSize(mRenderer.getWidth(), mRenderer.getHeight());
 
-                Surface surface = new Surface(surfaceTexture);
+                Surface surface = new Surface(mSurfaceTexture);
 
                 try {
                     Canvas canvas = surface.lockCanvas(null);
-                    renderer.render(canvas, vrFrame);
+                    mRenderer.render(canvas, vrFrame);
                     surface.unlockCanvasAndPost(canvas);
                 } finally {
                     surface.release();
                 }
 
-                surfaceTexture.updateTexImage();
+                mSurfaceTexture.updateTexImage();
             }
 
-        } else if (continuesUpdate) {
-            surfaceTexture.updateTexImage();
+        } else if (mContinuesUpdate) {
+            mSurfaceTexture.updateTexImage();
         }
     }
 
@@ -166,38 +166,38 @@ public class Texture {
      */
     public static class DrawableRenderer implements CanvasRenderer {
 
-        private final Drawable drawable;
-        private boolean dirty = true;
+        private final Drawable mDrawable;
+        private boolean mDirty = true;
 
         private DrawableRenderer(Drawable drawable) {
-            this.drawable = drawable;
+            this.mDrawable = drawable;
         }
 
         @Override
         public void render(Canvas canvas, Frame vrFrame) {
             canvas.drawColor(0, PorterDuff.Mode.CLEAR);
-            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-            drawable.draw(canvas);
-            dirty = false;
+            mDrawable.setBounds(0, 0, mDrawable.getIntrinsicWidth(), mDrawable.getIntrinsicHeight());
+            mDrawable.draw(canvas);
+            mDirty = false;
         }
 
         @Override
         public int getWidth() {
-            return drawable.getIntrinsicWidth();
+            return mDrawable.getIntrinsicWidth();
         }
 
         @Override
         public int getHeight() {
-            return drawable.getIntrinsicHeight();
+            return mDrawable.getIntrinsicHeight();
         }
 
         @Override
         public boolean isDirty() {
-            return dirty;
+            return mDirty;
         }
 
         public Drawable getDrawable() {
-            return drawable;
+            return mDrawable;
         }
     }
 
@@ -206,10 +206,10 @@ public class Texture {
      */
     public static class ViewRenderer implements CanvasRenderer {
 
-        private final View view;
+        private final View mView;
 
         private ViewRenderer(View view) {
-            this.view = view;
+            this.mView = view;
             view.measure(0, 0);
             view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
         }
@@ -239,26 +239,26 @@ public class Texture {
         @Override
         public void render(Canvas canvas, Frame vrFrame) {
             canvas.drawColor(0, PorterDuff.Mode.CLEAR);
-            view.draw(canvas);
+            mView.draw(canvas);
         }
 
         @Override
         public int getWidth() {
-            return view.getMeasuredWidth();
+            return mView.getMeasuredWidth();
         }
 
         @Override
         public int getHeight() {
-            return view.getMeasuredHeight();
+            return mView.getMeasuredHeight();
         }
 
         @Override
         public boolean isDirty() {
-            return isDirty(view);
+            return isDirty(mView);
         }
 
         public View getView() {
-            return view;
+            return mView;
         }
     }
 }

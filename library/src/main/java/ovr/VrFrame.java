@@ -21,10 +21,10 @@ import com.eje_c.meganekko.Frame;
  */
 public class VrFrame implements Frame {
 
-    private final long nativePtr;
+    private final long mNativePtr;
 
     public VrFrame(long nativePtr) {
-        this.nativePtr = nativePtr;
+        this.mNativePtr = nativePtr;
     }
 
     private static native double getPredictedDisplayTimeInSeconds(long vrFramePtr);
@@ -50,7 +50,7 @@ public class VrFrame implements Frame {
      */
     @Override
     public double getPredictedDisplayTimeInSeconds() {
-        return getPredictedDisplayTimeInSeconds(nativePtr);
+        return getPredictedDisplayTimeInSeconds(mNativePtr);
     }
 
     /**
@@ -63,7 +63,7 @@ public class VrFrame implements Frame {
      */
     @Override
     public float getDeltaSeconds() {
-        return getDeltaSeconds(nativePtr);
+        return getDeltaSeconds(mNativePtr);
     }
 
     /**
@@ -73,7 +73,7 @@ public class VrFrame implements Frame {
      */
     @Override
     public int getFrameNumber() {
-        return getFrameNumber(nativePtr);
+        return getFrameNumber(mNativePtr);
     }
 
     /**
@@ -85,7 +85,7 @@ public class VrFrame implements Frame {
      */
     @Override
     public float getSwipeFraction() {
-        return getSwipeFraction(nativePtr);
+        return getSwipeFraction(mNativePtr);
     }
 
     /**
@@ -95,7 +95,7 @@ public class VrFrame implements Frame {
      */
     @Override
     public int getButtonState() {
-        return getButtonState(nativePtr);
+        return getButtonState(mNativePtr);
     }
 
     /**
@@ -105,7 +105,7 @@ public class VrFrame implements Frame {
      */
     @Override
     public int getButtonPressed() {
-        return getButtonPressed(nativePtr);
+        return getButtonPressed(mNativePtr);
     }
 
     /**
@@ -115,6 +115,6 @@ public class VrFrame implements Frame {
      */
     @Override
     public int getButtonReleased() {
-        return getButtonReleased(nativePtr);
+        return getButtonReleased(mNativePtr);
     }
 }

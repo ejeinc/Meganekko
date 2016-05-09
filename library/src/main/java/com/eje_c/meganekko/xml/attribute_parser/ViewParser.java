@@ -12,17 +12,15 @@ import com.eje_c.meganekko.xml.XmlAttributeParser;
 
 public class ViewParser implements XmlAttributeParser {
 
-    private static final float AUTO_SIZE_SCALE = 0.006f;
-
     // layout & texture are alias
-    private static final String[] ATTRS = {
+    private static final String[] sAttrs = {
             "layout", "texture"
     };
 
     @Override
     public void parse(Context context, SceneObject object, AttributeSet attributeSet) {
 
-        for (String attr : ATTRS) {
+        for (String attr : sAttrs) {
             String layout = attributeSet.getAttributeValue(NAMESPACE, attr);
             if (layout == null) continue;
 

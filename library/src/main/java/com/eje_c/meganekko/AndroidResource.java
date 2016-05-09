@@ -41,18 +41,18 @@ import java.io.InputStream;
  */
 public class AndroidResource {
 
-    private final InputStream stream;
+    private final InputStream mStream;
 
     /*
      * Instance members
      */
     // Save parameters, for hashCode() and equals()
-    private final String filePath;
-    private final int resourceId;
-    private final String assetPath;
-    private DebugStates debugState;
+    private final String mFilePath;
+    private final int mResourceId;
+    private final String mAssetPath;
+    private DebugStates mDebugState;
     // For hint to Assimp
-    private String resourceFilePath;
+    private String mResourceFilePath;
 
     /**
      * Open any file you have permission to read.
@@ -61,13 +61,13 @@ public class AndroidResource {
      * @throws FileNotFoundException File doesn't exist, or can't be read.
      */
     public AndroidResource(String path) throws FileNotFoundException {
-        stream = new MarkingFileInputStream(path);
-        debugState = DebugStates.OPEN;
+        mStream = new MarkingFileInputStream(path);
+        mDebugState = DebugStates.OPEN;
 
-        filePath = path;
-        resourceId = 0; // No R.whatever field will ever be 0
-        assetPath = null;
-        resourceFilePath = null;
+        mFilePath = path;
+        mResourceId = 0; // No R.whatever field will ever be 0
+        mAssetPath = null;
+        mResourceFilePath = null;
     }
 
     /**
@@ -88,15 +88,15 @@ public class AndroidResource {
      */
     public AndroidResource(Context context, int resourceId) {
         Resources resources = context.getResources();
-        stream = resources.openRawResource(resourceId);
-        debugState = DebugStates.OPEN;
+        mStream = resources.openRawResource(resourceId);
+        mDebugState = DebugStates.OPEN;
 
-        filePath = null;
-        this.resourceId = resourceId;
-        assetPath = null;
+        mFilePath = null;
+        this.mResourceId = resourceId;
+        mAssetPath = null;
         TypedValue value = new TypedValue();
         resources.getValue(resourceId, value, true);
-        resourceFilePath = value.string.toString();
+        mResourceFilePath = value.string.toString();
     }
 
     /**
@@ -110,13 +110,13 @@ public class AndroidResource {
      */
     public AndroidResource(Context context, String assetRelativeFilename) throws IOException {
         AssetManager assets = context.getResources().getAssets();
-        stream = assets.open(assetRelativeFilename);
-        debugState = DebugStates.OPEN;
+        mStream = assets.open(assetRelativeFilename);
+        mDebugState = DebugStates.OPEN;
 
-        filePath = null;
-        resourceId = 0; // No R.whatever field will ever be 0
-        assetPath = assetRelativeFilename;
-        resourceFilePath = null;
+        mFilePath = null;
+        mResourceId = 0; // No R.whatever field will ever be 0
+        mAssetPath = assetRelativeFilename;
+        mResourceFilePath = null;
     }
 
     /**
@@ -128,8 +128,8 @@ public class AndroidResource {
      * @return An open {@link InputStream}.
      */
     public final InputStream getStream() {
-        debugState = DebugStates.READING;
-        return stream;
+        mDebugState = DebugStates.READING;
+        return mStream;
     }
 
     /**
@@ -142,8 +142,8 @@ public class AndroidResource {
      */
     public final void closeStream() {
         try {
-            debugState = DebugStates.CLOSED;
-            stream.close();
+            mDebugState = DebugStates.CLOSED;
+            mStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -165,7 +165,7 @@ public class AndroidResource {
      * can't handle the file format.
      */
     public void mark() {
-        stream.mark(Integer.MAX_VALUE);
+        mStream.mark(Integer.MAX_VALUE);
     }
 
     /**
@@ -183,7 +183,7 @@ public class AndroidResource {
      */
     public void reset() {
         try {
-            stream.reset();
+            mStream.reset();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -196,16 +196,16 @@ public class AndroidResource {
      * resource is not associated with any file
      */
     public String getResourceFilename() {
-        if (filePath != null) {
-            return filePath.substring(filePath.lastIndexOf(File.separator) + 1);
-        } else if (resourceId != 0) {
-            if (resourceFilePath != null) {
-                return resourceFilePath.substring(resourceFilePath
+        if (mFilePath != null) {
+            return mFilePath.substring(mFilePath.lastIndexOf(File.separator) + 1);
+        } else if (mResourceId != 0) {
+            if (mResourceFilePath != null) {
+                return mResourceFilePath.substring(mResourceFilePath
                         .lastIndexOf(File.separator) + 1);
             }
-        } else if (assetPath != null) {
-            return assetPath
-                    .substring(assetPath.lastIndexOf(File.separator) + 1);
+        } else if (mAssetPath != null) {
+            return mAssetPath
+                    .substring(mAssetPath.lastIndexOf(File.separator) + 1);
         }
         return null;
     }
@@ -214,9 +214,9 @@ public class AndroidResource {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((assetPath == null) ? 0 : assetPath.hashCode());
-        result = prime * result + ((filePath == null) ? 0 : filePath.hashCode());
-        result = prime * result + resourceId;
+        result = prime * result + ((mAssetPath == null) ? 0 : mAssetPath.hashCode());
+        result = prime * result + ((mFilePath == null) ? 0 : mFilePath.hashCode());
+        result = prime * result + mResourceId;
         return result;
     }
 
@@ -239,21 +239,21 @@ public class AndroidResource {
             return false;
         }
         AndroidResource other = (AndroidResource) obj;
-        if (assetPath == null) {
-            if (other.assetPath != null) {
+        if (mAssetPath == null) {
+            if (other.mAssetPath != null) {
                 return false;
             }
-        } else if (!assetPath.equals(other.assetPath)) {
+        } else if (!mAssetPath.equals(other.mAssetPath)) {
             return false;
         }
-        if (filePath == null) {
-            if (other.filePath != null) {
+        if (mFilePath == null) {
+            if (other.mFilePath != null) {
                 return false;
             }
-        } else if (!filePath.equals(other.filePath)) {
+        } else if (!mFilePath.equals(other.mFilePath)) {
             return false;
         }
-        return resourceId == other.resourceId;
+        return mResourceId == other.mResourceId;
     }
 
     /**
@@ -262,7 +262,7 @@ public class AndroidResource {
      */
     @Override
     public String toString() {
-        return String.format("%s{filePath=%s; resourceId=%x; assetPath=%s}", debugState, filePath, resourceId, assetPath);
+        return String.format("%s{filePath=%s; resourceId=%x; assetPath=%s}", mDebugState, mFilePath, mResourceId, mAssetPath);
     }
 
     /*

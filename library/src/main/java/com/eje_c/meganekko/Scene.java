@@ -105,9 +105,9 @@ public class Scene extends SceneObject {
     }
 
     public Vector3f getLookingPoint(SceneObject target, boolean axisInWorld) {
-        synchronized (TEMP_VALUES_FOR_JNI) {
-            getLookingPoint(getNative(), target.getNative(), axisInWorld, TEMP_VALUES_FOR_JNI);
-            return new Vector3f(TEMP_VALUES_FOR_JNI[0], TEMP_VALUES_FOR_JNI[1], TEMP_VALUES_FOR_JNI[2]);
+        synchronized (sTempValuesForJni) {
+            getLookingPoint(getNative(), target.getNative(), axisInWorld, sTempValuesForJni);
+            return new Vector3f(sTempValuesForJni[0], sTempValuesForJni[1], sTempValuesForJni[2]);
         }
     }
 
@@ -132,16 +132,16 @@ public class Scene extends SceneObject {
     }
 
     public Vector3f getViewPosition() {
-        synchronized (TEMP_VALUES_FOR_JNI) {
-            getViewPosition(getNative(), TEMP_VALUES_FOR_JNI);
-            return new Vector3f(TEMP_VALUES_FOR_JNI[0], TEMP_VALUES_FOR_JNI[1], TEMP_VALUES_FOR_JNI[2]);
+        synchronized (sTempValuesForJni) {
+            getViewPosition(getNative(), sTempValuesForJni);
+            return new Vector3f(sTempValuesForJni[0], sTempValuesForJni[1], sTempValuesForJni[2]);
         }
     }
 
     public Quaternionf getViewOrientation() {
-        synchronized (TEMP_VALUES_FOR_JNI) {
-            getViewOrientation(getNative(), TEMP_VALUES_FOR_JNI);
-            return new Quaternionf(TEMP_VALUES_FOR_JNI[0], TEMP_VALUES_FOR_JNI[1], TEMP_VALUES_FOR_JNI[2], TEMP_VALUES_FOR_JNI[3]);
+        synchronized (sTempValuesForJni) {
+            getViewOrientation(getNative(), sTempValuesForJni);
+            return new Quaternionf(sTempValuesForJni[0], sTempValuesForJni[1], sTempValuesForJni[2], sTempValuesForJni[3]);
         }
     }
 
