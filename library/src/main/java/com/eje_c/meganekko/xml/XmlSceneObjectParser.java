@@ -20,13 +20,9 @@ import android.util.AttributeSet;
 import android.util.Xml;
 
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.scene_objects.ConeSceneObject;
-import com.eje_c.meganekko.scene_objects.CubeSceneObject;
-import com.eje_c.meganekko.scene_objects.CylinderSceneObject;
-import com.eje_c.meganekko.scene_objects.SphereSceneObject;
+import com.eje_c.meganekko.scene_objects.GlobeSceneObject;
 import com.eje_c.meganekko.xml.attribute_parser.BasicParser;
 import com.eje_c.meganekko.xml.attribute_parser.DrawableParser;
-import com.eje_c.meganekko.xml.attribute_parser.MeshParser;
 import com.eje_c.meganekko.xml.attribute_parser.PositionParser;
 import com.eje_c.meganekko.xml.attribute_parser.RotationParser;
 import com.eje_c.meganekko.xml.attribute_parser.ScaleParser;
@@ -56,7 +52,6 @@ public class XmlSceneObjectParser {
                 PositionParser.class,
                 ScaleParser.class,
                 RotationParser.class,
-                MeshParser.class,
                 ViewParser.class,
                 DrawableParser.class
         ));
@@ -170,14 +165,8 @@ public class XmlSceneObjectParser {
                     } else {
                         return ObjectFactory.newInstance(className);
                     }
-                case "cube":
-                    return new CubeSceneObject();
-                case "sphere":
-                    return new SphereSceneObject();
-                case "cone":
-                    return new ConeSceneObject();
-                case "cylinder":
-                    return new CylinderSceneObject();
+                case "globe":
+                    return new GlobeSceneObject();
                 default:
                     return ObjectFactory.newInstance(name);
             }

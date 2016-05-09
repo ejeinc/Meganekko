@@ -137,10 +137,7 @@ void Renderer::FrustumCull(Scene* scene, const Vector3f& camera_position,
             continue;
         }
 
-        const float* bounding_box_info = currentMesh->getBoundingBoxInfo();
-        if (bounding_box_info == NULL) {
-            continue;
-        }
+        BoundingBoxInfo bounding_box_info = currentMesh->getBoundingBoxInfo();
 
         Matrix4f model_matrix_tmp = render_data->GetOwnerObject()->GetModelMatrix();
         Matrix4f mvp_matrix_tmp(vp_matrix * model_matrix_tmp);
@@ -166,9 +163,8 @@ void Renderer::FrustumCull(Scene* scene, const Vector3f& camera_position,
         }
 
         // Transform the bounding sphere
-        const float *sphere_info = currentMesh->getBoundingSphereInfo();
-        Vector4f sphere_center(sphere_info[0], sphere_info[1], sphere_info[2],
-                1.0f);
+        const BoundingSphereInfo sphere_info = currentMesh->getBoundingSphereInfo();
+        Vector4f sphere_center(sphere_info.center, 1.0f);
         Vector4f transformed_sphere_center = mvp_matrix_tmp.Transform(sphere_center);
 
         // Calculate distance from camera
@@ -295,39 +291,33 @@ void Renderer::BuildFrustum(float frustum[6][4], float mvp_matrix[16]) {
     frustum[5][3] /= t;
 }
 
-bool Renderer::IsCubeInFrustum(float frustum[6][4], const float *vertex_limit) {
+bool Renderer::IsCubeInFrustum(float frustum[6][4], const BoundingBoxInfo & vertex_limit) {
     int p;
-    float Xmin = vertex_limit[0];
-    float Ymin = vertex_limit[1];
-    float Zmin = vertex_limit[2];
-    float Xmax = vertex_limit[3];
-    float Ymax = vertex_limit[4];
-    float Zmax = vertex_limit[5];
 
     for (p = 0; p < 6; p++) {
-        if (frustum[p][0] * (Xmin) + frustum[p][1] * (Ymin)
-                + frustum[p][2] * (Zmin) + frustum[p][3] > 0)
+        if (frustum[p][0] * (vertex_limit.mins.x) + frustum[p][1] * (vertex_limit.mins.y)
+                + frustum[p][2] * (vertex_limit.mins.z) + frustum[p][3] > 0)
             continue;
-        if (frustum[p][0] * (Xmax) + frustum[p][1] * (Ymin)
-                + frustum[p][2] * (Zmin) + frustum[p][3] > 0)
+        if (frustum[p][0] * (vertex_limit.maxs.x) + frustum[p][1] * (vertex_limit.mins.y)
+                + frustum[p][2] * (vertex_limit.mins.z) + frustum[p][3] > 0)
             continue;
-        if (frustum[p][0] * (Xmin) + frustum[p][1] * (Ymax)
-                + frustum[p][2] * (Zmin) + frustum[p][3] > 0)
+        if (frustum[p][0] * (vertex_limit.mins.x) + frustum[p][1] * (vertex_limit.maxs.y)
+                + frustum[p][2] * (vertex_limit.mins.z) + frustum[p][3] > 0)
             continue;
-        if (frustum[p][0] * (Xmax) + frustum[p][1] * (Ymax)
-                + frustum[p][2] * (Zmin) + frustum[p][3] > 0)
+        if (frustum[p][0] * (vertex_limit.maxs.x) + frustum[p][1] * (vertex_limit.maxs.y)
+                + frustum[p][2] * (vertex_limit.mins.z) + frustum[p][3] > 0)
             continue;
-        if (frustum[p][0] * (Xmin) + frustum[p][1] * (Ymin)
-                + frustum[p][2] * (Zmax) + frustum[p][3] > 0)
+        if (frustum[p][0] * (vertex_limit.mins.x) + frustum[p][1] * (vertex_limit.mins.y)
+                + frustum[p][2] * (vertex_limit.maxs.z) + frustum[p][3] > 0)
             continue;
-        if (frustum[p][0] * (Xmax) + frustum[p][1] * (Ymin)
-                + frustum[p][2] * (Zmax) + frustum[p][3] > 0)
+        if (frustum[p][0] * (vertex_limit.maxs.x) + frustum[p][1] * (vertex_limit.mins.y)
+                + frustum[p][2] * (vertex_limit.maxs.z) + frustum[p][3] > 0)
             continue;
-        if (frustum[p][0] * (Xmin) + frustum[p][1] * (Ymax)
-                + frustum[p][2] * (Zmax) + frustum[p][3] > 0)
+        if (frustum[p][0] * (vertex_limit.mins.x) + frustum[p][1] * (vertex_limit.maxs.y)
+                + frustum[p][2] * (vertex_limit.maxs.z) + frustum[p][3] > 0)
             continue;
-        if (frustum[p][0] * (Xmax) + frustum[p][1] * (Ymax)
-                + frustum[p][2] * (Zmax) + frustum[p][3] > 0)
+        if (frustum[p][0] * (vertex_limit.maxs.x) + frustum[p][1] * (vertex_limit.maxs.y)
+                + frustum[p][2] * (vertex_limit.maxs.z) + frustum[p][3] > 0)
             continue;
         return false;
     }

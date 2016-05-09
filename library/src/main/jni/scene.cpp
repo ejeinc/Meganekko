@@ -65,13 +65,11 @@ IntersectRayBoundsResult Scene::IntersectRayBounds(SceneObject *target, bool axi
 
     const Vector3f rayStart = worldToModelM.Transform(inWorldCenterViewPos);
     const Vector3f rayDir = worldToModelM.Transform(centerViewRot.Rotate(Vector3f(0.0f, 0.0f, -1.0f))) - rayStart;
-    const float* boundingBoxInfo = target->GetRenderData()->GetMesh()->getBoundingBoxInfo();
-    const Vector3f mins(boundingBoxInfo[0], boundingBoxInfo[1], boundingBoxInfo[2]);
-    const Vector3f maxs(boundingBoxInfo[3], boundingBoxInfo[4], boundingBoxInfo[5]);
+    const BoundingBoxInfo boundingBoxInfo = target->GetRenderData()->GetMesh()->getBoundingBoxInfo();
     float t0 = 0.0f;
     float t1 = 0.0f;
 
-    bool intersected = Intersect_RayBounds(rayStart, rayDir, mins, maxs, t0, t1);
+    bool intersected = Intersect_RayBounds(rayStart, rayDir, boundingBoxInfo.mins, boundingBoxInfo.maxs, t0, t1);
 
     IntersectRayBoundsResult result;
     result.intersected = intersected && t0 > 0;

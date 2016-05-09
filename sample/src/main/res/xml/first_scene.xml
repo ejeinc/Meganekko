@@ -12,9 +12,8 @@
 
     </object>
 
-    <sphere
+    <globe
         renderingOrder="1"
-        scale="10 10 -10"
         texture="@drawable/background" />
 
 </scene>

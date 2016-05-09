@@ -64,13 +64,7 @@ OESShader::~OESShader() {
 
 void OESShader::Render(const Matrix4f & mvpMatrix, const RenderData * renderData, const Material * material, const int eye) {
 
-    Mesh * mesh = renderData->GetMesh();
     Vector4f color = material->GetColor();
-
-    GL(mesh->SetVertexLoc(VERTEX_ATTRIBUTE_LOCATION_POSITION));
-    GL(mesh->SetNormalLoc(VERTEX_ATTRIBUTE_LOCATION_NORMAL));
-    GL(mesh->SetTexCoordLoc(VERTEX_ATTRIBUTE_LOCATION_UV0));
-    GL(mesh->GenerateVAO());
 
     GL(glUseProgram(program.program));
 
@@ -81,10 +75,15 @@ void OESShader::Render(const Matrix4f & mvpMatrix, const RenderData * renderData
     GL(glUniform4f(program.uColor, color.x, color.y, color.z, color.w));
     GL(glUniform1f(opacity, material->GetOpacity()));
 
-    GL(glBindVertexArray(mesh->GetVAOId()));
-    GL(glDrawElements(GL_TRIANGLES, mesh->GetTriangles().size(), GL_UNSIGNED_SHORT, 0));
-    GL(glBindVertexArray(0));
-
+    Mesh * mesh = renderData->GetMesh();
+    GlGeometry geometry = mesh->GetGeometry();
+    if (geometry.vertexCount > 0) {
+        // Draw with OVR::GlGeometry
+        geometry.Draw();
+    } else {
+        // Legacy mesh
+    }
+    
     GL(glActiveTexture( GL_TEXTURE0 ));
     GL(glBindTexture( GL_TEXTURE_EXTERNAL_OES, 0 ));
 }

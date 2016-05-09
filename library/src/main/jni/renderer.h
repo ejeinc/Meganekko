@@ -59,7 +59,7 @@ private:
             std::vector<RenderData*>& renderDataVector, const OVR::Matrix4f &vpMatrix,
             OESShader * oesShader);
     static void BuildFrustum(float frustum[6][4], float mvpMatrix[16]);
-    static bool IsCubeInFrustum(float frustum[6][4], const float *vertexLimit);
+    static bool IsCubeInFrustum(float frustum[6][4], const BoundingBoxInfo & vertexLimit);
 
     static void SetFaceCulling(int cull_face);
 
