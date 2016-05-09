@@ -18,7 +18,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.5.0'
+        classpath 'com.android.tools.build:gradle:2.0.0'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -42,7 +42,7 @@ task clean(type: Delete) {
 ```gradle
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.eje_c:meganekko:2.0.0' // この行を追加
+    compile 'com.eje_c:meganekko:2.0.12' // この行を追加
 }
 ```
 
@@ -128,24 +128,12 @@ public class MainActivity extends MeganekkoActivity {
 
 Meganekkoを使うためにはAndroidManifestにも手を加える必要があります。
 
-`android.permission.ACCESS_NETWORK_STATE`パーミッションがOculus SDK Mobileを使うために必要なので、指定します。
-
-```xml
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-```
-
-その他に[Oculus developer document](https://developer.oculus.com/documentation/mobilesdk/latest/concepts/mobile-new-apps-intro/#mobile-native-manifest)で推奨されている属性値があるので、追記します。
+[Oculus developer document](https://developer.oculus.com/documentation/mobilesdk/latest/concepts/mobile-new-apps-intro/#mobile-native-manifest)で推奨されている属性値があるので、追記します。
 
 ```xml
 <application
-    android:allowBackup="true"
     android:icon="@mipmap/ic_launcher"
-    android:label="@string/app_name"
-    android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
-
-    <meta-data
-        android:name="com.samsung.android.vr.application.mode"
-        android:value="vr_only" />
+    android:label="@string/app_name">
 
     <activity
         android:name=".MainActivity"
@@ -165,6 +153,14 @@ Meganekkoを使うためにはAndroidManifestにも手を加える必要があ�
     </activity>
 </application>
 ```
+
+```xml
+<meta-data
+    android:name="com.samsung.android.vr.application.mode"
+    android:value="vr_only" />
+```
+
+の記述はライブラリからインジェクトされるので、定義しなくても良いです。
 
 Gear VRのアプリケーションを動作させるにはosigファイルが必要です。osigファイルについては[Oculusデベロッパードキュメント](https://developer.oculus.com/osig/)を読んでください。
 
