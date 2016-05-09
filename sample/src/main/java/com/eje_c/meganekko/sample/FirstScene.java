@@ -8,11 +8,13 @@ import com.eje_c.meganekko.ObjectLookingStateDetector;
 import com.eje_c.meganekko.Scene;
 import com.eje_c.meganekko.SceneObject;
 
+import org.joml.Vector3f;
+
 import ovr.JoyButton;
 
 public class FirstScene extends Scene {
     private SceneObject button, videocam;
-    private ObjectLookingStateDetector detector;
+    private ObjectLookingStateDetector buttonLookingStateDetector, videocamLookingStateDetector;
 
     @Override
     protected void initialize(MeganekkoApp app) {
@@ -22,7 +24,7 @@ public class FirstScene extends Scene {
 
         View buttonView = button.view();
 
-        detector = new ObjectLookingStateDetector(app, button, new ObjectLookingStateDetector.ObjectLookingStateListener() {
+        buttonLookingStateDetector = new ObjectLookingStateDetector(app, button, new ObjectLookingStateDetector.ObjectLookingStateListener() {
             @Override
             public void onLookStart(SceneObject targetObject, Frame vrFrame) {
                 getApp().runOnUiThread(() -> buttonView.setPressed(true));
@@ -37,11 +39,35 @@ public class FirstScene extends Scene {
                 getApp().runOnUiThread(() -> buttonView.setPressed(false));
             }
         });
+
+        videocamLookingStateDetector = new ObjectLookingStateDetector(app, videocam, new ObjectLookingStateDetector.ObjectLookingStateListener() {
+            Vector3f focusSize = new Vector3f(1.5f, 1.5f, 1.5f);
+            Vector3f originalSize = videocam.scale();
+
+            @Override
+            public void onLookStart(SceneObject targetObject, Frame vrFrame) {
+                videocam.animate()
+                        .scaleTo(focusSize)
+                        .start(app);
+            }
+
+            @Override
+            public void onLooking(SceneObject targetObject, Frame vrFrame) {
+            }
+
+            @Override
+            public void onLookEnd(SceneObject targetObject, Frame vrFrame) {
+                videocam.animate()
+                        .scaleTo(originalSize)
+                        .start(app);
+            }
+        });
     }
 
     @Override
     public void update(Frame frame) {
-        detector.update(frame);
+        buttonLookingStateDetector.update(frame);
+        videocamLookingStateDetector.update(frame);
 
         final boolean singleTouchDetected = JoyButton.contains(frame.getButtonPressed(), JoyButton.BUTTON_TOUCH_SINGLE);
         if (singleTouchDetected) {
