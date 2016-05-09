@@ -35,71 +35,78 @@ public:
     SceneObject();
     ~SceneObject();
 
-    void set_in_frustum(bool in_frustum = true) {
-        in_frustum_ = in_frustum;
+    void SetInFrustum(bool inFrustum = true) {
+        this->inFrustum = inFrustum;
     }
 
-    bool in_frustum() const {
-        return in_frustum_;
+    bool IsInFrustum() const {
+        return inFrustum;
     }
 
-    void set_visible(bool visibility);
-    bool visible() const {
-        return visible_;
+    void SetVisible(bool visibility);
+
+    bool IsVisible() const {
+        return visible;
     }
 
-    void set_query_issued(bool issued = true) {
-        query_currently_issued_ = issued;
+    void SetQueryIssued(bool issued = true) {
+        queryCurrentlyIssued = issued;
     }
 
-    bool is_query_issued() {
-        return query_currently_issued_;
+    bool IsQueryIssued() {
+        return queryCurrentlyIssued;
     }
 
-    void attachRenderData(SceneObject* self, RenderData* render_data);
-    void detachRenderData();
+    void AttachRenderData(SceneObject* self, RenderData* render_data);
 
-    RenderData* render_data() const {
-        return render_data_;
+    void DetachRenderData();
+
+    RenderData* GetRenderData() const {
+        return renderData;
     }
 
-    SceneObject* parent() const {
-        return parent_;
+    SceneObject* GetParent() const {
+        return parent;
     }
 
-    const std::vector<SceneObject*>& children() const {
-        return children_;
+    const std::vector<SceneObject*>& GetChildren() const {
+        return children;
     }
 
-    void addChildObject(SceneObject* self, SceneObject* child);
-    void removeChildObject(SceneObject* child);
-    int getChildrenCount() const;
-    SceneObject* getChildByIndex(int index);
-    GLuint *get_occlusion_array() {
-        return queries_;
-    }
-    bool isColliding(SceneObject* scene_object);
+    void AddChildObject(SceneObject* self, SceneObject* child);
 
-    void setLODRange(float minRange, float maxRange) {
-        lod_min_range_ = minRange * minRange;
-        lod_max_range_ = maxRange * maxRange;
-        using_lod_ = true;
+    void RemoveChildObject(SceneObject* child);
+
+    int GetChildrenCount() const;
+
+    SceneObject* GetChildByIndex(int index);
+
+    GLuint * GetOcclusionArray() {
+        return queries;
     }
 
-    float getLODMinRange() {
-        return lod_min_range_;
+    bool IsColliding(SceneObject* scene_object);
+
+    void SetLODRange(float minRange, float maxRange) {
+        lodMinRange = minRange * minRange;
+        lodMaxRange = maxRange * maxRange;
+        usingLod = true;
     }
 
-    float getLODMaxRange() {
-        return lod_max_range_;
+    float GetLODMinRange() {
+        return lodMinRange;
     }
 
-    bool inLODRange(float distance_from_camera) {
-        if(!using_lod_) {
+    float GetLODMaxRange() {
+        return lodMaxRange;
+    }
+
+    bool InLODRange(float distance_from_camera) {
+        if(!usingLod) {
             return true;
         }
-        if(distance_from_camera >= lod_min_range_ &&
-           distance_from_camera < lod_max_range_) {
+        if(distance_from_camera >= lodMinRange &&
+           distance_from_camera < lodMaxRange) {
             return true;
         }
         return false;
@@ -153,25 +160,26 @@ private:
 
     Vector3f position;
     Vector3f scale;
-    Quatf rotation;
+    Quatf    rotation;
     Matrix4f modelMatrix;
-    bool modelMatrixInvalidated = true;
+    bool     modelMatrixInvalidated = true;
     
-    RenderData* render_data_;
-    SceneObject* parent_;
-    std::vector<SceneObject*> children_;
-    float lod_min_range_;
-    float lod_max_range_;
-    bool using_lod_;
+    RenderData *              renderData;
+    SceneObject *             parent;
+    std::vector<SceneObject*> children;
+
+    float lodMinRange;
+    float lodMaxRange;
+    bool  usingLod;
 
     //Flags to check for visibility of a node and
     //whether there are any pending occlusion queries on it
-    const int check_frames_ = 12;
-    int vis_count_;
-    bool visible_;
-    bool in_frustum_;
-    bool query_currently_issued_;
-    GLuint *queries_;
+    const int checkFrames = 12;
+    int       visCount;
+    bool      visible;
+    bool      inFrustum;
+    bool      queryCurrentlyIssued;
+    GLuint *  queries;
 };
 
 }

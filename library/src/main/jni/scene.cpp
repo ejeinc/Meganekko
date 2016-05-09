@@ -25,9 +25,8 @@
 
 namespace mgn {
     Scene::Scene() : SceneObject(),
-        frustum_flag_(false),
-        dirtyFlag_(0),
-        occlusion_flag_(false) {
+        frustumFlag(false),
+        occlusionFlag(false) {
     oesShader = new OESShader();
 }
 
@@ -35,20 +34,20 @@ Scene::~Scene() {
     delete oesShader;
 }
 
-std::vector<SceneObject*> Scene::getWholeSceneObjects() {
-    std::vector<SceneObject*> scene_objects(children());
-    for (int i = 0; i < scene_objects.size(); ++i) {
-        std::vector<SceneObject*> children(scene_objects[i]->children());
+std::vector<SceneObject*> Scene::GetWholeSceneObjects() {
+    std::vector<SceneObject*> sceneObjects(GetChildren());
+    for (int i = 0; i < sceneObjects.size(); ++i) {
+        std::vector<SceneObject*> children(sceneObjects[i]->GetChildren());
         for (auto it = children.begin(); it != children.end(); ++it) {
-            scene_objects.push_back(*it);
+            sceneObjects.push_back(*it);
         }
     }
 
-    return scene_objects;
+    return sceneObjects;
 }
 
 void Scene::PrepareForRendering() {
-    sceneObjects = getWholeSceneObjects();
+    sceneObjects = GetWholeSceneObjects();
 }
 
 Matrix4f Scene::Render(const int eye) {
@@ -66,13 +65,11 @@ IntersectRayBoundsResult Scene::IntersectRayBounds(SceneObject *target, bool axi
 
     const Vector3f rayStart = worldToModelM.Transform(inWorldCenterViewPos);
     const Vector3f rayDir = worldToModelM.Transform(centerViewRot.Rotate(Vector3f(0.0f, 0.0f, -1.0f))) - rayStart;
-    const float* boundingBoxInfo = target->render_data()->mesh()->getBoundingBoxInfo();
-    const Vector3f mins(boundingBoxInfo[0], boundingBoxInfo[1], boundingBoxInfo[2]);
-    const Vector3f maxs(boundingBoxInfo[3], boundingBoxInfo[4], boundingBoxInfo[5]);
+    const BoundingBoxInfo boundingBoxInfo = target->GetRenderData()->GetMesh()->GetBoundingBoxInfo();
     float t0 = 0.0f;
     float t1 = 0.0f;
 
-    bool intersected = Intersect_RayBounds(rayStart, rayDir, mins, maxs, t0, t1);
+    bool intersected = Intersect_RayBounds(rayStart, rayDir, boundingBoxInfo.mins, boundingBoxInfo.maxs, t0, t1);
 
     IntersectRayBoundsResult result;
     result.intersected = intersected && t0 > 0;

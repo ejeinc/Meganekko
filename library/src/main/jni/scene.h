@@ -41,13 +41,23 @@ class Scene: public SceneObject {
 public:
     Scene();
     virtual ~Scene();
-    std::vector<SceneObject*> getWholeSceneObjects();
+    std::vector<SceneObject*> GetWholeSceneObjects();
 
-    void set_frustum_culling( bool frustum_flag){ frustum_flag_ = frustum_flag; }
-    bool get_frustum_culling(){ return frustum_flag_; }
+    void SetFrustumCulling( bool frustumFlag) {
+        this->frustumFlag = frustumFlag;
+    }
 
-    void set_occlusion_culling( bool occlusion_flag){ occlusion_flag_ = occlusion_flag; }
-    bool get_occlusion_culling(){ return occlusion_flag_; }
+    bool GetFrustumCulling() {
+        return frustumFlag;
+    }
+
+    void SetOcclusionCulling(bool occlusionFlag) {
+        this->occlusionFlag = occlusionFlag;
+    }
+
+    bool GetOcclusionCulling() {
+        return occlusionFlag;
+    }
 
     void SetCenterViewMatrix(const Matrix4f & m){
         centerViewM = m;
@@ -102,10 +112,8 @@ private:
     Matrix4f projectionM;
     std::vector<SceneObject*> sceneObjects; // will be rendererd
 
-    int dirtyFlag_;
-    bool frustum_flag_;
-    bool occlusion_flag_;
-    bool statsInitialized = false;
+    bool frustumFlag;
+    bool occlusionFlag;
 
 };
 

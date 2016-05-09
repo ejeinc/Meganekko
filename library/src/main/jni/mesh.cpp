@@ -15,134 +15,32 @@
 
 #include "includes.h"
 #include "Mesh.h"
-#include "assimp/Importer.hpp"
-#include "assimp/mesh.h"
-#include "assimp/postprocess.h"
-#include "assimp/scene.h"
 
 namespace mgn {
-Mesh* Mesh::getBoundingBox() {
-    Mesh* mesh = new Mesh();
 
-    getBoundingBoxInfo(); // Make sure bounding_box_info_ is valid
+void Mesh::SetBoundingBox(const Vector3f & mins, const Vector3f & maxs){
+    boundingBoxInfo.mins = mins;
+    boundingBoxInfo.maxs = maxs;
 
-    float min_x = bounding_box_info_[0];
-    float max_x = bounding_box_info_[3];
-    float min_y = bounding_box_info_[1];
-    float max_y = bounding_box_info_[4];
-    float min_z = bounding_box_info_[2];
-    float max_z = bounding_box_info_[5];
+    Vector3f center = (mins + maxs) * 0.5f;
 
-    mesh->vertices_.push_back(OVR::Vector3f(min_x, min_y, min_z));
-    mesh->vertices_.push_back(OVR::Vector3f(max_x, min_y, min_z));
-    mesh->vertices_.push_back(OVR::Vector3f(min_x, max_y, min_z));
-    mesh->vertices_.push_back(OVR::Vector3f(max_x, max_y, min_z));
-    mesh->vertices_.push_back(OVR::Vector3f(min_x, min_y, max_z));
-    mesh->vertices_.push_back(OVR::Vector3f(max_x, min_y, max_z));
-    mesh->vertices_.push_back(OVR::Vector3f(min_x, max_y, max_z));
-    mesh->vertices_.push_back(OVR::Vector3f(max_x, max_y, max_z));
+    // find radius
+    float x_squared = (mins.x - center.x) * (mins.x - center.x);
+    float y_squared = (mins.y - center.y) * (mins.y - center.y);
+    float z_squared = (mins.z - center.z) * (mins.z - center.z);
+    float radius = sqrtf(x_squared + y_squared + z_squared);
 
-    mesh->triangles_.push_back(0);
-    mesh->triangles_.push_back(2);
-    mesh->triangles_.push_back(1);
-    mesh->triangles_.push_back(1);
-    mesh->triangles_.push_back(2);
-    mesh->triangles_.push_back(3);
-
-    mesh->triangles_.push_back(1);
-    mesh->triangles_.push_back(3);
-    mesh->triangles_.push_back(7);
-    mesh->triangles_.push_back(1);
-    mesh->triangles_.push_back(7);
-    mesh->triangles_.push_back(5);
-
-    mesh->triangles_.push_back(4);
-    mesh->triangles_.push_back(5);
-    mesh->triangles_.push_back(6);
-    mesh->triangles_.push_back(5);
-    mesh->triangles_.push_back(7);
-    mesh->triangles_.push_back(6);
-
-    mesh->triangles_.push_back(0);
-    mesh->triangles_.push_back(6);
-    mesh->triangles_.push_back(2);
-    mesh->triangles_.push_back(0);
-    mesh->triangles_.push_back(4);
-    mesh->triangles_.push_back(6);
-
-    mesh->triangles_.push_back(0);
-    mesh->triangles_.push_back(1);
-    mesh->triangles_.push_back(5);
-    mesh->triangles_.push_back(0);
-    mesh->triangles_.push_back(5);
-    mesh->triangles_.push_back(4);
-
-    mesh->triangles_.push_back(2);
-    mesh->triangles_.push_back(7);
-    mesh->triangles_.push_back(3);
-    mesh->triangles_.push_back(2);
-    mesh->triangles_.push_back(6);
-    mesh->triangles_.push_back(7);
-
-    return mesh;
+    // assign the sphere
+    boundingSphereInfo.center = center;
+    boundingSphereInfo.radius = radius;
 }
 
-// an array of size:6 with Xmin, Ymin, Zmin and Xmax, Ymax, Zmax values
-const float* Mesh::getBoundingBoxInfo() {
-    if (have_bounding_box_) {
-        return bounding_box_info_;
-    }
-
-    float min_x = std::numeric_limits<float>::infinity();
-    float max_x = -std::numeric_limits<float>::infinity();
-    float min_y = std::numeric_limits<float>::infinity();
-    float max_y = -std::numeric_limits<float>::infinity();
-    float min_z = std::numeric_limits<float>::infinity();
-    float max_z = -std::numeric_limits<float>::infinity();
-
-    if (vertices_.size() == 0) {
-        return NULL;
-    }
-
-    for (auto it = vertices_.begin(); it != vertices_.end(); ++it) {
-        if (it->x < min_x) {
-            min_x = it->x;
-        }
-        if (it->x > max_x) {
-            max_x = it->x;
-        }
-        if (it->y < min_y) {
-            min_y = it->y;
-        }
-        if (it->y > max_y) {
-            max_y = it->y;
-        }
-        if (it->z < min_z) {
-            min_z = it->z;
-        }
-        if (it->z > max_z) {
-            max_z = it->z;
-        }
-    }
-
-    bounding_box_info_[0] = min_x;
-    bounding_box_info_[1] = min_y;
-    bounding_box_info_[2] = min_z;
-
-    bounding_box_info_[3] = max_x;
-    bounding_box_info_[4] = max_y;
-    bounding_box_info_[5] = max_z;
-
-    have_bounding_box_ = true;
-    return bounding_box_info_;
+const BoundingBoxInfo & Mesh::GetBoundingBoxInfo() {
+    return boundingBoxInfo;
 }
 
-void Mesh::getTransformedBoundingBoxInfo(OVR::Matrix4f *Mat,
+void Mesh::GetTransformedBoundingBoxInfo(OVR::Matrix4f *Mat,
         float *transformed_bounding_box) {
-
-    if (have_bounding_box_ == false) {
-        getBoundingBoxInfo();
-    }
 
     OVR::Matrix4f M(*Mat);
     float a, b;
@@ -162,8 +60,8 @@ void Mesh::getTransformedBoundingBoxInfo(OVR::Matrix4f *Mat,
 
     for (int i = 0; i < 3; i++) {
         //x coord
-        a = M.M[0][i] * bounding_box_info_[0];
-        b = M.M[0][i] * bounding_box_info_[3];
+        a = M.M[0][i] * boundingBoxInfo.mins.x;
+        b = M.M[0][i] * boundingBoxInfo.maxs.x;
         if (a < b) {
             transformed_bounding_box[0] += a;
             transformed_bounding_box[3] += b;
@@ -173,8 +71,8 @@ void Mesh::getTransformedBoundingBoxInfo(OVR::Matrix4f *Mat,
         }
 
         //y coord
-        a = M.M[1][i] * bounding_box_info_[1];
-        b = M.M[1][i] * bounding_box_info_[4];
+        a = M.M[1][i] * boundingBoxInfo.mins.y;
+        b = M.M[1][i] * boundingBoxInfo.maxs.y;
         if (a < b) {
             transformed_bounding_box[1] += a;
             transformed_bounding_box[4] += b;
@@ -184,8 +82,8 @@ void Mesh::getTransformedBoundingBoxInfo(OVR::Matrix4f *Mat,
         }
 
         //z coord
-        a = M.M[2][i] * bounding_box_info_[2];
-        b = M.M[2][i] * bounding_box_info_[5];
+        a = M.M[2][i] * boundingBoxInfo.mins.z;
+        b = M.M[2][i] * boundingBoxInfo.maxs.z;
         if (a < b) {
             transformed_bounding_box[2] += a;
             transformed_bounding_box[5] += b;
@@ -199,168 +97,8 @@ void Mesh::getTransformedBoundingBoxInfo(OVR::Matrix4f *Mat,
 }
 
 // This gives us a really coarse bounding sphere given the already calcuated bounding box.  This won't be a tight-fitting sphere because it is based on the bounding box.  We can revisit this later if we decide we need a tighter sphere.
-const float *Mesh::getBoundingSphereInfo() {
-    if (!have_bounding_box_) {
-        getBoundingBoxInfo();
-    }
-
-    if (have_bounding_sphere_) {
-        return bounding_sphere_info_;
-    }
-
-    // get the bounding box into nicely readable variables
-    float min_x = bounding_box_info_[0];
-    float max_x = bounding_box_info_[3];
-    float min_y = bounding_box_info_[1];
-    float max_y = bounding_box_info_[4];
-    float min_z = bounding_box_info_[2];
-    float max_z = bounding_box_info_[5];
-
-    // find center
-    float center_x = (min_x + max_x) / 2.0f;
-    float center_y = (min_y + max_y) / 2.0f;
-    float center_z = (min_z + max_z) / 2.0f;
-
-    // find radius
-    float x_squared = (min_x - center_x) * (min_x - center_x);
-    float y_squared = (min_y - center_y) * (min_y - center_y);
-    float z_squared = (min_z - center_z) * (min_z - center_z);
-    float radius = sqrtf(x_squared + y_squared + z_squared);
-
-    // assign the sphere
-    bounding_sphere_info_[0] = center_x;
-    bounding_sphere_info_[1] = center_y;
-    bounding_sphere_info_[2] = center_z;
-    bounding_sphere_info_[3] = radius;
-
-    have_bounding_sphere_ = true;
-
-    return bounding_sphere_info_;
-}
-
-// generate vertex array object
-void Mesh::generateVAO() {
-    GLuint tmpID;
-
-    if (vao_dirty_) {
-        deleteVaos();
-    }
-
-    if (vaoID != 0) {
-        // already initialized
-        return;
-    }
-
-    if (vertices_.size() == 0 && normals_.size() == 0
-            && tex_coords_.size() == 0) {
-        std::string error = "no vertex data yet, shouldn't call here. ";
-        throw error;
-        return;
-    }
-
-    if (vertexLoc_ == -1 && normalLoc_ == -1 && texCoordLoc_ == -1) {
-        std::string error =
-                "no attrib loc setup yet, please compile shader and set attribLoc first. ";
-        throw error;
-        return;
-    }
-
-    GLuint vaoID_ = 0;
-    GLuint triangle_vboID_, vert_vboID_, norm_vboID_, tex_vboID_;
-
-    GL(glGenVertexArrays(1, &vaoID_));
-    GL(glBindVertexArray(vaoID_));
-
-    GL(glGenBuffers(1, &triangle_vboID_));
-    GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, triangle_vboID_));
-    GL(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-            sizeof(unsigned short) * triangles_.size(), &triangles_[0],
-            GL_STATIC_DRAW));
-    numTriangles_ = triangles_.size() / 3;
-
-    if (vertices_.size()) {
-        GL(glGenBuffers(1, &vert_vboID_));
-        GL(glBindBuffer(GL_ARRAY_BUFFER, vert_vboID_));
-        GL(glBufferData(GL_ARRAY_BUFFER, sizeof(OVR::Vector3f) * vertices_.size(),
-                &vertices_[0], GL_STATIC_DRAW));
-        GL(glEnableVertexAttribArray(getVertexLoc()));
-        GL(glVertexAttribPointer(getVertexLoc(), 3, GL_FLOAT, 0, 0, 0));
-    }
-
-    if (normals_.size()) {
-        GL(glGenBuffers(1, &norm_vboID_));
-        GL(glBindBuffer(GL_ARRAY_BUFFER, norm_vboID_));
-        GL(glBufferData(GL_ARRAY_BUFFER, sizeof(OVR::Vector3f) * normals_.size(),
-                &normals_[0], GL_STATIC_DRAW);
-        GL(glEnableVertexAttribArray(getNormalLoc())));
-        GL(glVertexAttribPointer(getNormalLoc(), 3, GL_FLOAT, 0, 0, 0));
-    }
-
-    if (tex_coords_.size()) {
-        GL(glGenBuffers(1, &tex_vboID_));
-        GL(glBindBuffer(GL_ARRAY_BUFFER, tex_vboID_));
-        GL(glBufferData(GL_ARRAY_BUFFER, sizeof(OVR::Vector2f) * tex_coords_.size(),
-                &tex_coords_[0], GL_STATIC_DRAW);
-        GL(glEnableVertexAttribArray(getTexCoordLoc())));
-        GL(glVertexAttribPointer(getTexCoordLoc(), 2, GL_FLOAT, 0, 0, 0));
-    }
-
-    for (auto it = attribute_float_keys_.begin();
-            it != attribute_float_keys_.end(); ++it) {
-        GL(glGenBuffers(1, &tmpID));
-        GL(glBindBuffer(GL_ARRAY_BUFFER, tmpID));
-        GL(glBufferData(GL_ARRAY_BUFFER,
-                sizeof(GLfloat) * getFloatVector(it->second).size(),
-                getFloatVector(it->second).data(), GL_STATIC_DRAW));
-        GL(glEnableVertexAttribArray(it->first));
-        GL(glVertexAttribPointer(it->first, 1, GL_FLOAT, 0, 0, 0));
-    }
-
-    for (auto it = attribute_vec2_keys_.begin();
-            it != attribute_vec2_keys_.end(); ++it) {
-        GL(glGenBuffers(1, &tmpID));
-        GL(glBindBuffer(GL_ARRAY_BUFFER, tmpID));
-        GL(glBufferData(GL_ARRAY_BUFFER,
-                sizeof(OVR::Vector2f) * getVec2Vector(it->second).size(),
-                getVec2Vector(it->second).data(), GL_STATIC_DRAW));
-        GL(glEnableVertexAttribArray(it->first));
-        GL(glVertexAttribPointer(it->first, 2, GL_FLOAT, 0, 0, 0));
-    }
-
-    for (auto it = attribute_vec3_keys_.begin();
-            it != attribute_vec3_keys_.end(); ++it) {
-        GL(glGenBuffers(1, &tmpID));
-        GL(glBindBuffer(GL_ARRAY_BUFFER, tmpID));
-        GL(glBufferData(GL_ARRAY_BUFFER,
-                sizeof(OVR::Vector3f) * getVec3Vector(it->second).size(),
-                getVec3Vector(it->second).data(), GL_STATIC_DRAW));
-        GL(glEnableVertexAttribArray(it->first));
-        GL(glVertexAttribPointer(it->first, 3, GL_FLOAT, 0, 0, 0));
-    }
-
-    for (auto it = attribute_vec4_keys_.begin();
-            it != attribute_vec4_keys_.end(); ++it) {
-        GL(glGenBuffers(1, &tmpID));
-        GL(glBindBuffer(GL_ARRAY_BUFFER, tmpID));
-        GL(glBufferData(GL_ARRAY_BUFFER,
-                sizeof(OVR::Vector4f) * getVec4Vector(it->second).size(),
-                getVec4Vector(it->second).data(), GL_STATIC_DRAW));
-        GL(glEnableVertexAttribArray(it->first));
-        GL(glVertexAttribPointer(it->first, 4, GL_FLOAT, 0, 0, 0));
-    }
-
-    vaoID = vaoID_;
-    triangle_vboID = triangle_vboID_;
-    vert_vboID = vert_vboID_;
-    norm_vboID = norm_vboID_;
-    tex_vboID = tex_vboID_;
-
-    // done generation
-    GL(glBindVertexArray(0));
-    GL(glBindBuffer(GL_ARRAY_BUFFER, 0));
-    GL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
-
-    vao_dirty_ = false;
+const BoundingSphereInfo & Mesh::GetBoundingSphereInfo() {
+    return boundingSphereInfo;
 }
 
 }

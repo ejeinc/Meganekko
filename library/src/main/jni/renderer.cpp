@@ -39,14 +39,14 @@ void Renderer::RenderEyeView(Scene* scene, std::vector<SceneObject*> scene_objec
     std::vector<RenderData*> render_data_vector;
 
     // do occlusion culling, if enabled
-    occlusion_cull(scene, scene_objects);
+    OcclusionCull(scene, scene_objects);
 
     // do frustum culling, if enabled
-    frustum_cull(scene, eyeViewMatrix.GetTranslation(), scene_objects, render_data_vector,
+    FrustumCull(scene, eyeViewMatrix.GetTranslation(), scene_objects, render_data_vector,
             eyeViewProjection, oesShader);
 
     // do sorting based on render order
-    if (!scene->get_frustum_culling()) {
+    if (!scene->GetFrustumCulling()) {
         std::sort(render_data_vector.begin(), render_data_vector.end(),
                 compareRenderData);
     } else {
@@ -72,19 +72,18 @@ void Renderer::RenderEyeView(Scene* scene, std::vector<SceneObject*> scene_objec
 
     for (auto it = render_data_vector.begin();
             it != render_data_vector.end(); ++it) {
-        renderRenderData(*it, eyeViewMatrix, eyeProjectionMatrix, renderMask, oesShader, eye);
+        RenderRenderData(*it, eyeViewMatrix, eyeProjectionMatrix, renderMask, oesShader, eye);
     }
 
 }
 
-void Renderer::occlusion_cull(Scene* scene,
-        std::vector<SceneObject*> scene_objects) {
-    if (!scene->get_occlusion_culling()) {
+void Renderer::OcclusionCull(Scene* scene, std::vector<SceneObject*> scene_objects) {
+    if (!scene->GetOcclusionCulling()) {
         return;
     }
 
     for (auto it = scene_objects.begin(); it != scene_objects.end(); ++it) {
-        RenderData* render_data = (*it)->render_data();
+        RenderData* render_data = (*it)->GetRenderData();
         if (render_data == 0) {
             continue;
         }
@@ -95,12 +94,12 @@ void Renderer::occlusion_cull(Scene* scene,
 
         //If a query was issued on an earlier or same frame and if results are
         //available, then update the same. If results are unavailable, do nothing
-        if (!(*it)->is_query_issued()) {
+        if (!(*it)->IsQueryIssued()) {
             continue;
         }
 
         GLuint query_result = GL_FALSE;
-        GLuint *query = (*it)->get_occlusion_array();
+        GLuint *query = (*it)->GetOcclusionArray();
         glGetQueryObjectuiv(query[0], GL_QUERY_RESULT_AVAILABLE, &query_result);
 
         if (query_result) {
@@ -108,69 +107,65 @@ void Renderer::occlusion_cull(Scene* scene,
             glGetQueryObjectuiv(query[0], GL_QUERY_RESULT, &pixel_count);
             bool visibility = ((pixel_count & GL_TRUE) == GL_TRUE);
 
-            (*it)->set_visible(visibility);
-            (*it)->set_query_issued(false);
+            (*it)->SetVisible(visibility);
+            (*it)->SetQueryIssued(false);
         }
     }
 }
 
-void Renderer::frustum_cull(Scene* scene, const Vector3f& camera_position,
+void Renderer::FrustumCull(Scene* scene, const Vector3f& camera_position,
         std::vector<SceneObject*> scene_objects,
         std::vector<RenderData*>& render_data_vector, const Matrix4f &vp_matrix,
         OESShader * oesShader) {
     for (auto it = scene_objects.begin(); it != scene_objects.end(); ++it) {
         SceneObject *scene_object = (*it);
-        RenderData* render_data = scene_object->render_data();
+        RenderData* render_data = scene_object->GetRenderData();
         if (render_data == 0 || render_data->GetMaterial() == 0) {
             continue;
         }
 
         // Check for frustum culling flag
-        if (!scene->get_frustum_culling()) {
+        if (!scene->GetFrustumCulling()) {
             //No occlusion or frustum tests enabled
             render_data_vector.push_back(render_data);
             continue;
         }
 
         // Frustum culling setup
-        Mesh* currentMesh = render_data->mesh();
+        Mesh* currentMesh = render_data->GetMesh();
         if (currentMesh == NULL) {
             continue;
         }
 
-        const float* bounding_box_info = currentMesh->getBoundingBoxInfo();
-        if (bounding_box_info == NULL) {
-            continue;
-        }
+        BoundingBoxInfo bounding_box_info = currentMesh->GetBoundingBoxInfo();
 
-        Matrix4f model_matrix_tmp = render_data->owner_object()->GetModelMatrix();
-        Matrix4f mvp_matrix_tmp(vp_matrix * model_matrix_tmp);
+        Matrix4f modelMatrixTmp = render_data->GetOwnerObject()->GetModelMatrix();
+        Matrix4f mvpMatrixTmp(vp_matrix * modelMatrixTmp);
 
         // Frustum
         float frustum[6][4];
 
         // Matrix to array
         float mvp_matrix_array[16] = { 0.0 };
-        const float *mat_to_array = (const float*)mvp_matrix_tmp.Transposed().M[0]; // TODO this is originally glm::mat4 so transposed
+        const float *mat_to_array = (const float*)mvpMatrixTmp.Transposed().M[0]; // TODO this is originally glm::mat4 so transposed
         memcpy(mvp_matrix_array, mat_to_array, sizeof(float) * 16);
 
         // Build the frustum
-        build_frustum(frustum, mvp_matrix_array);
+        BuildFrustum(frustum, mvp_matrix_array);
 
         // Check for being inside or outside frustum
-        bool is_inside = is_cube_in_frustum(frustum, bounding_box_info);
+        bool is_inside = IsCubeInFrustum(frustum, bounding_box_info);
 
         // Only push those scene objects that are inside of the frustum
         if (!is_inside) {
-            scene_object->set_in_frustum(false);
+            scene_object->SetInFrustum(false);
             continue;
         }
 
         // Transform the bounding sphere
-        const float *sphere_info = currentMesh->getBoundingSphereInfo();
-        Vector4f sphere_center(sphere_info[0], sphere_info[1], sphere_info[2],
-                1.0f);
-        Vector4f transformed_sphere_center = mvp_matrix_tmp.Transform(sphere_center);
+        const BoundingSphereInfo sphereInfo = currentMesh->GetBoundingSphereInfo();
+        Vector4f sphere_center(sphereInfo.center, 1.0f);
+        Vector4f transformed_sphere_center = mvpMatrixTmp.Transform(sphere_center);
 
         // Calculate distance from camera
         Vector4f position(camera_position, 1.0f);
@@ -178,16 +173,16 @@ void Renderer::frustum_cull(Scene* scene, const Vector3f& camera_position,
         float distance = difference.Dot(difference);
 
         // this distance will be used when sorting transparent objects
-        render_data->set_camera_distance(distance);
+        render_data->SetCameraDistance(distance);
 
         // Check if this is the correct LOD level
-        if (!scene_object->inLODRange(distance)) {
+        if (!scene_object->InLODRange(distance)) {
             // not in range, don't add it to the list
             continue;
         }
 
-        scene_object->set_in_frustum();
-        bool visible = scene_object->visible();
+        scene_object->SetInFrustum();
+        bool visible = scene_object->IsVisible();
 
         //If visibility flag was set by an earlier occlusion query,
         //turn visibility on for the object
@@ -196,13 +191,13 @@ void Renderer::frustum_cull(Scene* scene, const Vector3f& camera_position,
         }
 
         if (render_data->GetMaterial() == 0
-                || !scene->get_occlusion_culling()) {
+                || !scene->GetOcclusionCulling()) {
             continue;
         }
     }
 }
 
-void Renderer::build_frustum(float frustum[6][4], float mvp_matrix[16]) {
+void Renderer::BuildFrustum(float frustum[6][4], float mvp_matrix[16]) {
     float t;
 
     /* Extract the numbers for the RIGHT plane */
@@ -296,72 +291,65 @@ void Renderer::build_frustum(float frustum[6][4], float mvp_matrix[16]) {
     frustum[5][3] /= t;
 }
 
-bool Renderer::is_cube_in_frustum(float frustum[6][4],
-        const float *vertex_limit) {
+bool Renderer::IsCubeInFrustum(float frustum[6][4], const BoundingBoxInfo & vertex_limit) {
     int p;
-    float Xmin = vertex_limit[0];
-    float Ymin = vertex_limit[1];
-    float Zmin = vertex_limit[2];
-    float Xmax = vertex_limit[3];
-    float Ymax = vertex_limit[4];
-    float Zmax = vertex_limit[5];
 
     for (p = 0; p < 6; p++) {
-        if (frustum[p][0] * (Xmin) + frustum[p][1] * (Ymin)
-                + frustum[p][2] * (Zmin) + frustum[p][3] > 0)
+        if (frustum[p][0] * (vertex_limit.mins.x) + frustum[p][1] * (vertex_limit.mins.y)
+                + frustum[p][2] * (vertex_limit.mins.z) + frustum[p][3] > 0)
             continue;
-        if (frustum[p][0] * (Xmax) + frustum[p][1] * (Ymin)
-                + frustum[p][2] * (Zmin) + frustum[p][3] > 0)
+        if (frustum[p][0] * (vertex_limit.maxs.x) + frustum[p][1] * (vertex_limit.mins.y)
+                + frustum[p][2] * (vertex_limit.mins.z) + frustum[p][3] > 0)
             continue;
-        if (frustum[p][0] * (Xmin) + frustum[p][1] * (Ymax)
-                + frustum[p][2] * (Zmin) + frustum[p][3] > 0)
+        if (frustum[p][0] * (vertex_limit.mins.x) + frustum[p][1] * (vertex_limit.maxs.y)
+                + frustum[p][2] * (vertex_limit.mins.z) + frustum[p][3] > 0)
             continue;
-        if (frustum[p][0] * (Xmax) + frustum[p][1] * (Ymax)
-                + frustum[p][2] * (Zmin) + frustum[p][3] > 0)
+        if (frustum[p][0] * (vertex_limit.maxs.x) + frustum[p][1] * (vertex_limit.maxs.y)
+                + frustum[p][2] * (vertex_limit.mins.z) + frustum[p][3] > 0)
             continue;
-        if (frustum[p][0] * (Xmin) + frustum[p][1] * (Ymin)
-                + frustum[p][2] * (Zmax) + frustum[p][3] > 0)
+        if (frustum[p][0] * (vertex_limit.mins.x) + frustum[p][1] * (vertex_limit.mins.y)
+                + frustum[p][2] * (vertex_limit.maxs.z) + frustum[p][3] > 0)
             continue;
-        if (frustum[p][0] * (Xmax) + frustum[p][1] * (Ymin)
-                + frustum[p][2] * (Zmax) + frustum[p][3] > 0)
+        if (frustum[p][0] * (vertex_limit.maxs.x) + frustum[p][1] * (vertex_limit.mins.y)
+                + frustum[p][2] * (vertex_limit.maxs.z) + frustum[p][3] > 0)
             continue;
-        if (frustum[p][0] * (Xmin) + frustum[p][1] * (Ymax)
-                + frustum[p][2] * (Zmax) + frustum[p][3] > 0)
+        if (frustum[p][0] * (vertex_limit.mins.x) + frustum[p][1] * (vertex_limit.maxs.y)
+                + frustum[p][2] * (vertex_limit.maxs.z) + frustum[p][3] > 0)
             continue;
-        if (frustum[p][0] * (Xmax) + frustum[p][1] * (Ymax)
-                + frustum[p][2] * (Zmax) + frustum[p][3] > 0)
+        if (frustum[p][0] * (vertex_limit.maxs.x) + frustum[p][1] * (vertex_limit.maxs.y)
+                + frustum[p][2] * (vertex_limit.maxs.z) + frustum[p][3] > 0)
             continue;
         return false;
     }
     return true;
 }
 
-void Renderer::renderRenderData(RenderData* render_data,
+void Renderer::RenderRenderData(RenderData* render_data,
         const Matrix4f& view_matrix, const Matrix4f& projection_matrix,
         int render_mask, OESShader * oesShader, const int eye) {
-    if (render_mask & render_data->render_mask()) {
+    if (render_mask & render_data->GetRenderMask()) {
 
-        if (render_data->offset()) {
+        if (render_data->GetOffset()) {
             glEnable (GL_POLYGON_OFFSET_FILL);
-            glPolygonOffset(render_data->offset_factor(),
-                    render_data->offset_units());
+            glPolygonOffset(render_data->GetOffsetFactor(),
+                    render_data->GetOffsetUnits());
         }
-        if (!render_data->depth_test()) {
+        if (!render_data->GetDepthTest()) {
             glDisable (GL_DEPTH_TEST);
         }
-        if (!render_data->alpha_blend()) {
+        if (!render_data->GetAlphaBlend()) {
             glDisable (GL_BLEND);
         }
-        if (render_data->mesh() != 0) {
+        if (render_data->GetMesh() != 0) {
             Material* curr_material = render_data->GetMaterial();
             if (curr_material != nullptr) {
-                set_face_culling(curr_material->GetCullFace());
+                SetFaceCulling(curr_material->GetCullFace());
 
-                Matrix4f model_matrix = render_data->owner_object()->GetModelMatrix();
+                Matrix4f model_matrix = render_data->GetOwnerObject()->GetModelMatrix();
                 Matrix4f mv_matrix(view_matrix * model_matrix);
                 Matrix4f mvp_matrix = projection_matrix * mv_matrix;
                 try {
-                    oesShader->render(mvp_matrix, render_data, curr_material, eye);
+                    oesShader->Render(mvp_matrix, render_data, curr_material, eye);
                 } catch (std::string error) {
                     __android_log_print(ANDROID_LOG_ERROR, "mgn", "Error detected in Renderer::renderRenderData; error : %s", error.c_str());
                 }
@@ -376,19 +364,19 @@ void Renderer::renderRenderData(RenderData* render_data,
             glCullFace (GL_BACK);
         }
 
-        if (render_data->offset()) {
+        if (render_data->GetOffset()) {
             glDisable (GL_POLYGON_OFFSET_FILL);
         }
-        if (!render_data->depth_test()) {
+        if (!render_data->GetDepthTest()) {
             glEnable (GL_DEPTH_TEST);
         }
-        if (!render_data->alpha_blend()) {
+        if (!render_data->GetAlphaBlend()) {
             glEnable (GL_BLEND);
         }
     }
 }
 
-void Renderer::set_face_culling(int cull_face) {
+void Renderer::SetFaceCulling(int cull_face) {
     switch (cull_face) {
     case Material::CullFront:
         glEnable (GL_CULL_FACE);

@@ -15,8 +15,12 @@
 
 package com.eje_c.meganekko;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
+import android.view.View;
 
 import com.eje_c.meganekko.utility.Colors;
 
@@ -26,11 +30,59 @@ import com.eje_c.meganekko.utility.Colors;
 public class Material extends HybridObject {
 
     private Texture mTexture;
-    private CullFace cullFace;
+    private CullFace mCullFace;
+
+    /**
+     * Create {@link Material} from {@code View}.
+     *
+     * @param view
+     * @return
+     */
+    public static Material from(View view) {
+        Material material = new Material();
+        material.texture().set(view);
+        return material;
+    }
+
+    /**
+     * Create {@link Material} from {@code Drawable}.
+     *
+     * @param drawable
+     * @return
+     */
+    public static Material from(Drawable drawable) {
+        Material material = new Material();
+        material.texture().set(drawable);
+        return material;
+    }
+
+    /**
+     * Create {@link Material} from {@code Bitmap}.
+     *
+     * @param bitmap
+     * @return
+     */
+    public static Material from(Bitmap bitmap) {
+        Material material = new Material();
+        material.texture().set(bitmap);
+        return material;
+    }
+
+    /**
+     * Create {@link Material} from {@code MediaPlayer}.
+     *
+     * @param mediaPlayer
+     * @return
+     */
+    public static Material from(MediaPlayer mediaPlayer) {
+        Material material = new Material();
+        material.texture().set(mediaPlayer);
+        return material;
+    }
 
     private static native void setColor(long material, float r, float g, float b, float a);
 
-    private static native float[] getColor(long material);
+    private static native void getColor(long material, float[] val);
 
     private static native void setOpacity(long material, float opacity);
 
@@ -43,16 +95,16 @@ public class Material extends HybridObject {
     @Override
     protected native long initNativeInstance();
 
-    @Override
-    protected void delete() {
-
-        if (mTexture != null) {
-            mTexture.release();
-            mTexture = null;
-        }
-
-        super.delete();
-    }
+//    @Override
+//    protected void delete() {
+//
+//        if (mTexture != null) {
+//            mTexture.release();
+//            mTexture = null;
+//        }
+//
+//        super.delete();
+//    }
 
     /**
      * Get the {@code color} uniform.
@@ -60,7 +112,9 @@ public class Material extends HybridObject {
      * @return The current {@code vec4 color} as a four-element array [r, g, b, a]
      */
     public float[] getColor() {
-        return getColor(getNative());
+        float[] result = new float[4];
+        getColor(getNative(), result);
+        return result;
     }
 
     /**
@@ -149,12 +203,12 @@ public class Material extends HybridObject {
     }
 
     public void setCullFace(CullFace cullFace) {
-        this.cullFace = cullFace;
+        this.mCullFace = cullFace;
         setCullFace(getNative(), cullFace.ordinal());
     }
 
     public CullFace getCullFace() {
-        return cullFace;
+        return mCullFace;
     }
 
     public enum StereoMode {

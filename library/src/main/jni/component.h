@@ -30,26 +30,26 @@ class SceneObject;
 class Component: public HybridObject {
 public:
     Component() :
-            HybridObject(), owner_object_() {
+            HybridObject(), ownerObject() {
     }
 
     Component(SceneObject* owner_object) :
-            owner_object_(owner_object) {
+            ownerObject(owner_object) {
     }
 
     virtual ~Component() {
     }
 
-    SceneObject* owner_object() const {
-        return owner_object_;
+    SceneObject* GetOwnerObject() const {
+        return ownerObject;
     }
 
-    void set_owner_object(SceneObject* owner_object) {
-        owner_object_ = owner_object;
+    void SetOwnerObject(SceneObject* ownerObject) {
+        this->ownerObject = ownerObject;
     }
 
-    void removeOwnerObject() {
-        owner_object_ = NULL;
+    void RemoveOwnerObject() {
+        ownerObject = NULL;
     }
 
 private:
@@ -59,7 +59,7 @@ private:
     Component& operator=(Component&& component);
 
 private:
-    SceneObject* owner_object_;
+    SceneObject* ownerObject;
 };
 
 }

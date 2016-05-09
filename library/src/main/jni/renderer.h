@@ -48,27 +48,25 @@ public:
             const int eye);
 
 private:
-    static void renderRenderData(RenderData* render_data,
-            const OVR::Matrix4f& view_matrix,
-            const OVR::Matrix4f& projection_matrix,
-            int render_mask, OESShader * oesShader, const int eye);
+    static void RenderRenderData(RenderData* renderData,
+            const OVR::Matrix4f& viewMatrix,
+            const OVR::Matrix4f& projectionMatrix,
+            int renderMask, OESShader * oesShader, const int eye);
 
-    static void occlusion_cull(Scene* scene,
-            std::vector<SceneObject*> scene_objects);
-    static void frustum_cull(Scene* scene, const OVR::Vector3f& camera_position,
-            std::vector<SceneObject*> scene_objects,
-            std::vector<RenderData*>& render_data_vector, const OVR::Matrix4f &vp_matrix,
+    static void OcclusionCull(Scene* scene, std::vector<SceneObject*> sceneObjects);
+    static void FrustumCull(Scene* scene, const OVR::Vector3f& cameraPosition,
+            std::vector<SceneObject*> sceneObjects,
+            std::vector<RenderData*>& renderDataVector, const OVR::Matrix4f &vpMatrix,
             OESShader * oesShader);
-    static void build_frustum(float frustum[6][4], float mvp_matrix[16]);
-    static bool is_cube_in_frustum(float frustum[6][4],
-            const float *vertex_limit);
+    static void BuildFrustum(float frustum[6][4], float mvpMatrix[16]);
+    static bool IsCubeInFrustum(float frustum[6][4], const BoundingBoxInfo & vertexLimit);
 
-    static void set_face_culling(int cull_face);
+    static void SetFaceCulling(int cull_face);
 
-    Renderer(const Renderer& render_engine);
-    Renderer(Renderer&& render_engine);
-    Renderer& operator=(const Renderer& render_engine);
-    Renderer& operator=(Renderer&& render_engine);
+    Renderer(const Renderer& renderEngine);
+    Renderer(Renderer&& renderEngine);
+    Renderer& operator=(const Renderer& renderEngine);
+    Renderer& operator=(Renderer&& renderEngine);
 };
 
 }

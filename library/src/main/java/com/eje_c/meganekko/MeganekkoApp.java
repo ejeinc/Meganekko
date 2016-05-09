@@ -14,6 +14,7 @@ import com.eje_c.meganekko.xml.XmlSceneParserFactory;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+import java.lang.ref.Reference;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -27,7 +28,6 @@ public abstract class MeganekkoApp {
     private final Meganekko meganekko;
     private final Queue<Runnable> mRunnables = new LinkedBlockingQueue<>();
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private final Queue<HybridObject> mDeleteQueue = new LinkedBlockingQueue<>();
     private Scene mScene;
     private Frame frame;
 
@@ -50,9 +50,12 @@ public abstract class MeganekkoApp {
 
         mScene.update(frame);
 
-        // Delete objects
-        while (!mDeleteQueue.isEmpty()) {
-            mDeleteQueue.poll().delete();
+        // Delete native resources related with Garbage Collected objects
+        Reference<? extends HybridObject> ref;
+        while ((ref = NativeReference.sReferenceQueue.poll()) != null) {
+            if (ref instanceof NativeReference) {
+                ((NativeReference) ref).delete();
+            }
         }
     }
 
@@ -273,14 +276,5 @@ public abstract class MeganekkoApp {
             e.printStackTrace();
             throw new IllegalArgumentException(e);
         }
-    }
-
-    /**
-     * Mark object will be deleted.
-     *
-     * @param object
-     */
-    public void delete(HybridObject object) {
-        mDeleteQueue.add(object);
     }
 }

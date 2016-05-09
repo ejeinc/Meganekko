@@ -22,6 +22,13 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.XmlRes;
+import android.support.v4.content.ContextCompat;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import com.eje_c.meganekko.RenderData.RenderMaskBit;
@@ -31,10 +38,14 @@ import com.eje_c.meganekko.animation.RotationUpdateListener;
 import com.eje_c.meganekko.animation.ScaleUpdateListener;
 import com.eje_c.meganekko.animation.VectorEvaluator;
 import com.eje_c.meganekko.utility.Log;
+import com.eje_c.meganekko.xml.XmlSceneObjectParser;
 
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -56,6 +67,10 @@ import java.util.Set;
  * a {@link Material} that defines its surface.
  */
 public class SceneObject extends HybridObject {
+    // Temp array for get values from JNI.
+    // You have to surround with
+    // synchronized (sTempValuesForJni) { ... } block to prevent
+    protected static final float[] sTempValuesForJni = new float[16];
 
     private static final String TAG = SceneObject.class.getSimpleName();
     private final List<SceneObject> mChildren = new ArrayList<>();
@@ -84,6 +99,71 @@ public class SceneObject extends HybridObject {
         renderData.setMesh(mesh);
     }
 
+    /**
+     * Create {@link SceneObject} from {@code View}.
+     *
+     * @param view
+     * @return
+     */
+    public static SceneObject from(View view) {
+        SceneObject sceneObject = new SceneObject();
+        sceneObject.material(Material.from(view));
+        sceneObject.updateViewLayout();
+        sceneObject.mesh(Mesh.from(view));
+        return sceneObject;
+    }
+
+    /**
+     * Create {@link SceneObject} from layout XML.
+     *
+     * @param context
+     * @param layoutRes
+     * @return
+     */
+    public static SceneObject fromLayout(Context context, @LayoutRes int layoutRes) {
+        View view = LayoutInflater.from(context).inflate(layoutRes, null);
+        return from(view);
+    }
+
+    /**
+     * Create {@link SceneObject} from {@code Drawable}.
+     *
+     * @param drawable
+     * @return
+     */
+    public static SceneObject from(Drawable drawable) {
+        SceneObject sceneObject = new SceneObject();
+        sceneObject.mesh(Mesh.from(drawable));
+        sceneObject.material(Material.from(drawable));
+        return sceneObject;
+    }
+
+    /**
+     * Create {@link SceneObject} from drawable XML.
+     *
+     * @param context
+     * @param drawableRes
+     * @return
+     */
+    public static SceneObject fromDrawable(Context context, @DrawableRes int drawableRes) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableRes);
+        return from(drawable);
+    }
+
+    /**
+     * Create {@link SceneObject} from XML.
+     *
+     * @param context
+     * @param xmlRes
+     * @return
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
+    public static SceneObject fromXML(Context context, @XmlRes int xmlRes) throws IOException, XmlPullParserException {
+        XmlSceneObjectParser parser = new XmlSceneObjectParser(context);
+        return parser.parse(context.getResources().getXml(xmlRes));
+    }
+
     private static native void attachRenderData(long sceneObject, long renderData);
 
     private static native void detachRenderData(long sceneObject);
@@ -106,33 +186,22 @@ public class SceneObject extends HybridObject {
 
     private static native void setRotation(long sceneObject, float x, float y, float z, float w);
 
-    private static native Vector3f getPosition(long sceneObject);
+    private static native void getPosition(long sceneObject, float[] val);
 
-    private static native Vector3f getScale(long sceneObject);
+    private static native void getScale(long sceneObject, float[] val);
 
-    private static native Quaternionf getRotation(long sceneObject);
+    private static native void getRotation(long sceneObject, float[] val);
+
+    private static native void setModelMatrix(long sceneObject,
+                                              float m11, float m12, float m13, float m14,
+                                              float m21, float m22, float m23, float m24,
+                                              float m31, float m32, float m33, float m34,
+                                              float m41, float m42, float m43, float m44);
+
+    private static native void getModelMatrix(long sceneObject, float[] val);
 
     @Override
     protected native long initNativeInstance();
-
-    @Override
-    protected void delete() {
-
-        // Delete children first
-        while (getChildrenCount() > 0) {
-            SceneObject child = getChildByIndex(0);
-            removeChildObject(child);
-            child.delete();
-        }
-
-        // Delete self
-        if (mRenderData != null) {
-            mRenderData.delete();
-            mRenderData = null;
-        }
-
-        super.delete();
-    }
 
     /**
      * Get the (optional) ID of the object.
@@ -456,18 +525,18 @@ public class SceneObject extends HybridObject {
         return null;
     }
 
-    public void update(Frame vrFrame) {
+    public void update(Frame frame) {
 
         if (mRenderData != null) {
             Material material = mRenderData.getMaterial();
 
             if (material != null) {
-                material.update(vrFrame);
+                material.update(frame);
             }
         }
 
         for (SceneObject child : mChildren) {
-            child.update(vrFrame);
+            child.update(frame);
         }
     }
 
@@ -610,7 +679,10 @@ public class SceneObject extends HybridObject {
     }
 
     public Vector3f position() {
-        return getPosition(getNative());
+        synchronized (sTempValuesForJni) {
+            getPosition(getNative(), sTempValuesForJni);
+            return new Vector3f(sTempValuesForJni[0], sTempValuesForJni[1], sTempValuesForJni[2]);
+        }
     }
 
     public void scale(Vector3f scale) {
@@ -618,7 +690,10 @@ public class SceneObject extends HybridObject {
     }
 
     public Vector3f scale() {
-        return getScale(getNative());
+        synchronized (sTempValuesForJni) {
+            getScale(getNative(), sTempValuesForJni);
+            return new Vector3f(sTempValuesForJni[0], sTempValuesForJni[1], sTempValuesForJni[2]);
+        }
     }
 
     public void rotation(Quaternionf rotation) {
@@ -626,7 +701,30 @@ public class SceneObject extends HybridObject {
     }
 
     public Quaternionf rotation() {
-        return getRotation(getNative());
+        synchronized (sTempValuesForJni) {
+            getRotation(getNative(), sTempValuesForJni);
+            return new Quaternionf(sTempValuesForJni[0], sTempValuesForJni[1], sTempValuesForJni[2], sTempValuesForJni[3]);
+        }
+    }
+
+    public void modelMatrix(Matrix4f m) {
+        setModelMatrix(getNative(),
+                m.m00, m.m01, m.m02, m.m03,
+                m.m10, m.m11, m.m12, m.m13,
+                m.m20, m.m21, m.m22, m.m23,
+                m.m30, m.m31, m.m32, m.m33
+        );
+    }
+
+    public Matrix4f modelMatrix() {
+        synchronized (sTempValuesForJni) {
+            getModelMatrix(getNative(), sTempValuesForJni);
+            return new Matrix4f(
+                    sTempValuesForJni[0], sTempValuesForJni[1], sTempValuesForJni[2], sTempValuesForJni[3],
+                    sTempValuesForJni[4], sTempValuesForJni[5], sTempValuesForJni[6], sTempValuesForJni[7],
+                    sTempValuesForJni[8], sTempValuesForJni[9], sTempValuesForJni[10], sTempValuesForJni[11],
+                    sTempValuesForJni[12], sTempValuesForJni[13], sTempValuesForJni[14], sTempValuesForJni[15]);
+        }
     }
 
     public Material material() {
@@ -640,8 +738,6 @@ public class SceneObject extends HybridObject {
             attachRenderData(new RenderData());
         }
 
-        Material old = mRenderData.getMaterial();
-        old.delete();
         mRenderData.setMaterial(material);
     }
 
@@ -701,6 +797,27 @@ public class SceneObject extends HybridObject {
         material.texture().set(view);
     }
 
+    public void updateViewLayout() {
+        updateViewLayout(false);
+    }
+
+    /**
+     * Call this when you update {@code View} size after rendered.
+     *
+     * @param updateMeshToView Update mesh to new View size.
+     */
+    public void updateViewLayout(boolean updateMeshToView) {
+        View view = view();
+        if (view == null) return;
+
+        view.measure(0, 0);
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        if (updateMeshToView) {
+            mesh(Mesh.from(view));
+        }
+    }
+
     public SceneObjectAnimator animate() {
         return new SceneObjectAnimator();
     }
@@ -711,6 +828,8 @@ public class SceneObject extends HybridObject {
         private long duration = -1;
         private TimeInterpolator interpolator;
         private boolean sequential;
+        private long delay;
+        private AnimatorSet animator;
 
         // For sequential animation
         private Vector3f lastPos, lastScale;
@@ -801,24 +920,54 @@ public class SceneObject extends HybridObject {
             return this;
         }
 
-        public void start(MeganekkoApp app) {
-            AnimatorSet set = new AnimatorSet();
+        public SceneObjectAnimator delay(long delay) {
+            this.delay = delay;
+            return this;
+        }
+
+        public SceneObjectAnimator start(MeganekkoApp app) {
+
+            if (animator == null) {
+                setupAnimator();
+            }
+
+            app.animate(animator, callback);
+            return this;
+        }
+
+        public SceneObjectAnimator setupAnimator() {
+            this.animator = new AnimatorSet();
 
             if (sequential) {
-                set.playSequentially(animators);
+                animator.playSequentially(animators);
             } else {
-                set.playTogether(animators);
+                animator.playTogether(animators);
             }
 
             if (duration >= 0) {
-                set.setDuration(duration);
+                animator.setDuration(duration);
             }
 
             if (interpolator != null) {
-                set.setInterpolator(interpolator);
+                animator.setInterpolator(interpolator);
             }
 
-            app.animate(set, callback);
+            if (delay > 0) {
+                animator.setStartDelay(delay);
+            }
+
+            return this;
+        }
+
+        /**
+         * Get {@code Animator} of this.
+         * Until {@link #start(MeganekkoApp)} or {@link #setupAnimator()} was called,
+         * this method always return null.
+         *
+         * @return
+         */
+        public Animator getAnimator() {
+            return animator;
         }
     }
 }

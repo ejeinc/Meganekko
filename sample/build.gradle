@@ -1,4 +1,15 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.1.0'
+        classpath 'me.tatarka:gradle-retrolambda:3.2.3' // Retrolambda for lambda expression support
+    }
+}
+
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda' // Retrolambda for lambda expression support
 
 android {
     compileSdkVersion 23
@@ -17,6 +28,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 

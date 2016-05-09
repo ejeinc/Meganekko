@@ -55,11 +55,11 @@ public:
         surfaceTexture = NULL;
     }
 
-    GLuint getId() const {
+    GLuint GetTextureId() const {
         return surfaceTexture->GetTextureId();
     }
 
-    jobject getSurfaceTexture() {
+    jobject GetSurfaceTexture() {
         return surfaceTexture->GetJavaObject();
     }
 

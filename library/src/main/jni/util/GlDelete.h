@@ -13,14 +13,10 @@
  * limitations under the License.
  */
 
+#include "includes.h"
+
 #ifndef GL_DELETE_H_
 #define GL_DELETE_H_
-
-#include <vector>
-#include <pthread.h>
-#ifndef GL_ES_VERSION_3_0
-#include "GLES3/gl3.h"
-#endif
 
 namespace mgn {
 class GlDelete {

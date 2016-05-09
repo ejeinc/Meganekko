@@ -22,7 +22,7 @@ import android.content.Context;
  */
 public class XmlSceneParserFactory {
 
-    private static XmlSceneParserFactory instance;
+    private static XmlSceneParserFactory sInstance;
     private final Context mContext;
     private XmlSceneParser mSceneParser;
 
@@ -36,10 +36,10 @@ public class XmlSceneParserFactory {
      * @return Singleton instance.
      */
     public synchronized static XmlSceneParserFactory getInstance(Context context) {
-        if (instance == null) {
-            instance = new XmlSceneParserFactory(context.getApplicationContext());
+        if (sInstance == null) {
+            sInstance = new XmlSceneParserFactory(context.getApplicationContext());
         }
-        return instance;
+        return sInstance;
     }
 
     /**

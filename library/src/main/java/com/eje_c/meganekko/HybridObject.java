@@ -26,43 +26,28 @@ import com.eje_c.meganekko.utility.Log;
 public abstract class HybridObject {
 
     private static final String TAG = Log.tag(HybridObject.class);
-
-    /**
-     * This is not {@code final}: the first call to {@link #delete()} sets
-     * {@link #mNativePointer} to 0, so that {@link #delete()} can safely be
-     * called multiple times.
-     */
-    private long mNativePointer;
+    private final NativeReference mNativeReference;
 
     /**
      * Normal constructor
      */
     protected HybridObject() {
-        mNativePointer = initNativeInstance();
+        long nativePointer = initNativeInstance();
 
-        if (mNativePointer == 0l) {
+        if (nativePointer == 0l) {
             throw new IllegalStateException("You must override initNativeInstance to get native pointer.");
         }
+
+        mNativeReference = NativeReference.get(this, nativePointer);
     }
 
     protected HybridObject(long nativePointer) {
-        mNativePointer = nativePointer;
 
-        if (mNativePointer == 0l) {
+        if (nativePointer == 0l) {
             throw new IllegalStateException("You must pass valid native pointer.");
         }
-    }
 
-    private static native void delete(long nativePointer);
-
-    /**
-     * Delete associated native pointer. You must call super.delete() if you override this method.
-     */
-    protected void delete() {
-        if (mNativePointer != 0) {
-            delete(mNativePointer);
-            mNativePointer = 0;
-        }
+        mNativeReference = NativeReference.get(this, nativePointer);
     }
 
     /**
@@ -81,7 +66,7 @@ public abstract class HybridObject {
      * This is an internal method that may be useful in diagnostic code.
      */
     public long getNative() {
-        return mNativePointer;
+        return mNativeReference.getNativePointer();
     }
 
     @Override

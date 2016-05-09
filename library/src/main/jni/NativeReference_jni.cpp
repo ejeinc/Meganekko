@@ -1,4 +1,5 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/* 
+ * Copyright 2016 eje inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +15,19 @@
  */
 
 #include "includes.h"
+#include "HybridObject.h"
 
-/***************************************************************************
- * OpenGL related utility functions.
- ***************************************************************************/
-
-#ifndef GL_UTIL_H_
-#define GL_UTIL_H_
-
-#define GL( func )  func; GL_CheckErrors(#func);
-#define __gl2_h_
-
-#include "util/GlDelete.h"
-
+namespace mgn {
+#ifdef __cplusplus
+extern "C" {
 #endif
+
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_NativeReference_delete(JNIEnv * env, jobject obj, jlong nativePointer) {
+    delete reinterpret_cast<HybridObject*>(nativePointer);
+}
+
+#ifdef __cplusplus 
+} // extern C
+#endif
+} // namespace mgn

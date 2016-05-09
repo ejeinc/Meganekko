@@ -20,33 +20,61 @@ import android.util.AttributeSet;
 import android.util.Xml;
 
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.scene_objects.CanvasSceneObject;
-import com.eje_c.meganekko.scene_objects.ConeSceneObject;
-import com.eje_c.meganekko.scene_objects.CubeSceneObject;
-import com.eje_c.meganekko.scene_objects.CylinderSceneObject;
-import com.eje_c.meganekko.scene_objects.SphereSceneObject;
-import com.eje_c.meganekko.scene_objects.VideoSceneObject;
-import com.eje_c.meganekko.scene_objects.ViewSceneObject;
+import com.eje_c.meganekko.scene_objects.GlobeSceneObject;
+import com.eje_c.meganekko.xml.attribute_parser.BasicParser;
+import com.eje_c.meganekko.xml.attribute_parser.DrawableParser;
+import com.eje_c.meganekko.xml.attribute_parser.PositionParser;
+import com.eje_c.meganekko.xml.attribute_parser.RotationParser;
+import com.eje_c.meganekko.xml.attribute_parser.ScaleParser;
+import com.eje_c.meganekko.xml.attribute_parser.ViewParser;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Internally used from {@link XmlSceneParser}. This creates {@link SceneObject} and set properties from XML attributes.
  */
 public class XmlSceneObjectParser {
 
+    private static final List<Class<? extends XmlAttributeParser>> sAttributeParsers = new ArrayList<>();
     private final Context mContext;
+    private final List<XmlAttributeParser> mAttributeParsers = new ArrayList<>();
+
+    static {
+        sAttributeParsers.addAll(Arrays.asList(
+                BasicParser.class,
+                PositionParser.class,
+                ScaleParser.class,
+                RotationParser.class,
+                ViewParser.class,
+                DrawableParser.class
+        ));
+    }
+
+    public static void installAttributeParser(Class<? extends XmlAttributeParser> attributeParserClass) {
+        sAttributeParsers.add(attributeParserClass);
+    }
 
     public XmlSceneObjectParser(Context context) {
         this.mContext = context;
+
+        for (Class<? extends XmlAttributeParser> clazz : sAttributeParsers) {
+            try {
+                mAttributeParsers.add(clazz.newInstance());
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        }
     }
 
-    public SceneObject parse(XmlPullParser parser, Collection<XmlAttributeParser> attributeParsers) throws XmlPullParserException, IOException {
+    public SceneObject parse(XmlPullParser parser) throws XmlPullParserException, IOException {
 
         // Skip until start tag appears
         while (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -66,7 +94,7 @@ public class XmlSceneObjectParser {
 
         // Parse attributes
         AttributeSet attributeSet = Xml.asAttributeSet(parser);
-        for (XmlAttributeParser attributeParser : attributeParsers) {
+        for (XmlAttributeParser attributeParser : mAttributeParsers) {
             attributeParser.parse(mContext, object, attributeSet);
         }
 
@@ -99,7 +127,7 @@ public class XmlSceneObjectParser {
         while (parser.next() != XmlPullParser.END_TAG) {
 
             if (parser.getEventType() == XmlPullParser.START_TAG) {
-                SceneObject child = parse(parser, attributeParsers);
+                SceneObject child = parse(parser);
                 if (child != null) {
                     object.addChildObject(child);
                 }
@@ -137,20 +165,8 @@ public class XmlSceneObjectParser {
                     } else {
                         return ObjectFactory.newInstance(className);
                     }
-                case "cube":
-                    return new CubeSceneObject();
-                case "sphere":
-                    return new SphereSceneObject();
-                case "cone":
-                    return new ConeSceneObject();
-                case "cylinder":
-                    return new CylinderSceneObject();
-                case "video":
-                    return new VideoSceneObject();
-                case "canvas":
-                    return new CanvasSceneObject();
-                case "view":
-                    return new ViewSceneObject();
+                case "globe":
+                    return new GlobeSceneObject();
                 default:
                     return ObjectFactory.newInstance(name);
             }

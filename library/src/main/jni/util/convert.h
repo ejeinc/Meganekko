@@ -1,36 +1,22 @@
+
+#include "includes.h"
+
 #ifndef CONVERT_H_
 #define CONVERT_H_
-
-#include "jni.h"
-#include "Kernel/OVR_Math.h"
 
 using namespace OVR;
 
 namespace mgn {
-
+    
     /**
-     * Convert float container values such as Vector3f or Matrix4f to Java float[].
+     * Fill Java float array with float container value from 0 index.
+     * T value argument will be a float container such as Vector3f, Quatf or Matrix4f.
+     * This method does not check array length. Use carefully.
      */
     template<typename T>
-    static inline jfloatArray ToFloatArray(JNIEnv *jni, T value) {
-
+    static inline void FillElementsUnSafe(JNIEnv * jni, jfloatArray array, T value) {
         jsize size = sizeof(T) / sizeof(jfloat);
-        jfloatArray array = jni->NewFloatArray(size);
-        jni->SetFloatArrayRegion(array, 0, size, reinterpret_cast<jfloat *>(&value));
-
-        return array;
-    }
-
-    static inline jobject ToJava(JNIEnv * jni, Vector3f vec) {
-        const jclass clazz = jni->FindClass("org/joml/Vector3f");
-        const jmethodID constructor = jni->GetMethodID(clazz, "<init>", "(FFF)V" );
-        return jni->NewObject(clazz, constructor, vec.x, vec.y, vec.z);
-    }
-
-    static inline jobject ToJava(JNIEnv * jni, Quatf q) {
-        const jclass clazz = jni->FindClass("org/joml/Quaternionf");
-        const jmethodID constructor = jni->GetMethodID(clazz, "<init>", "(FFFF)V" );
-        return jni->NewObject(clazz, constructor, q.x, q.y, q.z, q.w);
+        jni->SetFloatArrayRegion(array, 0, size, reinterpret_cast<jfloat*>(&value));
     }
 }
 #endif

@@ -21,14 +21,6 @@ import android.util.Xml;
 
 import com.eje_c.meganekko.Scene;
 import com.eje_c.meganekko.SceneObject;
-import com.eje_c.meganekko.xml.attribute_parser.BasicParser;
-import com.eje_c.meganekko.xml.attribute_parser.CanvasParser;
-import com.eje_c.meganekko.xml.attribute_parser.DrawableParser;
-import com.eje_c.meganekko.xml.attribute_parser.MeshParser;
-import com.eje_c.meganekko.xml.attribute_parser.PositionParser;
-import com.eje_c.meganekko.xml.attribute_parser.RotationParser;
-import com.eje_c.meganekko.xml.attribute_parser.ScaleParser;
-import com.eje_c.meganekko.xml.attribute_parser.ViewParser;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -37,45 +29,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Load XML and add {@link SceneObject}s to {@link Scene}.
  */
 public class XmlSceneParser {
 
-    private static final List<Class<? extends XmlAttributeParser>> DEFAULT_ATTRIBUTE_PARSERS = Arrays.asList(
-            BasicParser.class,
-            PositionParser.class,
-            ScaleParser.class,
-            RotationParser.class,
-            MeshParser.class,
-            CanvasParser.class,
-            ViewParser.class,
-            DrawableParser.class
-    );
-    private final Set<Class<? extends XmlAttributeParser>> attributeParsers = new HashSet<>();
     private final Context mContext;
     private final XmlSceneObjectParser mObjectParser;
 
     public XmlSceneParser(Context context) {
         this.mContext = context;
         this.mObjectParser = new XmlSceneObjectParser(context);
-
-        attributeParsers.addAll(DEFAULT_ATTRIBUTE_PARSERS);
-    }
-
-    public boolean addXmlAttributeParser(Class<? extends XmlAttributeParser> parser) {
-        return attributeParsers.add(parser);
-    }
-
-    public boolean removeXmlAttributeParser(Class<? extends XmlAttributeParser> parser) {
-        return attributeParsers.remove(parser);
     }
 
     /**
@@ -147,17 +112,6 @@ public class XmlSceneParser {
             }
         }
 
-        // Instantiate attribute parsers
-        Collection<XmlAttributeParser> parsers = new ArrayList<>();
-        for (Class<? extends XmlAttributeParser> clazz : attributeParsers) {
-            try {
-                parsers.add(clazz.newInstance());
-            } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
-        }
-
         // Parse first tag as Scene if scene was not passed
         if (scene == null) {
 
@@ -180,7 +134,7 @@ public class XmlSceneParser {
 
                 case XmlPullParser.START_TAG:
 
-                    SceneObject object = mObjectParser.parse(parser, parsers);
+                    SceneObject object = mObjectParser.parse(parser);
 
                     if (object != null) {
                         scene.addChildObject(object);
