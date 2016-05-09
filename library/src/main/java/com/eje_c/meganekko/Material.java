@@ -82,7 +82,7 @@ public class Material extends HybridObject {
 
     private static native void setColor(long material, float r, float g, float b, float a);
 
-    private static native float[] getColor(long material);
+    private static native void getColor(long material, float[] val);
 
     private static native void setOpacity(long material, float opacity);
 
@@ -112,7 +112,9 @@ public class Material extends HybridObject {
      * @return The current {@code vec4 color} as a four-element array [r, g, b, a]
      */
     public float[] getColor() {
-        return getColor(getNative());
+        float[] result = new float[4];
+        getColor(getNative(), result);
+        return result;
     }
 
     /**

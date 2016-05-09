@@ -34,7 +34,7 @@ public class Scene extends SceneObject {
 
     private static native boolean isLookingAt(long scene, long sceneObject);
 
-    private static native Vector3f getLookingPoint(long scene, long sceneObject, boolean axisInWorld);
+    private static native void getLookingPoint(long scene, long sceneObject, boolean axisInWorld, float[] val);
 
     private static native void setViewMatrix(long scene, float[] m);
 
@@ -44,9 +44,9 @@ public class Scene extends SceneObject {
 
     private static native void setViewPosition(long scene, float x, float y, float z);
 
-    private static native Vector3f getViewPosition(long scene);
+    private static native void getViewPosition(long scene, float[] val);
 
-    private static native Quaternionf getViewOrientation(long scene);
+    private static native void getViewOrientation(long scene, float[] val);
 
     @Override
     protected native long initNativeInstance();
@@ -105,7 +105,10 @@ public class Scene extends SceneObject {
     }
 
     public Vector3f getLookingPoint(SceneObject target, boolean axisInWorld) {
-        return getLookingPoint(getNative(), target.getNative(), axisInWorld);
+        synchronized (TEMP_VALUES_FOR_JNI) {
+            getLookingPoint(getNative(), target.getNative(), axisInWorld, TEMP_VALUES_FOR_JNI);
+            return new Vector3f(TEMP_VALUES_FOR_JNI[0], TEMP_VALUES_FOR_JNI[1], TEMP_VALUES_FOR_JNI[2]);
+        }
     }
 
     public void setViewMatrix(float[] viewM) {
@@ -129,11 +132,17 @@ public class Scene extends SceneObject {
     }
 
     public Vector3f getViewPosition() {
-        return getViewPosition(getNative());
+        synchronized (TEMP_VALUES_FOR_JNI) {
+            getViewPosition(getNative(), TEMP_VALUES_FOR_JNI);
+            return new Vector3f(TEMP_VALUES_FOR_JNI[0], TEMP_VALUES_FOR_JNI[1], TEMP_VALUES_FOR_JNI[2]);
+        }
     }
 
     public Quaternionf getViewOrientation() {
-        return getViewOrientation(getNative());
+        synchronized (TEMP_VALUES_FOR_JNI) {
+            getViewOrientation(getNative(), TEMP_VALUES_FOR_JNI);
+            return new Quaternionf(TEMP_VALUES_FOR_JNI[0], TEMP_VALUES_FOR_JNI[1], TEMP_VALUES_FOR_JNI[2], TEMP_VALUES_FOR_JNI[3]);
+        }
     }
 
     public MeganekkoApp getApp() {

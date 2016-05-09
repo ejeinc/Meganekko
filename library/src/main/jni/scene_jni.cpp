@@ -47,12 +47,12 @@ Java_com_eje_1c_meganekko_Scene_isLookingAt(JNIEnv * env, jobject obj, jlong jsc
     return result.intersected;
 }
 
-JNIEXPORT jobject JNICALL
-Java_com_eje_1c_meganekko_Scene_getLookingPoint(JNIEnv * env, jobject obj, jlong jscene, jlong jsceneObject, jboolean axisInWorld) {
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_Scene_getLookingPoint(JNIEnv * env, jobject obj, jlong jscene, jlong jsceneObject, jboolean axisInWorld, jfloatArray values) {
     Scene* scene = reinterpret_cast<Scene*>(jscene);
     SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
     IntersectRayBoundsResult result = scene->IntersectRayBounds(sceneObject, axisInWorld);
-    return ToJava(env, result.first);
+    FillElementsUnSafe(env, values, result.first);
 }
 
 JNIEXPORT void JNICALL
@@ -95,17 +95,18 @@ Java_com_eje_1c_meganekko_Scene_setViewPosition(JNIEnv * jni, jobject obj, jlong
     scene->SetViewPosition(Vector3f(x, y, z));
 }
 
-JNIEXPORT jobject JNICALL
-Java_com_eje_1c_meganekko_Scene_getViewPosition(JNIEnv * jni, jobject obj, jlong jscene) {
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_Scene_getViewPosition(JNIEnv * jni, jobject obj, jlong jscene, jfloatArray values) {
     Scene* scene = reinterpret_cast<Scene*>(jscene);
-    return ToJava(jni, scene->GetViewPosition());
+    Vector3f pos = scene->GetViewPosition();
+    FillElementsUnSafe(jni, values, pos);
 }
 
-JNIEXPORT jobject JNICALL
-Java_com_eje_1c_meganekko_Scene_getViewOrientation(JNIEnv * jni, jobject obj, jlong jscene) {
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_Scene_getViewOrientation(JNIEnv * jni, jobject obj, jlong jscene, jfloatArray values) {
     Scene* scene = reinterpret_cast<Scene*>(jscene);
     Quatf orientation = Quatf(scene->GetCenterViewMatrix().InvertedHomogeneousTransform());
-    return ToJava(jni, orientation);
+    FillElementsUnSafe(jni, values, orientation);
 }
 
 #ifdef __cplusplus 

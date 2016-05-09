@@ -33,10 +33,11 @@ Java_com_eje_1c_meganekko_Material_setColor(JNIEnv * env, jobject obj, jlong jma
     material->SetColor(Vector4f(r, g, b, a));
 }
 
-JNIEXPORT jfloatArray JNICALL
-Java_com_eje_1c_meganekko_Material_getColor(JNIEnv * env, jobject obj, jlong jmaterial) {
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_Material_getColor(JNIEnv * env, jobject obj, jlong jmaterial, jfloatArray values) {
     Material* material = reinterpret_cast<Material*>(jmaterial);
-    return ToFloatArray(env, material->GetColor());
+    Vector4f color = material->GetColor();
+    FillElementsUnSafe(env, values, color);
 }
 
 JNIEXPORT void JNICALL

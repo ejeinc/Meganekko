@@ -67,6 +67,10 @@ import java.util.Set;
  * a {@link Material} that defines its surface.
  */
 public class SceneObject extends HybridObject {
+    // Temp array for get values from JNI.
+    // You have to surround with
+    // synchronized (TEMP_VALUES_FOR_JNI) { ... } block to prevent
+    protected static final float[] TEMP_VALUES_FOR_JNI = new float[16];
 
     private static final String TAG = SceneObject.class.getSimpleName();
     private final List<SceneObject> mChildren = new ArrayList<>();
@@ -182,11 +186,11 @@ public class SceneObject extends HybridObject {
 
     private static native void setRotation(long sceneObject, float x, float y, float z, float w);
 
-    private static native Vector3f getPosition(long sceneObject);
+    private static native void getPosition(long sceneObject, float[] val);
 
-    private static native Vector3f getScale(long sceneObject);
+    private static native void getScale(long sceneObject, float[] val);
 
-    private static native Quaternionf getRotation(long sceneObject);
+    private static native void getRotation(long sceneObject, float[] val);
 
     private static native void setModelMatrix(long sceneObject,
                                               float m11, float m12, float m13, float m14,
@@ -194,7 +198,7 @@ public class SceneObject extends HybridObject {
                                               float m31, float m32, float m33, float m34,
                                               float m41, float m42, float m43, float m44);
 
-    private static native Matrix4f getModelMatrix(long sceneObject);
+    private static native void getModelMatrix(long sceneObject, float[] val);
 
     @Override
     protected native long initNativeInstance();
@@ -675,7 +679,10 @@ public class SceneObject extends HybridObject {
     }
 
     public Vector3f position() {
-        return getPosition(getNative());
+        synchronized (TEMP_VALUES_FOR_JNI) {
+            getPosition(getNative(), TEMP_VALUES_FOR_JNI);
+            return new Vector3f(TEMP_VALUES_FOR_JNI[0], TEMP_VALUES_FOR_JNI[1], TEMP_VALUES_FOR_JNI[2]);
+        }
     }
 
     public void scale(Vector3f scale) {
@@ -683,7 +690,10 @@ public class SceneObject extends HybridObject {
     }
 
     public Vector3f scale() {
-        return getScale(getNative());
+        synchronized (TEMP_VALUES_FOR_JNI) {
+            getScale(getNative(), TEMP_VALUES_FOR_JNI);
+            return new Vector3f(TEMP_VALUES_FOR_JNI[0], TEMP_VALUES_FOR_JNI[1], TEMP_VALUES_FOR_JNI[2]);
+        }
     }
 
     public void rotation(Quaternionf rotation) {
@@ -691,7 +701,10 @@ public class SceneObject extends HybridObject {
     }
 
     public Quaternionf rotation() {
-        return getRotation(getNative());
+        synchronized (TEMP_VALUES_FOR_JNI) {
+            getRotation(getNative(), TEMP_VALUES_FOR_JNI);
+            return new Quaternionf(TEMP_VALUES_FOR_JNI[0], TEMP_VALUES_FOR_JNI[1], TEMP_VALUES_FOR_JNI[2], TEMP_VALUES_FOR_JNI[3]);
+        }
     }
 
     public void modelMatrix(Matrix4f m) {
@@ -704,7 +717,14 @@ public class SceneObject extends HybridObject {
     }
 
     public Matrix4f modelMatrix() {
-        return getModelMatrix(getNative());
+        synchronized (TEMP_VALUES_FOR_JNI) {
+            getModelMatrix(getNative(), TEMP_VALUES_FOR_JNI);
+            return new Matrix4f(
+                    TEMP_VALUES_FOR_JNI[0], TEMP_VALUES_FOR_JNI[1], TEMP_VALUES_FOR_JNI[2], TEMP_VALUES_FOR_JNI[3],
+                    TEMP_VALUES_FOR_JNI[4], TEMP_VALUES_FOR_JNI[5], TEMP_VALUES_FOR_JNI[6], TEMP_VALUES_FOR_JNI[7],
+                    TEMP_VALUES_FOR_JNI[8], TEMP_VALUES_FOR_JNI[9], TEMP_VALUES_FOR_JNI[10], TEMP_VALUES_FOR_JNI[11],
+                    TEMP_VALUES_FOR_JNI[12], TEMP_VALUES_FOR_JNI[13], TEMP_VALUES_FOR_JNI[14], TEMP_VALUES_FOR_JNI[15]);
+        }
     }
 
     public Material material() {
