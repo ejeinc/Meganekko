@@ -143,7 +143,7 @@ That's all! Build, Connect Galaxy device to PC, install APK, and launch app. You
 
 If you wish customize Meganekko, follow these steps:
 
-1. Download [Oculus Mobile SDK 1.0.0.0](https://developer.oculus.com/downloads/).
+1. Download [Oculus Mobile SDK 1.0.0.1](https://developer.oculus.com/downloads/).
 2. Extract Oculus Mobile SDK.
 3. Create environment variable `OVR_SDK_MOBILE` and point it to Oculus Mobile SDK directory.
 4. Launch Android Studio.
