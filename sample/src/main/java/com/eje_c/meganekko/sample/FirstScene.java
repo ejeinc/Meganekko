@@ -16,15 +16,22 @@ public class FirstScene extends Scene {
     private SceneObject button, videocam;
     private ObjectLookingStateDetector buttonLookingStateDetector, videocamLookingStateDetector;
 
+    /**
+     * Initialize task.
+     *
+     * @param app
+     */
     @Override
     protected void initialize(MeganekkoApp app) {
         super.initialize(app);
+
+        // Cache SceneObjects
         button = findObjectById(R.id.button);
         videocam = findObjectById(R.id.ic_videocam);
 
-        View buttonView = button.view();
-
         buttonLookingStateDetector = new ObjectLookingStateDetector(app, button, new ObjectLookingStateDetector.ObjectLookingStateListener() {
+            View buttonView = button.view();
+
             @Override
             public void onLookStart(SceneObject targetObject, Frame vrFrame) {
                 getApp().runOnUiThread(() -> buttonView.setPressed(true));
@@ -66,10 +73,14 @@ public class FirstScene extends Scene {
 
     @Override
     public void update(Frame frame) {
+
+        // These update() dispatches onLookStart and onLookEnd
         buttonLookingStateDetector.update(frame);
         videocamLookingStateDetector.update(frame);
 
+        // Single tap event can be detected with this method
         final boolean singleTouchDetected = JoyButton.contains(frame.getButtonPressed(), JoyButton.BUTTON_TOUCH_SINGLE);
+
         if (singleTouchDetected) {
             if (isLookingAt(button)) {
                 MyApp app = (MyApp) getApp();

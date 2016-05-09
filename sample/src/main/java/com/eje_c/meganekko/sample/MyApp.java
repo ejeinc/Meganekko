@@ -4,12 +4,17 @@ import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
 import com.eje_c.meganekko.utility.Log;
 
+/**
+ * Meganekko's main app logics.
+ */
 public class MyApp extends MeganekkoApp {
     private static final String TAG = "MGN";
-    private FirstScene firstScene;
+    private FirstScene firstScene; // cache first scene for returning from switched scene
 
     public MyApp(Meganekko meganekko) {
         super(meganekko);
+
+        // Set first scene
         setSceneFromXML(R.xml.first_scene);
     }
 
@@ -18,7 +23,7 @@ public class MyApp extends MeganekkoApp {
      */
     @Override
     public void update() {
-        super.update();
+        super.update(); // This is important! Don't forget to call super.update();
 //        Log.d(TAG, "update");
     }
 
@@ -27,11 +32,19 @@ public class MyApp extends MeganekkoApp {
         Log.d(TAG, "shutdown");
     }
 
+    /**
+     * Called when {@code Activity.onResume} was called.
+     * Note: This method will not be called on first launch.
+     */
     @Override
     public void onResume() {
         Log.d(TAG, "resumed");
     }
 
+    /**
+     * Called when {@code Activity.onPause} was called.
+     * Note: This method will be called about after 10 seconds from device is detached from Gear VR.
+     */
     @Override
     public void onPause() {
         Log.d(TAG, "paused");
