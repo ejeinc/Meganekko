@@ -25,9 +25,8 @@
 
 namespace mgn {
     Scene::Scene() : SceneObject(),
-        frustum_flag_(false),
-        dirtyFlag_(0),
-        occlusion_flag_(false) {
+        frustumFlag(false),
+        occlusionFlag(false) {
     oesShader = new OESShader();
 }
 
@@ -36,15 +35,15 @@ Scene::~Scene() {
 }
 
 std::vector<SceneObject*> Scene::GetWholeSceneObjects() {
-    std::vector<SceneObject*> scene_objects(GetChildren());
-    for (int i = 0; i < scene_objects.size(); ++i) {
-        std::vector<SceneObject*> children(scene_objects[i]->GetChildren());
+    std::vector<SceneObject*> sceneObjects(GetChildren());
+    for (int i = 0; i < sceneObjects.size(); ++i) {
+        std::vector<SceneObject*> children(sceneObjects[i]->GetChildren());
         for (auto it = children.begin(); it != children.end(); ++it) {
-            scene_objects.push_back(*it);
+            sceneObjects.push_back(*it);
         }
     }
 
-    return scene_objects;
+    return sceneObjects;
 }
 
 void Scene::PrepareForRendering() {

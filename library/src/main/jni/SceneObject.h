@@ -35,40 +35,42 @@ public:
     SceneObject();
     ~SceneObject();
 
-    void SetInFrustum(bool in_frustum = true) {
-        in_frustum_ = in_frustum;
+    void SetInFrustum(bool inFrustum = true) {
+        this->inFrustum = inFrustum;
     }
 
     bool IsInFrustum() const {
-        return in_frustum_;
+        return inFrustum;
     }
 
     void SetVisible(bool visibility);
+
     bool IsVisible() const {
-        return visible_;
+        return visible;
     }
 
     void SetQueryIssued(bool issued = true) {
-        query_currently_issued_ = issued;
+        queryCurrentlyIssued = issued;
     }
 
     bool IsQueryIssued() {
-        return query_currently_issued_;
+        return queryCurrentlyIssued;
     }
 
     void AttachRenderData(SceneObject* self, RenderData* render_data);
+
     void DetachRenderData();
 
     RenderData* GetRenderData() const {
-        return render_data_;
+        return renderData;
     }
 
     SceneObject* GetParent() const {
-        return parent_;
+        return parent;
     }
 
     const std::vector<SceneObject*>& GetChildren() const {
-        return children_;
+        return children;
     }
 
     void AddChildObject(SceneObject* self, SceneObject* child);
@@ -80,31 +82,31 @@ public:
     SceneObject* GetChildByIndex(int index);
 
     GLuint * GetOcclusionArray() {
-        return queries_;
+        return queries;
     }
 
     bool IsColliding(SceneObject* scene_object);
 
     void SetLODRange(float minRange, float maxRange) {
-        lod_min_range_ = minRange * minRange;
-        lod_max_range_ = maxRange * maxRange;
-        using_lod_ = true;
+        lodMinRange = minRange * minRange;
+        lodMaxRange = maxRange * maxRange;
+        usingLod = true;
     }
 
     float GetLODMinRange() {
-        return lod_min_range_;
+        return lodMinRange;
     }
 
     float GetLODMaxRange() {
-        return lod_max_range_;
+        return lodMaxRange;
     }
 
     bool InLODRange(float distance_from_camera) {
-        if(!using_lod_) {
+        if(!usingLod) {
             return true;
         }
-        if(distance_from_camera >= lod_min_range_ &&
-           distance_from_camera < lod_max_range_) {
+        if(distance_from_camera >= lodMinRange &&
+           distance_from_camera < lodMaxRange) {
             return true;
         }
         return false;
@@ -158,25 +160,26 @@ private:
 
     Vector3f position;
     Vector3f scale;
-    Quatf rotation;
+    Quatf    rotation;
     Matrix4f modelMatrix;
-    bool modelMatrixInvalidated = true;
+    bool     modelMatrixInvalidated = true;
     
-    RenderData* render_data_;
-    SceneObject* parent_;
-    std::vector<SceneObject*> children_;
-    float lod_min_range_;
-    float lod_max_range_;
-    bool using_lod_;
+    RenderData *              renderData;
+    SceneObject *             parent;
+    std::vector<SceneObject*> children;
+
+    float lodMinRange;
+    float lodMaxRange;
+    bool  usingLod;
 
     //Flags to check for visibility of a node and
     //whether there are any pending occlusion queries on it
-    const int check_frames_ = 12;
-    int vis_count_;
-    bool visible_;
-    bool in_frustum_;
-    bool query_currently_issued_;
-    GLuint *queries_;
+    const int checkFrames = 12;
+    int       visCount;
+    bool      visible;
+    bool      inFrustum;
+    bool      queryCurrentlyIssued;
+    GLuint *  queries;
 };
 
 }

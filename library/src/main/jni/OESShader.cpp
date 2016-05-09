@@ -62,7 +62,7 @@ OESShader::~OESShader() {
     DeleteProgram(program);
 }
 
-void OESShader::Render(const Matrix4f & mvpMatrix, RenderData * renderData, Material * material, const int eye) {
+void OESShader::Render(const Matrix4f & mvpMatrix, const RenderData * renderData, const Material * material, const int eye) {
 
     Mesh * mesh = renderData->GetMesh();
     Vector4f color = material->GetColor();

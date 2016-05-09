@@ -28,72 +28,73 @@ namespace mgn {
         position(Vector3f()),
         scale(Vector3f(1, 1, 1)),
         rotation(Quatf()),
-        render_data_(),
-        parent_(),
-        children_(),
-        visible_(true),
-        in_frustum_(false),
-        query_currently_issued_(false),
-        vis_count_(0),
-        lod_min_range_(0),
-        lod_max_range_(MAXFLOAT),
-        using_lod_(false) {
+        renderData(),
+        parent(),
+        children(),
+        visible(true),
+        inFrustum(false),
+        queryCurrentlyIssued(false),
+        visCount(0),
+        lodMinRange(0),
+        lodMaxRange(MAXFLOAT),
+        usingLod(false) {
 
     // Occlusion query setup
-    queries_ = new GLuint[1];
-    glGenQueries(1, queries_);
+    queries = new GLuint[1];
+    glGenQueries(1, queries);
 }
 
 SceneObject::~SceneObject() {
-    delete queries_;
+    delete queries;
 }
 
-void SceneObject::AttachRenderData(SceneObject* self, RenderData* render_data) {
-    if (render_data_) {
+void SceneObject::AttachRenderData(SceneObject* self, RenderData* renderData) {
+    if (renderData) {
         DetachRenderData();
     }
-    SceneObject* owner_object(render_data->GetOwnerObject());
-    if (owner_object) {
-        owner_object->DetachRenderData();
+
+    SceneObject* ownerObject(renderData->GetOwnerObject());
+    if (ownerObject) {
+        ownerObject->DetachRenderData();
     }
-    render_data_ = render_data;
-    render_data->SetOwnerObject(self);
+
+    this->renderData = renderData;
+    renderData->SetOwnerObject(self);
 }
 
 void SceneObject::DetachRenderData() {
-    if (render_data_) {
-        render_data_->RemoveOwnerObject();
-        render_data_ = NULL;
+    if (renderData) {
+        renderData->RemoveOwnerObject();
+        renderData = NULL;
     }
 }
 
 void SceneObject::AddChildObject(SceneObject* self, SceneObject* child) {
-    for (SceneObject* parent = parent_; parent; parent = parent->parent_) {
+    for (SceneObject* parent = this->parent; parent; parent = parent->parent) {
         if (child == parent) {
             std::string error =
                     "SceneObject::addChildObject() : cycle of scene objects is not allowed.";
             throw error;
         }
     }
-    children_.push_back(child);
-    child->parent_ = self;
+    children.push_back(child);
+    child->parent = self;
 }
 
 void SceneObject::RemoveChildObject(SceneObject* child) {
-    if (child->parent_ == this) {
-        children_.erase(std::remove(children_.begin(), children_.end(), child),
-                children_.end());
-        child->parent_ = NULL;
+    if (child->parent == this) {
+        children.erase(std::remove(children.begin(), children.end(), child), children.end());
+        child->parent = NULL;
     }
 }
 
 int SceneObject::GetChildrenCount() const {
-    return children_.size();
+    return children.size();
 }
 
 SceneObject* SceneObject::GetChildByIndex(int index) {
-    if (index < children_.size()) {
-        return children_[index];
+    if (index < children.size()) {
+        return children[index];
     } else {
         std::string error = "SceneObject::getChildByIndex() : Out of index.";
         throw error;
@@ -110,38 +111,38 @@ void SceneObject::SetVisible(bool visibility = true) {
     //changing the status to avoid flickering artifacts.
 
     if (visibility == true)
-        vis_count_++;
+        visCount++;
     else
-        vis_count_--;
+        visCount--;
 
-    if (vis_count_ > check_frames_) {
-        visible_ = true;
-        vis_count_ = 0;
-    } else if (vis_count_ < (-1 * check_frames_)) {
-        visible_ = false;
-        vis_count_ = 0;
+    if (visCount > checkFrames) {
+        this->visible = true;
+        visCount = 0;
+    } else if (visCount < (-1 * checkFrames)) {
+        this->visible = false;
+        visCount = 0;
     }
 }
 
-bool SceneObject::IsColliding(SceneObject *scene_object) {
+bool SceneObject::IsColliding(SceneObject *sceneObject) {
 
     //Get the transformed bounding boxes in world coordinates and check if they intersect
     //Transformation is done by the getTransformedBoundingBoxInfo method in the Mesh class
 
-    float this_object_bounding_box[6], check_object_bounding_box[6];
+    float thisObjectBoundingBox[6], checkObjectBoundingBox[6];
 
     OVR::Matrix4f this_object_model_matrix = this->GetRenderData()->GetOwnerObject()->GetModelMatrix();
-    this->GetRenderData()->GetMesh()->getTransformedBoundingBoxInfo(&this_object_model_matrix, this_object_bounding_box);
+    this->GetRenderData()->GetMesh()->getTransformedBoundingBoxInfo(&this_object_model_matrix, thisObjectBoundingBox);
 
-    OVR::Matrix4f check_object_model_matrix = scene_object->GetRenderData()->GetOwnerObject()->GetModelMatrix();
-    scene_object->GetRenderData()->GetMesh()->getTransformedBoundingBoxInfo(&check_object_model_matrix, check_object_bounding_box);
+    OVR::Matrix4f check_object_model_matrix = sceneObject->GetRenderData()->GetOwnerObject()->GetModelMatrix();
+    sceneObject->GetRenderData()->GetMesh()->getTransformedBoundingBoxInfo(&check_object_model_matrix, checkObjectBoundingBox);
 
-    bool result = (this_object_bounding_box[3] > check_object_bounding_box[0]
-            && this_object_bounding_box[0] < check_object_bounding_box[3]
-            && this_object_bounding_box[4] > check_object_bounding_box[1]
-            && this_object_bounding_box[1] < check_object_bounding_box[4]
-            && this_object_bounding_box[5] > check_object_bounding_box[2]
-            && this_object_bounding_box[2] < check_object_bounding_box[5]);
+    bool result = (thisObjectBoundingBox[3] > checkObjectBoundingBox[0]
+            && thisObjectBoundingBox[0] < checkObjectBoundingBox[3]
+            && thisObjectBoundingBox[4] > checkObjectBoundingBox[1]
+            && thisObjectBoundingBox[1] < checkObjectBoundingBox[4]
+            && thisObjectBoundingBox[5] > checkObjectBoundingBox[2]
+            && thisObjectBoundingBox[2] < checkObjectBoundingBox[5]);
 
     return result;
 }
