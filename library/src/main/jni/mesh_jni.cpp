@@ -29,7 +29,7 @@ Java_com_eje_1c_meganekko_Mesh_initNativeInstance(JNIEnv* env, jobject obj) {
 JNIEXPORT jfloatArray JNICALL
 Java_com_eje_1c_meganekko_Mesh_getVertices(JNIEnv * env, jobject obj, jlong jmesh) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
-    std::vector<OVR::Vector3f>& vertices = mesh->vertices();
+    std::vector<OVR::Vector3f>& vertices = mesh->GetVertices();
     jfloatArray jvertices = env->NewFloatArray(vertices.size() * 3);
     env->SetFloatArrayRegion(jvertices, 0, vertices.size() * 3, reinterpret_cast<jfloat*>(vertices.data()));
     return jvertices;
@@ -45,14 +45,14 @@ Java_com_eje_1c_meganekko_Mesh_setVertices(JNIEnv * env, jobject obj, jlong jmes
     for (int i = 0; i < vertices_length; ++i) {
         native_vertices.push_back(vertices_pointer[i]);
     }
-    mesh->set_vertices(native_vertices);
+    mesh->SetVertices(native_vertices);
     env->ReleaseFloatArrayElements(vertices, jvertices_pointer, 0);
 }
 
 JNIEXPORT jfloatArray JNICALL
 Java_com_eje_1c_meganekko_Mesh_getNormals(JNIEnv * env, jobject obj, jlong jmesh) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
-    std::vector<OVR::Vector3f>& normals = mesh->normals();
+    std::vector<OVR::Vector3f>& normals = mesh->GetNormals();
     jfloatArray jnormals = env->NewFloatArray(normals.size() * 3);
     env->SetFloatArrayRegion(jnormals, 0, normals.size() * 3, reinterpret_cast<jfloat*>(normals.data()));
     return jnormals;
@@ -68,14 +68,14 @@ Java_com_eje_1c_meganekko_Mesh_setNormals(JNIEnv * env, jobject obj, jlong jmesh
     for (int i = 0; i < normals_length; ++i) {
         native_normals.push_back(normals_pointer[i]);
     }
-    mesh->set_normals(native_normals);
+    mesh->SetNormals(native_normals);
     env->ReleaseFloatArrayElements(normals, jnormals_pointer, 0);
 }
 
 JNIEXPORT jfloatArray JNICALL
 Java_com_eje_1c_meganekko_Mesh_getTexCoords(JNIEnv * env, jobject obj, jlong jmesh) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
-    std::vector<OVR::Vector2f>& uvs = mesh->tex_coords();
+    std::vector<OVR::Vector2f>& uvs = mesh->GetTexCoords();
     jfloatArray juvs = env->NewFloatArray(uvs.size() * 2);
     env->SetFloatArrayRegion(juvs, 0, uvs.size() * 2, reinterpret_cast<jfloat*>(uvs.data()));
     return juvs;
@@ -91,14 +91,14 @@ Java_com_eje_1c_meganekko_Mesh_setTexCoords(JNIEnv * env, jobject obj, jlong jme
     for (int i = 0; i < tex_coords_length; ++i) {
         native_tex_coords.push_back(tex_coords_pointer[i]);
     }
-    mesh->set_tex_coords(native_tex_coords);
+    mesh->SetTexCoords(native_tex_coords);
     env->ReleaseFloatArrayElements(tex_coords, jtex_coords_pointer, 0);
 }
 
 JNIEXPORT jcharArray JNICALL
 Java_com_eje_1c_meganekko_Mesh_getTriangles(JNIEnv * env, jobject obj, jlong jmesh) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
-    std::vector<unsigned short>& triangles = mesh->triangles();
+    std::vector<unsigned short>& triangles = mesh->GetTriangles();
     jcharArray jtriangles = env->NewCharArray(triangles.size());
     env->SetCharArrayRegion(jtriangles, 0, triangles.size(), triangles.data());
     return jtriangles;
@@ -114,7 +114,7 @@ Java_com_eje_1c_meganekko_Mesh_setTriangles(JNIEnv * env, jobject obj, jlong jme
     for (int i = 0; i < triangles_length; ++i) {
         native_triangles.push_back(triangles_pointer[i]);
     }
-    mesh->set_triangles(native_triangles);
+    mesh->SetTriangles(native_triangles);
     env->ReleaseCharArrayElements(triangles, jtriangles_pointer, 0);
 }
 
@@ -123,7 +123,7 @@ Java_com_eje_1c_meganekko_Mesh_getFloatVector(JNIEnv * env, jobject obj, jlong j
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     const char* charKey = env->GetStringUTFChars(key, 0);
     std::string nativeKey = std::string(charKey);
-    std::vector<float>& float_vector = mesh->getFloatVector(nativeKey);
+    std::vector<float>& float_vector = mesh->GetFloatVector(nativeKey);
     env->ReleaseStringUTFChars(key, charKey);
     jfloatArray jfloat_vector = env->NewFloatArray(float_vector.size());
     env->SetFloatArrayRegion(jfloat_vector, 0, float_vector.size(), reinterpret_cast<jfloat*>(float_vector.data()));
@@ -142,7 +142,7 @@ Java_com_eje_1c_meganekko_Mesh_setFloatVector(JNIEnv * env, jobject obj, jlong j
     }
     const char* charKey = env->GetStringUTFChars(key, 0);
     std::string nativeKey = std::string(charKey);
-    mesh->setFloatVector(nativeKey, native_float_vector);
+    mesh->SetFloatVector(nativeKey, native_float_vector);
     env->ReleaseStringUTFChars(key, charKey);
     env->ReleaseFloatArrayElements(float_vector, jfloat_vector_pointer, 0);
 }
@@ -152,7 +152,7 @@ Java_com_eje_1c_meganekko_Mesh_getVec2Vector(JNIEnv * env, jobject obj, jlong jm
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     const char* charKey = env->GetStringUTFChars(key, 0);
     std::string nativeKey = std::string(charKey);
-    std::vector<OVR::Vector2f>& vec2_vector = mesh->getVec2Vector(nativeKey);
+    std::vector<OVR::Vector2f>& vec2_vector = mesh->GetVec2Vector(nativeKey);
     env->ReleaseStringUTFChars(key, charKey);
     jfloatArray jvec2_vector = env->NewFloatArray(vec2_vector.size() * 2);
     env->SetFloatArrayRegion(jvec2_vector, 0, vec2_vector.size() * 2, reinterpret_cast<jfloat*>(vec2_vector.data()));
@@ -171,7 +171,7 @@ Java_com_eje_1c_meganekko_Mesh_setVec2Vector(JNIEnv * env, jobject obj, jlong jm
     }
     const char* charKey = env->GetStringUTFChars(key, 0);
     std::string nativeKey = std::string(charKey);
-    mesh->setVec2Vector(nativeKey, native_vec2_vector);
+    mesh->SetVec2Vector(nativeKey, native_vec2_vector);
     env->ReleaseStringUTFChars(key, charKey);
     env->ReleaseFloatArrayElements(vec2_vector, jvec2_vector_pointer, 0);
 }
@@ -181,7 +181,7 @@ Java_com_eje_1c_meganekko_Mesh_getVec3Vector(JNIEnv * env, jobject obj, jlong jm
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     const char* charKey = env->GetStringUTFChars(key, 0);
     std::string nativeKey = std::string(charKey);
-    std::vector<OVR::Vector3f>& vec3Vector = mesh->getVec3Vector(nativeKey);
+    std::vector<OVR::Vector3f>& vec3Vector = mesh->GetVec3Vector(nativeKey);
     env->ReleaseStringUTFChars(key, charKey);
     jfloatArray jvec3Vector = env->NewFloatArray(vec3Vector.size() * 3);
     env->SetFloatArrayRegion(jvec3Vector, 0, vec3Vector.size() * 3, reinterpret_cast<jfloat*>(vec3Vector.data()));
@@ -200,7 +200,7 @@ Java_com_eje_1c_meganekko_Mesh_setVec3Vector(JNIEnv * env, jobject obj, jlong jm
     }
     const char* charKey = env->GetStringUTFChars(key, 0);
     std::string nativeKey = std::string(charKey);
-    mesh->setVec3Vector(nativeKey, native_vec3Vector);
+    mesh->SetVec3Vector(nativeKey, native_vec3Vector);
     env->ReleaseStringUTFChars(key, charKey);
     env->ReleaseFloatArrayElements(vec3Vector, jvec3VectorPointer, 0);
 }
@@ -210,7 +210,7 @@ Java_com_eje_1c_meganekko_Mesh_getVec4Vector(JNIEnv * env, jobject obj, jlong jm
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     const char* charKey = env->GetStringUTFChars(key, 0);
     std::string nativeKey = std::string(charKey);
-    std::vector<OVR::Vector4f>& vec4Vector = mesh->getVec4Vector(nativeKey);
+    std::vector<OVR::Vector4f>& vec4Vector = mesh->GetVec4Vector(nativeKey);
     env->ReleaseStringUTFChars(key, charKey);
     jfloatArray jvec4Vector = env->NewFloatArray(vec4Vector.size() * 4);
     env->SetFloatArrayRegion(jvec4Vector, 0, vec4Vector.size() * 4, reinterpret_cast<jfloat*>(vec4Vector.data()));
@@ -229,7 +229,7 @@ Java_com_eje_1c_meganekko_Mesh_setVec4Vector(JNIEnv * env, jobject obj, jlong jm
     }
     const char* charKey = env->GetStringUTFChars(key, 0);
     std::string nativeKey = std::string(charKey);
-    mesh->setVec4Vector(nativeKey, nativeVec4Vector);
+    mesh->SetVec4Vector(nativeKey, nativeVec4Vector);
     env->ReleaseStringUTFChars(key, charKey);
     env->ReleaseFloatArrayElements(vec4Vector, jvec4VectorPointer, 0);
 }

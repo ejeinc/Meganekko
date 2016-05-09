@@ -35,66 +35,71 @@ public:
     SceneObject();
     ~SceneObject();
 
-    void set_in_frustum(bool in_frustum = true) {
+    void SetInFrustum(bool in_frustum = true) {
         in_frustum_ = in_frustum;
     }
 
-    bool in_frustum() const {
+    bool IsInFrustum() const {
         return in_frustum_;
     }
 
-    void set_visible(bool visibility);
-    bool visible() const {
+    void SetVisible(bool visibility);
+    bool IsVisible() const {
         return visible_;
     }
 
-    void set_query_issued(bool issued = true) {
+    void SetQueryIssued(bool issued = true) {
         query_currently_issued_ = issued;
     }
 
-    bool is_query_issued() {
+    bool IsQueryIssued() {
         return query_currently_issued_;
     }
 
-    void attachRenderData(SceneObject* self, RenderData* render_data);
-    void detachRenderData();
+    void AttachRenderData(SceneObject* self, RenderData* render_data);
+    void DetachRenderData();
 
-    RenderData* render_data() const {
+    RenderData* GetRenderData() const {
         return render_data_;
     }
 
-    SceneObject* parent() const {
+    SceneObject* GetParent() const {
         return parent_;
     }
 
-    const std::vector<SceneObject*>& children() const {
+    const std::vector<SceneObject*>& GetChildren() const {
         return children_;
     }
 
-    void addChildObject(SceneObject* self, SceneObject* child);
-    void removeChildObject(SceneObject* child);
-    int getChildrenCount() const;
-    SceneObject* getChildByIndex(int index);
-    GLuint *get_occlusion_array() {
+    void AddChildObject(SceneObject* self, SceneObject* child);
+
+    void RemoveChildObject(SceneObject* child);
+
+    int GetChildrenCount() const;
+
+    SceneObject* GetChildByIndex(int index);
+
+    GLuint * GetOcclusionArray() {
         return queries_;
     }
-    bool isColliding(SceneObject* scene_object);
 
-    void setLODRange(float minRange, float maxRange) {
+    bool IsColliding(SceneObject* scene_object);
+
+    void SetLODRange(float minRange, float maxRange) {
         lod_min_range_ = minRange * minRange;
         lod_max_range_ = maxRange * maxRange;
         using_lod_ = true;
     }
 
-    float getLODMinRange() {
+    float GetLODMinRange() {
         return lod_min_range_;
     }
 
-    float getLODMaxRange() {
+    float GetLODMaxRange() {
         return lod_max_range_;
     }
 
-    bool inLODRange(float distance_from_camera) {
+    bool InLODRange(float distance_from_camera) {
         if(!using_lod_) {
             return true;
         }

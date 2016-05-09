@@ -41,13 +41,13 @@ class Scene: public SceneObject {
 public:
     Scene();
     virtual ~Scene();
-    std::vector<SceneObject*> getWholeSceneObjects();
+    std::vector<SceneObject*> GetWholeSceneObjects();
 
-    void set_frustum_culling( bool frustum_flag){ frustum_flag_ = frustum_flag; }
-    bool get_frustum_culling(){ return frustum_flag_; }
+    void SetFrustumCulling( bool frustum_flag){ frustum_flag_ = frustum_flag; }
+    bool GetFrustumCulling(){ return frustum_flag_; }
 
-    void set_occlusion_culling( bool occlusion_flag){ occlusion_flag_ = occlusion_flag; }
-    bool get_occlusion_culling(){ return occlusion_flag_; }
+    void SetOcclusionCulling( bool occlusion_flag){ occlusion_flag_ = occlusion_flag; }
+    bool GetOcclusionCulling(){ return occlusion_flag_; }
 
     void SetCenterViewMatrix(const Matrix4f & m){
         centerViewM = m;

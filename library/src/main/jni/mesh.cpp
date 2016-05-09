@@ -239,11 +239,11 @@ const float *Mesh::getBoundingSphereInfo() {
 }
 
 // generate vertex array object
-void Mesh::generateVAO() {
+void Mesh::GenerateVAO() {
     GLuint tmpID;
 
     if (vao_dirty_) {
-        deleteVaos();
+        DeleteVaos();
     }
 
     if (vaoID != 0) {
@@ -283,8 +283,8 @@ void Mesh::generateVAO() {
         GL(glBindBuffer(GL_ARRAY_BUFFER, vert_vboID_));
         GL(glBufferData(GL_ARRAY_BUFFER, sizeof(OVR::Vector3f) * vertices_.size(),
                 &vertices_[0], GL_STATIC_DRAW));
-        GL(glEnableVertexAttribArray(getVertexLoc()));
-        GL(glVertexAttribPointer(getVertexLoc(), 3, GL_FLOAT, 0, 0, 0));
+        GL(glEnableVertexAttribArray(GetVertexLoc()));
+        GL(glVertexAttribPointer(GetVertexLoc(), 3, GL_FLOAT, 0, 0, 0));
     }
 
     if (normals_.size()) {
@@ -292,8 +292,8 @@ void Mesh::generateVAO() {
         GL(glBindBuffer(GL_ARRAY_BUFFER, norm_vboID_));
         GL(glBufferData(GL_ARRAY_BUFFER, sizeof(OVR::Vector3f) * normals_.size(),
                 &normals_[0], GL_STATIC_DRAW);
-        GL(glEnableVertexAttribArray(getNormalLoc())));
-        GL(glVertexAttribPointer(getNormalLoc(), 3, GL_FLOAT, 0, 0, 0));
+        GL(glEnableVertexAttribArray(GetNormalLoc())));
+        GL(glVertexAttribPointer(GetNormalLoc(), 3, GL_FLOAT, 0, 0, 0));
     }
 
     if (tex_coords_.size()) {
@@ -301,8 +301,8 @@ void Mesh::generateVAO() {
         GL(glBindBuffer(GL_ARRAY_BUFFER, tex_vboID_));
         GL(glBufferData(GL_ARRAY_BUFFER, sizeof(OVR::Vector2f) * tex_coords_.size(),
                 &tex_coords_[0], GL_STATIC_DRAW);
-        GL(glEnableVertexAttribArray(getTexCoordLoc())));
-        GL(glVertexAttribPointer(getTexCoordLoc(), 2, GL_FLOAT, 0, 0, 0));
+        GL(glEnableVertexAttribArray(GetTexCoordLoc())));
+        GL(glVertexAttribPointer(GetTexCoordLoc(), 2, GL_FLOAT, 0, 0, 0));
     }
 
     for (auto it = attribute_float_keys_.begin();
@@ -310,8 +310,8 @@ void Mesh::generateVAO() {
         GL(glGenBuffers(1, &tmpID));
         GL(glBindBuffer(GL_ARRAY_BUFFER, tmpID));
         GL(glBufferData(GL_ARRAY_BUFFER,
-                sizeof(GLfloat) * getFloatVector(it->second).size(),
-                getFloatVector(it->second).data(), GL_STATIC_DRAW));
+                sizeof(GLfloat) * GetFloatVector(it->second).size(),
+                GetFloatVector(it->second).data(), GL_STATIC_DRAW));
         GL(glEnableVertexAttribArray(it->first));
         GL(glVertexAttribPointer(it->first, 1, GL_FLOAT, 0, 0, 0));
     }
@@ -321,8 +321,8 @@ void Mesh::generateVAO() {
         GL(glGenBuffers(1, &tmpID));
         GL(glBindBuffer(GL_ARRAY_BUFFER, tmpID));
         GL(glBufferData(GL_ARRAY_BUFFER,
-                sizeof(OVR::Vector2f) * getVec2Vector(it->second).size(),
-                getVec2Vector(it->second).data(), GL_STATIC_DRAW));
+                sizeof(OVR::Vector2f) * GetVec2Vector(it->second).size(),
+                GetVec2Vector(it->second).data(), GL_STATIC_DRAW));
         GL(glEnableVertexAttribArray(it->first));
         GL(glVertexAttribPointer(it->first, 2, GL_FLOAT, 0, 0, 0));
     }
@@ -332,8 +332,8 @@ void Mesh::generateVAO() {
         GL(glGenBuffers(1, &tmpID));
         GL(glBindBuffer(GL_ARRAY_BUFFER, tmpID));
         GL(glBufferData(GL_ARRAY_BUFFER,
-                sizeof(OVR::Vector3f) * getVec3Vector(it->second).size(),
-                getVec3Vector(it->second).data(), GL_STATIC_DRAW));
+                sizeof(OVR::Vector3f) * GetVec3Vector(it->second).size(),
+                GetVec3Vector(it->second).data(), GL_STATIC_DRAW));
         GL(glEnableVertexAttribArray(it->first));
         GL(glVertexAttribPointer(it->first, 3, GL_FLOAT, 0, 0, 0));
     }
@@ -343,8 +343,8 @@ void Mesh::generateVAO() {
         GL(glGenBuffers(1, &tmpID));
         GL(glBindBuffer(GL_ARRAY_BUFFER, tmpID));
         GL(glBufferData(GL_ARRAY_BUFFER,
-                sizeof(OVR::Vector4f) * getVec4Vector(it->second).size(),
-                getVec4Vector(it->second).data(), GL_STATIC_DRAW));
+                sizeof(OVR::Vector4f) * GetVec4Vector(it->second).size(),
+                GetVec4Vector(it->second).data(), GL_STATIC_DRAW));
         GL(glEnableVertexAttribArray(it->first));
         GL(glVertexAttribPointer(it->first, 4, GL_FLOAT, 0, 0, 0));
     }

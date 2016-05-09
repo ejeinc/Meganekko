@@ -55,7 +55,7 @@ Java_com_eje_1c_meganekko_Material_getOpacity(JNIEnv * env, jobject obj, jlong j
 JNIEXPORT jobject JNICALL
 Java_com_eje_1c_meganekko_Material_getSurfaceTexture(JNIEnv * env, jobject obj, jlong jmaterial) {
     Material* material = reinterpret_cast<Material*>(jmaterial);
-    return material->getSurfaceTexture();
+    return material->GetSurfaceTexture();
 }
 
 JNIEXPORT void JNICALL

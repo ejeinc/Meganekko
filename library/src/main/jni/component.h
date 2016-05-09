@@ -40,15 +40,15 @@ public:
     virtual ~Component() {
     }
 
-    SceneObject* owner_object() const {
+    SceneObject* GetOwnerObject() const {
         return owner_object_;
     }
 
-    void set_owner_object(SceneObject* owner_object) {
+    void SetOwnerObject(SceneObject* owner_object) {
         owner_object_ = owner_object;
     }
 
-    void removeOwnerObject() {
+    void RemoveOwnerObject() {
         owner_object_ = NULL;
     }
 

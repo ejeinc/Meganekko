@@ -35,10 +35,10 @@ public:
     }
 
     ~Mesh() {
-        cleanUp();
+        CleanUp();
     }
 
-    void cleanUp() {
+    void CleanUp() {
         std::vector<OVR::Vector3f> vertices;
         vertices.swap(vertices_);
         std::vector<OVR::Vector3f> normals;
@@ -48,10 +48,10 @@ public:
         std::vector<unsigned short> triangles;
         triangles.swap(triangles_);
 
-        deleteVaos();
+        DeleteVaos();
     }
 
-    void deleteVaos() {
+    void DeleteVaos() {
         
         if (vaoID != 0) {
             gl_delete.queueVertexArray(vaoID);
@@ -81,75 +81,75 @@ public:
         have_bounding_sphere_ = false;
     }
 
-    std::vector<OVR::Vector3f>& vertices() {
+    std::vector<OVR::Vector3f>& GetVertices() {
         return vertices_;
     }
 
-    const std::vector<OVR::Vector3f>& vertices() const {
+    const std::vector<OVR::Vector3f>& GetVertices() const {
         return vertices_;
     }
 
-    void set_vertices(const std::vector<OVR::Vector3f>& vertices) {
+    void SetVertices(const std::vector<OVR::Vector3f>& vertices) {
         vertices_ = vertices;
         getBoundingSphereInfo(); // calculate bounding sphere
     }
 
-    void set_vertices(std::vector<OVR::Vector3f>&& vertices) {
+    void SetVertices(std::vector<OVR::Vector3f>&& vertices) {
         vertices_ = std::move(vertices);
         getBoundingSphereInfo(); // calculate bounding sphere
     }
 
-    std::vector<OVR::Vector3f>& normals() {
+    std::vector<OVR::Vector3f>& GetNormals() {
         return normals_;
     }
 
-    const std::vector<OVR::Vector3f>& normals() const {
+    const std::vector<OVR::Vector3f>& GetNormals() const {
         return normals_;
     }
 
-    void set_normals(const std::vector<OVR::Vector3f>& normals) {
+    void SetNormals(const std::vector<OVR::Vector3f>& normals) {
         normals_ = normals;
     }
 
-    void set_normals(std::vector<OVR::Vector3f>&& normals) {
+    void SetNormals(std::vector<OVR::Vector3f>&& normals) {
         normals_ = std::move(normals);
     }
 
-    std::vector<OVR::Vector2f>& tex_coords() {
+    std::vector<OVR::Vector2f>& GetTexCoords() {
         return tex_coords_;
     }
 
-    const std::vector<OVR::Vector2f>& tex_coords() const {
+    const std::vector<OVR::Vector2f>& GetTexCoords() const {
         return tex_coords_;
     }
 
-    void set_tex_coords(const std::vector<OVR::Vector2f>& tex_coords) {
+    void SetTexCoords(const std::vector<OVR::Vector2f>& tex_coords) {
         tex_coords_ = tex_coords;
         vao_dirty_ = true;
     }
 
-    void set_tex_coords(std::vector<OVR::Vector2f>&& tex_coords) {
+    void SetTexCoords(std::vector<OVR::Vector2f>&& tex_coords) {
         tex_coords_ = std::move(tex_coords);
         vao_dirty_ = true;
     }
 
-    std::vector<unsigned short>& triangles() {
+    std::vector<unsigned short>& GetTriangles() {
         return triangles_;
     }
 
-    const std::vector<unsigned short>& triangles() const {
+    const std::vector<unsigned short>& GetTriangles() const {
         return triangles_;
     }
 
-    void set_triangles(const std::vector<unsigned short>& triangles) {
+    void SetTriangles(const std::vector<unsigned short>& triangles) {
         triangles_ = triangles;
     }
 
-    void set_triangles(std::vector<unsigned short>&& triangles) {
+    void SetTriangles(std::vector<unsigned short>&& triangles) {
         triangles_ = std::move(triangles);
     }
 
-    std::vector<float>& getFloatVector(std::string key) {
+    std::vector<float>& GetFloatVector(std::string key) {
         auto it = float_vectors_.find(key);
         if (it != float_vectors_.end()) {
             return it->second;
@@ -160,7 +160,7 @@ public:
         }
     }
 
-    const std::vector<float>& getFloatVector(std::string key) const {
+    const std::vector<float>& GetFloatVector(std::string key) const {
         auto it = float_vectors_.find(key);
         if (it != float_vectors_.end()) {
             return it->second;
@@ -171,11 +171,11 @@ public:
         }
     }
 
-    void setFloatVector(std::string key, const std::vector<float>& vector) {
+    void SetFloatVector(std::string key, const std::vector<float>& vector) {
         float_vectors_[key] = vector;
     }
 
-    std::vector<OVR::Vector2f>& getVec2Vector(std::string key) {
+    std::vector<OVR::Vector2f>& GetVec2Vector(std::string key) {
         auto it = vec2_vectors_.find(key);
         if (it != vec2_vectors_.end()) {
             return it->second;
@@ -185,7 +185,7 @@ public:
         }
     }
 
-    const std::vector<OVR::Vector2f>& getVec2Vector(std::string key) const {
+    const std::vector<OVR::Vector2f>& GetVec2Vector(std::string key) const {
         auto it = vec2_vectors_.find(key);
         if (it != vec2_vectors_.end()) {
             return it->second;
@@ -195,11 +195,11 @@ public:
         }
     }
 
-    void setVec2Vector(std::string key, const std::vector<OVR::Vector2f>& vector) {
+    void SetVec2Vector(std::string key, const std::vector<OVR::Vector2f>& vector) {
         vec2_vectors_[key] = vector;
     }
 
-    std::vector<OVR::Vector3f>& getVec3Vector(std::string key) {
+    std::vector<OVR::Vector3f>& GetVec3Vector(std::string key) {
         auto it = vec3_vectors_.find(key);
         if (it != vec3_vectors_.end()) {
             return it->second;
@@ -209,7 +209,7 @@ public:
         }
     }
 
-    const std::vector<OVR::Vector3f>& getVec3Vector(std::string key) const {
+    const std::vector<OVR::Vector3f>& GetVec3Vector(std::string key) const {
         auto it = vec3_vectors_.find(key);
         if (it != vec3_vectors_.end()) {
             return it->second;
@@ -219,11 +219,11 @@ public:
         }
     }
 
-    void setVec3Vector(std::string key, const std::vector<OVR::Vector3f>& vector) {
+    void SetVec3Vector(std::string key, const std::vector<OVR::Vector3f>& vector) {
         vec3_vectors_[key] = vector;
     }
 
-    std::vector<OVR::Vector4f>& getVec4Vector(std::string key) {
+    std::vector<OVR::Vector4f>& GetVec4Vector(std::string key) {
         auto it = vec4_vectors_.find(key);
         if (it != vec4_vectors_.end()) {
             return it->second;
@@ -233,7 +233,7 @@ public:
         }
     }
 
-    const std::vector<OVR::Vector4f>& getVec4Vector(std::string key) const {
+    const std::vector<OVR::Vector4f>& GetVec4Vector(std::string key) const {
         auto it = vec4_vectors_.find(key);
         if (it != vec4_vectors_.end()) {
             return it->second;
@@ -243,7 +243,7 @@ public:
         }
     }
 
-    void setVec4Vector(std::string key, const std::vector<OVR::Vector4f>& vector) {
+    void SetVec4Vector(std::string key, const std::vector<OVR::Vector4f>& vector) {
         vec4_vectors_[key] = vector;
     }
 
@@ -256,54 +256,54 @@ public:
     // /////////////////////////////////////////////////
     //  code for vertex attribute location
 
-    void setVertexLoc(GLuint loc) {
+    void SetVertexLoc(GLuint loc) {
         vertexLoc_ = loc;
     }
 
-    const GLuint getVertexLoc() const {
+    const GLuint GetVertexLoc() const {
         return vertexLoc_;
     }
 
-    void setNormalLoc(GLuint loc) {
+    void SetNormalLoc(GLuint loc) {
         normalLoc_ = loc;
     }
 
-    const GLuint getNormalLoc() const {
+    const GLuint GetNormalLoc() const {
         return normalLoc_;
     }
 
-    void setTexCoordLoc(GLuint loc) {
+    void SetTexCoordLoc(GLuint loc) {
         texCoordLoc_ = loc;
     }
 
-    const GLuint getTexCoordLoc() const {
+    const GLuint GetTexCoordLoc() const {
         return texCoordLoc_;
     }
 
-    void setVertexAttribLocF(GLuint location, std::string key) {
+    void SetVertexAttribLocF(GLuint location, std::string key) {
         attribute_float_keys_[location] = key;
     }
 
-    void setVertexAttribLocV2(GLuint location, std::string key) {
+    void SetVertexAttribLocV2(GLuint location, std::string key) {
         attribute_vec2_keys_[location] = key;
     }
 
-    void setVertexAttribLocV3(GLuint location, std::string key) {
+    void SetVertexAttribLocV3(GLuint location, std::string key) {
         attribute_vec3_keys_[location] = key;
     }
 
-    void setVertexAttribLocV4(GLuint location, std::string key) {
+    void SetVertexAttribLocV4(GLuint location, std::string key) {
         attribute_vec4_keys_[location] = key;
     }
 
     // generate VAO
-    void generateVAO();
+    void GenerateVAO();
 
-    const GLuint getVAOId() const {
+    const GLuint GetVAOId() const {
         return vaoID;
     }
 
-    GLuint getNumTriangles() {
+    GLuint GetNumTriangles() {
         return numTriangles_;
     }
 

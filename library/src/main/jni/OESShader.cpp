@@ -62,27 +62,27 @@ OESShader::~OESShader() {
     DeleteProgram(program);
 }
 
-void OESShader::render(const Matrix4f & mvpMatrix, RenderData * renderData, Material * material, const int eye) {
+void OESShader::Render(const Matrix4f & mvpMatrix, RenderData * renderData, Material * material, const int eye) {
 
-    Mesh * mesh = renderData->mesh();
+    Mesh * mesh = renderData->GetMesh();
     Vector4f color = material->GetColor();
 
-    GL(mesh->setVertexLoc(VERTEX_ATTRIBUTE_LOCATION_POSITION));
-    GL(mesh->setNormalLoc(VERTEX_ATTRIBUTE_LOCATION_NORMAL));
-    GL(mesh->setTexCoordLoc(VERTEX_ATTRIBUTE_LOCATION_UV0));
-    GL(mesh->generateVAO());
+    GL(mesh->SetVertexLoc(VERTEX_ATTRIBUTE_LOCATION_POSITION));
+    GL(mesh->SetNormalLoc(VERTEX_ATTRIBUTE_LOCATION_NORMAL));
+    GL(mesh->SetTexCoordLoc(VERTEX_ATTRIBUTE_LOCATION_UV0));
+    GL(mesh->GenerateVAO());
 
     GL(glUseProgram(program.program));
 
     GL(glUniformMatrix4fv(program.uMvp, 1, GL_TRUE, mvpMatrix.M[0]));
     GL(glUniformMatrix4fv(program.uTexm, 1, GL_TRUE, TexmForVideo(material->GetStereoMode(), eye).M[ 0 ] ));
     GL(glActiveTexture (GL_TEXTURE0));
-    GL(glBindTexture(GL_TEXTURE_EXTERNAL_OES, material->getId()));
+    GL(glBindTexture(GL_TEXTURE_EXTERNAL_OES, material->GetTextureId()));
     GL(glUniform4f(program.uColor, color.x, color.y, color.z, color.w));
     GL(glUniform1f(opacity, material->GetOpacity()));
 
-    GL(glBindVertexArray(mesh->getVAOId()));
-    GL(glDrawElements(GL_TRIANGLES, mesh->triangles().size(), GL_UNSIGNED_SHORT, 0));
+    GL(glBindVertexArray(mesh->GetVAOId()));
+    GL(glDrawElements(GL_TRIANGLES, mesh->GetTriangles().size(), GL_UNSIGNED_SHORT, 0));
     GL(glBindVertexArray(0));
 
     GL(glActiveTexture( GL_TEXTURE0 ));

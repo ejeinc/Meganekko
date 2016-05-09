@@ -38,7 +38,7 @@ Mesh* AssimpImporter::getMesh(int index) {
                 OVR::Vector3f(ai_mesh->mVertices[i].x, ai_mesh->mVertices[i].y,
                         ai_mesh->mVertices[i].z));
     }
-    mesh->set_vertices(std::move(vertices));
+    mesh->SetVertices(std::move(vertices));
 
     if (ai_mesh->mNormals != 0) {
         std::vector<OVR::Vector3f> normals;
@@ -47,7 +47,7 @@ Mesh* AssimpImporter::getMesh(int index) {
                     OVR::Vector3f(ai_mesh->mNormals[i].x, ai_mesh->mNormals[i].y,
                             ai_mesh->mNormals[i].z));
         }
-        mesh->set_normals(std::move(normals));
+        mesh->SetNormals(std::move(normals));
     }
 
     if (ai_mesh->mTextureCoords[0] != 0) {
@@ -57,7 +57,7 @@ Mesh* AssimpImporter::getMesh(int index) {
                     OVR::Vector2f(ai_mesh->mTextureCoords[0][i].x,
                             ai_mesh->mTextureCoords[0][i].y));
         }
-        mesh->set_tex_coords(std::move(tex_coords));
+        mesh->SetTexCoords(std::move(tex_coords));
     }
 
     std::vector<unsigned short> triangles;
@@ -76,7 +76,7 @@ Mesh* AssimpImporter::getMesh(int index) {
             triangles.push_back(ai_mesh->mFaces[i].mIndices[0]);
         }
     }
-    mesh->set_triangles(std::move(triangles));
+    mesh->SetTriangles(std::move(triangles));
 
     return mesh;
 }

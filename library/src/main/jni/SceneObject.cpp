@@ -48,26 +48,26 @@ SceneObject::~SceneObject() {
     delete queries_;
 }
 
-void SceneObject::attachRenderData(SceneObject* self, RenderData* render_data) {
+void SceneObject::AttachRenderData(SceneObject* self, RenderData* render_data) {
     if (render_data_) {
-        detachRenderData();
+        DetachRenderData();
     }
-    SceneObject* owner_object(render_data->owner_object());
+    SceneObject* owner_object(render_data->GetOwnerObject());
     if (owner_object) {
-        owner_object->detachRenderData();
+        owner_object->DetachRenderData();
     }
     render_data_ = render_data;
-    render_data->set_owner_object(self);
+    render_data->SetOwnerObject(self);
 }
 
-void SceneObject::detachRenderData() {
+void SceneObject::DetachRenderData() {
     if (render_data_) {
-        render_data_->removeOwnerObject();
+        render_data_->RemoveOwnerObject();
         render_data_ = NULL;
     }
 }
 
-void SceneObject::addChildObject(SceneObject* self, SceneObject* child) {
+void SceneObject::AddChildObject(SceneObject* self, SceneObject* child) {
     for (SceneObject* parent = parent_; parent; parent = parent->parent_) {
         if (child == parent) {
             std::string error =
@@ -79,7 +79,7 @@ void SceneObject::addChildObject(SceneObject* self, SceneObject* child) {
     child->parent_ = self;
 }
 
-void SceneObject::removeChildObject(SceneObject* child) {
+void SceneObject::RemoveChildObject(SceneObject* child) {
     if (child->parent_ == this) {
         children_.erase(std::remove(children_.begin(), children_.end(), child),
                 children_.end());
@@ -87,11 +87,11 @@ void SceneObject::removeChildObject(SceneObject* child) {
     }
 }
 
-int SceneObject::getChildrenCount() const {
+int SceneObject::GetChildrenCount() const {
     return children_.size();
 }
 
-SceneObject* SceneObject::getChildByIndex(int index) {
+SceneObject* SceneObject::GetChildByIndex(int index) {
     if (index < children_.size()) {
         return children_[index];
     } else {
@@ -100,7 +100,7 @@ SceneObject* SceneObject::getChildByIndex(int index) {
     }
 }
 
-void SceneObject::set_visible(bool visibility = true) {
+void SceneObject::SetVisible(bool visibility = true) {
 
     //HACK
     //If checked every frame, queries may return
@@ -123,18 +123,18 @@ void SceneObject::set_visible(bool visibility = true) {
     }
 }
 
-bool SceneObject::isColliding(SceneObject *scene_object) {
+bool SceneObject::IsColliding(SceneObject *scene_object) {
 
     //Get the transformed bounding boxes in world coordinates and check if they intersect
     //Transformation is done by the getTransformedBoundingBoxInfo method in the Mesh class
 
     float this_object_bounding_box[6], check_object_bounding_box[6];
 
-    OVR::Matrix4f this_object_model_matrix = this->render_data()->owner_object()->GetModelMatrix();
-    this->render_data()->mesh()->getTransformedBoundingBoxInfo(&this_object_model_matrix, this_object_bounding_box);
+    OVR::Matrix4f this_object_model_matrix = this->GetRenderData()->GetOwnerObject()->GetModelMatrix();
+    this->GetRenderData()->GetMesh()->getTransformedBoundingBoxInfo(&this_object_model_matrix, this_object_bounding_box);
 
-    OVR::Matrix4f check_object_model_matrix = scene_object->render_data()->owner_object()->GetModelMatrix();
-    scene_object->render_data()->mesh()->getTransformedBoundingBoxInfo(&check_object_model_matrix, check_object_bounding_box);
+    OVR::Matrix4f check_object_model_matrix = scene_object->GetRenderData()->GetOwnerObject()->GetModelMatrix();
+    scene_object->GetRenderData()->GetMesh()->getTransformedBoundingBoxInfo(&check_object_model_matrix, check_object_bounding_box);
 
     bool result = (this_object_bounding_box[3] > check_object_bounding_box[0]
             && this_object_bounding_box[0] < check_object_bounding_box[3]
@@ -177,8 +177,8 @@ void SceneObject::UpdateModelMatrix() {
     Matrix4f scaleMatrix = Matrix4f::Scaling(scale);
     Matrix4f localMatrix = translationMatrix * rotationMatrix * scaleMatrix;
 
-    if (parent() != 0) {
-        Matrix4f matrix = parent()->GetModelMatrix() * localMatrix;
+    if (GetParent() != 0) {
+        Matrix4f matrix = GetParent()->GetModelMatrix() * localMatrix;
         this->modelMatrix = matrix;
     } else {
         this->modelMatrix = localMatrix;
@@ -213,7 +213,7 @@ void SceneObject::SetModelMatrix(const Matrix4f & matrix) {
 void SceneObject::Invalidate(bool rotationUpdated) {
     if (!modelMatrixInvalidated) {
         modelMatrixInvalidated = true;
-        std::vector<SceneObject*> objects = children();
+        std::vector<SceneObject*> objects = GetChildren();
         for (auto it = objects.begin(); it != objects.end(); ++it) {
             (*it)->Invalidate(false);
         }

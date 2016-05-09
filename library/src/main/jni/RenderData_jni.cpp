@@ -31,7 +31,7 @@ JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_RenderData_setMesh(JNIEnv * env, jobject obj, jlong jrenderData, jlong jmesh) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
-    render_data->set_mesh(mesh);
+    render_data->SetMesh(mesh);
 }
 
 JNIEXPORT void JNICALL
@@ -44,97 +44,97 @@ Java_com_eje_1c_meganekko_RenderData_setMaterial(JNIEnv * env, jobject obj, jlon
 JNIEXPORT jint JNICALL
 Java_com_eje_1c_meganekko_RenderData_getRenderMask(JNIEnv * env, jobject obj, jlong jrenderData) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    return render_data->render_mask();
+    return render_data->GetRenderMask();
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_RenderData_setRenderMask(JNIEnv * env, jobject obj, jlong jrenderData, jint render_mask) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    render_data->set_render_mask(render_mask);
+    render_data->SetRenderMask(render_mask);
 }
 
 JNIEXPORT jint JNICALL
 Java_com_eje_1c_meganekko_RenderData_getRenderingOrder( JNIEnv * env, jobject obj, jlong jrenderData) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    return render_data->rendering_order();
+    return render_data->GetRenderingOrder();
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_RenderData_setRenderingOrder( JNIEnv * env, jobject obj, jlong jrenderData, jint renderingOrder) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    render_data->set_rendering_order(renderingOrder);
+    render_data->SetRenderingOrder(renderingOrder);
 }
 
 JNIEXPORT jboolean JNICALL
 Java_com_eje_1c_meganekko_RenderData_getOffset(JNIEnv * env, jobject obj, jlong jrenderData) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    return static_cast<jboolean>(render_data->offset());
+    return static_cast<jboolean>(render_data->GetOffset());
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_RenderData_setOffset(JNIEnv * env, jobject obj, jlong jrenderData, jboolean offset) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    render_data->set_offset(static_cast<bool>(offset));
+    render_data->SetOffset(static_cast<bool>(offset));
 }
 
 JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_RenderData_getOffsetFactor(JNIEnv * env, jobject obj, jlong jrenderData) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    return render_data->offset_factor();
+    return render_data->GetOffsetFactor();
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_RenderData_setOffsetFactor(JNIEnv * env, jobject obj, jlong jrenderData, jfloat offsetFactor) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    render_data->set_offset_factor(offsetFactor);
+    render_data->SetOffsetFactor(offsetFactor);
 }
 
 JNIEXPORT jfloat JNICALL
 Java_com_eje_1c_meganekko_RenderData_getOffsetUnits(JNIEnv * env, jobject obj, jlong jrenderData) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    return render_data->offset_units();
+    return render_data->GetOffsetUnits();
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_RenderData_setOffsetUnits(JNIEnv * env, jobject obj, jlong jrenderData, jfloat offsetUnits) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    render_data->set_offset_units(offsetUnits);
+    render_data->SetOffsetUnits(offsetUnits);
 }
 
 JNIEXPORT jboolean JNICALL
 Java_com_eje_1c_meganekko_RenderData_getDepthTest(JNIEnv * env, jobject obj, jlong jrenderData) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    return static_cast<jboolean>(render_data->depth_test());
+    return static_cast<jboolean>(render_data->GetDepthTest());
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_RenderData_setDepthTest(JNIEnv * env, jobject obj, jlong jrenderData, jboolean depthTest) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    render_data->set_depth_test(static_cast<bool>(depthTest));
+    render_data->SetDepthTest(static_cast<bool>(depthTest));
 }
 
 JNIEXPORT jboolean JNICALL
 Java_com_eje_1c_meganekko_RenderData_getAlphaBlend(JNIEnv * env, jobject obj, jlong jrenderData) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    return static_cast<jboolean>(render_data->alpha_blend());
+    return static_cast<jboolean>(render_data->GetAlphaBlend());
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_RenderData_setAlphaBlend(JNIEnv * env, jobject obj, jlong jrenderData, jboolean alpha_blend) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    render_data->set_alpha_blend(static_cast<bool>(alpha_blend));
+    render_data->SetAlphaBlend(static_cast<bool>(alpha_blend));
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_RenderData_setDrawMode(JNIEnv * env, jobject obj, jlong jrenderData, jint draw_mode) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    render_data->set_draw_mode(draw_mode);
+    render_data->SetDrawMode(draw_mode);
 }
 
 JNIEXPORT jint JNICALL
 Java_com_eje_1c_meganekko_RenderData_getDrawMode(JNIEnv * env, jobject obj, jlong jrenderData) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    return render_data->draw_mode();
+    return render_data->GetDrawMode();
 }
 
 #ifdef __cplusplus 

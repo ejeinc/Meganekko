@@ -54,16 +54,12 @@ public:
     ~RenderData() {
     }
 
-    Mesh* mesh() const {
+    Mesh* GetMesh() const {
         return mesh_;
     }
 
-    void set_mesh(Mesh* mesh) {
+    void SetMesh(Mesh* mesh) {
         mesh_ = mesh;
-    }
-
-    Material* material(int pass) const {
-        return material_;
     }
 
     void SetMaterial(Material* material) {
@@ -78,76 +74,75 @@ public:
         return material_;
     }
 
-    int render_mask() const {
+    int GetRenderMask() const {
         return render_mask_;
     }
 
-    void set_render_mask(int render_mask) {
+    void SetRenderMask(int render_mask) {
         render_mask_ = render_mask;
     }
 
-    int rendering_order() const {
+    int GetRenderingOrder() const {
         return rendering_order_;
     }
 
-    void set_rendering_order(int rendering_order) {
+    void SetRenderingOrder(int rendering_order) {
         rendering_order_ = rendering_order;
     }
 
-    bool offset() const {
+    bool GetOffset() const {
         return offset_;
     }
 
-    void set_offset(bool offset) {
+    void SetOffset(bool offset) {
         offset_ = offset;
     }
 
-    float offset_factor() const {
+    float GetOffsetFactor() const {
         return offset_factor_;
     }
 
-    void set_offset_factor(float offset_factor) {
+    void SetOffsetFactor(float offset_factor) {
         offset_factor_ = offset_factor;
     }
 
-    float offset_units() const {
+    float GetOffsetUnits() const {
         return offset_units_;
     }
 
-    void set_offset_units(float offset_units) {
+    void SetOffsetUnits(float offset_units) {
         offset_units_ = offset_units;
     }
 
-    bool depth_test() const {
+    bool GetDepthTest() const {
         return depth_test_;
     }
 
-    void set_depth_test(bool depth_test) {
+    void SetDepthTest(bool depth_test) {
         depth_test_ = depth_test;
     }
 
-    bool alpha_blend() const {
+    bool GetAlphaBlend() const {
         return alpha_blend_;
     }
 
-    void set_alpha_blend(bool alpha_blend) {
+    void SetAlphaBlend(bool alpha_blend) {
         alpha_blend_ = alpha_blend;
     }
 
-    GLenum draw_mode() const {
+    GLenum GetDrawMode() const {
         return draw_mode_;
     }
 
-    void set_camera_distance(float distance) {
+    void SetCameraDistance(float distance) {
         camera_distance_ = distance;
     }
 
-    float camera_distance() const {
+    float GetCameraDistance() const {
         return camera_distance_;
     }
 
-
-    void set_draw_mode(GLenum draw_mode) {
+    void SetDrawMode(GLenum draw_mode) {
         draw_mode_ = draw_mode;
     }
 
@@ -175,31 +170,31 @@ private:
 
 inline bool compareRenderData(RenderData* i, RenderData* j) {
     // if it is a transparent object, sort by camera distance.
-    if(i->rendering_order() == j->rendering_order() &&
-       i->rendering_order() >= RenderData::Transparent &&
-       i->rendering_order() < RenderData::Overlay) {
-        return i->camera_distance() > j->camera_distance();
+    if(i->GetRenderingOrder() == j->GetRenderingOrder() &&
+       i->GetRenderingOrder() >= RenderData::Transparent &&
+       i->GetRenderingOrder() < RenderData::Overlay) {
+        return i->GetCameraDistance() > j->GetCameraDistance();
     }
 
-    return i->rendering_order() < j->rendering_order();
+    return i->GetRenderingOrder() < j->GetRenderingOrder();
 }
 
 inline bool compareRenderDataWithFrustumCulling(RenderData* i, RenderData* j) {
     // if either i or j is a transparent object or an overlay object
-    if (i->rendering_order() >= RenderData::Transparent
-            || j->rendering_order() >= RenderData::Transparent) {
-        if (i->rendering_order() == j->rendering_order()) {
+    if (i->GetRenderingOrder() >= RenderData::Transparent
+            || j->GetRenderingOrder() >= RenderData::Transparent) {
+        if (i->GetRenderingOrder() == j->GetRenderingOrder()) {
             // if both are either transparent or both are overlays
             // place them in reverse camera order from back to front
-            return i->camera_distance() < j->camera_distance();
+            return i->GetCameraDistance() < j->GetCameraDistance();
         } else {
             // if one of them is a transparent or an overlay draw by rendering order
-            return i->rendering_order() < j->rendering_order();
+            return i->GetRenderingOrder() < j->GetRenderingOrder();
         }
     }
 
     // if both are neither transparent nor overlays, place them in camera order front to back
-    return i->camera_distance() > j->camera_distance();
+    return i->GetCameraDistance() > j->GetCameraDistance();
 }
 
 }
