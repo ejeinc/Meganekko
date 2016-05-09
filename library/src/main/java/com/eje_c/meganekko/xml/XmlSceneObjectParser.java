@@ -23,6 +23,7 @@ import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.scene_objects.GlobeSceneObject;
 import com.eje_c.meganekko.xml.attribute_parser.BasicParser;
 import com.eje_c.meganekko.xml.attribute_parser.DrawableParser;
+import com.eje_c.meganekko.xml.attribute_parser.MeshParser;
 import com.eje_c.meganekko.xml.attribute_parser.PositionParser;
 import com.eje_c.meganekko.xml.attribute_parser.RotationParser;
 import com.eje_c.meganekko.xml.attribute_parser.ScaleParser;
@@ -53,7 +54,8 @@ public class XmlSceneObjectParser {
                 ScaleParser.class,
                 RotationParser.class,
                 ViewParser.class,
-                DrawableParser.class
+                DrawableParser.class,
+                MeshParser.class
         ));
     }
 
