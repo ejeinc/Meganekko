@@ -61,10 +61,10 @@ public:
 
     void SetBoundingBox(const Vector3f & mins, const Vector3f & maxs);
 
-    const BoundingBoxInfo & getBoundingBoxInfo(); // Xmin, Ymin, Zmin and Xmax, Ymax, Zmax
-    void getTransformedBoundingBoxInfo(OVR::Matrix4f *M,
+    const BoundingBoxInfo & GetBoundingBoxInfo(); // Xmin, Ymin, Zmin and Xmax, Ymax, Zmax
+    void GetTransformedBoundingBoxInfo(OVR::Matrix4f *M,
             float *transformed_bounding_box); //Get Bounding box info transformed by matrix
-    const BoundingSphereInfo & getBoundingSphereInfo(); // Get bounding sphere based on the bounding box
+    const BoundingSphereInfo & GetBoundingSphereInfo(); // Get bounding sphere based on the bounding box
 
     // generate VAO
     void GenerateVAO();

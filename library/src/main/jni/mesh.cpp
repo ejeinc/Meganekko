@@ -35,11 +35,11 @@ void Mesh::SetBoundingBox(const Vector3f & mins, const Vector3f & maxs){
     boundingSphereInfo.radius = radius;
 }
 
-const BoundingBoxInfo & Mesh::getBoundingBoxInfo() {
+const BoundingBoxInfo & Mesh::GetBoundingBoxInfo() {
     return boundingBoxInfo;
 }
 
-void Mesh::getTransformedBoundingBoxInfo(OVR::Matrix4f *Mat,
+void Mesh::GetTransformedBoundingBoxInfo(OVR::Matrix4f *Mat,
         float *transformed_bounding_box) {
 
     OVR::Matrix4f M(*Mat);
@@ -97,7 +97,7 @@ void Mesh::getTransformedBoundingBoxInfo(OVR::Matrix4f *Mat,
 }
 
 // This gives us a really coarse bounding sphere given the already calcuated bounding box.  This won't be a tight-fitting sphere because it is based on the bounding box.  We can revisit this later if we decide we need a tighter sphere.
-const BoundingSphereInfo & Mesh::getBoundingSphereInfo() {
+const BoundingSphereInfo & Mesh::GetBoundingSphereInfo() {
     return boundingSphereInfo;
 }
 

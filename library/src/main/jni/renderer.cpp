@@ -137,17 +137,17 @@ void Renderer::FrustumCull(Scene* scene, const Vector3f& camera_position,
             continue;
         }
 
-        BoundingBoxInfo bounding_box_info = currentMesh->getBoundingBoxInfo();
+        BoundingBoxInfo bounding_box_info = currentMesh->GetBoundingBoxInfo();
 
-        Matrix4f model_matrix_tmp = render_data->GetOwnerObject()->GetModelMatrix();
-        Matrix4f mvp_matrix_tmp(vp_matrix * model_matrix_tmp);
+        Matrix4f modelMatrixTmp = render_data->GetOwnerObject()->GetModelMatrix();
+        Matrix4f mvpMatrixTmp(vp_matrix * modelMatrixTmp);
 
         // Frustum
         float frustum[6][4];
 
         // Matrix to array
         float mvp_matrix_array[16] = { 0.0 };
-        const float *mat_to_array = (const float*)mvp_matrix_tmp.Transposed().M[0]; // TODO this is originally glm::mat4 so transposed
+        const float *mat_to_array = (const float*)mvpMatrixTmp.Transposed().M[0]; // TODO this is originally glm::mat4 so transposed
         memcpy(mvp_matrix_array, mat_to_array, sizeof(float) * 16);
 
         // Build the frustum
@@ -163,9 +163,9 @@ void Renderer::FrustumCull(Scene* scene, const Vector3f& camera_position,
         }
 
         // Transform the bounding sphere
-        const BoundingSphereInfo sphere_info = currentMesh->getBoundingSphereInfo();
-        Vector4f sphere_center(sphere_info.center, 1.0f);
-        Vector4f transformed_sphere_center = mvp_matrix_tmp.Transform(sphere_center);
+        const BoundingSphereInfo sphereInfo = currentMesh->GetBoundingSphereInfo();
+        Vector4f sphere_center(sphereInfo.center, 1.0f);
+        Vector4f transformed_sphere_center = mvpMatrixTmp.Transform(sphere_center);
 
         // Calculate distance from camera
         Vector4f position(camera_position, 1.0f);

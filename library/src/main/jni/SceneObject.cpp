@@ -132,10 +132,10 @@ bool SceneObject::IsColliding(SceneObject *sceneObject) {
     float thisObjectBoundingBox[6], checkObjectBoundingBox[6];
 
     OVR::Matrix4f this_object_model_matrix = this->GetRenderData()->GetOwnerObject()->GetModelMatrix();
-    this->GetRenderData()->GetMesh()->getTransformedBoundingBoxInfo(&this_object_model_matrix, thisObjectBoundingBox);
+    this->GetRenderData()->GetMesh()->GetTransformedBoundingBoxInfo(&this_object_model_matrix, thisObjectBoundingBox);
 
     OVR::Matrix4f check_object_model_matrix = sceneObject->GetRenderData()->GetOwnerObject()->GetModelMatrix();
-    sceneObject->GetRenderData()->GetMesh()->getTransformedBoundingBoxInfo(&check_object_model_matrix, checkObjectBoundingBox);
+    sceneObject->GetRenderData()->GetMesh()->GetTransformedBoundingBoxInfo(&check_object_model_matrix, checkObjectBoundingBox);
 
     bool result = (thisObjectBoundingBox[3] > checkObjectBoundingBox[0]
             && thisObjectBoundingBox[0] < checkObjectBoundingBox[3]
