@@ -347,7 +347,7 @@ void Renderer::RenderRenderData(RenderData* renderData,
         glDisable (GL_BLEND);
     }
 
-    SetFaceCulling(material->GetCullFace());
+    SetFaceCulling(material->GetSide());
 
     Matrix4f model_matrix = renderData->GetOwnerObject()->GetModelMatrix();
     Matrix4f mv_matrix(view_matrix * model_matrix);
@@ -361,7 +361,7 @@ void Renderer::RenderRenderData(RenderData* renderData,
     // Restoring to Default.
     // TODO: There's a lot of redundant state changes. If on every render face culling is being set there's no need to
     // restore defaults. Possibly later we could add a OpenGL state wrapper to avoid redundant api calls.
-    if (renderData->GetMaterial()->GetCullFace() != Material::CullBack) {
+    if (renderData->GetMaterial()->GetSide() != Material::FrontSide) {
         glEnable (GL_CULL_FACE);
         glCullFace (GL_BACK);
     }
@@ -381,16 +381,16 @@ void Renderer::RenderRenderData(RenderData* renderData,
 
 void Renderer::SetFaceCulling(int cull_face) {
     switch (cull_face) {
-    case Material::CullFront:
+    case Material::BackSide:
         glEnable (GL_CULL_FACE);
         glCullFace (GL_FRONT);
         break;
 
-    case Material::CullNone:
+    case Material::DoubleSide:
         glDisable(GL_CULL_FACE);
         break;
 
-        // CullBack as Default
+        // FrontSide as Default
     default:
         glEnable(GL_CULL_FACE);
         glCullFace (GL_BACK);

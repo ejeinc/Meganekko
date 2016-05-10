@@ -33,8 +33,8 @@ class Color;
 class Material: public HybridObject {
 public:
 
-    enum CullFace : int {
-        CullBack = 0, CullFront, CullNone
+    enum Side: int {
+        FrontSide = 0, BackSide, DoubleSide
     };
     
     enum StereoMode {
@@ -44,7 +44,7 @@ public:
 
     explicit Material(JNIEnv * jni) {
         Mode = NORMAL;
-        cullFace = DEFAULT_CULL_FACE;
+        side = FrontSide;
         surfaceTexture = new SurfaceTexture(jni);
         color = Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
         opacity = 1.0f;
@@ -95,16 +95,16 @@ public:
         this->opacity = opacity;
     }
     
-    int GetCullFace() const {
-        return cullFace;
+    int GetSide() const {
+        return side;
     }
     
-    int GetCullFace() {
-        return cullFace;
+    int GetSide() {
+        return side;
     }
     
-    void SetCullFace(int cullFace) {
-        this->cullFace = cullFace;
+    void SetSide(int side) {
+        this->side = side;
     }
 
 private:
@@ -114,12 +114,11 @@ private:
     Material& operator=(Material&& material);
 
 private:
-    static const int DEFAULT_CULL_FACE = CullBack;
     SurfaceTexture *surfaceTexture;
     Vector4f color;
     float opacity;
     StereoMode Mode;
-    int cullFace;
+    int side;
 };
 }
 #endif
