@@ -26,58 +26,77 @@ Java_com_eje_1c_meganekko_Mesh_initNativeInstance(JNIEnv* env, jobject obj) {
     return reinterpret_cast<jlong>(new Mesh());
 }
 
-
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Mesh_buildQuad(JNIEnv * env, jobject obj, jlong jmesh, float width, float height) {
-
-    Vector3f vertices[] = {
-        Vector3f(width * -0.5f, height * 0.5f, 0.0f),
-        Vector3f(width * -0.5f, height * -0.5f, 0.0f),
-        Vector3f(width * 0.5f, height * 0.5f, 0.0f),
-        Vector3f(width * 0.5f, height * -0.5f, 0.0f)
-    };
-
-    Vector2f uv[] = {
-        Vector2f(0.0f, 0.0f),
-        Vector2f(0.0f, 1.0f),
-        Vector2f(1.0f, 0.0f),
-        Vector2f(1.0f, 1.0f)
-    };
-
-    Vector4f color = Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-    TriangleIndex triangles[] = {
-        0, 1, 2, 1, 3, 2
-    };
+Java_com_eje_1c_meganekko_Mesh_build(JNIEnv * env, jobject obj, jlong jmesh,
+        jfloatArray jPositions, jfloatArray jColors, jfloatArray jUVs, jintArray jTriangles) {
 
     VertexAttribs attribs;
-    attribs.position.Resize(4);
-    attribs.color.Resize(4);
-    attribs.uv0.Resize(4);
 
+    // positions
+    jsize jPositionsSize = env->GetArrayLength(jPositions);
+    jfloat *jPositionsElements = env->GetFloatArrayElements(jPositions, 0);
+
+    // for bounding box
     Vector3f mins;
     Vector3f maxs;
-    
-    for (int i = 0; i < 4; ++i) {
-        attribs.position[i] = vertices[i];
-        attribs.color[i] = color;
-        attribs.uv0[i] = uv[i];
-        
-        mins.x = std::min(mins.x, vertices[i].x);
-        mins.y = std::min(mins.y, vertices[i].y);
-        mins.z = std::min(mins.z, vertices[i].z);
-        
-        maxs.x = std::max(maxs.x, vertices[i].x);
-        maxs.y = std::max(maxs.y, vertices[i].y);
-        maxs.z = std::max(maxs.z, vertices[i].z);
+
+    for (int i = 0; i < jPositionsSize; i += 3) {
+        float x = jPositionsElements[i];
+        float y = jPositionsElements[i + 1];
+        float z = jPositionsElements[i + 2];
+        attribs.position.PushBack(Vector3f(x, y, z));
+        attribs.color.PushBack(Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
+
+        // calc mins and maxs
+        mins.x = std::min(mins.x, x);
+        mins.y = std::min(mins.y, y);
+        mins.z = std::min(mins.z, z);
+
+        maxs.x = std::max(maxs.x, x);
+        maxs.y = std::max(maxs.y, y);
+        maxs.z = std::max(maxs.z, z);
     }
+
+    env->ReleaseFloatArrayElements(jPositions, jPositionsElements, 0);
+
+    // colors
+    jsize jColorsSize = env->GetArrayLength(jColors);
+    jfloat *jColorsElements = env->GetFloatArrayElements(jColors, 0);
+
+    for (int i = 0; i < jColorsSize; i += 4) {
+        float r = jColorsElements[i];
+        float g = jColorsElements[i + 1];
+        float b = jColorsElements[i + 2];
+        float a = jColorsElements[i + 3];
+        attribs.color.PushBack(Vector4f(r, g, b, a));
+    }
+
+    env->ReleaseFloatArrayElements(jColors, jColorsElements, 0);
+
+    // UVs
+    jsize jUVsSize = env->GetArrayLength(jUVs);
+    jfloat *jUVsElements = env->GetFloatArrayElements(jUVs, 0);
+
+    for (int i = 0; i < jUVsSize; i += 2) {
+        float x = jUVsElements[i];
+        float y = jUVsElements[i + 1];
+        attribs.uv0.PushBack(Vector2f(x, y));
+    }
+
+    env->ReleaseFloatArrayElements(jUVs, jUVsElements, 0);
+
+    // triangles
+    jsize jTrianglesSize = env->GetArrayLength(jTriangles);
+    jint *jTrianglesElements = env->GetIntArrayElements(jTriangles, 0);
 
     Array< TriangleIndex > indices;
-    indices.Resize(6);
+    indices.Resize(jTrianglesSize);
 
-    for (int i = 0; i < 6; ++i) {
-        indices[i] = triangles[i];
+    for (int i = 0; i < jTrianglesSize; ++i) {
+        indices[i] = jTrianglesElements[i];
     }
+
+    env->ReleaseIntArrayElements(jTriangles, jTrianglesElements, 0);
 
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     mesh->SetGeometry(GlGeometry(attribs, indices));
