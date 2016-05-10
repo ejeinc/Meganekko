@@ -15,6 +15,7 @@
 
 package com.eje_c.meganekko;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
@@ -189,6 +190,14 @@ public class Mesh extends HybridObject {
 
     public static Mesh from(Drawable drawable, float scaleFactor) {
         return createQuad(scaleFactor * drawable.getIntrinsicWidth(), scaleFactor * drawable.getIntrinsicHeight());
+    }
+
+    public static Mesh from(Bitmap bitmap) {
+        return from(bitmap, getDefaultScaleFactor());
+    }
+
+    public static Mesh from(Bitmap bitmap, float scaleFactor) {
+        return createQuad(scaleFactor * bitmap.getWidth(), scaleFactor * bitmap.getHeight());
     }
 
     public static float getDefaultScaleFactor() {
