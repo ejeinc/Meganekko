@@ -137,7 +137,7 @@ void Renderer::FrustumCull(Scene* scene, const Vector3f& camera_position,
 
         BoundingBoxInfo bounding_box_info = currentMesh->GetBoundingBoxInfo();
 
-        Matrix4f modelMatrixTmp = render_data->GetOwnerObject()->GetModelMatrix();
+        Matrix4f modelMatrixTmp = render_data->GetOwnerObject()->GetMatrixWorld();
         Matrix4f mvpMatrixTmp(vp_matrix * modelMatrixTmp);
 
         // Frustum
@@ -349,7 +349,7 @@ void Renderer::RenderRenderData(RenderData* renderData,
 
     SetFaceCulling(material->GetSide());
 
-    Matrix4f model_matrix = renderData->GetOwnerObject()->GetModelMatrix();
+    Matrix4f model_matrix = renderData->GetOwnerObject()->GetMatrixWorld();
     Matrix4f mv_matrix(view_matrix * model_matrix);
     Matrix4f mvp_matrix = projection_matrix * mv_matrix;
     try {

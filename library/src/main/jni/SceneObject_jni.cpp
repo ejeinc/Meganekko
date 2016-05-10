@@ -119,14 +119,14 @@ Java_com_eje_1c_meganekko_SceneObject_getRotation(JNIEnv * env, jobject obj, jlo
 }
 
 JNIEXPORT jobject JNICALL
-Java_com_eje_1c_meganekko_SceneObject_setModelMatrix(JNIEnv * env, jobject obj, jlong jsceneObject,
+Java_com_eje_1c_meganekko_SceneObject_setMatrix(JNIEnv * env, jobject obj, jlong jsceneObject,
         float m11, float m12, float m13, float m14,
         float m21, float m22, float m23, float m24,
         float m31, float m32, float m33, float m34,
         float m41, float m42, float m43, float m44) {
 
     SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
-    sceneObject->SetModelMatrix(Matrix4f(
+    sceneObject->SetMatrixLocal(Matrix4f(
         m11, m12, m13, m14,
         m21, m22, m23, m24,
         m31, m32, m33, m34,
@@ -135,9 +135,16 @@ Java_com_eje_1c_meganekko_SceneObject_setModelMatrix(JNIEnv * env, jobject obj, 
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_getModelMatrix(JNIEnv * env, jobject obj, jlong jsceneObject, jfloatArray values) {
+Java_com_eje_1c_meganekko_SceneObject_getMatrixWorld(JNIEnv * env, jobject obj, jlong jsceneObject, jfloatArray values) {
     SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
-    Matrix4f m = sceneObject->GetModelMatrix();
+    Matrix4f m = sceneObject->GetMatrixWorld();
+    FillElementsUnSafe(env, values, m);
+}
+
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_SceneObject_getMatrix(JNIEnv * env, jobject obj, jlong jsceneObject, jfloatArray values) {
+    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
+    Matrix4f m = sceneObject->GetMatrix();
     FillElementsUnSafe(env, values, m);
 }
 

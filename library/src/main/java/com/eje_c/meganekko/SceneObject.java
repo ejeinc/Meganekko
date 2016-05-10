@@ -191,13 +191,15 @@ public class SceneObject extends HybridObject {
 
     private static native void getRotation(long sceneObject, float[] val);
 
-    private static native void setModelMatrix(long sceneObject,
-                                              float m11, float m12, float m13, float m14,
-                                              float m21, float m22, float m23, float m24,
-                                              float m31, float m32, float m33, float m34,
-                                              float m41, float m42, float m43, float m44);
+    private static native void setMatrix(long sceneObject,
+                                         float m11, float m12, float m13, float m14,
+                                         float m21, float m22, float m23, float m24,
+                                         float m31, float m32, float m33, float m34,
+                                         float m41, float m42, float m43, float m44);
 
-    private static native void getModelMatrix(long sceneObject, float[] val);
+    private static native void getMatrixWorld(long sceneObject, float[] val);
+
+    private static native void getMatrix(long sceneObject, float[] val);
 
     @Override
     protected native long initNativeInstance();
@@ -706,8 +708,13 @@ public class SceneObject extends HybridObject {
         }
     }
 
+    @Deprecated
     public void modelMatrix(Matrix4f m) {
-        setModelMatrix(getNative(),
+        matrix(m);
+    }
+
+    public void matrix(Matrix4f m) {
+        setMatrix(getNative(),
                 m.m00, m.m01, m.m02, m.m03,
                 m.m10, m.m11, m.m12, m.m13,
                 m.m20, m.m21, m.m22, m.m23,
@@ -715,9 +722,25 @@ public class SceneObject extends HybridObject {
         );
     }
 
+    @Deprecated
     public Matrix4f modelMatrix() {
+        return matrixWorld();
+    }
+
+    public Matrix4f matrixWorld() {
         synchronized (sTempValuesForJni) {
-            getModelMatrix(getNative(), sTempValuesForJni);
+            getMatrixWorld(getNative(), sTempValuesForJni);
+            return new Matrix4f(
+                    sTempValuesForJni[0], sTempValuesForJni[1], sTempValuesForJni[2], sTempValuesForJni[3],
+                    sTempValuesForJni[4], sTempValuesForJni[5], sTempValuesForJni[6], sTempValuesForJni[7],
+                    sTempValuesForJni[8], sTempValuesForJni[9], sTempValuesForJni[10], sTempValuesForJni[11],
+                    sTempValuesForJni[12], sTempValuesForJni[13], sTempValuesForJni[14], sTempValuesForJni[15]);
+        }
+    }
+
+    public Matrix4f matrix() {
+        synchronized (sTempValuesForJni) {
+            getMatrix(getNative(), sTempValuesForJni);
             return new Matrix4f(
                     sTempValuesForJni[0], sTempValuesForJni[1], sTempValuesForJni[2], sTempValuesForJni[3],
                     sTempValuesForJni[4], sTempValuesForJni[5], sTempValuesForJni[6], sTempValuesForJni[7],

@@ -131,10 +131,10 @@ bool SceneObject::IsColliding(SceneObject *sceneObject) {
 
     float thisObjectBoundingBox[6], checkObjectBoundingBox[6];
 
-    OVR::Matrix4f this_object_model_matrix = this->GetRenderData()->GetOwnerObject()->GetModelMatrix();
+    OVR::Matrix4f this_object_model_matrix = this->GetRenderData()->GetOwnerObject()->GetMatrixWorld();
     this->GetRenderData()->GetMesh()->GetTransformedBoundingBoxInfo(&this_object_model_matrix, thisObjectBoundingBox);
 
-    OVR::Matrix4f check_object_model_matrix = sceneObject->GetRenderData()->GetOwnerObject()->GetModelMatrix();
+    OVR::Matrix4f check_object_model_matrix = sceneObject->GetRenderData()->GetOwnerObject()->GetMatrixWorld();
     sceneObject->GetRenderData()->GetMesh()->GetTransformedBoundingBoxInfo(&check_object_model_matrix, checkObjectBoundingBox);
 
     bool result = (thisObjectBoundingBox[3] > checkObjectBoundingBox[0]
@@ -162,35 +162,45 @@ void SceneObject::SetRotation(const Quatf& rotation) {
     Invalidate(true);
 }
 
-const Matrix4f & SceneObject::GetModelMatrix() {
+const Matrix4f & SceneObject::GetMatrixWorld() {
     
-    if (modelMatrixInvalidated) {
-        UpdateModelMatrix();
-        modelMatrixInvalidated = false;
+    if (matrixWorldInvalidated) {
+        UpdateMatrixWorld();
+        matrixWorldInvalidated = false;
     }
         
-    return modelMatrix;
+    return matrixWorld;
 }
 
-void SceneObject::UpdateModelMatrix() {
+void SceneObject::UpdateMatrixWorld() {
+
+    if (matrixLocalInvalidated) {
+        UpdateMatrixLocal();
+        matrixLocalInvalidated = false;
+    }
+
+    if (GetParent() != 0) {
+        this->matrixWorld = GetParent()->GetMatrixWorld() * matrixLocal;
+    } else {
+        this->matrixWorld = matrixLocal;
+    }
+}
+
+void SceneObject::UpdateMatrixLocal() {
+
     Matrix4f translationMatrix = Matrix4f::Translation(position);
     Matrix4f rotationMatrix = Matrix4f(rotation);
     Matrix4f scaleMatrix = Matrix4f::Scaling(scale);
-    Matrix4f localMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+    matrixLocal = translationMatrix * rotationMatrix * scaleMatrix;
 
-    if (GetParent() != 0) {
-        Matrix4f matrix = GetParent()->GetModelMatrix() * localMatrix;
-        this->modelMatrix = matrix;
-    } else {
-        this->modelMatrix = localMatrix;
-    }
 }
 
 float inline sign(float a) {
     return a >= 0 ? 1.0f : -1.0f;
 }
 
-void SceneObject::SetModelMatrix(const Matrix4f & matrix) {
+void SceneObject::SetMatrixLocal(const Matrix4f & matrix) {
+
 
     float xs = sign(matrix.M[0][0] * matrix.M[1][0] * matrix.M[2][0] * matrix.M[3][0]);
     float ys = sign(matrix.M[0][1] * matrix.M[1][1] * matrix.M[2][1] * matrix.M[3][1]);
@@ -209,17 +219,25 @@ void SceneObject::SetModelMatrix(const Matrix4f & matrix) {
     position = matrix.GetTranslation();
     scale = newScale;
     rotation = Quatf(rotationMatrix);
+
+    Invalidate(true);
+
+    this->matrixLocal = matrix;
+    matrixLocalInvalidated = false;
 }
 
 void SceneObject::Invalidate(bool rotationUpdated) {
-    if (!modelMatrixInvalidated) {
-        modelMatrixInvalidated = true;
+
+    if (!matrixLocalInvalidated || !matrixWorldInvalidated) {
         std::vector<SceneObject*> objects = GetChildren();
         for (auto it = objects.begin(); it != objects.end(); ++it) {
             (*it)->Invalidate(false);
         }
     }
-    
+
+    matrixLocalInvalidated = true;
+    matrixWorldInvalidated = true;
+
     if (rotationUpdated) {
         // scale rotation if needed to avoid overflow
         static const float threshold = sqrt(FLT_MAX) / 2.0f;
