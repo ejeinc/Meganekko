@@ -4,6 +4,8 @@ import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
 import com.eje_c.meganekko.utility.Log;
 
+import ovr.JoyButton;
+
 /**
  * Meganekko's main app logics.
  */
@@ -24,6 +26,21 @@ public class MyApp extends MeganekkoApp {
     @Override
     public void update() {
         super.update(); // This is important! Don't forget to call super.update();
+
+        final int buttonPressed = getFrame().getButtonPressed();
+        if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_TOUCH_SINGLE)) {
+            Log.d(TAG, "on single tap");
+        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_TOUCH_DOUBLE)) {
+            Log.d(TAG, "on double tap");
+        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_BACK)) {
+            Log.d(TAG, "on swipe back");
+        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_FORWARD)) {
+            Log.d(TAG, "on swipe forward");
+        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_UP)) {
+            Log.d(TAG, "on swipe up");
+        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_DOWN)) {
+            Log.d(TAG, "on swipe down");
+        }
 //        Log.d(TAG, "update");
     }
 
