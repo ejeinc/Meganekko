@@ -40,6 +40,7 @@ public:
     };
 
     RenderData() : Component(),
+        material_(nullptr),
         mesh_(0),
         render_mask_(DEFAULT_RENDER_MASK),
         rendering_order_(DEFAULT_RENDERING_ORDER),
