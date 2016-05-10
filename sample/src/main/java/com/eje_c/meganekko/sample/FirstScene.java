@@ -8,12 +8,13 @@ import com.eje_c.meganekko.ObjectLookingStateDetector;
 import com.eje_c.meganekko.Scene;
 import com.eje_c.meganekko.SceneObject;
 
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import ovr.JoyButton;
 
 public class FirstScene extends Scene {
-    private SceneObject button, videocam;
+    private SceneObject cursor, button, videocam;
     private ObjectLookingStateDetector buttonLookingStateDetector, videocamLookingStateDetector;
 
     /**
@@ -26,6 +27,7 @@ public class FirstScene extends Scene {
         super.initialize(app);
 
         // Cache SceneObjects
+        cursor = findObjectById(R.id.cursor);
         button = findObjectById(R.id.button);
         videocam = findObjectById(R.id.ic_videocam);
 
@@ -71,8 +73,17 @@ public class FirstScene extends Scene {
         });
     }
 
+    private final Vector3f forward = new Vector3f(0, 0, -5);
+    private final Vector3f tmp = new Vector3f();
+
     @Override
     public void update(Frame frame) {
+
+        // update cursor position
+        Quaternionf headRotation = getViewOrientation();
+        headRotation.transform(forward, tmp);
+        cursor.position(tmp);
+        cursor.rotation(headRotation);
 
         // These update() dispatches onLookStart and onLookEnd
         buttonLookingStateDetector.update(frame);

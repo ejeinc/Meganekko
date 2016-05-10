@@ -22,4 +22,7 @@
         renderingOrder="1"
         texture="@drawable/background"/>
 
+    <object
+        id="@+id/cursor"
+        texture="@drawable/cursor"/>
 </scene>
