@@ -324,55 +324,60 @@ bool Renderer::IsCubeInFrustum(float frustum[6][4], const BoundingBoxInfo & vert
     return true;
 }
 
-void Renderer::RenderRenderData(RenderData* render_data,
+void Renderer::RenderRenderData(RenderData* renderData,
         const Matrix4f& view_matrix, const Matrix4f& projection_matrix,
         int render_mask, OESShader * oesShader, const int eye) {
-    if (render_mask & render_data->GetRenderMask()) {
 
-        if (render_data->GetOffset()) {
-            glEnable (GL_POLYGON_OFFSET_FILL);
-            glPolygonOffset(render_data->GetOffsetFactor(),
-                    render_data->GetOffsetUnits());
-        }
-        if (!render_data->GetDepthTest()) {
-            glDisable (GL_DEPTH_TEST);
-        }
-        if (!render_data->GetAlphaBlend()) {
-            glDisable (GL_BLEND);
-        }
-        if (render_data->GetMesh() != 0) {
-            Material* curr_material = render_data->GetMaterial();
-            if (curr_material != nullptr) {
-                SetFaceCulling(curr_material->GetCullFace());
+    Mesh * mesh = renderData->GetMesh();
+    if (mesh == NULL) return;
 
-                Matrix4f model_matrix = render_data->GetOwnerObject()->GetModelMatrix();
-                Matrix4f mv_matrix(view_matrix * model_matrix);
-                Matrix4f mvp_matrix = projection_matrix * mv_matrix;
-                try {
-                    oesShader->Render(mvp_matrix, render_data, curr_material, eye);
-                } catch (std::string error) {
-                    __android_log_print(ANDROID_LOG_ERROR, "mgn", "Error detected in Renderer::renderRenderData; error : %s", error.c_str());
-                }
-            }
-        }
+    Material* material = renderData->GetMaterial();
+    if (material == NULL) return;
 
-        // Restoring to Default.
-        // TODO: There's a lot of redundant state changes. If on every render face culling is being set there's no need to
-        // restore defaults. Possibly later we could add a OpenGL state wrapper to avoid redundant api calls.
-        if (render_data->GetMaterial()->GetCullFace() != Material::CullBack) {
-            glEnable (GL_CULL_FACE);
-            glCullFace (GL_BACK);
-        }
+    if ((render_mask & renderData->GetRenderMask()) == 0) return;
 
-        if (render_data->GetOffset()) {
-            glDisable (GL_POLYGON_OFFSET_FILL);
-        }
-        if (!render_data->GetDepthTest()) {
-            glEnable (GL_DEPTH_TEST);
-        }
-        if (!render_data->GetAlphaBlend()) {
-            glEnable (GL_BLEND);
-        }
+    if (renderData->GetOffset()) {
+        glEnable (GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(renderData->GetOffsetFactor(), renderData->GetOffsetUnits());
+    }
+
+    if (!renderData->GetDepthTest()) {
+        glDisable (GL_DEPTH_TEST);
+    }
+
+    if (!renderData->GetAlphaBlend()) {
+        glDisable (GL_BLEND);
+    }
+
+    SetFaceCulling(material->GetCullFace());
+
+    Matrix4f model_matrix = renderData->GetOwnerObject()->GetModelMatrix();
+    Matrix4f mv_matrix(view_matrix * model_matrix);
+    Matrix4f mvp_matrix = projection_matrix * mv_matrix;
+    try {
+        oesShader->Render(mvp_matrix, mesh->GetGeometry(), material, eye);
+    } catch (std::string error) {
+        __android_log_print(ANDROID_LOG_ERROR, "mgn", "Error detected in Renderer::renderRenderData; error : %s", error.c_str());
+    }
+
+    // Restoring to Default.
+    // TODO: There's a lot of redundant state changes. If on every render face culling is being set there's no need to
+    // restore defaults. Possibly later we could add a OpenGL state wrapper to avoid redundant api calls.
+    if (renderData->GetMaterial()->GetCullFace() != Material::CullBack) {
+        glEnable (GL_CULL_FACE);
+        glCullFace (GL_BACK);
+    }
+
+    if (renderData->GetOffset()) {
+        glDisable (GL_POLYGON_OFFSET_FILL);
+    }
+
+    if (!renderData->GetDepthTest()) {
+        glEnable (GL_DEPTH_TEST);
+    }
+
+    if (!renderData->GetAlphaBlend()) {
+        glEnable (GL_BLEND);
     }
 }
 

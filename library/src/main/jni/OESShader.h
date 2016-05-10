@@ -36,7 +36,7 @@ class RenderData;
 public:
     OESShader();
     ~OESShader();
-    void Render(const Matrix4f & mvpMatrix, const RenderData * renderData, const Material * material, const int eye);
+    void Render(const Matrix4f & mvpMatrix, const GlGeometry & geometry, const Material * material, const int eye);
 
 private:
     OESShader(const OESShader& oesShader);
