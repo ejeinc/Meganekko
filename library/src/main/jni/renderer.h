@@ -51,7 +51,7 @@ private:
     static void RenderRenderData(RenderData* renderData,
             const OVR::Matrix4f& viewMatrix,
             const OVR::Matrix4f& projectionMatrix,
-            int renderMask, OESShader * oesShader, const int eye);
+            OESShader * oesShader, const int eye);
 
     static void OcclusionCull(Scene* scene, std::vector<SceneObject*> sceneObjects);
     static void FrustumCull(Scene* scene, const OVR::Vector3f& cameraPosition,

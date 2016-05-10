@@ -15,6 +15,7 @@
 
 package com.eje_c.meganekko;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
@@ -31,6 +32,8 @@ public class Mesh extends HybridObject {
     Mesh(long ptr) {
         super(ptr);
     }
+
+    private static native void build(long renderData, float[] positions, float[] colors, float[] uvs, int[] triangles);
 
     private static native void buildQuad(long renderData, float width, float heigh);
 
@@ -52,8 +55,75 @@ public class Mesh extends HybridObject {
 
     private static native void buildUnitCubeLines(long renderData);
 
+    public void build(float[] positions, float[] colors, float[] uvs, int[] triangles) {
+
+        if (positions.length % 3 != 0) {
+            throw new IllegalArgumentException("positions element count must be multiple of 3.");
+        } else if (colors.length % 4 != 0) {
+            throw new IllegalArgumentException("positions element count must be multiple of 4.");
+        } else if (uvs.length % 2 != 0) {
+            throw new IllegalArgumentException("positions element count must be multiple of 2.");
+        } else if (triangles.length % 3 != 0) {
+            throw new IllegalArgumentException("triangles element count must be multiple of 3.");
+        }
+
+        int positionSize = positions.length / 3;
+        int colorSize = colors.length / 4;
+        int uvSize = uvs.length / 2;
+
+        if (positionSize != colorSize) {
+            throw new IllegalArgumentException("position elements are " + positionSize + " but color elements are " + colorSize + ".");
+        } else if (colorSize != uvSize) {
+            throw new IllegalArgumentException("color elements are " + colorSize + " but uv elements are " + uvSize + ".");
+        }
+
+        build(getNative(), positions, colors, uvs, triangles);
+    }
+
+    /**
+     * Build quad mesh
+     *
+     * @param width
+     * @param height
+     */
     public void buildQuad(float width, float height) {
-        buildQuad(getNative(), width, height);
+
+        /*
+         * 0    2
+         * *----*
+         * |  / |
+         * | /  |
+         * *----*
+         * 1    3
+         */
+
+        float[] positions = {
+                width * -0.5f, height * 0.5f, 0.0f,  // Left Top
+                width * -0.5f, height * -0.5f, 0.0f, // Left Bottom
+                width * 0.5f, height * 0.5f, 0.0f,   // Right Top
+                width * 0.5f, height * -0.5f, 0.0f   // Right Bottom
+        };
+
+        float[] colors = {
+                1.0f, 1.0f, 1.0f, 1.0f,
+                1.0f, 1.0f, 1.0f, 1.0f,
+                1.0f, 1.0f, 1.0f, 1.0f,
+                1.0f, 1.0f, 1.0f, 1.0f
+        };
+
+        float[] uvs = {
+                0.0f, 0.0f,
+                0.0f, 1.0f,
+                1.0f, 0.0f,
+                1.0f, 1.0f
+        };
+
+        int[] triangles = {
+                0, 1, 2,
+                1, 3, 2
+        };
+
+        build(positions, colors, uvs, triangles);
     }
 
     public void buildTesselatedQuad(int horizontal, int vertical, boolean twoSided) {
@@ -120,6 +190,14 @@ public class Mesh extends HybridObject {
 
     public static Mesh from(Drawable drawable, float scaleFactor) {
         return createQuad(scaleFactor * drawable.getIntrinsicWidth(), scaleFactor * drawable.getIntrinsicHeight());
+    }
+
+    public static Mesh from(Bitmap bitmap) {
+        return from(bitmap, getDefaultScaleFactor());
+    }
+
+    public static Mesh from(Bitmap bitmap, float scaleFactor) {
+        return createQuad(scaleFactor * bitmap.getWidth(), scaleFactor * bitmap.getHeight());
     }
 
     public static float getDefaultScaleFactor() {

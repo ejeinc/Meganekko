@@ -142,11 +142,13 @@ public:
     
     void SetRotation(const Quatf& rotation);
     
-    const Matrix4f & GetModelMatrix();
-    
-    void UpdateModelMatrix();
-    
-    void SetModelMatrix(const Matrix4f & matrix);
+    const Matrix4f & GetMatrixWorld();
+
+    const Matrix4f & GetMatrix() {
+        return matrixLocal;
+    }
+
+    void SetMatrixLocal(const Matrix4f & matrix);
     
     void Invalidate(bool rotationUpdated);
 
@@ -158,12 +160,16 @@ private:
 
 private:
 
+    void UpdateMatrixWorld();
+    void UpdateMatrixLocal();
+
     Vector3f position;
     Vector3f scale;
     Quatf    rotation;
-    Matrix4f modelMatrix;
-    bool     modelMatrixInvalidated = true;
-    
+    Matrix4f matrixLocal;
+    Matrix4f matrixWorld;
+    bool     matrixWorldNeedsUpdate = false;
+
     RenderData *              renderData;
     SceneObject *             parent;
     std::vector<SceneObject*> children;

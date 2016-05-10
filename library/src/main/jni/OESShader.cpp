@@ -62,7 +62,7 @@ OESShader::~OESShader() {
     DeleteProgram(program);
 }
 
-void OESShader::Render(const Matrix4f & mvpMatrix, const RenderData * renderData, const Material * material, const int eye) {
+void OESShader::Render(const Matrix4f & mvpMatrix, const GlGeometry & geometry, const Material * material, const int eye) {
 
     Vector4f color = material->GetColor();
 
@@ -75,16 +75,8 @@ void OESShader::Render(const Matrix4f & mvpMatrix, const RenderData * renderData
     GL(glUniform4f(program.uColor, color.x, color.y, color.z, color.w));
     GL(glUniform1f(opacity, material->GetOpacity()));
 
-    Mesh * mesh = renderData->GetMesh();
-    GlGeometry geometry = mesh->GetGeometry();
-    if (geometry.vertexCount > 0) {
-        // Draw with OVR::GlGeometry
-        geometry.Draw();
-    } else {
-        // Legacy mesh
-    }
-    
-    GL(glActiveTexture( GL_TEXTURE0 ));
+    geometry.Draw();
+
     GL(glBindTexture( GL_TEXTURE_EXTERNAL_OES, 0 ));
 }
 

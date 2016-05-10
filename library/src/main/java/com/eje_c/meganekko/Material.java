@@ -90,7 +90,7 @@ public class Material extends HybridObject {
 
     private static native void setStereoMode(long material, int stereoMode);
 
-    private static native void setCullFace(long material, int cullFace);
+    private static native void setSide(long material, int side);
 
     @Override
     protected native long initNativeInstance();
@@ -202,11 +202,17 @@ public class Material extends HybridObject {
         }
     }
 
+    @Deprecated
     public void setCullFace(CullFace cullFace) {
-        this.mCullFace = cullFace;
-        setCullFace(getNative(), cullFace.ordinal());
+        mCullFace = cullFace;
+        setSide(getNative(), cullFace.ordinal());
     }
 
+    public void setSide(Side side) {
+        setSide(getNative(), side.ordinal());
+    }
+
+    @Deprecated
     public CullFace getCullFace() {
         return mCullFace;
     }
@@ -216,7 +222,12 @@ public class Material extends HybridObject {
         TOP_ONLY, BOTTOM_ONLY, LEFT_ONLY, RIGHT_ONLY
     }
 
+    @Deprecated
     public enum CullFace {
         CullBack, CullFront, CullNone
+    }
+
+    public enum Side {
+        FrontSide, BackSide, DoubleSide
     }
 }

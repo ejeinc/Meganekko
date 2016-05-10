@@ -35,14 +35,10 @@ public:
         Background = 1000, Geometry = 2000, Transparent = 3000, Overlay = 4000
     };
 
-    enum RenderMaskBit {
-        Left = 0x1, Right = 0x2
-    };
-
     RenderData() : Component(),
         material_(nullptr),
-        mesh_(0),
-        render_mask_(DEFAULT_RENDER_MASK),
+        mesh_(nullptr),
+        visible(true),
         rendering_order_(DEFAULT_RENDERING_ORDER),
         offset_(false),
         offset_factor_(0.0f),
@@ -75,12 +71,16 @@ public:
         return material_;
     }
 
-    int GetRenderMask() const {
-        return render_mask_;
+    bool IsVisible() const {
+        return visible;
     }
 
-    void SetRenderMask(int render_mask) {
-        render_mask_ = render_mask;
+    bool IsVisible() {
+        return visible;
+    }
+
+    void SetVisible(bool visible) {
+        this->visible = visible;
     }
 
     int GetRenderingOrder() const {
@@ -154,11 +154,10 @@ private:
     RenderData& operator=(RenderData&& renderData);
 
 private:
-    static const int DEFAULT_RENDER_MASK = Left | Right;
     static const int DEFAULT_RENDERING_ORDER = Geometry;
     Mesh* mesh_;
     Material * material_;
-    int render_mask_;
+    bool visible;
     int rendering_order_;
     bool offset_;
     float offset_factor_;

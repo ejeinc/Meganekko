@@ -68,11 +68,9 @@ void Renderer::RenderEyeView(Scene* scene, std::vector<SceneObject*> scene_objec
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-    int renderMask = eye == 0 ? RenderData::RenderMaskBit::Left : RenderData::RenderMaskBit::Right;
-
     for (auto it = render_data_vector.begin();
             it != render_data_vector.end(); ++it) {
-        RenderRenderData(*it, eyeViewMatrix, eyeProjectionMatrix, renderMask, oesShader, eye);
+        RenderRenderData(*it, eyeViewMatrix, eyeProjectionMatrix, oesShader, eye);
     }
 
 }
@@ -84,11 +82,11 @@ void Renderer::OcclusionCull(Scene* scene, std::vector<SceneObject*> scene_objec
 
     for (auto it = scene_objects.begin(); it != scene_objects.end(); ++it) {
         RenderData* render_data = (*it)->GetRenderData();
-        if (render_data == 0) {
+        if (render_data == nullptr) {
             continue;
         }
 
-        if (render_data->GetMaterial() == 0) {
+        if (render_data->GetMaterial() == nullptr) {
             continue;
         }
 
@@ -120,7 +118,7 @@ void Renderer::FrustumCull(Scene* scene, const Vector3f& camera_position,
     for (auto it = scene_objects.begin(); it != scene_objects.end(); ++it) {
         SceneObject *scene_object = (*it);
         RenderData* render_data = scene_object->GetRenderData();
-        if (render_data == 0 || render_data->GetMaterial() == 0) {
+        if (render_data == nullptr || render_data->GetMaterial() == nullptr) {
             continue;
         }
 
@@ -133,13 +131,13 @@ void Renderer::FrustumCull(Scene* scene, const Vector3f& camera_position,
 
         // Frustum culling setup
         Mesh* currentMesh = render_data->GetMesh();
-        if (currentMesh == NULL) {
+        if (currentMesh == nullptr) {
             continue;
         }
 
         BoundingBoxInfo bounding_box_info = currentMesh->GetBoundingBoxInfo();
 
-        Matrix4f modelMatrixTmp = render_data->GetOwnerObject()->GetModelMatrix();
+        Matrix4f modelMatrixTmp = render_data->GetOwnerObject()->GetMatrixWorld();
         Matrix4f mvpMatrixTmp(vp_matrix * modelMatrixTmp);
 
         // Frustum
@@ -190,7 +188,7 @@ void Renderer::FrustumCull(Scene* scene, const Vector3f& camera_position,
             render_data_vector.push_back(render_data);
         }
 
-        if (render_data->GetMaterial() == 0
+        if (render_data->GetMaterial() == nullptr
                 || !scene->GetOcclusionCulling()) {
             continue;
         }
@@ -324,70 +322,75 @@ bool Renderer::IsCubeInFrustum(float frustum[6][4], const BoundingBoxInfo & vert
     return true;
 }
 
-void Renderer::RenderRenderData(RenderData* render_data,
+void Renderer::RenderRenderData(RenderData* renderData,
         const Matrix4f& view_matrix, const Matrix4f& projection_matrix,
-        int render_mask, OESShader * oesShader, const int eye) {
-    if (render_mask & render_data->GetRenderMask()) {
+        OESShader * oesShader, const int eye) {
 
-        if (render_data->GetOffset()) {
-            glEnable (GL_POLYGON_OFFSET_FILL);
-            glPolygonOffset(render_data->GetOffsetFactor(),
-                    render_data->GetOffsetUnits());
-        }
-        if (!render_data->GetDepthTest()) {
-            glDisable (GL_DEPTH_TEST);
-        }
-        if (!render_data->GetAlphaBlend()) {
-            glDisable (GL_BLEND);
-        }
-        if (render_data->GetMesh() != 0) {
-            Material* curr_material = render_data->GetMaterial();
-            if (curr_material != nullptr) {
-                SetFaceCulling(curr_material->GetCullFace());
+    if (!renderData->IsVisible()) return;
 
-                Matrix4f model_matrix = render_data->GetOwnerObject()->GetModelMatrix();
-                Matrix4f mv_matrix(view_matrix * model_matrix);
-                Matrix4f mvp_matrix = projection_matrix * mv_matrix;
-                try {
-                    oesShader->Render(mvp_matrix, render_data, curr_material, eye);
-                } catch (std::string error) {
-                    __android_log_print(ANDROID_LOG_ERROR, "mgn", "Error detected in Renderer::renderRenderData; error : %s", error.c_str());
-                }
-            }
-        }
+    Mesh * mesh = renderData->GetMesh();
+    if (mesh == nullptr) return;
 
-        // Restoring to Default.
-        // TODO: There's a lot of redundant state changes. If on every render face culling is being set there's no need to
-        // restore defaults. Possibly later we could add a OpenGL state wrapper to avoid redundant api calls.
-        if (render_data->GetMaterial()->GetCullFace() != Material::CullBack) {
-            glEnable (GL_CULL_FACE);
-            glCullFace (GL_BACK);
-        }
+    Material* material = renderData->GetMaterial();
+    if (material == nullptr) return;
 
-        if (render_data->GetOffset()) {
-            glDisable (GL_POLYGON_OFFSET_FILL);
-        }
-        if (!render_data->GetDepthTest()) {
-            glEnable (GL_DEPTH_TEST);
-        }
-        if (!render_data->GetAlphaBlend()) {
-            glEnable (GL_BLEND);
-        }
+    if (renderData->GetOffset()) {
+        glEnable (GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(renderData->GetOffsetFactor(), renderData->GetOffsetUnits());
+    }
+
+    if (!renderData->GetDepthTest()) {
+        glDisable (GL_DEPTH_TEST);
+    }
+
+    if (!renderData->GetAlphaBlend()) {
+        glDisable (GL_BLEND);
+    }
+
+    SetFaceCulling(material->GetSide());
+
+    Matrix4f model_matrix = renderData->GetOwnerObject()->GetMatrixWorld();
+    Matrix4f mv_matrix(view_matrix * model_matrix);
+    Matrix4f mvp_matrix = projection_matrix * mv_matrix;
+    try {
+        oesShader->Render(mvp_matrix, mesh->GetGeometry(), material, eye);
+    } catch (std::string error) {
+        __android_log_print(ANDROID_LOG_ERROR, "mgn", "Error detected in Renderer::renderRenderData; error : %s", error.c_str());
+    }
+
+    // Restoring to Default.
+    // TODO: There's a lot of redundant state changes. If on every render face culling is being set there's no need to
+    // restore defaults. Possibly later we could add a OpenGL state wrapper to avoid redundant api calls.
+    if (renderData->GetMaterial()->GetSide() != Material::FrontSide) {
+        glEnable (GL_CULL_FACE);
+        glCullFace (GL_BACK);
+    }
+
+    if (renderData->GetOffset()) {
+        glDisable (GL_POLYGON_OFFSET_FILL);
+    }
+
+    if (!renderData->GetDepthTest()) {
+        glEnable (GL_DEPTH_TEST);
+    }
+
+    if (!renderData->GetAlphaBlend()) {
+        glEnable (GL_BLEND);
     }
 }
 
 void Renderer::SetFaceCulling(int cull_face) {
     switch (cull_face) {
-    case Material::CullFront:
+    case Material::BackSide:
         glEnable (GL_CULL_FACE);
         glCullFace (GL_FRONT);
         break;
 
-    case Material::CullNone:
+    case Material::DoubleSide:
         glDisable(GL_CULL_FACE);
         break;
 
-        // CullBack as Default
+        // FrontSide as Default
     default:
         glEnable(GL_CULL_FACE);
         glCullFace (GL_BACK);

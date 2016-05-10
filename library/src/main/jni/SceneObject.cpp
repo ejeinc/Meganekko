@@ -28,8 +28,8 @@ namespace mgn {
         position(Vector3f()),
         scale(Vector3f(1, 1, 1)),
         rotation(Quatf()),
-        renderData(),
-        parent(),
+        renderData(nullptr),
+        parent(nullptr),
         children(),
         visible(true),
         inFrustum(false),
@@ -65,7 +65,7 @@ void SceneObject::AttachRenderData(SceneObject* self, RenderData* renderData) {
 void SceneObject::DetachRenderData() {
     if (renderData) {
         renderData->RemoveOwnerObject();
-        renderData = NULL;
+        renderData = nullptr;
     }
 }
 
@@ -84,7 +84,7 @@ void SceneObject::AddChildObject(SceneObject* self, SceneObject* child) {
 void SceneObject::RemoveChildObject(SceneObject* child) {
     if (child->parent == this) {
         children.erase(std::remove(children.begin(), children.end(), child), children.end());
-        child->parent = NULL;
+        child->parent = nullptr;
     }
 }
 
@@ -131,10 +131,10 @@ bool SceneObject::IsColliding(SceneObject *sceneObject) {
 
     float thisObjectBoundingBox[6], checkObjectBoundingBox[6];
 
-    OVR::Matrix4f this_object_model_matrix = this->GetRenderData()->GetOwnerObject()->GetModelMatrix();
+    OVR::Matrix4f this_object_model_matrix = this->GetRenderData()->GetOwnerObject()->GetMatrixWorld();
     this->GetRenderData()->GetMesh()->GetTransformedBoundingBoxInfo(&this_object_model_matrix, thisObjectBoundingBox);
 
-    OVR::Matrix4f check_object_model_matrix = sceneObject->GetRenderData()->GetOwnerObject()->GetModelMatrix();
+    OVR::Matrix4f check_object_model_matrix = sceneObject->GetRenderData()->GetOwnerObject()->GetMatrixWorld();
     sceneObject->GetRenderData()->GetMesh()->GetTransformedBoundingBoxInfo(&check_object_model_matrix, checkObjectBoundingBox);
 
     bool result = (thisObjectBoundingBox[3] > checkObjectBoundingBox[0]
@@ -162,35 +162,42 @@ void SceneObject::SetRotation(const Quatf& rotation) {
     Invalidate(true);
 }
 
-const Matrix4f & SceneObject::GetModelMatrix() {
+const Matrix4f & SceneObject::GetMatrixWorld() {
     
-    if (modelMatrixInvalidated) {
-        UpdateModelMatrix();
-        modelMatrixInvalidated = false;
+    if (matrixWorldNeedsUpdate) {
+        UpdateMatrixWorld();
+        matrixWorldNeedsUpdate = false;
     }
         
-    return modelMatrix;
+    return matrixWorld;
 }
 
-void SceneObject::UpdateModelMatrix() {
+void SceneObject::UpdateMatrixWorld() {
+
+    UpdateMatrixLocal();
+
+    if (GetParent() != nullptr) {
+        this->matrixWorld = GetParent()->GetMatrixWorld() * matrixLocal;
+    } else {
+        this->matrixWorld = matrixLocal;
+    }
+}
+
+void SceneObject::UpdateMatrixLocal() {
+
     Matrix4f translationMatrix = Matrix4f::Translation(position);
     Matrix4f rotationMatrix = Matrix4f(rotation);
     Matrix4f scaleMatrix = Matrix4f::Scaling(scale);
-    Matrix4f localMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+    matrixLocal = translationMatrix * rotationMatrix * scaleMatrix;
 
-    if (GetParent() != 0) {
-        Matrix4f matrix = GetParent()->GetModelMatrix() * localMatrix;
-        this->modelMatrix = matrix;
-    } else {
-        this->modelMatrix = localMatrix;
-    }
 }
 
 float inline sign(float a) {
     return a >= 0 ? 1.0f : -1.0f;
 }
 
-void SceneObject::SetModelMatrix(const Matrix4f & matrix) {
+void SceneObject::SetMatrixLocal(const Matrix4f & matrix) {
+
 
     float xs = sign(matrix.M[0][0] * matrix.M[1][0] * matrix.M[2][0] * matrix.M[3][0]);
     float ys = sign(matrix.M[0][1] * matrix.M[1][1] * matrix.M[2][1] * matrix.M[3][1]);
@@ -209,17 +216,21 @@ void SceneObject::SetModelMatrix(const Matrix4f & matrix) {
     position = matrix.GetTranslation();
     scale = newScale;
     rotation = Quatf(rotationMatrix);
+
+    Invalidate(true);
 }
 
 void SceneObject::Invalidate(bool rotationUpdated) {
-    if (!modelMatrixInvalidated) {
-        modelMatrixInvalidated = true;
+
+    if (!matrixWorldNeedsUpdate) {
         std::vector<SceneObject*> objects = GetChildren();
         for (auto it = objects.begin(); it != objects.end(); ++it) {
             (*it)->Invalidate(false);
         }
     }
-    
+
+    matrixWorldNeedsUpdate = true;
+
     if (rotationUpdated) {
         // scale rotation if needed to avoid overflow
         static const float threshold = sqrt(FLT_MAX) / 2.0f;

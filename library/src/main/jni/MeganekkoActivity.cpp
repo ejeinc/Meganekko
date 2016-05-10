@@ -25,7 +25,7 @@ namespace mgn
 
 MeganekkoActivity::MeganekkoActivity() :
       GuiSys( OvrGuiSys::Create() ),
-      Locale( NULL ),
+      Locale( nullptr ),
       HmdMounted(false)
 {
 }
@@ -73,10 +73,10 @@ void MeganekkoActivity::OneTimeInit(const char * fromPackage, const char * launc
 void MeganekkoActivity::OneTimeShutdown()
 {
     delete SoundEffectPlayer;
-    SoundEffectPlayer = NULL;
+    SoundEffectPlayer = nullptr;
 
     delete SoundEffectContext;
-    SoundEffectContext = NULL;
+    SoundEffectContext = nullptr;
 
     jmethodID oneTimeShutdownMethodId = GetMethodID("oneTimeShutDown", "()V");
     app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, oneTimeShutdownMethodId);

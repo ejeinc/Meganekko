@@ -42,15 +42,15 @@ Java_com_eje_1c_meganekko_RenderData_setMaterial(JNIEnv * env, jobject obj, jlon
 }
 
 JNIEXPORT jint JNICALL
-Java_com_eje_1c_meganekko_RenderData_getRenderMask(JNIEnv * env, jobject obj, jlong jrenderData) {
+Java_com_eje_1c_meganekko_RenderData_isVisible(JNIEnv * env, jobject obj, jlong jrenderData) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    return render_data->GetRenderMask();
+    return render_data->IsVisible();
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_setRenderMask(JNIEnv * env, jobject obj, jlong jrenderData, jint render_mask) {
+Java_com_eje_1c_meganekko_RenderData_setVisible(JNIEnv * env, jobject obj, jlong jrenderData, jboolean visible) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    render_data->SetRenderMask(render_mask);
+    render_data->SetVisible(visible);
 }
 
 JNIEXPORT jint JNICALL
