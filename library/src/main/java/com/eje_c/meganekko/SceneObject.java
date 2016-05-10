@@ -31,7 +31,6 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.eje_c.meganekko.RenderData.RenderMaskBit;
 import com.eje_c.meganekko.animation.PositionUpdateListener;
 import com.eje_c.meganekko.animation.QuaternionEvaluator;
 import com.eje_c.meganekko.animation.RotationUpdateListener;
@@ -447,7 +446,7 @@ public class SceneObject extends HybridObject {
         RenderData renderData = getRenderData();
         if (renderData != null) {
             boolean visible = isShown();
-            renderData.setRenderMask(visible ? RenderMaskBit.Left | RenderMaskBit.Right : 0);
+            renderData.setVisible(visible);
         }
 
         for (SceneObject child : mChildren) {

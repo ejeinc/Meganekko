@@ -44,9 +44,9 @@ public class RenderData extends Component {
 
     private static native void setMaterial(long renderData, long material);
 
-    private static native int getRenderMask(long renderData);
+    private static native boolean isVisible(long renderData);
 
-    private static native void setRenderMask(long renderData, int renderMask);
+    private static native void setVisible(long renderData, boolean visible);
 
     private static native int getRenderingOrder(long renderData);
 
@@ -140,24 +140,12 @@ public class RenderData extends Component {
         setMaterial(getNative(), material.getNative());
     }
 
-    /**
-     * Get the rendering options bit mask.
-     *
-     * @return The rendering options bit mask.
-     * @see RenderMaskBit
-     */
-    public int getRenderMask() {
-        return getRenderMask(getNative());
+    public boolean isVisible() {
+        return isVisible(getNative());
     }
 
-    /**
-     * Set the rendering options bit mask.
-     *
-     * @param renderMask The rendering options bit mask.
-     * @see RenderMaskBit
-     */
-    public void setRenderMask(int renderMask) {
-        setRenderMask(getNative(), renderMask);
+    public void setVisible(boolean visible) {
+        setVisible(getNative(), visible);
     }
 
     /**
@@ -333,19 +321,5 @@ public class RenderData extends Component {
          * The rendering order for sprites {@literal &c.}
          */
         public static final int OVERLAY = 4000;
-    }
-
-    /**
-     * Items for the rendering options bit mask.
-     */
-    public abstract static class RenderMaskBit {
-        /**
-         * Render the mesh in the left {@link Camera camera}.
-         */
-        public static final int Left = 0x1;
-        /**
-         * Render the mesh in the right {@link Camera camera}.
-         */
-        public static final int Right = 0x2;
     }
 }

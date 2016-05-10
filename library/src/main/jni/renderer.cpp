@@ -68,11 +68,9 @@ void Renderer::RenderEyeView(Scene* scene, std::vector<SceneObject*> scene_objec
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-    int renderMask = eye == 0 ? RenderData::RenderMaskBit::Left : RenderData::RenderMaskBit::Right;
-
     for (auto it = render_data_vector.begin();
             it != render_data_vector.end(); ++it) {
-        RenderRenderData(*it, eyeViewMatrix, eyeProjectionMatrix, renderMask, oesShader, eye);
+        RenderRenderData(*it, eyeViewMatrix, eyeProjectionMatrix, oesShader, eye);
     }
 
 }
@@ -326,15 +324,15 @@ bool Renderer::IsCubeInFrustum(float frustum[6][4], const BoundingBoxInfo & vert
 
 void Renderer::RenderRenderData(RenderData* renderData,
         const Matrix4f& view_matrix, const Matrix4f& projection_matrix,
-        int render_mask, OESShader * oesShader, const int eye) {
+        OESShader * oesShader, const int eye) {
+
+    if (!renderData->IsVisible()) return;
 
     Mesh * mesh = renderData->GetMesh();
     if (mesh == NULL) return;
 
     Material* material = renderData->GetMaterial();
     if (material == NULL) return;
-
-    if ((render_mask & renderData->GetRenderMask()) == 0) return;
 
     if (renderData->GetOffset()) {
         glEnable (GL_POLYGON_OFFSET_FILL);
