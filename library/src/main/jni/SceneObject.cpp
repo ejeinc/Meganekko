@@ -164,9 +164,9 @@ void SceneObject::SetRotation(const Quatf& rotation) {
 
 const Matrix4f & SceneObject::GetMatrixWorld() {
     
-    if (matrixWorldInvalidated) {
+    if (matrixWorldNeedsUpdate) {
         UpdateMatrixWorld();
-        matrixWorldInvalidated = false;
+        matrixWorldNeedsUpdate = false;
     }
         
     return matrixWorld;
@@ -174,10 +174,7 @@ const Matrix4f & SceneObject::GetMatrixWorld() {
 
 void SceneObject::UpdateMatrixWorld() {
 
-    if (matrixLocalInvalidated) {
-        UpdateMatrixLocal();
-        matrixLocalInvalidated = false;
-    }
+    UpdateMatrixLocal();
 
     if (GetParent() != 0) {
         this->matrixWorld = GetParent()->GetMatrixWorld() * matrixLocal;
@@ -221,22 +218,18 @@ void SceneObject::SetMatrixLocal(const Matrix4f & matrix) {
     rotation = Quatf(rotationMatrix);
 
     Invalidate(true);
-
-    this->matrixLocal = matrix;
-    matrixLocalInvalidated = false;
 }
 
 void SceneObject::Invalidate(bool rotationUpdated) {
 
-    if (!matrixLocalInvalidated || !matrixWorldInvalidated) {
+    if (!matrixWorldNeedsUpdate) {
         std::vector<SceneObject*> objects = GetChildren();
         for (auto it = objects.begin(); it != objects.end(); ++it) {
             (*it)->Invalidate(false);
         }
     }
 
-    matrixLocalInvalidated = true;
-    matrixWorldInvalidated = true;
+    matrixWorldNeedsUpdate = true;
 
     if (rotationUpdated) {
         // scale rotation if needed to avoid overflow

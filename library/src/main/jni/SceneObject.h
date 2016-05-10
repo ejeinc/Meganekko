@@ -168,8 +168,7 @@ private:
     Quatf    rotation;
     Matrix4f matrixLocal;
     Matrix4f matrixWorld;
-    bool     matrixLocalInvalidated = true;
-    bool     matrixWorldInvalidated = true;
+    bool     matrixWorldNeedsUpdate = false;
 
     RenderData *              renderData;
     SceneObject *             parent;
