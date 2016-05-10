@@ -82,11 +82,11 @@ void Renderer::OcclusionCull(Scene* scene, std::vector<SceneObject*> scene_objec
 
     for (auto it = scene_objects.begin(); it != scene_objects.end(); ++it) {
         RenderData* render_data = (*it)->GetRenderData();
-        if (render_data == 0) {
+        if (render_data == nullptr) {
             continue;
         }
 
-        if (render_data->GetMaterial() == 0) {
+        if (render_data->GetMaterial() == nullptr) {
             continue;
         }
 
@@ -118,7 +118,7 @@ void Renderer::FrustumCull(Scene* scene, const Vector3f& camera_position,
     for (auto it = scene_objects.begin(); it != scene_objects.end(); ++it) {
         SceneObject *scene_object = (*it);
         RenderData* render_data = scene_object->GetRenderData();
-        if (render_data == 0 || render_data->GetMaterial() == 0) {
+        if (render_data == nullptr || render_data->GetMaterial() == nullptr) {
             continue;
         }
 
@@ -131,7 +131,7 @@ void Renderer::FrustumCull(Scene* scene, const Vector3f& camera_position,
 
         // Frustum culling setup
         Mesh* currentMesh = render_data->GetMesh();
-        if (currentMesh == NULL) {
+        if (currentMesh == nullptr) {
             continue;
         }
 
@@ -188,7 +188,7 @@ void Renderer::FrustumCull(Scene* scene, const Vector3f& camera_position,
             render_data_vector.push_back(render_data);
         }
 
-        if (render_data->GetMaterial() == 0
+        if (render_data->GetMaterial() == nullptr
                 || !scene->GetOcclusionCulling()) {
             continue;
         }
@@ -329,10 +329,10 @@ void Renderer::RenderRenderData(RenderData* renderData,
     if (!renderData->IsVisible()) return;
 
     Mesh * mesh = renderData->GetMesh();
-    if (mesh == NULL) return;
+    if (mesh == nullptr) return;
 
     Material* material = renderData->GetMaterial();
-    if (material == NULL) return;
+    if (material == nullptr) return;
 
     if (renderData->GetOffset()) {
         glEnable (GL_POLYGON_OFFSET_FILL);

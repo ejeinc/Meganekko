@@ -37,7 +37,7 @@ public:
 
     RenderData() : Component(),
         material_(nullptr),
-        mesh_(0),
+        mesh_(nullptr),
         visible(true),
         rendering_order_(DEFAULT_RENDERING_ORDER),
         offset_(false),

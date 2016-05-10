@@ -30,7 +30,7 @@ class SceneObject;
 class Component: public HybridObject {
 public:
     Component() :
-            HybridObject(), ownerObject() {
+            HybridObject(), ownerObject(nullptr) {
     }
 
     Component(SceneObject* owner_object) :
@@ -49,7 +49,7 @@ public:
     }
 
     void RemoveOwnerObject() {
-        ownerObject = NULL;
+        ownerObject = nullptr;
     }
 
 private:

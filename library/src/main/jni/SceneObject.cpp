@@ -28,8 +28,8 @@ namespace mgn {
         position(Vector3f()),
         scale(Vector3f(1, 1, 1)),
         rotation(Quatf()),
-        renderData(),
-        parent(),
+        renderData(nullptr),
+        parent(nullptr),
         children(),
         visible(true),
         inFrustum(false),
@@ -65,7 +65,7 @@ void SceneObject::AttachRenderData(SceneObject* self, RenderData* renderData) {
 void SceneObject::DetachRenderData() {
     if (renderData) {
         renderData->RemoveOwnerObject();
-        renderData = NULL;
+        renderData = nullptr;
     }
 }
 
@@ -84,7 +84,7 @@ void SceneObject::AddChildObject(SceneObject* self, SceneObject* child) {
 void SceneObject::RemoveChildObject(SceneObject* child) {
     if (child->parent == this) {
         children.erase(std::remove(children.begin(), children.end(), child), children.end());
-        child->parent = NULL;
+        child->parent = nullptr;
     }
 }
 
@@ -176,7 +176,7 @@ void SceneObject::UpdateMatrixWorld() {
 
     UpdateMatrixLocal();
 
-    if (GetParent() != 0) {
+    if (GetParent() != nullptr) {
         this->matrixWorld = GetParent()->GetMatrixWorld() * matrixLocal;
     } else {
         this->matrixWorld = matrixLocal;

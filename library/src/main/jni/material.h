@@ -52,7 +52,7 @@ public:
 
     ~Material() {
         delete surfaceTexture;
-        surfaceTexture = NULL;
+        surfaceTexture = nullptr;
     }
 
     GLuint GetTextureId() const {
