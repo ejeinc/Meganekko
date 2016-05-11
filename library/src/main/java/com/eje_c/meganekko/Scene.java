@@ -101,6 +101,10 @@ public class Scene extends SceneObject {
     }
 
     public boolean isLookingAt(SceneObject target) {
+
+        // cannot look at target has no mesh
+        if (target.mesh() == null) return false;
+
         return isLookingAt(getNative(), target.getNative());
     }
 
