@@ -24,11 +24,13 @@ import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.SystemClock;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.XmlRes;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.eje_c.meganekko.animation.PositionUpdateListener;
@@ -846,6 +848,37 @@ public class SceneObject extends HybridObject {
 
     public SceneObjectAnimator animate() {
         return new SceneObjectAnimator();
+    }
+
+    /**
+     * Called from {@link Scene}.
+     *
+     * @param eventType {@code MotionEvent.ACTION_DOWN}, {@code MotionEvent.ACTION_MOVE} or {@code MotionEvent.ACTION_UP}.
+     * @param localX    Touched point on local coordinate X
+     * @param localY    Touched point on local coordinate Y
+     * @return True if the event was handled by the view, false otherwise.
+     */
+    boolean simulateTouchEvent(int eventType, float localX, float localY) {
+        float[] uv = new float[2];
+        mesh().mapLocalXYToUV(localX, localY, uv);
+
+        long downTime = SystemClock.uptimeMillis();
+        long eventTime = SystemClock.uptimeMillis() + 100;
+        int metaState = 0;
+
+        View view = view();
+        float x = uv[0] * view.getWidth();
+        float y = uv[1] * view.getHeight();
+
+        MotionEvent motionEvent = MotionEvent.obtain(
+                downTime,
+                eventTime,
+                eventType,
+                x,
+                y,
+                metaState);
+
+        return view.dispatchTouchEvent(motionEvent);
     }
 
     public class SceneObjectAnimator {

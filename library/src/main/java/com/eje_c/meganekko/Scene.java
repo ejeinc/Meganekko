@@ -17,8 +17,13 @@
 
 package com.eje_c.meganekko;
 
+import android.view.MotionEvent;
+import android.view.View;
+
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+
+import ovr.JoyButton;
 
 /**
  * The scene graph
@@ -147,6 +152,87 @@ public class Scene extends SceneObject {
             getViewOrientation(getNative(), sTempValuesForJni);
             return new Quaternionf(sTempValuesForJni[0], sTempValuesForJni[1], sTempValuesForJni[2], sTempValuesForJni[3]);
         }
+    }
+
+    /**
+     * @param frame    The {@link Frame}.
+     * @param target   Target {@link SceneObject}. It have to render texture with {@code View}.
+     * @param useSwipe If true swipe motion is enabled.
+     */
+    public void simulateTouch(Frame frame, final SceneObject target, boolean useSwipe) {
+        simulateTouch(frame, target, useSwipe, false);
+    }
+
+    private float simulateTouchAdditionalY;
+
+    /**
+     * @param frame              The {@link Frame}.
+     * @param target             Target {@link SceneObject}. It have to render texture with {@code View}.
+     * @param dispatchOnUiThread if true, {@code View.dispatchTouchEvent} will be called on UI thread.
+     *                           Otherwise called in current thread.
+     * @param useSwipe
+     * @return True if the event was handled by the view, false otherwise.
+     */
+    public void simulateTouch(Frame frame, final SceneObject target, boolean useSwipe, boolean dispatchOnUiThread) {
+
+        // Do nothing when target has no view.
+        final View view = target.view();
+        if (view == null) return;
+
+        // MotionEvent.ACTION_DOWN, ACTION_MOVE, ACTION_UP or -1
+        final int eventType = getEventType(frame);
+
+        if (eventType != -1 && isLookingAt(target)) {
+            final Vector3f lookingPoint = getLookingPoint(target, false);
+
+            // Scroll with swipe gesture
+            if (useSwipe) {
+                final int buttonPressed = frame.getButtonPressed();
+                if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_UP)) {
+                    simulateTouchAdditionalY = 1;
+                } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_DOWN)) {
+                    simulateTouchAdditionalY = -1;
+                }
+            }
+
+            lookingPoint.y += simulateTouchAdditionalY * (frame.getSwipeFraction() - 1.0f);
+
+            if (dispatchOnUiThread) {
+                getApp().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dispatchTouchEvent(target, view, eventType, lookingPoint);
+                    }
+                });
+            } else {
+                dispatchTouchEvent(target, view, eventType, lookingPoint);
+            }
+
+        } else {
+
+            // Stop scrolling
+            simulateTouchAdditionalY = 0;
+
+            // Force redraw (required for RecyclerView or something)
+            view.invalidate();
+        }
+    }
+
+    private static int getEventType(Frame frame) {
+        if (JoyButton.contains(frame.getButtonPressed(), JoyButton.BUTTON_TOUCH)) {
+            return MotionEvent.ACTION_DOWN;
+        } else if (JoyButton.contains(frame.getButtonState(), JoyButton.BUTTON_TOUCH)) {
+            return MotionEvent.ACTION_MOVE;
+        } else if (JoyButton.contains(frame.getButtonReleased(), JoyButton.BUTTON_TOUCH)) {
+            return MotionEvent.ACTION_UP;
+        } else {
+            return -1;
+        }
+    }
+
+    private static void dispatchTouchEvent(SceneObject target, View view, int eventType, Vector3f lookingPoint) {
+        target.simulateTouchEvent(eventType, lookingPoint.x, lookingPoint.y);
+        view.invalidate();
     }
 
     public MeganekkoApp getApp() {

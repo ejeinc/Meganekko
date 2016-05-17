@@ -23,7 +23,7 @@ import java.net.URL;
 import ovr.JoyButton;
 
 public class FirstScene extends Scene {
-    private SceneObject cursor, bitmapObj, button, videocam;
+    private SceneObject cursor, customViewSceneObject, bitmapObj, button, videocam;
     private ObjectLookingStateDetector buttonLookingStateDetector, videocamLookingStateDetector;
 
     /**
@@ -37,6 +37,7 @@ public class FirstScene extends Scene {
 
         // Cache SceneObjects
         cursor = findObjectById(R.id.cursor);
+        customViewSceneObject = findObjectById(R.id.custom_view_scene_object);
         bitmapObj = findObjectById(R.id.bitmap_obj);
         button = findObjectById(R.id.button);
         videocam = findObjectById(R.id.ic_videocam);
@@ -114,11 +115,16 @@ public class FirstScene extends Scene {
         // update cursor position
         updateCursorPosition();
 
+        // To simulate touch control, call this on every frame update
+        simulateTouch(frame, customViewSceneObject, false);
+
         // These update() dispatches onLookStart and onLookEnd
         buttonLookingStateDetector.update(frame);
         videocamLookingStateDetector.update(frame);
 
-        // Single tap event can be detected with this method
+        /*
+         * Single tap event can be detected with this method
+         */
         final int buttonPressed = frame.getButtonPressed();
         final boolean singleTouchDetected = JoyButton.contains(buttonPressed, JoyButton.BUTTON_TOUCH_SINGLE);
 
@@ -126,7 +132,9 @@ public class FirstScene extends Scene {
             onSingleTouchDetected();
         }
 
-        // Swipe event handling and SceneObject animation
+        /*
+         * Swipe event handling and SceneObject animation
+         */
         if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_UP)) {
             bitmapObj.animate()
                     .moveBy(new Vector3f(0, 1, 0))
