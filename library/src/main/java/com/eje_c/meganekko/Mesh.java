@@ -16,7 +16,9 @@
 package com.eje_c.meganekko;
 
 import android.graphics.Bitmap;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.view.View;
 
 /**
@@ -25,6 +27,8 @@ import android.view.View;
  * A GL mesh is a net of triangles that define an object's surface geometry.
  */
 public class Mesh extends HybridObject {
+
+    private RectF mQuad;
 
     public Mesh() {
     }
@@ -124,6 +128,26 @@ public class Mesh extends HybridObject {
         };
 
         build(positions, colors, uvs, triangles);
+
+        // RectF's Y coordinate is inverted from OpenGL
+        // top is -Y, bottom is +Y
+        mQuad = new RectF(-width * 0.5f, -height * 0.5f, width * 0.5f, height * 0.5f);
+    }
+
+    /**
+     * Convert local coordinates XY to texture UV.
+     * This only works with mesh created from {@link #createQuad(float, float)}.
+     *
+     * @param x  X on local coordinates
+     * @param y  Y on local coordinates
+     * @param uv Results will be set. {@code uv.length} must be 2 or greater.
+     */
+    public void mapLocalXYToUV(float x, float y, @NonNull float[] uv) {
+        if (mQuad == null)
+            throw new IllegalStateException("Mesh is not created with quad geometry");
+
+        uv[0] = (x - mQuad.left) / mQuad.width();
+        uv[1] = (-y - mQuad.top) / mQuad.height();
     }
 
     public void buildTesselatedQuad(int horizontal, int vertical, boolean twoSided) {
