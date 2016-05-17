@@ -511,6 +511,10 @@ public class SceneObject extends HybridObject {
         return null;
     }
 
+    public SceneObject findObjectById(String id) {
+        return findObjectById(id.hashCode());
+    }
+
     public SceneObject findObjectByName(String name) {
         if (name.equals(getName())) {
             return this;
