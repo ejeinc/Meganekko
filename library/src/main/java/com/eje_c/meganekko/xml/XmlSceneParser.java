@@ -33,6 +33,7 @@ import java.net.URL;
 /**
  * Load XML and add {@link SceneObject}s to {@link Scene}.
  */
+@Deprecated
 public class XmlSceneParser {
 
     private final Context mContext;

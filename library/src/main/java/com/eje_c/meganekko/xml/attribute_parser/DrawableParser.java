@@ -11,6 +11,7 @@ import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.xml.XmlAttributeParser;
 
+@Deprecated
 public class DrawableParser implements XmlAttributeParser {
 
     private static void setDrawable(SceneObject object, Drawable d, AttributeSet attributeSet) {

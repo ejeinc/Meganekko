@@ -8,6 +8,7 @@ import com.eje_c.meganekko.xml.XmlAttributeParser;
 
 import org.joml.Quaternionf;
 
+@Deprecated
 public class RotationParser implements XmlAttributeParser {
     @Override
     public void parse(Context context, SceneObject object, AttributeSet attributeSet) {

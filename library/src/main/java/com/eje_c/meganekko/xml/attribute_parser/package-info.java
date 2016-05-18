@@ -19,4 +19,5 @@
  * XML attribute parsers.
  * You can add your own parser with {@link com.eje_c.meganekko.xml.XmlSceneParser#addXmlAttributeParser(java.lang.Class)}.
  */
+@Deprecated
 package com.eje_c.meganekko.xml.attribute_parser;

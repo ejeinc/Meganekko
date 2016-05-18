@@ -38,6 +38,9 @@ import com.eje_c.meganekko.animation.QuaternionEvaluator;
 import com.eje_c.meganekko.animation.RotationUpdateListener;
 import com.eje_c.meganekko.animation.ScaleUpdateListener;
 import com.eje_c.meganekko.animation.VectorEvaluator;
+import com.eje_c.meganekko.event.EventEmitter;
+import com.eje_c.meganekko.event.EventHandler;
+import com.eje_c.meganekko.event.KeyEvent;
 import com.eje_c.meganekko.utility.Log;
 import com.eje_c.meganekko.xml.XmlSceneObjectParser;
 
@@ -52,6 +55,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import ovr.JoyButton;
 
 /**
  * One of the key Meganekko classes: a scene object.
@@ -71,6 +76,7 @@ public class SceneObject extends HybridObject {
     protected static final float[] sTempValuesForJni = new float[16];
 
     private static final String TAG = SceneObject.class.getSimpleName();
+    private final EventEmitter mEventEmitter = new EventEmitter();
     private final List<SceneObject> mChildren = new ArrayList<>();
     private final Set<KeyEventListener> mKeyEventListeners = new HashSet<>();
     private int mId;
@@ -515,8 +521,44 @@ public class SceneObject extends HybridObject {
             }
         }
 
+        if (!mEventEmitter.isEmpty()) {
+            dispatchJSEvent(frame);
+        }
+
         for (SceneObject child : mChildren) {
             child.update(frame);
+        }
+    }
+
+    private void dispatchJSEvent(Frame frame) {
+        // JavaScript event
+        mEventEmitter.emit("update", frame);
+
+        if (willBeDispatchedGestureEvent()) {
+            dispatchGestureEvent(frame);
+        }
+    }
+
+    protected boolean willBeDispatchedGestureEvent() {
+        return getScene().isLookingAt(this);
+    }
+
+    private void dispatchGestureEvent(Frame frame) {
+        final int buttonPressed = frame.getButtonPressed();
+        if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_FORWARD)) {
+            mEventEmitter.emit("swipeforward", frame);
+        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_BACK)) {
+            mEventEmitter.emit("swipeback", frame);
+        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_UP)) {
+            mEventEmitter.emit("swipeup", frame);
+        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_DOWN)) {
+            mEventEmitter.emit("swipedown", frame);
+        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_TOUCH_SINGLE)) {
+            mEventEmitter.emit("touchsingle", frame);
+        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_TOUCH_DOUBLE)) {
+            mEventEmitter.emit("touchdouble", frame);
+        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_TOUCH_LONGPRESS)) {
+            mEventEmitter.emit("touchlongpress", frame);
         }
     }
 
@@ -548,6 +590,10 @@ public class SceneObject extends HybridObject {
             }
         }
 
+        if (jsKeyEvent("keyshortpress", keyCode, repeatCount)) {
+            return true;
+        }
+
         for (SceneObject child : mChildren) {
             if (child.onKeyShortPress(keyCode, repeatCount)) {
                 return true;
@@ -563,6 +609,10 @@ public class SceneObject extends HybridObject {
             if (l.onKeyDoubleTap(keyCode, repeatCount)) {
                 return true;
             }
+        }
+
+        if (jsKeyEvent("keydoubletap", keyCode, repeatCount)) {
+            return true;
         }
 
         for (SceneObject child : mChildren) {
@@ -582,6 +632,10 @@ public class SceneObject extends HybridObject {
             }
         }
 
+        if (jsKeyEvent("keylongpress", keyCode, repeatCount)) {
+            return true;
+        }
+
         for (SceneObject child : mChildren) {
             if (child.onKeyLongPress(keyCode, repeatCount)) {
                 return true;
@@ -597,6 +651,10 @@ public class SceneObject extends HybridObject {
             if (l.onKeyDown(keyCode, repeatCount)) {
                 return true;
             }
+        }
+
+        if (jsKeyEvent("keydown", keyCode, repeatCount)) {
+            return true;
         }
 
         for (SceneObject child : mChildren) {
@@ -616,6 +674,10 @@ public class SceneObject extends HybridObject {
             }
         }
 
+        if (jsKeyEvent("keyup", keyCode, repeatCount)) {
+            return true;
+        }
+
         for (SceneObject child : mChildren) {
             if (child.onKeyUp(keyCode, repeatCount)) {
                 return true;
@@ -625,6 +687,7 @@ public class SceneObject extends HybridObject {
         return false;
     }
 
+
     public boolean onKeyMax(int keyCode, int repeatCount) {
 
         for (KeyEventListener l : mKeyEventListeners) {
@@ -633,12 +696,27 @@ public class SceneObject extends HybridObject {
             }
         }
 
+        if (jsKeyEvent("keymax", keyCode, repeatCount)) {
+            return true;
+        }
+
         for (SceneObject child : mChildren) {
             if (child.onKeyMax(keyCode, repeatCount)) {
                 return true;
             }
         }
 
+        return false;
+    }
+
+    private boolean jsKeyEvent(String eventName, int keyCode, int repeatCount) {
+        if (!mEventEmitter.isEmpty() && willBeDispatchedGestureEvent()) {
+            final KeyEvent keyEvent = new KeyEvent(keyCode, repeatCount);
+            mEventEmitter.emit(eventName, keyEvent);
+            if (keyEvent.isPreventDefaultCalled()) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -1001,5 +1079,24 @@ public class SceneObject extends HybridObject {
         public Animator getAnimator() {
             return animator;
         }
+    }
+
+    /*
+     * JavaScript APIs
+     */
+
+    public SceneObject on(String eventName, EventHandler eventHandler) {
+        mEventEmitter.on(eventName, eventHandler);
+        return this;
+    }
+
+    public SceneObject off(String eventName, EventHandler eventHandler) {
+        mEventEmitter.off(eventName, eventHandler);
+        return this;
+    }
+
+    public SceneObject off(String eventName) {
+        mEventEmitter.off(eventName);
+        return this;
     }
 }

@@ -8,6 +8,7 @@ import com.eje_c.meganekko.xml.XmlAttributeParser;
 
 import org.joml.Vector3f;
 
+@Deprecated
 public class ScaleParser implements XmlAttributeParser {
     @Override
     public void parse(Context context, SceneObject object, AttributeSet attributeSet) {

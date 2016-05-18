@@ -2,6 +2,7 @@ package com.eje_c.meganekko.xml;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.RenderData;
 import com.eje_c.meganekko.Scene;
 import com.eje_c.meganekko.SceneObject;
+import com.eje_c.meganekko.javascript.JS;
 import com.eje_c.meganekko.scene_objects.GlobeSceneObject;
 
 import org.joml.Quaternionf;
@@ -24,6 +26,7 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -35,6 +38,13 @@ import javax.xml.parsers.ParserConfigurationException;
  */
 public class XmlDocumentParser {
 
+    private static final String[] EVENT_NAMES = {
+            "update",
+            "swipeforward", "swipeback", "swipeup", "swipedown",
+            "touchsingle", "touchdouble", "touchlongpress",
+            "keyshortpress", "keydoubletap", "keylongpress", "keydown", "keyup", "keymax"
+    };
+    private static DocumentBuilderFactory sDocumentBuilderFactory;
     private final Context mContext;
 
     public XmlDocumentParser(Context context) {
@@ -42,7 +52,10 @@ public class XmlDocumentParser {
     }
 
     private static DocumentBuilder defaultDocumentBuilder() throws ParserConfigurationException {
-        return DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        if (sDocumentBuilderFactory == null) {
+            sDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
+        }
+        return sDocumentBuilderFactory.newDocumentBuilder();
     }
 
     private static boolean isEmpty(String id) {
@@ -68,7 +81,7 @@ public class XmlDocumentParser {
      * Parse {@link Scene} from URI.
      *
      * @param uri             URI which points to XML data.
-     * @param documentBuilder
+     * @param documentBuilder DocumentBuilder.
      * @return Scene
      * @throws XmlDocumentParserException
      */
@@ -82,7 +95,8 @@ public class XmlDocumentParser {
 
     public Scene parseScene(@RawRes int rawRes) throws XmlDocumentParserException {
         InputStream is = mContext.getResources().openRawResource(rawRes);
-        return parseScene(is);
+        final String resName = mContext.getResources().getResourceEntryName(rawRes);
+        return parseScene(is, "res:///raw/" + resName);
     }
 
     /**
@@ -95,7 +109,7 @@ public class XmlDocumentParser {
     public Scene parseSceneFromAsset(String assetPath) throws XmlDocumentParserException {
         try {
             InputStream is = mContext.getAssets().open(assetPath);
-            return parseScene(is);
+            return parseScene(is, "asset:///" + assetPath);
         } catch (IOException e) {
             throw new XmlDocumentParserException("Error in parsing XML from asset " + assetPath, e);
         }
@@ -104,21 +118,32 @@ public class XmlDocumentParser {
     /**
      * Parse {@link Scene} from {@code InputStream}.
      *
-     * @param is InputStream
+     * @param is          InputStream
+     * @param documentUri URI passed to {@link Document#setDocumentURI(String)}.
      * @return Scene
      * @throws XmlDocumentParserException
      */
-    public Scene parseScene(InputStream is) throws XmlDocumentParserException {
+    public Scene parseScene(InputStream is, String documentUri) throws XmlDocumentParserException {
         try {
-            return parseScene(is, defaultDocumentBuilder());
+            return parseScene(is, documentUri, defaultDocumentBuilder());
         } catch (ParserConfigurationException e) {
             throw new XmlDocumentParserException("Error in parsing XML from " + is.toString(), e);
         }
     }
 
-    public Scene parseScene(InputStream is, DocumentBuilder documentBuilder) throws XmlDocumentParserException {
+    /**
+     * Parse {@link Scene} from {@code InputStream}.
+     *
+     * @param is              InputStream
+     * @param documentUri     URI passed to {@link Document#setDocumentURI(String)}.
+     * @param documentBuilder DocumentBuilder.
+     * @return Scene
+     * @throws XmlDocumentParserException
+     */
+    public Scene parseScene(InputStream is, String documentUri, DocumentBuilder documentBuilder) throws XmlDocumentParserException {
         try {
             Document document = documentBuilder.parse(is);
+            document.setDocumentURI(documentUri);
             return parseScene(document);
         } catch (IOException | SAXException e) {
             throw new XmlDocumentParserException("Error in parsing XML from " + is.toString(), e);
@@ -133,9 +158,86 @@ public class XmlDocumentParser {
             throw new XmlDocumentParserException("XML root element is not Scene");
         }
 
+        Scene scene = (Scene) root;
+
+        try {
+            parseScriptNodes(document, scene);
+        } catch (IOException e) {
+            throw new XmlDocumentParserException("Error while parsing JavaScript in XML", e);
+        }
+
         return (Scene) root;
     }
 
+    private void parseScriptNodes(Document document, Scene scene) throws IOException {
+
+        NodeList scripts = document.getElementsByTagName("script");
+
+        for (int i = 0, len = scripts.getLength(); i < len; ++i) {
+
+            Node scriptNode = scripts.item(i);
+            Node src = scriptNode.getAttributes().getNamedItem("src");
+
+            if (src != null) {
+
+                // execte <script src="{code}" />
+                String srcVal = src.getNodeValue();
+                if (isEmpty(srcVal)) continue;
+
+                // src="@raw/script"
+                if (srcVal.startsWith("@raw")) {
+                    int rawRes = mContext.getResources().getIdentifier(srcVal.substring(1), "raw", mContext.getPackageName());
+                    JS.exec(scene, mContext.getResources().openRawResource(rawRes));
+                    continue;
+                }
+
+                // src="url"
+                URI srcUri = URI.create(srcVal);
+
+                // if src is not absolute URI, resolve from document URI
+                if (!srcUri.isAbsolute()) {
+                    srcUri = URI.create(document.getDocumentURI()).resolve(srcUri);
+                }
+
+                execURL(scene, srcUri);
+            } else {
+                // execute <script> {code} </script>
+                String code = scriptNode.getTextContent();
+                if (!isEmpty(code)) {
+                    JS.exec(scene, code);
+                }
+            }
+        }
+    }
+
+    private void execURL(Scene scene, URI uri) throws IOException {
+        if ("asset".equals(uri.getScheme())) {
+
+            // from asset
+            JS.exec(scene, mContext.getAssets().open(uri.getPath().substring(1)));
+
+        } else if ("res".equals(uri.getScheme())) {
+
+            // from resource
+            String resName = uri.getPath().substring(1);
+
+            // trim extension
+            if (resName.endsWith(".js")) {
+                resName = resName.replace(".js", "");
+            }
+
+            int resId = mContext.getResources().getIdentifier(resName, null, mContext.getPackageName());
+            JS.exec(scene, mContext.getResources().openRawResource(resId));
+
+        } else {
+
+            // from URL
+            JS.exec(scene, uri.toURL().openStream());
+
+        }
+    }
+
+    @Nullable
     private SceneObject parseSceneObject(Document document) throws XmlDocumentParserException {
         try {
             return parse(document.getDocumentElement());
@@ -144,9 +246,17 @@ public class XmlDocumentParser {
         }
     }
 
+    @Nullable
     private SceneObject parse(Element element) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
 
-        SceneObject object = createSceneObject(element);
+        if ("script".equals(element.getTagName())) {
+            return null;
+        }
+
+        final SceneObject object = createSceneObject(element);
+
+        // Attach SceneObject to DOM Element
+        element.setUserData("sceneObject", object, null);
 
         parseId(element, object);
 
@@ -162,6 +272,13 @@ public class XmlDocumentParser {
         parseOpacity(element, object);
         parseVisible(element, object);
         parseRenderingOrder(element, object);
+
+        for (String eventName : EVENT_NAMES) {
+            String attr = element.getAttribute("on" + eventName);
+            if (!isEmpty(attr)) {
+                object.on(eventName, JS.createEventHandler(object, attr));
+            }
+        }
 
         return object;
     }
@@ -196,7 +313,9 @@ public class XmlDocumentParser {
             Node childNode = childNodes.item(i);
             if (childNode.getNodeType() == Node.ELEMENT_NODE) {
                 SceneObject child = parse((Element) childNodes.item(i));
-                object.addChildObject(child);
+                if (child != null) {
+                    object.addChildObject(child);
+                }
             }
         }
     }

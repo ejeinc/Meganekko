@@ -15,8 +15,6 @@ public class MyApp extends MeganekkoApp {
 
     public MyApp(Meganekko meganekko) {
         super(meganekko);
-
-        // Set first scene
         setSceneFromXML(R.xml.first_scene);
     }
 

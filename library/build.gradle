@@ -20,6 +20,7 @@ dependencies {
      */
     compile 'com.android.support:support-v4:23.3.0'
     compile 'org.joml:joml:+'
+    compile 'org.mozilla:rhino:1.7.7.1'
 }
 
 android {

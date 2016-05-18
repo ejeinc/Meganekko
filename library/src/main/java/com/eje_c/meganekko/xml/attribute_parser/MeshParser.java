@@ -7,6 +7,7 @@ import com.eje_c.meganekko.Mesh;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.xml.XmlAttributeParser;
 
+@Deprecated
 public class MeshParser implements XmlAttributeParser {
 
     @Override

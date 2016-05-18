@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.xml.XmlAttributeParser;
 
+@Deprecated
 public class BasicParser implements XmlAttributeParser {
 
     @Override

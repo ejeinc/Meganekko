@@ -236,4 +236,14 @@ public class Scene extends SceneObject {
     public MeganekkoApp getApp() {
         return mApp;
     }
+
+    /**
+     * Scene's event is always dispatched.
+     *
+     * @return true
+     */
+    @Override
+    protected boolean willBeDispatchedGestureEvent() {
+        return true;
+    }
 }

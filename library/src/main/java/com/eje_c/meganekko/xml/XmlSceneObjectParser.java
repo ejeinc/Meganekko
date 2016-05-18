@@ -41,6 +41,7 @@ import java.util.List;
 /**
  * Internally used from {@link XmlSceneParser}. This creates {@link SceneObject} and set properties from XML attributes.
  */
+@Deprecated
 public class XmlSceneObjectParser {
 
     private static final List<Class<? extends XmlAttributeParser>> sAttributeParsers = new ArrayList<>();

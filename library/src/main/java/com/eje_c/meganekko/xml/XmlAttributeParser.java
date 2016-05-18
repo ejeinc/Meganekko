@@ -7,6 +7,7 @@ import com.eje_c.meganekko.SceneObject;
 
 import org.xmlpull.v1.XmlPullParserException;
 
+@Deprecated
 public interface XmlAttributeParser {
 
     // Reserved for future update
