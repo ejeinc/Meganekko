@@ -18,8 +18,7 @@ package com.eje_c.meganekko.utility;
 import android.graphics.Color;
 
 /**
- * RGB <--> GL utilities.
- * <p/>
+ * RGB and GL utilities.
  * Please note that the {@code org.gearvrf.utility} package contains low-level
  * utility code used in multiple Meganekko packages. We can't keep you from using
  * this code in a Meganekko application, but we <em>can</em> urge you not to:

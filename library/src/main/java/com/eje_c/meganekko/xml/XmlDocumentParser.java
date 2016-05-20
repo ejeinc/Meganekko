@@ -41,6 +41,14 @@ public class XmlDocumentParser {
         this.mContext = context;
     }
 
+    private static DocumentBuilder defaultDocumentBuilder() throws ParserConfigurationException {
+        return DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    }
+
+    private static boolean isEmpty(String id) {
+        return id == null || id.isEmpty();
+    }
+
     /**
      * Parse {@link Scene} from URI.
      *
@@ -230,7 +238,6 @@ public class XmlDocumentParser {
         object.mesh(Mesh.createQuad(w, h));
     }
 
-
     private void parseScale(Element element, SceneObject object) {
         String scaleAttr = element.getAttribute("scale");
         String x = element.getAttribute("scaleX");
@@ -370,13 +377,5 @@ public class XmlDocumentParser {
         }
 
         return new SceneObject();
-    }
-
-    private static DocumentBuilder defaultDocumentBuilder() throws ParserConfigurationException {
-        return DocumentBuilderFactory.newInstance().newDocumentBuilder();
-    }
-
-    private static boolean isEmpty(String id) {
-        return id == null || id.isEmpty();
     }
 }

@@ -17,7 +17,6 @@
 
 /**
  * Animation support classes.
- * <p/>
  * With these classes, Meganekko application can easily use Android's animation framework.
  */
 package com.eje_c.meganekko.animation;

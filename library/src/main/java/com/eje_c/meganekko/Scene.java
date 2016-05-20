@@ -32,6 +32,7 @@ public class Scene extends SceneObject {
 
     private boolean mInitialized;
     private MeganekkoApp mApp;
+    private float simulateTouchAdditionalY;
 
     private static native void setFrustumCulling(long scene, boolean flag);
 
@@ -52,6 +53,23 @@ public class Scene extends SceneObject {
     private static native void getViewPosition(long scene, float[] val);
 
     private static native void getViewOrientation(long scene, float[] val);
+
+    private static int getEventType(Frame frame) {
+        if (JoyButton.contains(frame.getButtonPressed(), JoyButton.BUTTON_TOUCH)) {
+            return MotionEvent.ACTION_DOWN;
+        } else if (JoyButton.contains(frame.getButtonState(), JoyButton.BUTTON_TOUCH)) {
+            return MotionEvent.ACTION_MOVE;
+        } else if (JoyButton.contains(frame.getButtonReleased(), JoyButton.BUTTON_TOUCH)) {
+            return MotionEvent.ACTION_UP;
+        } else {
+            return -1;
+        }
+    }
+
+    private static void dispatchTouchEvent(SceneObject target, View view, int eventType, Vector3f lookingPoint) {
+        target.simulateTouchEvent(eventType, lookingPoint.x, lookingPoint.y);
+        view.invalidate();
+    }
 
     @Override
     protected native long initNativeInstance();
@@ -136,15 +154,15 @@ public class Scene extends SceneObject {
         setViewPosition(getNative(), x, y, z);
     }
 
-    public void setViewPosition(Vector3f pos) {
-        setViewPosition(getNative(), pos.x, pos.y, pos.z);
-    }
-
     public Vector3f getViewPosition() {
         synchronized (sTempValuesForJni) {
             getViewPosition(getNative(), sTempValuesForJni);
             return new Vector3f(sTempValuesForJni[0], sTempValuesForJni[1], sTempValuesForJni[2]);
         }
+    }
+
+    public void setViewPosition(Vector3f pos) {
+        setViewPosition(getNative(), pos.x, pos.y, pos.z);
     }
 
     public Quaternionf getViewOrientation() {
@@ -163,15 +181,12 @@ public class Scene extends SceneObject {
         simulateTouch(frame, target, useSwipe, false);
     }
 
-    private float simulateTouchAdditionalY;
-
     /**
      * @param frame              The {@link Frame}.
      * @param target             Target {@link SceneObject}. It have to render texture with {@code View}.
      * @param dispatchOnUiThread if true, {@code View.dispatchTouchEvent} will be called on UI thread.
      *                           Otherwise called in current thread.
      * @param useSwipe
-     * @return True if the event was handled by the view, false otherwise.
      */
     public void simulateTouch(Frame frame, final SceneObject target, boolean useSwipe, boolean dispatchOnUiThread) {
 
@@ -216,23 +231,6 @@ public class Scene extends SceneObject {
             // Force redraw (required for RecyclerView or something)
             view.invalidate();
         }
-    }
-
-    private static int getEventType(Frame frame) {
-        if (JoyButton.contains(frame.getButtonPressed(), JoyButton.BUTTON_TOUCH)) {
-            return MotionEvent.ACTION_DOWN;
-        } else if (JoyButton.contains(frame.getButtonState(), JoyButton.BUTTON_TOUCH)) {
-            return MotionEvent.ACTION_MOVE;
-        } else if (JoyButton.contains(frame.getButtonReleased(), JoyButton.BUTTON_TOUCH)) {
-            return MotionEvent.ACTION_UP;
-        } else {
-            return -1;
-        }
-    }
-
-    private static void dispatchTouchEvent(SceneObject target, View view, int eventType, Vector3f lookingPoint) {
-        target.simulateTouchEvent(eventType, lookingPoint.x, lookingPoint.y);
-        view.invalidate();
     }
 
     public MeganekkoApp getApp() {

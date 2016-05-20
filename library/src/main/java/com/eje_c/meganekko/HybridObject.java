@@ -19,7 +19,6 @@ import com.eje_c.meganekko.utility.Log;
 
 /**
  * Root of the Meganekko object hierarchy.
- * <p/>
  * Descendant classes all have native (JNI) implementations; this base class
  * manages the native life cycles.
  */
@@ -62,8 +61,9 @@ public abstract class HybridObject {
 
     /**
      * The actual address of the native object.
-     * <p/>
      * This is an internal method that may be useful in diagnostic code.
+     *
+     * @return Native pointer value.
      */
     public long getNative() {
         return mNativeReference.getNativePointer();

@@ -30,7 +30,6 @@ import static android.opengl.GLES30.GL_TRIANGLE_STRIP;
 /**
  * One of the key Meganekko classes: Encapsulates the data associated with rendering
  * a mesh.
- * <p/>
  * This includes the {@link Mesh mesh} itself, the mesh's {@link Material
  * material}, camera association, rendering order, and various other parameters.
  */
@@ -87,20 +86,7 @@ public class RenderData extends Component {
     }
 
     /**
-     * Set the {@link Mesh mesh} to be rendered.
-     *
-     * @param mesh The mesh to be rendered.
-     */
-    public void setMesh(Mesh mesh) {
-        synchronized (this) {
-            mMesh = mesh;
-        }
-        setMesh(getNative(), mesh.getNative());
-    }
-
-    /**
      * Asynchronously set the {@link Mesh mesh} to be rendered.
-     * <p/>
      * Uses a background thread from the thread pool to wait for the
      * {@code Future.get()} method; unless you are loading dozens of meshes
      * asynchronously, the extra overhead should be modest compared to the cost
@@ -120,6 +106,18 @@ public class RenderData extends Component {
                 }
             }
         });
+    }
+
+    /**
+     * Set the {@link Mesh mesh} to be rendered.
+     *
+     * @param mesh The mesh to be rendered.
+     */
+    public void setMesh(Mesh mesh) {
+        synchronized (this) {
+            mMesh = mesh;
+        }
+        setMesh(getNative(), mesh.getNative());
     }
 
     /**
@@ -288,14 +286,12 @@ public class RenderData extends Component {
 
     /**
      * Rendering hints.
-     * <p/>
      * You might expect the rendering process to sort the scene graph, from back
      * to front, so it can then draw translucent objects over the objects behind
      * them. But that's not how Meganekko works. Instead, it sorts the scene graph by
      * render order, then draws the sorted graph in traversal order. (Please
      * don't waste your time getting angry or trying to make sense of this;
      * please just take it as a bald statement of How Meganekko Currently Works.)
-     * <p/>
      * The point is, to get transparency to work as you expect, you do need to
      * explicitly call {@link RenderData#setRenderingOrder(int)
      * setRenderingOrder():} objects are sorted from low render order to high

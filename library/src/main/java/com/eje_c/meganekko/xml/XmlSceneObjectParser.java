@@ -44,8 +44,6 @@ import java.util.List;
 public class XmlSceneObjectParser {
 
     private static final List<Class<? extends XmlAttributeParser>> sAttributeParsers = new ArrayList<>();
-    private final Context mContext;
-    private final List<XmlAttributeParser> mAttributeParsers = new ArrayList<>();
 
     static {
         sAttributeParsers.addAll(Arrays.asList(
@@ -59,9 +57,8 @@ public class XmlSceneObjectParser {
         ));
     }
 
-    public static void installAttributeParser(Class<? extends XmlAttributeParser> attributeParserClass) {
-        sAttributeParsers.add(attributeParserClass);
-    }
+    private final Context mContext;
+    private final List<XmlAttributeParser> mAttributeParsers = new ArrayList<>();
 
     public XmlSceneObjectParser(Context context) {
         this.mContext = context;
@@ -74,6 +71,10 @@ public class XmlSceneObjectParser {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public static void installAttributeParser(Class<? extends XmlAttributeParser> attributeParserClass) {
+        sAttributeParsers.add(attributeParserClass);
     }
 
     public SceneObject parse(XmlPullParser parser) throws XmlPullParserException, IOException {

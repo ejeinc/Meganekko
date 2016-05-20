@@ -18,26 +18,20 @@
 
 /**
  * Main classes for Meganekko.
- * <p/>
  * You have to extend {@link com.eje_c.meganekko.gearvr.MeganekkoActivity} instead of {@code Activity},
  * and implement {@link com.eje_c.meganekko.gearvr.MeganekkoActivity#createMeganekkoApp()}
  * and return your own {@link com.eje_c.meganekko.MeganekkoApp}.
  * You don't need to override {@code onCreate} typically.
- * <p/>
  * A {@linkplain com.eje_c.meganekko.Scene scene graph} contains any number of {@linkplain com.eje_c.meganekko.SceneObject scene objects.}
  * Scene objects have an {@linkplain com.eje_c.meganekko.Transform 4x4 matrix} which positions them in the scene.
  * Each scene object can have child scene objects: moving the parent moves the children,
  * maintaining the children's positions with relation to each other.
- * <p/>
  * To be visible, a scene object must have {@linkplain com.eje_c.meganekko.RenderData render data},
  * including a {@linkplain com.eje_c.meganekko.Mesh GL mesh} which defines the surface geometry and
  * a {@linkplain com.eje_c.meganekko.Material material} which defines the surface appearance by specifying a GL shader and its parameters.
- * <p/>
  * <a name="scenegraph"><h3>Scene Graph</h3></a>
- * <p/>
  * A scene graph is created from Java code or XML. XML is preferable choice but two approaches are used properly in cases.
  * The relation of XML and Java are similar to HTML and JavaScript. XML represents a static state of scene and Java will change objects in scene dynamically.
- * <p/>
  * A simple scene graph example:
  * <pre>
  *     &lt;scene&gt;

@@ -37,7 +37,6 @@ public abstract class MeganekkoApp {
 
     /**
      * Will be called on frame update. Any animations or input handlings will be implemented in it.
-     * <p/>
      * You can override this method but you must call {@code super.update(meganekko, frame)} to work properly.
      */
     public void update() {
@@ -249,7 +248,7 @@ public abstract class MeganekkoApp {
     /**
      * Set current rendering scene.
      *
-     * @param scene
+     * @param scene The {@link Scene} will be rendered.
      */
     public synchronized void setScene(@NonNull Scene scene) {
 

@@ -53,8 +53,6 @@ public class CameraSceneObject extends SceneObject {
 
     /**
      * Resumes camera preview
-     * <p/>
-     * <p/>
      * Note: {@link #pause()} and {@code resume()} only affect the polling that
      * links the Android {@link Camera} to this {@linkplain SceneObject
      * Meganekko scene object:} they have <em>no affect</em> on the underlying
@@ -66,8 +64,6 @@ public class CameraSceneObject extends SceneObject {
 
     /**
      * Pauses camera preview
-     * <p/>
-     * <p/>
      * Note: {@code pause()} and {@link #resume()} only affect the polling that
      * links the Android {@link Camera} to this {@linkplain SceneObject
      * Meganekko scene object:} they have <em>no affect</em> on the underlying

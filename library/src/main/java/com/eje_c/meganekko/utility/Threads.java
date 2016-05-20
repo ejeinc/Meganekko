@@ -83,7 +83,7 @@ public abstract class Threads {
      *                   - by using spawn (and, hence the thread pool) there is at
      *                   least a chance that you will be reusing a thread, thus saving
      *                   teardown/startup costs.
-     * @return A Future<?> that lets you wait for thread completion, if
+     * @return A Future that lets you wait for thread completion, if
      * necessary
      */
     private static Future<?> spawn(final int priority, final Runnable threadProc) {
@@ -133,7 +133,7 @@ public abstract class Threads {
      *                   - by using spawn (and, hence the thread pool) there is at
      *                   least a chance that you will be reusing a thread, thus saving
      *                   teardown/startup costs.
-     * @return A Future<?> that lets you wait for thread completion, if
+     * @return A Future that lets you wait for thread completion, if
      * necessary
      */
     public static Future<?> spawn(final Runnable threadProc) {
@@ -154,7 +154,7 @@ public abstract class Threads {
      *                   - by using spawn (and, hence the thread pool) there is at
      *                   least a chance that you will be reusing a thread, thus saving
      *                   teardown/startup costs.
-     * @return A Future<?> that lets you wait for thread completion, if
+     * @return A Future that lets you wait for thread completion, if
      * necessary
      */
     public static Future<?> spawnLow(final Runnable threadProc) {
@@ -175,7 +175,7 @@ public abstract class Threads {
      *                   - by using spawn (and, hence the thread pool) there is at
      *                   least a chance that you will be reusing a thread, thus saving
      *                   teardown/startup costs.
-     * @return A Future<?> that lets you wait for thread completion, if
+     * @return A Future that lets you wait for thread completion, if
      * necessary
      */
     public static Future<?> spawnIdle(final Runnable threadProc) {
@@ -201,7 +201,7 @@ public abstract class Threads {
      *                   - by using spawn (and, hence the thread pool) there is at
      *                   least a chance that you will be reusing a thread, thus saving
      *                   teardown/startup costs.
-     * @return A Future<?> that lets you wait for thread completion, if
+     * @return A Future that lets you wait for thread completion, if
      * necessary
      */
     public static Future<?> spawnHigh(final Runnable threadProc) {
@@ -227,10 +227,10 @@ public abstract class Threads {
      * The spawn() methods use a {@link Executors#newCachedThreadPool()}; this
      * method provides access to that thread pool, so that other parts of the
      * app can use the pool without having to call one of the spwan() methods.
-     * <p/>
-     * <p/>
      * Note that any prior call to {@link #setThreadPool(ExecutorService)} will
      * affect the result of this method!
+     *
+     * @return ExecutorService
      */
     public static ExecutorService getThreadPool() {
         return threadPool;
@@ -241,11 +241,11 @@ public abstract class Threads {
      * {@link Executors#newCachedThreadPool()}. This method allows you to use a
      * different thread pool, if the cached thread pool provides the wrong
      * semantics or if you want to use a single thread pool for the whole app.
-     * <p/>
-     * <p/>
      * Note that calling this method will have <em>no effect</em> on any threads
      * started on the existing thread pool; they will run to completion in a
      * totally normal manner.
+     *
+     * @param newThreadPool Thread pool.
      */
     public static void setThreadPool(ExecutorService newThreadPool) {
         if (RUNTIME_ASSERTIONS) {
@@ -264,6 +264,8 @@ public abstract class Threads {
 
     /**
      * Shorthand for <code>Thread.currentThread().getId()</code>
+     *
+     * @return Thread ID.
      */
     public static long threadId() {
         return Thread.currentThread().getId();
@@ -304,45 +306,50 @@ public abstract class Threads {
      */
     public interface Cancelable extends Runnable {
         /**
-         * Should we still run() this?
+         * @return Should we still run() this?
          */
         boolean stillWanted();
     }
 
     /**
      * Manages pool of pending threads, deciding which should run next.
-     * <p/>
      * Used in conjunction with a ThreadLimiter, which handles synchronization:
      * implementations generally don't need to pay attention to thread safety.
      */
     public interface ThreadPolicyProvider<CANCELABLE extends Cancelable> {
         /**
          * Add a thread proc to the pool
+         *
+         * @param threadProc proc to the pool
          */
         void put(CANCELABLE threadProc);
 
         /**
          * Are there any thread procs in the pool?
-         * <p/>
          * May use {@link Cancelable#stillWanted()} to trim pool.
+         *
+         * @return Are there any thread procs in the pool?
          */
         boolean isEmpty();
 
         /**
          * Returns the next thread proc. May return <code>null</code> or raise
          * exception if isEmpty() is true
+         *
+         * @return next thread proc.
          */
         Runnable get();
 
         /**
          * Make threadProc the next in the pool.
-         * <p/>
          * <ul>
          * <li>If threadProc is already in the pool, move it to the front, so
          * get() returns it next.
          * <li>If threadProc is not in the pool, add it at the front, so get()
          * returns it next.
          * </ul>
+         *
+         * @param threadProc Command run in background.
          */
         void reschedule(CANCELABLE threadProc);
     }
@@ -353,10 +360,8 @@ public abstract class Threads {
 
     /**
      * Limits the number of (thread pool) threads running at any one time.
-     * <p/>
      * A stand-alone class, as different subsystems may have different limits,
      * based on the resources their threads consume.
-     * <p/>
      * Each subsystem that instantiates a thread limiter must supply an
      * implementation of {@link ThreadPolicyProvider}, or use the standard
      * {@link LifoThreadPolicyProvider}.
@@ -422,10 +427,11 @@ public abstract class Threads {
 
         /**
          * Run a thread proc, on a thread from the system thread pool.
-         * <p/>
          * Thread will run immediately, if possible. If the maximum number of
          * threads are already running, the thread proc will be added to a pool,
          * and scheduling will be determined by the ThreadPolicyProvider.
+         *
+         * @param threadProc Command run in background.
          */
         public void spawn(CANCELABLE threadProc) {
             handle(threadProc, PUT);
@@ -433,6 +439,8 @@ public abstract class Threads {
 
         /**
          * Run immediately, if possible; else, schedule threadProc to run next.
+         *
+         * @param threadProc Command run in background.
          */
         public void reschedule(CANCELABLE threadProc) {
             handle(threadProc, RESCHEDULE);
@@ -652,7 +660,6 @@ public abstract class Threads {
      * Provides LIFO thread policy management: Most recently added thread proc
      * will run next. Appropriate for image galleries, say, where most recent
      * request is most likely to be visible.
-     * <p/>
      * Never cancels a request!
      */
     public static class LifoThreadPolicyProvider implements

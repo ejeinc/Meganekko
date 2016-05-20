@@ -13,6 +13,29 @@ import com.eje_c.meganekko.xml.XmlAttributeParser;
 
 public class DrawableParser implements XmlAttributeParser {
 
+    private static void setDrawable(SceneObject object, Drawable d, AttributeSet attributeSet) {
+        RenderData renderData = object.getRenderData();
+
+        if (renderData == null) {
+            renderData = new RenderData();
+            object.attachRenderData(renderData);
+        }
+
+        Material material = new Material();
+        material.texture().set(d);
+        renderData.setMaterial(material);
+
+        // Set auto sized mesh
+        if (object.mesh() == null
+                && attributeSet.getAttributeValue(NAMESPACE, "width") == null
+                && attributeSet.getAttributeValue(NAMESPACE, "height") == null
+                && attributeSet.getAttributeValue(NAMESPACE, "mesh") == null) {
+
+            Mesh mesh = Mesh.from(d);
+            renderData.setMesh(mesh);
+        }
+    }
+
     @Override
     public void parse(Context context, SceneObject object, AttributeSet attributeSet) {
 
@@ -35,29 +58,6 @@ public class DrawableParser implements XmlAttributeParser {
                 setDrawable(object, ContextCompat.getDrawable(context, res), attributeSet);
                 return;
             }
-        }
-    }
-
-    private static void setDrawable(SceneObject object, Drawable d, AttributeSet attributeSet) {
-        RenderData renderData = object.getRenderData();
-
-        if (renderData == null) {
-            renderData = new RenderData();
-            object.attachRenderData(renderData);
-        }
-
-        Material material = new Material();
-        material.texture().set(d);
-        renderData.setMaterial(material);
-
-        // Set auto sized mesh
-        if (object.mesh() == null
-                && attributeSet.getAttributeValue(NAMESPACE, "width") == null
-                && attributeSet.getAttributeValue(NAMESPACE, "height") == null
-                && attributeSet.getAttributeValue(NAMESPACE, "mesh") == null) {
-
-            Mesh mesh = Mesh.from(d);
-            renderData.setMesh(mesh);
         }
     }
 }

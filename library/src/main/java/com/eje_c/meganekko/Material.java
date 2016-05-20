@@ -35,8 +35,8 @@ public class Material extends HybridObject {
     /**
      * Create {@link Material} from {@code View}.
      *
-     * @param view
-     * @return
+     * @param view Textured {@code View}.
+     * @return New {@link Material}.
      */
     public static Material from(View view) {
         Material material = new Material();
@@ -47,8 +47,8 @@ public class Material extends HybridObject {
     /**
      * Create {@link Material} from {@code Drawable}.
      *
-     * @param drawable
-     * @return
+     * @param drawable Textured {@code Drawable}.
+     * @return New {@link Material}.
      */
     public static Material from(Drawable drawable) {
         Material material = new Material();
@@ -59,8 +59,8 @@ public class Material extends HybridObject {
     /**
      * Create {@link Material} from {@code Bitmap}.
      *
-     * @param bitmap
-     * @return
+     * @param bitmap Textured {@code Bitmap}.
+     * @return New {@link Material}.
      */
     public static Material from(Bitmap bitmap) {
         Material material = new Material();
@@ -71,8 +71,8 @@ public class Material extends HybridObject {
     /**
      * Create {@link Material} from {@code MediaPlayer}.
      *
-     * @param mediaPlayer
-     * @return
+     * @param mediaPlayer Textured {@code MediaPlayer}.
+     * @return New {@link Material}.
      */
     public static Material from(MediaPlayer mediaPlayer) {
         Material material = new Material();
@@ -94,17 +94,6 @@ public class Material extends HybridObject {
 
     @Override
     protected native long initNativeInstance();
-
-//    @Override
-//    protected void delete() {
-//
-//        if (mTexture != null) {
-//            mTexture.release();
-//            mTexture = null;
-//        }
-//
-//        super.delete();
-//    }
 
     /**
      * Get the {@code color} uniform.
@@ -132,7 +121,6 @@ public class Material extends HybridObject {
 
     /**
      * Set the {@code color} uniform.
-     * <p/>
      * By convention, Meganekko shaders can use a {@code vec4} uniform named
      * {@code UniformColor}. With the default shader, this allows you to add an overlay color on top of the mTexture.
      * Values are between {@code 0.0f} and {@code 1.0f}, inclusive.
@@ -179,7 +167,7 @@ public class Material extends HybridObject {
     /**
      * Use this to render stereo texture.
      *
-     * @param stereoMode
+     * @param stereoMode Stereo mode.
      */
     public void setStereoMode(StereoMode stereoMode) {
         setStereoMode(getNative(), stereoMode.ordinal());
@@ -202,12 +190,6 @@ public class Material extends HybridObject {
         }
     }
 
-    @Deprecated
-    public void setCullFace(CullFace cullFace) {
-        mCullFace = cullFace;
-        setSide(getNative(), cullFace.ordinal());
-    }
-
     public void setSide(Side side) {
         setSide(getNative(), side.ordinal());
     }
@@ -215,6 +197,12 @@ public class Material extends HybridObject {
     @Deprecated
     public CullFace getCullFace() {
         return mCullFace;
+    }
+
+    @Deprecated
+    public void setCullFace(CullFace cullFace) {
+        mCullFace = cullFace;
+        setSide(getNative(), cullFace.ordinal());
     }
 
     public enum StereoMode {
