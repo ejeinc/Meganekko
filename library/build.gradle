@@ -79,17 +79,13 @@ def GetNDKBuildCmd() {
 }
 
 project.afterEvaluate {
-    compileDebugNdk.dependsOn 'NDKBuildDebugMGN'
-    compileReleaseNdk.dependsOn 'NDKBuildReleaseMGN'
+    compileDebugNdk.dependsOn 'NDKBuild'
+    compileReleaseNdk.dependsOn 'NDKBuild'
     clean.dependsOn 'NDKBuildCleanMGN'
 }
 
-task NDKBuildDebugMGN(type: Exec) {
-    commandLine GetNDKBuildCmd(), 'V=0', '-j10', 'NDK_DEBUG=1', 'OVR_DEBUG=1', "NDK_PROJECT_PATH=$projectDir/src/main"
-}
-
-task NDKBuildReleaseMGN(type: Exec) {
-    commandLine GetNDKBuildCmd(), 'V=0', '-j10', 'NDK_DEBUG=0', 'OVR_DEBUG=0', "NDK_PROJECT_PATH=$projectDir/src/main"
+task NDKBuild(type: Exec) {
+    commandLine GetNDKBuildCmd(), "NDK_PROJECT_PATH=$projectDir/src/main"
 }
 
 task NDKBuildCleanMGN(type: Exec) {
