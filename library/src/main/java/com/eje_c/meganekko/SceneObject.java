@@ -84,23 +84,6 @@ public class SceneObject extends HybridObject {
     private boolean mVisible = true;
 
     /**
-     * Constructs an empty scene object with a default transform.
-     */
-    public SceneObject() {
-    }
-
-    /**
-     * Constructs a scene object with an arbitrarily complex mesh.
-     *
-     * @param mesh a {@link Mesh}.
-     */
-    public SceneObject(Mesh mesh) {
-        RenderData renderData = new RenderData();
-        attachRenderData(renderData);
-        renderData.setMesh(mesh);
-    }
-
-    /**
      * Create {@link SceneObject} from {@code View}.
      *
      * @param view

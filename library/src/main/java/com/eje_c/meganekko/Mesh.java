@@ -30,13 +30,6 @@ public class Mesh extends HybridObject {
 
     private RectF mQuad;
 
-    public Mesh() {
-    }
-
-    Mesh(long ptr) {
-        super(ptr);
-    }
-
     private static native void build(long renderData, float[] positions, float[] colors, float[] uvs, int[] triangles);
 
     private static native void buildQuad(long renderData, float width, float heigh);

@@ -18,10 +18,8 @@ package com.eje_c.meganekko.scene_objects;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 
-import com.eje_c.meganekko.Material;
-import com.eje_c.meganekko.Mesh;
-import com.eje_c.meganekko.SceneObject;
 import com.eje_c.meganekko.Frame;
+import com.eje_c.meganekko.SceneObject;
 
 import java.io.IOException;
 
@@ -37,14 +35,12 @@ public class CameraSceneObject extends SceneObject {
      * Create a {@linkplain SceneObject scene object} (with arbitrarily complex
      * geometry) that shows live video from one of the device's cameras
      *
-     * @param mesh   an arbitrarily complex {@link Mesh} object
      * @param camera an Android {@link Camera}. <em>Note</em>: this constructor
      *               calls {@link Camera#setPreviewTexture(SurfaceTexture)} so you
      *               should be sure to call it before you call
      *               {@link Camera#startPreview()}.
      */
-    public CameraSceneObject(Mesh mesh, Camera camera) {
-        super(mesh);
+    public CameraSceneObject(Camera camera) {
 
         mSurfaceTexture = getRenderData().getMaterial().getSurfaceTexture();
 
