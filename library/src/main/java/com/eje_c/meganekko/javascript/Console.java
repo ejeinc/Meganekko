@@ -8,4 +8,16 @@ public class Console {
     public void log(String msg, Object... o) {
         Log.d(TAG, String.format(msg, o));
     }
+
+    public void error(String msg, Object... o) {
+        Log.e(TAG, String.format(msg, o));
+    }
+
+    public void info(String msg, Object... o) {
+        Log.i(TAG, String.format(msg, o));
+    }
+
+    public void warn(String msg, Object... o) {
+        Log.w(TAG, String.format(msg, o));
+    }
 }
