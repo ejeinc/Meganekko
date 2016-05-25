@@ -1,0 +1,20 @@
+<scene>
+    <object
+        id="text"
+        ontouchdouble="animate().sequential(true).opacity(0).opacity(1).start(app)"
+        texture="@layout/second_scene_text"
+        z="-4"/>
+
+    <script>
+        // disable back button
+        scene.on('keydown keyshortpress', function(e) {
+            if(e.keyCode === KeyCode.OVR_KEY_BACK) {
+                e.preventDefault();
+            }
+        });
+
+        scene.on('swipeback', function() {
+            app.resetScene();
+        });
+    </script>
+</scene>

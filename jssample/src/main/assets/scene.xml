@@ -1,0 +1,22 @@
+<scene>
+
+    <object
+        id="hello_world"
+        renderingOrder="10"
+        texture="@layout/hello_world"
+        z="-7.0"/>
+
+    <globe
+        renderingOrder="1"
+        texture="@drawable/background"/>
+
+    <object
+        id="cursor"
+        texture="@drawable/cursor"/>
+
+    <script src="@raw/cursor"/>
+    <script src="script.js"/>
+    <script>
+        console.log('Inline script!');
+    </script>
+</scene>
