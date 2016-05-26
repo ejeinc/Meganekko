@@ -93,6 +93,13 @@ public class XmlDocumentParser {
         }
     }
 
+    /**
+     * Parse {@link Scene} from raw resource, such as {@code R.raw.scene}.
+     *
+     * @param rawRes raw resource.
+     * @return Scene
+     * @throws XmlDocumentParserException
+     */
     public Scene parseScene(@RawRes int rawRes) throws XmlDocumentParserException {
         InputStream is = mContext.getResources().openRawResource(rawRes);
         final String resName = mContext.getResources().getResourceEntryName(rawRes);
