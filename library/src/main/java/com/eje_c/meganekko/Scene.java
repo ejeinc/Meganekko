@@ -246,4 +246,30 @@ public class Scene extends SceneObject {
     protected boolean willBeDispatchedGestureEvent() {
         return true;
     }
+
+    /**
+     * JavaScript APIs
+     */
+
+    public SceneObject createObject(int resId) {
+
+        String typeName = getApp().getContext().getResources().getResourceTypeName(resId);
+
+        switch (typeName) {
+//            case "raw":
+//                // TODO from XML
+//                break;
+
+            case "drawable":
+            case "mipmap":
+                // from Drawable
+                return SceneObject.fromDrawable(getApp().getContext(), resId);
+
+            case "layout":
+                // from View
+                return SceneObject.fromLayout(getApp().getContext(), resId);
+        }
+
+        return null;
+    }
 }

@@ -98,6 +98,8 @@ declare class Scene extends SceneObject {
 
   isLookingAt(target: SceneObject): boolean;
   getLookingPoint(target: SceneObject, axisInWorld: boolean): Vector3f;
+
+  createObject(resId: number): SceneObject;
 }
 
 declare class Vector3f {
