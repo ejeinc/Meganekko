@@ -1,6 +1,7 @@
 package com.eje_c.meganekko.javascript;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.RawRes;
 
 import com.eje_c.meganekko.MeganekkoApp;
 import com.eje_c.meganekko.Scene;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URI;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -28,6 +30,7 @@ import java.util.WeakHashMap;
 public class JS {
 
     private static final Map<SceneObject, Scriptable> sCache = new WeakHashMap<>();
+    private static android.content.Context sAndroidContext;
     private static Context sJSContext;
     private static Scriptable sGlobals;
 
@@ -37,6 +40,8 @@ public class JS {
      * @param app Meganekko app.
      */
     public static void init(@NonNull MeganekkoApp app) {
+
+        sAndroidContext = app.getContext().getApplicationContext();
 
         sJSContext = Context.enter();
         sJSContext.setOptimizationLevel(-1); // disable optimization is required on Android
@@ -62,6 +67,67 @@ public class JS {
     }
 
     /**
+     * Execute JavaScript on {@link Scene}. Code will be loaded from URI.
+     *
+     * @param scene Execution context {@link Scene}.
+     * @param uri   Code URI
+     * @return result.
+     * @throws IOException
+     */
+    public static Object execURL(Scene scene, URI uri) throws IOException {
+        return execURL(getScope(scene), uri);
+    }
+
+    private static Object execURL(Scriptable scope, URI uri) throws IOException {
+
+        // asset:///assetPath
+        if ("asset".equals(uri.getScheme())) {
+            final String assetPath = uri.getPath().substring(1);
+            return execAsset(scope, assetPath);
+        }
+
+        // res:///raw/script
+        if ("res".equals(uri.getScheme())) {
+
+            // from resource
+            String resName = uri.getPath().substring(1);
+
+            // trim extension
+            if (resName.endsWith(".js")) {
+                resName = resName.replace(".js", "");
+            }
+
+            int resId = sAndroidContext.getResources().getIdentifier(resName, null, sAndroidContext.getPackageName());
+            return execRawResource(scope, resId);
+        }
+
+        // other URL
+        return JS.exec(scope, uri.toURL().openStream());
+    }
+
+    /**
+     * Execute JavaScript on {@link Scene}. Code will be loaded from raw resource.
+     *
+     * @param scene Execution context {@link Scene}.
+     * @param resId resource id.
+     * @return result
+     * @throws IOException
+     */
+    public static Object execRawResource(Scene scene, @RawRes int resId) throws IOException {
+        return execRawResource(getScope(scene), resId);
+    }
+
+    private static Object execRawResource(Scriptable scope, @RawRes int resId) throws IOException {
+        InputStream inputStream = sAndroidContext.getResources().openRawResource(resId);
+        return exec(scope, inputStream);
+    }
+
+    private static Object execAsset(Scriptable scope, String assetPath) throws IOException {
+        InputStream inputStream = sAndroidContext.getAssets().open(assetPath);
+        return exec(scope, inputStream);
+    }
+
+    /**
      * Execute JavaScript code on {@link Scene}.
      *
      * @param scene Scene
@@ -72,23 +138,14 @@ public class JS {
         return exec(getScope(scene), code);
     }
 
-    /**
-     * Execute JavaScript code on {@link Scene}.
-     *
-     * @param scene Scene
-     * @param code  Streamed JavaScript code.
-     * @return result.
-     * @throws IOException
-     */
-    public static Object exec(@NonNull Scene scene, @NonNull InputStream code) throws IOException {
-        Scriptable scope = getScope(scene);
+    private static Object exec(@NonNull Scriptable scope, @NonNull String code) {
+        return sJSContext.evaluateString(scope, code, "", 1, null);
+    }
+
+    private static Object exec(@NonNull Scriptable scope, @NonNull InputStream code) throws IOException {
         try (Reader reader = new InputStreamReader(code)) {
             return sJSContext.evaluateReader(scope, reader, "", 1, null);
         }
-    }
-
-    private static Object exec(@NonNull Scriptable scope, @NonNull String code) {
-        return sJSContext.evaluateString(scope, code, "", 1, null);
     }
 
     /**
@@ -100,6 +157,12 @@ public class JS {
         sJSContext = null;
     }
 
+    /**
+     * Get JavaScript part of {@link Scene}.
+     *
+     * @param scene Scene.
+     * @return JavaScript part of Scene.
+     */
     private static Scriptable getScope(@NonNull Scene scene) {
         Scriptable scope = sCache.get(scene);
         if (scope == null) {
@@ -111,6 +174,12 @@ public class JS {
         return scope;
     }
 
+    /**
+     * Get JavaScript part of {@link SceneObject}.
+     *
+     * @param sceneObject SceneObject.
+     * @return JavaScript part of SceneObject.
+     */
     private static Scriptable getJSBinding(SceneObject sceneObject) {
         Scriptable jsBinding = sCache.get(sceneObject);
         if (jsBinding == null) {

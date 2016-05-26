@@ -187,7 +187,7 @@ public class XmlDocumentParser {
                 // src="@raw/script"
                 if (srcVal.startsWith("@raw")) {
                     int rawRes = mContext.getResources().getIdentifier(srcVal.substring(1), "raw", mContext.getPackageName());
-                    JS.exec(scene, mContext.getResources().openRawResource(rawRes));
+                    JS.execRawResource(scene, rawRes);
                     continue;
                 }
 
@@ -199,7 +199,7 @@ public class XmlDocumentParser {
                     srcUri = URI.create(document.getDocumentURI()).resolve(srcUri);
                 }
 
-                execURL(scene, srcUri);
+                JS.execURL(scene, srcUri);
             } else {
                 // execute <script> {code} </script>
                 String code = scriptNode.getTextContent();
@@ -207,33 +207,6 @@ public class XmlDocumentParser {
                     JS.exec(scene, code);
                 }
             }
-        }
-    }
-
-    private void execURL(Scene scene, URI uri) throws IOException {
-        if ("asset".equals(uri.getScheme())) {
-
-            // from asset
-            JS.exec(scene, mContext.getAssets().open(uri.getPath().substring(1)));
-
-        } else if ("res".equals(uri.getScheme())) {
-
-            // from resource
-            String resName = uri.getPath().substring(1);
-
-            // trim extension
-            if (resName.endsWith(".js")) {
-                resName = resName.replace(".js", "");
-            }
-
-            int resId = mContext.getResources().getIdentifier(resName, null, mContext.getPackageName());
-            JS.exec(scene, mContext.getResources().openRawResource(resId));
-
-        } else {
-
-            // from URL
-            JS.exec(scene, uri.toURL().openStream());
-
         }
     }
 
