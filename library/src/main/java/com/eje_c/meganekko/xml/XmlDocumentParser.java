@@ -165,6 +165,10 @@ public class XmlDocumentParser {
             throw new XmlDocumentParserException("XML root element is not Scene");
         }
 
+        /*
+         * Parse <script> elements to execute JavaScript.
+         */
+
         Scene scene = (Scene) root;
 
         try {
@@ -226,14 +230,21 @@ public class XmlDocumentParser {
         }
     }
 
+    /**
+     * Parse {@link Element} to create {@link SceneObject}.
+     * If element is not for a {@link SceneObject}, return {@code null}.
+     *
+     * @param element Element
+     * @return created sceneObject or null.
+     * @throws ClassNotFoundException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
     @Nullable
     private SceneObject parse(Element element) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
 
-        if ("script".equals(element.getTagName())) {
-            return null;
-        }
-
         final SceneObject object = createSceneObject(element);
+        if (object == null) return null;
 
         // Attach SceneObject to DOM Element
         element.setUserData("sceneObject", object, null);
@@ -459,22 +470,35 @@ public class XmlDocumentParser {
         }
     }
 
+    /**
+     * Create {@link SceneObject} from {@link Element}.
+     * If an {@link Element} is not for a {@link SceneObject}, return {@code null}.
+     *
+     * @param element Element
+     * @return Created SceneObject or null.
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws ClassNotFoundException
+     */
+    @Nullable
     private SceneObject createSceneObject(Element element) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
         final String className = element.getAttribute("class");
         if (!isEmpty(className)) {
-            return (Scene) Class.forName(className).newInstance();
+            return (SceneObject) Class.forName(className).newInstance();
         }
 
         final String tagName = element.getTagName();
 
         switch (tagName) {
+            case "object":
+                return new SceneObject();
             case "globe":
                 return new GlobeSceneObject();
             case "scene":
                 return new Scene();
         }
 
-        return new SceneObject();
+        return null;
     }
 }
