@@ -1,7 +1,13 @@
 <scene>
+
+    <!-- Event handling code can be written in attributes. -->
     <object
         id="text"
+        onswipedown="animate().scaleBy(new Vector3f(1, 0.5, 1)).start(app)"
+        onswipeup="animate().scaleBy(new Vector3f(1, 1.5, 1)).start(app)"
         ontouchdouble="animate().sequential(true).opacity(0).opacity(1).start(app)"
+        ontouchlongpress="animate().moveTo(new Vector3f(0,0,-4)).start(app)"
+        ontouchsingle="animate().moveBy(new Vector3f(0,0,-1)).start(app)"
         texture="@layout/second_scene_text"
         z="-4"/>
 
