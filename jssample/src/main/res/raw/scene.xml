@@ -14,7 +14,7 @@
         });
 
         scene.on('swipeback', function() {
-            app.resetScene();
+            resetScene();
         });
     </script>
 </scene>

@@ -12,14 +12,17 @@
             android:value="vr_only"/>
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.eje_c.meganekko.gearvr.MeganekkoJSActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="landscape">
 
-            <!-- Only in debugging. Remove this when upload to Oculus Store. -->
+            <meta-data
+                android:name="com.eje_c.meganekko.js.main"
+                android:value="asset:///main.js"/>
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

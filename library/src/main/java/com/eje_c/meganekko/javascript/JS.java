@@ -67,6 +67,17 @@ public class JS {
     }
 
     /**
+     * Execute JavaScript on global scope. Code will be loaded from URI.
+     *
+     * @param uri Code URI
+     * @return result.
+     * @throws IOException
+     */
+    public static Object execURL(URI uri) throws IOException {
+        return execURL(sGlobals, uri);
+    }
+
+    /**
      * Execute JavaScript on {@link Scene}. Code will be loaded from URI.
      *
      * @param scene Execution context {@link Scene}.
