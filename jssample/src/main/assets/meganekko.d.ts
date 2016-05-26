@@ -55,7 +55,15 @@ declare class SceneObjectAnimator {
 
 declare class SceneObject {
 
+  parent: SceneObject;
+  scene: Scene;
+
   findObjectById(id: string): SceneObject;
+  addChildObject(child: SceneObject): void;
+  removeChildObject(child: SceneObject): void;
+  getChildByIndex(index: number): SceneObject;
+  getChildrenCount(): number;
+  getChildren();
 
   /*
    * Event handler
@@ -88,9 +96,21 @@ declare class SceneObject {
   setOpacity(opacity: number): void;
   getOpacity(): number;
   opacity: number;
+
+  mesh();
+  mesh(mesh);
+
+  material();
+  material(material);
+
+  view();
+  view(view);
+  updateViewLayout(updateMeshToView?: boolean);
 }
 
 declare class Scene extends SceneObject {
+  app: MeganekkoApp;
+
   getViewOrientation(): Quaternionf;
 
   setViewPosition(viewPosition: Vector3f): void;
