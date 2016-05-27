@@ -1,4 +1,5 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/*
+ * Copyright 2016 eje inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +15,25 @@
  */
 
 #include "includes.h"
+#include "Texture.h"
 
-/***************************************************************************
- * OpenGL related utility functions.
- ***************************************************************************/
-
-#ifndef GL_UTIL_H_
-#define GL_UTIL_H_
-
-#define GL( func )  func; GL_CheckErrors(#func);
-#define __gl2_h_
-
+namespace mgn {
+#ifdef __cplusplus
+extern "C" {
 #endif
+
+JNIEXPORT jlong JNICALL
+Java_com_eje_1c_meganekko_Texture_initNativeInstance(JNIEnv * env, jobject obj) {
+    return reinterpret_cast<jlong>(new Texture(env));
+}
+
+JNIEXPORT jobject JNICALL
+Java_com_eje_1c_meganekko_Texture_getSurfaceTexture(JNIEnv * env, jobject obj, jlong jtexture) {
+    Texture* texture = reinterpret_cast<Texture*>(jtexture);
+    return texture->GetSurfaceTexture();
+}
+
+#ifdef __cplusplus
+} // extern C
+#endif
+} // namespace mgn

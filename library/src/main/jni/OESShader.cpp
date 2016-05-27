@@ -71,7 +71,7 @@ void OESShader::Render(const Matrix4f & mvpMatrix, const GlGeometry & geometry, 
     GL(glUniformMatrix4fv(program.uMvp, 1, GL_TRUE, mvpMatrix.M[0]));
     GL(glUniformMatrix4fv(program.uTexm, 1, GL_TRUE, TexmForVideo(material->GetStereoMode(), eye).M[ 0 ] ));
     GL(glActiveTexture (GL_TEXTURE0));
-    GL(glBindTexture(GL_TEXTURE_EXTERNAL_OES, material->GetTextureId()));
+    GL(glBindTexture(GL_TEXTURE_EXTERNAL_OES, material->GetTexture()->GetTextureId()));
     GL(glUniform4f(program.uColor, color.x, color.y, color.z, color.w));
     GL(glUniform1f(opacity, material->GetOpacity()));
 

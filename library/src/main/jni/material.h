@@ -24,6 +24,7 @@
 
 #include "util/GL.h"
 #include "HybridObject.h"
+#include "Texture.h"
 
 using namespace OVR;
 
@@ -45,22 +46,13 @@ public:
     explicit Material(JNIEnv * jni) {
         Mode = NORMAL;
         side = FrontSide;
-        surfaceTexture = new SurfaceTexture(jni);
         color = Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
         opacity = 1.0f;
     }
 
     ~Material() {
-        delete surfaceTexture;
-        surfaceTexture = nullptr;
-    }
-
-    GLuint GetTextureId() const {
-        return surfaceTexture->GetTextureId();
-    }
-
-    jobject GetSurfaceTexture() {
-        return surfaceTexture->GetJavaObject();
+        delete texture;
+        texture = nullptr;
     }
 
     StereoMode GetStereoMode() const {
@@ -107,6 +99,18 @@ public:
         this->side = side;
     }
 
+    void SetTexture(Texture * texture) {
+        this->texture = texture;
+    }
+
+    const Texture * GetTexture() const {
+        return texture;
+    }
+
+    const Texture * GetTexture() {
+        return texture;
+    }
+
 private:
     Material(const Material& material);
     Material(Material&& material);
@@ -114,7 +118,7 @@ private:
     Material& operator=(Material&& material);
 
 private:
-    SurfaceTexture *surfaceTexture;
+    Texture *texture;
     Vector4f color;
     float opacity;
     StereoMode Mode;

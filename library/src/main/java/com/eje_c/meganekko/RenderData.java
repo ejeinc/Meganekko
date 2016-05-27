@@ -15,10 +15,6 @@
 
 package com.eje_c.meganekko;
 
-import com.eje_c.meganekko.utility.Threads;
-
-import java.util.concurrent.Future;
-
 import static android.opengl.GLES30.GL_LINES;
 import static android.opengl.GLES30.GL_LINE_LOOP;
 import static android.opengl.GLES30.GL_LINE_STRIP;
@@ -33,9 +29,8 @@ import static android.opengl.GLES30.GL_TRIANGLE_STRIP;
  * This includes the {@link Mesh mesh} itself, the mesh's {@link Material
  * material}, camera association, rendering order, and various other parameters.
  */
-public class RenderData extends Component {
+public class RenderData extends HybridObject {
 
-    private static final String TAG = "Meganekko";
     private Mesh mMesh;
     private Material mMaterial;
 
@@ -86,38 +81,18 @@ public class RenderData extends Component {
     }
 
     /**
-     * Asynchronously set the {@link Mesh mesh} to be rendered.
-     * Uses a background thread from the thread pool to wait for the
-     * {@code Future.get()} method; unless you are loading dozens of meshes
-     * asynchronously, the extra overhead should be modest compared to the cost
-     * of loading a mesh.
-     *
-     * @param mesh The mesh to be rendered.
-     */
-    public void setMesh(final Future<Mesh> mesh) {
-        Threads.spawn(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    setMesh(mesh.get());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    /**
      * Set the {@link Mesh mesh} to be rendered.
      *
      * @param mesh The mesh to be rendered.
      */
     public void setMesh(Mesh mesh) {
-        synchronized (this) {
-            mMesh = mesh;
+        mMesh = mesh;
+
+        if (mesh != null) {
+            setMesh(getNative(), mesh.getNative());
+        } else {
+            setMesh(getNative(), 0);
         }
-        setMesh(getNative(), mesh.getNative());
     }
 
     /**
@@ -135,7 +110,12 @@ public class RenderData extends Component {
      */
     public void setMaterial(Material material) {
         this.mMaterial = material;
-        setMaterial(getNative(), material.getNative());
+
+        if (material != null) {
+            setMaterial(getNative(), material.getNative());
+        } else {
+            setMaterial(getNative(), 0);
+        }
     }
 
     public boolean isVisible() {

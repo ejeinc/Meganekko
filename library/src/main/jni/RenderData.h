@@ -22,20 +22,20 @@
 #ifndef RENDER_DATA_H_
 #define RENDER_DATA_H_
 
-#include "Component.h"
+#include "HybridObject.h"
 #include "Material.h"
 #include "util/GL.h"
 
 namespace mgn {
 class Mesh;
 
-class RenderData: public Component {
+class RenderData: public HybridObject {
 public:
     enum Queue {
         Background = 1000, Geometry = 2000, Transparent = 3000, Overlay = 4000
     };
 
-    RenderData() : Component(),
+    RenderData() : HybridObject(),
         material(nullptr),
         mesh(nullptr),
         visible(true),

@@ -243,7 +243,6 @@ public class SceneObject extends HybridObject {
      */
     public void attachRenderData(RenderData renderData) {
         mRenderData = renderData;
-        renderData.setOwnerObject(this);
         attachRenderData(getNative(), renderData.getNative());
     }
 
@@ -252,9 +251,6 @@ public class SceneObject extends HybridObject {
      * An object with no {@link RenderData} is not visible.
      */
     public void detachRenderData() {
-        if (mRenderData != null) {
-            mRenderData.setOwnerObject(null);
-        }
         mRenderData = null;
         detachRenderData(getNative());
     }
@@ -291,6 +287,8 @@ public class SceneObject extends HybridObject {
         child.mParent = this;
         child.updateOpacity();
         addChildObject(getNative(), child.getNative());
+
+        notifySceneObjectsChanged();
     }
 
     /**
@@ -303,6 +301,18 @@ public class SceneObject extends HybridObject {
         mChildren.remove(child);
         child.mParent = null;
         removeChildObject(getNative(), child.getNative());
+
+        notifySceneObjectsChanged();
+    }
+
+    /**
+     * Notify to {@link Scene} to update all {@link SceneObject} cache.
+     */
+    private void notifySceneObjectsChanged() {
+        Scene scene = getScene();
+        if (scene != null) {
+            scene.invalidateChildObjects();
+        }
     }
 
     /**
@@ -1097,6 +1107,23 @@ public class SceneObject extends HybridObject {
 
     public SceneObject off(String eventName) {
         mEventEmitter.off(eventName);
+        return this;
+    }
+
+    public SceneObject add(SceneObject child) {
+        addChildObject(child);
+        return this;
+    }
+
+    public SceneObject remove(SceneObject child) {
+        removeChildObject(child);
+        return this;
+    }
+
+    public SceneObject clear() {
+        while (getChildrenCount() > 0) {
+            removeChildObject(getChildByIndex(0));
+        }
         return this;
     }
 }
