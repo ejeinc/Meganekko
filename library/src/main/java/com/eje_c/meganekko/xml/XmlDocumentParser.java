@@ -260,13 +260,10 @@ public class XmlDocumentParser {
         final SceneObject object = createSceneObject(element);
         if (object == null) return null;
 
-        // Attach SceneObject to DOM Element
-        element.setUserData("sceneObject", object, null);
-
-        final ParserChain chain = new ParserChain(mContext, mAttributeParsers.iterator(), element, object);
-        chain.next();
-
         parseChildren(element, object);
+
+        ParserChain chain = new ParserChain(mContext, mAttributeParsers.iterator(), element, object);
+        chain.next();
 
         return object;
     }
