@@ -54,6 +54,7 @@ void Scene::PrepareForRendering() {
     // Cache all SceneObjects in this scene to sceneObjects.
     if (sceneObjectsChanged) {
         sceneObjects = GetWholeSceneObjects();
+        std::sort(sceneObjects.begin(), sceneObjects.end(), SceneObject::CompareWithRenderingOrder);
         sceneObjectsChanged = false;
     }
 }

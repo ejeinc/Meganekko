@@ -22,13 +22,13 @@
 #define SCENE_OBJECT_H_
 
 #include "HybridObject.h"
+#include "RenderData.h"
 #include "util/GL.h"
 
 using namespace OVR;
 
 namespace mgn {
 class Camera;
-class RenderData;
 
 class SceneObject: public HybridObject {
 public:
@@ -152,6 +152,13 @@ public:
     
     void Invalidate(bool rotationUpdated);
 
+    static bool CompareWithRenderingOrder(const SceneObject * left, const SceneObject * right) {
+        if (left->renderData == nullptr || right->renderData == nullptr) {
+            return true;
+        } else {
+            return left->renderData->GetRenderingOrder() < right->renderData->GetRenderingOrder();
+        }
+    }
 private:
     SceneObject(const SceneObject& scene_object);
     SceneObject(SceneObject&& scene_object);
