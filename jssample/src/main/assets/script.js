@@ -1,5 +1,3 @@
-/// <reference path="meganekko.d.ts" />
-
 // scene: Scene reference
 // app : MeganekkoApp reference
 
