@@ -2,6 +2,7 @@ package com.eje_c.meganekko.xml;
 
 import java.lang.reflect.InvocationTargetException;
 
+@Deprecated
 class ObjectFactory {
 
     /**

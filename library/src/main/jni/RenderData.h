@@ -36,39 +36,39 @@ public:
     };
 
     RenderData() : Component(),
-        material_(nullptr),
-        mesh_(nullptr),
+        material(nullptr),
+        mesh(nullptr),
         visible(true),
-        rendering_order_(DEFAULT_RENDERING_ORDER),
-        offset_(false),
-        offset_factor_(0.0f),
-        offset_units_(0.0f),
-        depth_test_(true),
-        alpha_blend_(true),
-        draw_mode_(GL_TRIANGLES) {
+        renderingOrder(DEFAULT_RENDERING_ORDER),
+        offset(false),
+        offsetFactor(0.0f),
+        offsetUnits(0.0f),
+        depthTest(true),
+        alphaBlend(true),
+        drawMode(GL_TRIANGLES) {
     }
 
     ~RenderData() {
     }
 
     Mesh* GetMesh() const {
-        return mesh_;
+        return mesh;
     }
 
     void SetMesh(Mesh* mesh) {
-        mesh_ = mesh;
+        this->mesh = mesh;
     }
 
     void SetMaterial(Material* material) {
-        this->material_ = material;
+        this->material = material;
     }
     
     Material* GetMaterial() const {
-        return material_;
+        return material;
     }
     
     Material* GetMaterial() {
-        return material_;
+        return material;
     }
 
     bool IsVisible() const {
@@ -84,67 +84,67 @@ public:
     }
 
     int GetRenderingOrder() const {
-        return rendering_order_;
+        return renderingOrder;
     }
 
-    void SetRenderingOrder(int rendering_order) {
-        rendering_order_ = rendering_order;
+    void SetRenderingOrder(int renderingOrder) {
+        this->renderingOrder = renderingOrder;
     }
 
     bool GetOffset() const {
-        return offset_;
+        return offset;
     }
 
     void SetOffset(bool offset) {
-        offset_ = offset;
+        this->offset = offset;
     }
 
     float GetOffsetFactor() const {
-        return offset_factor_;
+        return offsetFactor;
     }
 
-    void SetOffsetFactor(float offset_factor) {
-        offset_factor_ = offset_factor;
+    void SetOffsetFactor(float offsetFactor) {
+        this->offsetFactor = offsetFactor;
     }
 
     float GetOffsetUnits() const {
-        return offset_units_;
+        return offsetUnits;
     }
 
-    void SetOffsetUnits(float offset_units) {
-        offset_units_ = offset_units;
+    void SetOffsetUnits(float offsetUnits) {
+        this->offsetUnits = offsetUnits;
     }
 
     bool GetDepthTest() const {
-        return depth_test_;
+        return depthTest;
     }
 
-    void SetDepthTest(bool depth_test) {
-        depth_test_ = depth_test;
+    void SetDepthTest(bool depthTest) {
+        this->depthTest = depthTest;
     }
 
     bool GetAlphaBlend() const {
-        return alpha_blend_;
+        return alphaBlend;
     }
 
-    void SetAlphaBlend(bool alpha_blend) {
-        alpha_blend_ = alpha_blend;
+    void SetAlphaBlend(bool alphaBlend) {
+        this->alphaBlend = alphaBlend;
     }
 
     GLenum GetDrawMode() const {
-        return draw_mode_;
+        return drawMode;
     }
 
     void SetCameraDistance(float distance) {
-        camera_distance_ = distance;
+        this->cameraDistance = distance;
     }
 
     float GetCameraDistance() const {
-        return camera_distance_;
+        return cameraDistance;
     }
 
     void SetDrawMode(GLenum draw_mode) {
-        draw_mode_ = draw_mode;
+        this->drawMode = draw_mode;
     }
 
 private:
@@ -155,17 +155,17 @@ private:
 
 private:
     static const int DEFAULT_RENDERING_ORDER = Geometry;
-    Mesh* mesh_;
-    Material * material_;
+    Mesh* mesh;
+    Material * material;
     bool visible;
-    int rendering_order_;
-    bool offset_;
-    float offset_factor_;
-    float offset_units_;
-    bool depth_test_;
-    bool alpha_blend_;
-    GLenum draw_mode_;
-    float camera_distance_;
+    int renderingOrder;
+    bool offset;
+    float offsetFactor;
+    float offsetUnits;
+    bool depthTest;
+    bool alphaBlend;
+    GLenum drawMode;
+    float cameraDistance;
 };
 
 inline bool compareRenderData(RenderData* i, RenderData* j) {

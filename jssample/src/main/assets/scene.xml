@@ -1,0 +1,27 @@
+<scene>
+
+    <object
+        id="hello_world"
+        renderingOrder="10"
+        texture="@layout/hello_world"
+        z="-7.0"/>
+
+    <globe
+        renderingOrder="1"
+        texture="@drawable/background"/>
+
+    <object
+        id="cursor"
+        texture="@drawable/cursor"/>
+
+    <!-- Include script from @raw resource -->
+    <script src="@raw/cursor"/>
+
+    <!-- Include script from relative path (in this case, assets/script.js)-->
+    <script src="script.js"/>
+
+    <!-- Scripts can be written directly in <script> element -->
+    <script>
+        console.log('Inline script!');
+    </script>
+</scene>

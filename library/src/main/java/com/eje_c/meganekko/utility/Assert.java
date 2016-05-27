@@ -20,11 +20,8 @@ import android.text.TextUtils;
 /**
  * The goal of this class is to improve the readability and to provide some
  * common checking method to improve the robustness of Meganekko.
- * <p/>
  * Additionally, this class may help us avoid using {@link JniException},
  * which is (at best) a sort of fake exception-from-JNI.
- * <p/>
- * <p/>
  * Obviously, all parameter checks add runtime cost. Try to use this class
  * sparingly, on user-facing APIs that would otherwise crash: it's probably OK
  * to return meaningless results on meaningless inputs; internal calls should
@@ -68,7 +65,7 @@ public abstract class Assert {
      *
      * @param parameterName  The name of the user-supplied parameter that we are validating
      *                       so that the user can easily find the error in their code.
-     * @param array          The actual array
+     * @param actualLength   The actual length
      * @param expectedLength The expected array length
      */
     public static void checkArrayLength(String parameterName, int actualLength, int expectedLength) {
@@ -211,7 +208,7 @@ public abstract class Assert {
      *
      * @param parameterName The name of the user-supplied parameter that we are validating
      *                      so that the user can easily find the error in their code.
-     * @param array         The actual array
+     * @param actualLength  The actual array length
      * @param minimumLength The minimum array length
      */
     public static void checkMinimumArrayLength(String parameterName, int actualLength, int minimumLength) {

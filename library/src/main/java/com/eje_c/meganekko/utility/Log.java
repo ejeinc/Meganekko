@@ -26,6 +26,11 @@ public abstract class Log {
 
     /**
      * {@link android.util.Log#d(String, String)}, with String.format() pattern
+     *
+     * @param TAG        Used to identify the source of a log message.  It usually identifies
+     *                   the class or activity where the log call occurs.
+     * @param pattern    The message you would like logged.
+     * @param parameters Parameters passed to pattern.
      */
     public static void d(String TAG, String pattern, Object... parameters) {
         android.util.Log.d(TAG, format(pattern, parameters));
@@ -33,6 +38,11 @@ public abstract class Log {
 
     /**
      * {@link android.util.Log#e(String, String)}, with String.format() pattern
+     *
+     * @param TAG        Used to identify the source of a log message.  It usually identifies
+     *                   the class or activity where the log call occurs.
+     * @param pattern    The message you would like logged.
+     * @param parameters Parameters passed to pattern.
      */
     public static void e(String TAG, String pattern, Object... parameters) {
         android.util.Log.e(TAG, format(pattern, parameters));
@@ -40,6 +50,11 @@ public abstract class Log {
 
     /**
      * {@link android.util.Log#i(String, String)}, with String.format() pattern
+     *
+     * @param TAG        Used to identify the source of a log message.  It usually identifies
+     *                   the class or activity where the log call occurs.
+     * @param pattern    The message you would like logged.
+     * @param parameters Parameters passed to pattern.
      */
     public static void i(String TAG, String pattern, Object... parameters) {
         android.util.Log.i(TAG, format(pattern, parameters));
@@ -47,6 +62,11 @@ public abstract class Log {
 
     /**
      * {@link android.util.Log#v(String, String)}, with String.format() pattern
+     *
+     * @param TAG        Used to identify the source of a log message.  It usually identifies
+     *                   the class or activity where the log call occurs.
+     * @param pattern    The message you would like logged.
+     * @param parameters Parameters passed to pattern.
      */
     public static void v(String TAG, String pattern, Object... parameters) {
         android.util.Log.v(TAG, format(pattern, parameters));
@@ -54,6 +74,11 @@ public abstract class Log {
 
     /**
      * {@link android.util.Log#w(String, String)}, with String.format() pattern
+     *
+     * @param TAG        Used to identify the source of a log message.  It usually identifies
+     *                   the class or activity where the log call occurs.
+     * @param pattern    The message you would like logged.
+     * @param parameters Parameters passed to pattern.
      */
     public static void w(String TAG, String pattern, Object... parameters) {
         android.util.Log.w(TAG, format(pattern, parameters));
@@ -72,14 +97,10 @@ public abstract class Log {
      * Constructs debug {@code TAG} strings using a {@link Class}, so that
      * rename refactorings will keep the {@code TAG} up-to-date. Also handles
      * constructing fully-qualified {@code TAG} strings for nested classes.
-     * <p/>
      * Note that this involves a small amount of runtime overhead at start-up,
      * so if your code is particularly performance-sensitive, you may want to
      * stick to a manually constructed {@code TAG} string.
-     * <p/>
-     * <p/>
      * How you use it:
-     * <p/>
      * <pre>
      * class MyClass {
      *     ...

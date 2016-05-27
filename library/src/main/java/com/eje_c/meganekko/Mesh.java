@@ -23,19 +23,11 @@ import android.view.View;
 
 /**
  * This is one of the key Meganekko classes: It holds GL meshes.
- * <p>
  * A GL mesh is a net of triangles that define an object's surface geometry.
  */
 public class Mesh extends HybridObject {
 
     private RectF mQuad;
-
-    public Mesh() {
-    }
-
-    Mesh(long ptr) {
-        super(ptr);
-    }
 
     private static native void build(long renderData, float[] positions, float[] colors, float[] uvs, int[] triangles);
 
@@ -58,6 +50,48 @@ public class Mesh extends HybridObject {
     private static native void buildCalibrationLines(long renderData, int extraLines, boolean fullGrid);
 
     private static native void buildUnitCubeLines(long renderData);
+
+    /**
+     * Creates a quad consisting of two triangles, with the specified width and
+     * height.
+     *
+     * @param width  the quad's width
+     * @param height the quad's height
+     * @return A 2D, rectangular mesh with four vertices and two triangles
+     */
+    public static Mesh createQuad(float width, float height) {
+        Mesh mesh = new Mesh();
+        mesh.buildQuad(width, height);
+        return mesh;
+    }
+
+    public static Mesh from(View view) {
+        return from(view, getDefaultScaleFactor());
+    }
+
+    public static Mesh from(View view, float scaleFactor) {
+        return createQuad(scaleFactor * view.getMeasuredWidth(), scaleFactor * view.getMeasuredHeight());
+    }
+
+    public static Mesh from(Drawable drawable) {
+        return from(drawable, getDefaultScaleFactor());
+    }
+
+    public static Mesh from(Drawable drawable, float scaleFactor) {
+        return createQuad(scaleFactor * drawable.getIntrinsicWidth(), scaleFactor * drawable.getIntrinsicHeight());
+    }
+
+    public static Mesh from(Bitmap bitmap) {
+        return from(bitmap, getDefaultScaleFactor());
+    }
+
+    public static Mesh from(Bitmap bitmap, float scaleFactor) {
+        return createQuad(scaleFactor * bitmap.getWidth(), scaleFactor * bitmap.getHeight());
+    }
+
+    public static float getDefaultScaleFactor() {
+        return 0.006f;
+    }
 
     public void build(float[] positions, float[] colors, float[] uvs, int[] triangles) {
 
@@ -184,48 +218,6 @@ public class Mesh extends HybridObject {
 
     public void buildUnitCubeLines() {
         buildUnitCubeLines(getNative());
-    }
-
-    /**
-     * Creates a quad consisting of two triangles, with the specified width and
-     * height.
-     *
-     * @param width  the quad's width
-     * @param height the quad's height
-     * @return A 2D, rectangular mesh with four vertices and two triangles
-     */
-    public static Mesh createQuad(float width, float height) {
-        Mesh mesh = new Mesh();
-        mesh.buildQuad(width, height);
-        return mesh;
-    }
-
-    public static Mesh from(View view) {
-        return from(view, getDefaultScaleFactor());
-    }
-
-    public static Mesh from(View view, float scaleFactor) {
-        return createQuad(scaleFactor * view.getMeasuredWidth(), scaleFactor * view.getMeasuredHeight());
-    }
-
-    public static Mesh from(Drawable drawable) {
-        return from(drawable, getDefaultScaleFactor());
-    }
-
-    public static Mesh from(Drawable drawable, float scaleFactor) {
-        return createQuad(scaleFactor * drawable.getIntrinsicWidth(), scaleFactor * drawable.getIntrinsicHeight());
-    }
-
-    public static Mesh from(Bitmap bitmap) {
-        return from(bitmap, getDefaultScaleFactor());
-    }
-
-    public static Mesh from(Bitmap bitmap, float scaleFactor) {
-        return createQuad(scaleFactor * bitmap.getWidth(), scaleFactor * bitmap.getHeight());
-    }
-
-    public static float getDefaultScaleFactor() {
-        return 0.006f;
     }
 
     @Override

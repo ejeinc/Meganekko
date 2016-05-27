@@ -7,7 +7,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RawRes;
 
+import com.eje_c.meganekko.javascript.JS;
+import com.eje_c.meganekko.xml.XmlDocumentParser;
+import com.eje_c.meganekko.xml.XmlDocumentParserException;
 import com.eje_c.meganekko.xml.XmlSceneParser;
 import com.eje_c.meganekko.xml.XmlSceneParserFactory;
 
@@ -26,6 +30,7 @@ public abstract class MeganekkoApp {
     private static final int MAX_EVENTS_PER_FRAME = 16;
 
     private final Meganekko meganekko;
+    private XmlDocumentParser mXmlDocumentParser;
     private final Queue<Runnable> mRunnables = new LinkedBlockingQueue<>();
     private final Handler handler = new Handler(Looper.getMainLooper());
     private Scene mScene;
@@ -33,11 +38,11 @@ public abstract class MeganekkoApp {
 
     protected MeganekkoApp(Meganekko meganekko) {
         this.meganekko = meganekko;
+        JS.init(this);
     }
 
     /**
      * Will be called on frame update. Any animations or input handlings will be implemented in it.
-     * <p/>
      * You can override this method but you must call {@code super.update(meganekko, frame)} to work properly.
      */
     public void update() {
@@ -63,6 +68,7 @@ public abstract class MeganekkoApp {
      * Will be called when user leaves from app.
      */
     public void shutdown() {
+        JS.release();
     }
 
     /**
@@ -249,7 +255,7 @@ public abstract class MeganekkoApp {
     /**
      * Set current rendering scene.
      *
-     * @param scene
+     * @param scene The {@link Scene} will be rendered.
      */
     public synchronized void setScene(@NonNull Scene scene) {
 
@@ -265,6 +271,7 @@ public abstract class MeganekkoApp {
         mScene = scene;
     }
 
+    @Deprecated
     public void setSceneFromXML(int xmlRes) {
 
         XmlSceneParser parser = XmlSceneParserFactory.getInstance(meganekko.getContext()).getSceneParser();
@@ -275,6 +282,51 @@ public abstract class MeganekkoApp {
         } catch (XmlPullParserException | IOException e) {
             e.printStackTrace();
             throw new IllegalArgumentException(e);
+        }
+    }
+
+    public void setSceneFromAsset(String assetPath) {
+
+        ensureToHaveXmlDocumentParser();
+
+        try {
+            Scene scene = mXmlDocumentParser.parseSceneFromAsset(assetPath);
+            setScene(scene);
+        } catch (XmlDocumentParserException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    public void setSceneFromRawResource(@RawRes int rawRes) {
+
+        ensureToHaveXmlDocumentParser();
+
+        try {
+            Scene scene = mXmlDocumentParser.parseScene(rawRes);
+            setScene(scene);
+        } catch (XmlDocumentParserException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    public void setSceneFromUri(String uri) {
+
+        ensureToHaveXmlDocumentParser();
+
+        try {
+            Scene scene = mXmlDocumentParser.parseScene(uri);
+            setScene(scene);
+        } catch (XmlDocumentParserException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    private void ensureToHaveXmlDocumentParser() {
+        if (mXmlDocumentParser == null) {
+            mXmlDocumentParser = new XmlDocumentParser(getContext());
         }
     }
 }

@@ -20,6 +20,7 @@ import android.content.Context;
 /**
  * Simple singleton implementation for {@link XmlSceneParser}.
  */
+@Deprecated
 public class XmlSceneParserFactory {
 
     private static XmlSceneParserFactory sInstance;

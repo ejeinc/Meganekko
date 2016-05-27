@@ -18,8 +18,9 @@ dependencies {
     /*
      * Dependencies
      */
-    compile 'com.android.support:support-v4:23.3.0'
+    compile 'com.android.support:support-v4:23.4.0'
     compile 'org.joml:joml:+'
+    compile 'org.mozilla:rhino:1.7.7.1'
 }
 
 android {
@@ -79,17 +80,13 @@ def GetNDKBuildCmd() {
 }
 
 project.afterEvaluate {
-    compileDebugNdk.dependsOn 'NDKBuildDebugMGN'
-    compileReleaseNdk.dependsOn 'NDKBuildReleaseMGN'
+    compileDebugNdk.dependsOn 'NDKBuild'
+    compileReleaseNdk.dependsOn 'NDKBuild'
     clean.dependsOn 'NDKBuildCleanMGN'
 }
 
-task NDKBuildDebugMGN(type: Exec) {
-    commandLine GetNDKBuildCmd(), 'V=0', '-j10', 'NDK_DEBUG=1', 'OVR_DEBUG=1', "NDK_PROJECT_PATH=$projectDir/src/main"
-}
-
-task NDKBuildReleaseMGN(type: Exec) {
-    commandLine GetNDKBuildCmd(), 'V=0', '-j10', 'NDK_DEBUG=0', 'OVR_DEBUG=0', "NDK_PROJECT_PATH=$projectDir/src/main"
+task NDKBuild(type: Exec) {
+    commandLine GetNDKBuildCmd(), "NDK_PROJECT_PATH=$projectDir/src/main"
 }
 
 task NDKBuildCleanMGN(type: Exec) {
@@ -107,7 +104,7 @@ uploadArchives {
         mavenDeployer {
             def deployPath = file("$rootDir/../Meganekko_pages/repository")
             repository(url: "file://${deployPath.absolutePath}")
-            pom.version = '2.1.2'
+            pom.version = '2.2.0'
             pom.groupId = 'com.eje_c'
             pom.artifactId = 'meganekko'
         }

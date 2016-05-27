@@ -38,6 +38,9 @@ import com.eje_c.meganekko.animation.QuaternionEvaluator;
 import com.eje_c.meganekko.animation.RotationUpdateListener;
 import com.eje_c.meganekko.animation.ScaleUpdateListener;
 import com.eje_c.meganekko.animation.VectorEvaluator;
+import com.eje_c.meganekko.event.EventEmitter;
+import com.eje_c.meganekko.event.EventHandler;
+import com.eje_c.meganekko.event.KeyEvent;
 import com.eje_c.meganekko.utility.Log;
 import com.eje_c.meganekko.xml.XmlSceneObjectParser;
 
@@ -53,15 +56,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import ovr.JoyButton;
+
 /**
  * One of the key Meganekko classes: a scene object.
- * <p/>
  * Every scene object has children. An invisible scene object can be used to
  * move a set of scene as a unit, preserving their relative geometry. Invisible
  * scene objects don't need any {@linkplain SceneObject#getRenderData() render
  * data.}
- * <p/>
- * <p/>
  * Visible scene objects must have render data
  * {@linkplain SceneObject#attachRenderData(RenderData) attached.} Each
  * {@link RenderData} has a {@link Mesh GL mesh} that defines its geometry, and
@@ -74,6 +76,7 @@ public class SceneObject extends HybridObject {
     protected static final float[] sTempValuesForJni = new float[16];
 
     private static final String TAG = SceneObject.class.getSimpleName();
+    private final EventEmitter mEventEmitter = new EventEmitter();
     private final List<SceneObject> mChildren = new ArrayList<>();
     private final Set<KeyEventListener> mKeyEventListeners = new HashSet<>();
     private int mId;
@@ -82,23 +85,6 @@ public class SceneObject extends HybridObject {
     private SceneObject mParent;
     private float mOpacity = 1.0f;
     private boolean mVisible = true;
-
-    /**
-     * Constructs an empty scene object with a default transform.
-     */
-    public SceneObject() {
-    }
-
-    /**
-     * Constructs a scene object with an arbitrarily complex mesh.
-     *
-     * @param mesh a {@link Mesh}.
-     */
-    public SceneObject(Mesh mesh) {
-        RenderData renderData = new RenderData();
-        attachRenderData(renderData);
-        renderData.setMesh(mesh);
-    }
 
     /**
      * Create {@link SceneObject} from {@code View}.
@@ -217,7 +203,6 @@ public class SceneObject extends HybridObject {
 
     /**
      * Set the (optional) ID of the object.
-     * <p/>
      * Scene object IDs are not needed: they are only for the application's
      * convenience.
      *
@@ -239,7 +224,6 @@ public class SceneObject extends HybridObject {
 
     /**
      * Set the (optional) name of the object.
-     * <p/>
      * Scene object names are not needed: they are only for the application's
      * convenience.
      *
@@ -251,7 +235,6 @@ public class SceneObject extends HybridObject {
 
     /**
      * Attach {@linkplain RenderData rendering data} to the object.
-     * <p/>
      * If other rendering data is currently attached, it is replaced with the
      * new data. {@link RenderData} contains the GL mesh, the texture, the
      * shader id, and various shader constants.
@@ -266,7 +249,6 @@ public class SceneObject extends HybridObject {
 
     /**
      * Detach the object's current {@linkplain RenderData rendering data}.
-     * <p/>
      * An object with no {@link RenderData} is not visible.
      */
     public void detachRenderData() {
@@ -289,7 +271,6 @@ public class SceneObject extends HybridObject {
 
     /**
      * Get the {@linkplain SceneObject parent object.}
-     * <p/>
      * If the object has been {@link #addChildObject(SceneObject) added as a
      * child} to another {@link SceneObject}, returns that object. Otherwise,
      * returns {@code null}.
@@ -329,7 +310,7 @@ public class SceneObject extends HybridObject {
      *
      * @param otherObject {@link SceneObject Object} to check for collision with this
      *                    object.
-     * @return {@code true) if objects collide, {@code false} otherwise
+     * @return {@code true} if objects collide, {@code false} otherwise
      */
     public boolean isColliding(SceneObject otherObject) {
         return isColliding(getNative(), otherObject.getNative());
@@ -393,8 +374,6 @@ public class SceneObject extends HybridObject {
      *
      * @param index Position of the child to get.
      * @return {@link SceneObject Child object}.
-     * @throws {@link java.lang.IndexOutOfBoundsException} if there is no child at
-     *                that position.
      */
     public SceneObject getChildByIndex(int index) {
         return mChildren.get(index);
@@ -422,7 +401,7 @@ public class SceneObject extends HybridObject {
      * Set visibility of this object. This affects also all children of this
      * object.
      *
-     * @param visible
+     * @param visible {@code false} to hide this object and its children. Default is {@code true}.
      */
     public void setVisible(boolean visible) {
         this.mVisible = visible;
@@ -471,7 +450,7 @@ public class SceneObject extends HybridObject {
      * Set opacity of this object. This affects also all children of this
      * object.
      *
-     * @param opacity
+     * @param opacity Opacity of this object.
      */
     public void setOpacity(float opacity) {
         this.mOpacity = opacity;
@@ -542,8 +521,44 @@ public class SceneObject extends HybridObject {
             }
         }
 
+        if (!mEventEmitter.isEmpty()) {
+            dispatchJSEvent(frame);
+        }
+
         for (SceneObject child : mChildren) {
             child.update(frame);
+        }
+    }
+
+    private void dispatchJSEvent(Frame frame) {
+        // JavaScript event
+        mEventEmitter.emit("update", frame);
+
+        if (willBeDispatchedGestureEvent()) {
+            dispatchGestureEvent(frame);
+        }
+    }
+
+    protected boolean willBeDispatchedGestureEvent() {
+        return getScene().isLookingAt(this);
+    }
+
+    private void dispatchGestureEvent(Frame frame) {
+        final int buttonPressed = frame.getButtonPressed();
+        if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_FORWARD)) {
+            mEventEmitter.emit("swipeforward", frame);
+        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_BACK)) {
+            mEventEmitter.emit("swipeback", frame);
+        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_UP)) {
+            mEventEmitter.emit("swipeup", frame);
+        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_DOWN)) {
+            mEventEmitter.emit("swipedown", frame);
+        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_TOUCH_SINGLE)) {
+            mEventEmitter.emit("touchsingle", frame);
+        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_TOUCH_DOUBLE)) {
+            mEventEmitter.emit("touchdouble", frame);
+        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_TOUCH_LONGPRESS)) {
+            mEventEmitter.emit("touchlongpress", frame);
         }
     }
 
@@ -551,7 +566,7 @@ public class SceneObject extends HybridObject {
      * Get {@link Scene}. If this object is not in scene, return null.
      * This method uses recursive call. So you should not call it in render loop.
      *
-     * @return
+     * @return {@link Scene}.
      */
     public Scene getScene() {
 
@@ -575,6 +590,10 @@ public class SceneObject extends HybridObject {
             }
         }
 
+        if (jsKeyEvent("keyshortpress", keyCode, repeatCount)) {
+            return true;
+        }
+
         for (SceneObject child : mChildren) {
             if (child.onKeyShortPress(keyCode, repeatCount)) {
                 return true;
@@ -590,6 +609,10 @@ public class SceneObject extends HybridObject {
             if (l.onKeyDoubleTap(keyCode, repeatCount)) {
                 return true;
             }
+        }
+
+        if (jsKeyEvent("keydoubletap", keyCode, repeatCount)) {
+            return true;
         }
 
         for (SceneObject child : mChildren) {
@@ -609,6 +632,10 @@ public class SceneObject extends HybridObject {
             }
         }
 
+        if (jsKeyEvent("keylongpress", keyCode, repeatCount)) {
+            return true;
+        }
+
         for (SceneObject child : mChildren) {
             if (child.onKeyLongPress(keyCode, repeatCount)) {
                 return true;
@@ -624,6 +651,10 @@ public class SceneObject extends HybridObject {
             if (l.onKeyDown(keyCode, repeatCount)) {
                 return true;
             }
+        }
+
+        if (jsKeyEvent("keydown", keyCode, repeatCount)) {
+            return true;
         }
 
         for (SceneObject child : mChildren) {
@@ -643,6 +674,10 @@ public class SceneObject extends HybridObject {
             }
         }
 
+        if (jsKeyEvent("keyup", keyCode, repeatCount)) {
+            return true;
+        }
+
         for (SceneObject child : mChildren) {
             if (child.onKeyUp(keyCode, repeatCount)) {
                 return true;
@@ -652,6 +687,7 @@ public class SceneObject extends HybridObject {
         return false;
     }
 
+
     public boolean onKeyMax(int keyCode, int repeatCount) {
 
         for (KeyEventListener l : mKeyEventListeners) {
@@ -660,12 +696,27 @@ public class SceneObject extends HybridObject {
             }
         }
 
+        if (jsKeyEvent("keymax", keyCode, repeatCount)) {
+            return true;
+        }
+
         for (SceneObject child : mChildren) {
             if (child.onKeyMax(keyCode, repeatCount)) {
                 return true;
             }
         }
 
+        return false;
+    }
+
+    private boolean jsKeyEvent(String eventName, int keyCode, int repeatCount) {
+        if (!mEventEmitter.isEmpty() && willBeDispatchedGestureEvent()) {
+            final KeyEvent keyEvent = new KeyEvent(keyCode, repeatCount);
+            mEventEmitter.emit(eventName, keyEvent);
+            if (keyEvent.isPreventDefaultCalled()) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -786,7 +837,7 @@ public class SceneObject extends HybridObject {
     /**
      * Get attached view.
      *
-     * @return
+     * @return Attached {@link View}.
      */
     public View view() {
 
@@ -811,7 +862,7 @@ public class SceneObject extends HybridObject {
     /**
      * Attach view as Texture.
      *
-     * @param view
+     * @param view {@link View}
      */
     public void view(View view) {
 
@@ -1028,5 +1079,24 @@ public class SceneObject extends HybridObject {
         public Animator getAnimator() {
             return animator;
         }
+    }
+
+    /*
+     * JavaScript APIs
+     */
+
+    public SceneObject on(String eventName, EventHandler eventHandler) {
+        mEventEmitter.on(eventName, eventHandler);
+        return this;
+    }
+
+    public SceneObject off(String eventName, EventHandler eventHandler) {
+        mEventEmitter.off(eventName, eventHandler);
+        return this;
+    }
+
+    public SceneObject off(String eventName) {
+        mEventEmitter.off(eventName);
+        return this;
     }
 }

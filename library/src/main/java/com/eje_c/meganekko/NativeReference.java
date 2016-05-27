@@ -12,12 +12,12 @@ public class NativeReference extends WeakReference<HybridObject> {
     private static final Set<NativeReference> sNativeReferences = new HashSet<>();
     private long mNativePointer;
 
-    private static native void delete(long nativePointer);
-
     private NativeReference(HybridObject r, long nativePointer, ReferenceQueue<? super HybridObject> q) {
         super(r, q);
         this.mNativePointer = nativePointer;
     }
+
+    private static native void delete(long nativePointer);
 
     /**
      * Get {@link NativeReference} from nativePointer.
