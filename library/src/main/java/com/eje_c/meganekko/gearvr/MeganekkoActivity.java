@@ -26,7 +26,6 @@ import android.view.KeyEvent;
 import com.eje_c.meganekko.Frame;
 import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
-import com.eje_c.meganekko.utility.DockEventReceiver;
 import com.oculus.vrappframework.VrActivity;
 
 import ovr.App;
@@ -44,22 +43,7 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
     }
 
     private InternalSensorManager mInternalSensorManager;
-    private boolean mDocked;
-    private final Runnable mRunOnDock = new Runnable() {
-        @Override
-        public void run() {
-            mDocked = true;
-            mInternalSensorManager.stop();
-        }
-    };
-    private final Runnable mRunOnUndock = new Runnable() {
-        @Override
-        public void run() {
-            mDocked = false;
-        }
-    };
     private App mApp;
-    private DockEventReceiver mDockEventReceiver;
     private MeganekkoApp meganekkoApp;
 
     private static native long nativeSetAppInterface(VrActivity act, String fromPackageName, String commandString, String uriString);
@@ -83,7 +67,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
 
         setAppPtr(nativeSetAppInterface(this, fromPackageNameString, commandString, uriString));
 
-        mDockEventReceiver = new DockEventReceiver(this, mRunOnDock, mRunOnUndock);
         mInternalSensorManager = new InternalSensorManager(this, getAppPtr());
 
         mApp = new App(getAppPtr());
@@ -92,7 +75,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
     @Override
     protected void onPause() {
         super.onPause();
-        mDockEventReceiver.stop();
 
         if (meganekkoApp != null) {
             meganekkoApp.onPause();
@@ -102,7 +84,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
     @Override
     protected void onResume() {
         super.onResume();
-        mDockEventReceiver.start();
 
         if (meganekkoApp != null) {
             meganekkoApp.onResume();
@@ -116,9 +97,7 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
 
         meganekkoApp = createMeganekkoApp(this);
 
-        if (!mDocked) {
-            mInternalSensorManager.start();
-        }
+        mInternalSensorManager.start();
     }
 
     /**
@@ -143,9 +122,7 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
 
         meganekkoApp.shutdown();
 
-        if (!mDocked) {
-            mInternalSensorManager.stop();
-        }
+        mInternalSensorManager.stop();
     }
 
     /**
@@ -161,6 +138,9 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
     }
 
     protected void onHmdMounted() {
+
+        // Stop device internal sensor because device is docked to Gear VR
+        mInternalSensorManager.stop();
     }
 
     protected void onHmdUnmounted() {
