@@ -243,7 +243,6 @@ public class SceneObject extends HybridObject {
      */
     public void attachRenderData(RenderData renderData) {
         mRenderData = renderData;
-        renderData.setOwnerObject(this);
         attachRenderData(getNative(), renderData.getNative());
     }
 
@@ -252,9 +251,6 @@ public class SceneObject extends HybridObject {
      * An object with no {@link RenderData} is not visible.
      */
     public void detachRenderData() {
-        if (mRenderData != null) {
-            mRenderData.setOwnerObject(null);
-        }
         mRenderData = null;
         detachRenderData(getNative());
     }
@@ -291,6 +287,11 @@ public class SceneObject extends HybridObject {
         child.mParent = this;
         child.updateOpacity();
         addChildObject(getNative(), child.getNative());
+
+        Scene scene = getScene();
+        if (scene != null) {
+            scene.invalidateChildObjects();
+        }
     }
 
     /**

@@ -53,18 +53,11 @@ void SceneObject::AttachRenderData(SceneObject* self, RenderData* renderData) {
         DetachRenderData();
     }
 
-    SceneObject* ownerObject(renderData->GetOwnerObject());
-    if (ownerObject) {
-        ownerObject->DetachRenderData();
-    }
-
     this->renderData = renderData;
-    renderData->SetOwnerObject(self);
 }
 
 void SceneObject::DetachRenderData() {
     if (renderData) {
-        renderData->RemoveOwnerObject();
         renderData = nullptr;
     }
 }
@@ -131,10 +124,10 @@ bool SceneObject::IsColliding(SceneObject *sceneObject) {
 
     float thisObjectBoundingBox[6], checkObjectBoundingBox[6];
 
-    OVR::Matrix4f this_object_model_matrix = this->GetRenderData()->GetOwnerObject()->GetMatrixWorld();
+    OVR::Matrix4f this_object_model_matrix = this->GetMatrixWorld();
     this->GetRenderData()->GetMesh()->GetTransformedBoundingBoxInfo(&this_object_model_matrix, thisObjectBoundingBox);
 
-    OVR::Matrix4f check_object_model_matrix = sceneObject->GetRenderData()->GetOwnerObject()->GetMatrixWorld();
+    OVR::Matrix4f check_object_model_matrix = sceneObject->GetMatrixWorld();
     sceneObject->GetRenderData()->GetMesh()->GetTransformedBoundingBoxInfo(&check_object_model_matrix, checkObjectBoundingBox);
 
     bool result = (thisObjectBoundingBox[3] > checkObjectBoundingBox[0]

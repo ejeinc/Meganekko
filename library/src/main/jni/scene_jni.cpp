@@ -109,6 +109,12 @@ Java_com_eje_1c_meganekko_Scene_getViewOrientation(JNIEnv * jni, jobject obj, jl
     FillElementsUnSafe(jni, values, orientation);
 }
 
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_Scene_invalidateChildObjects(JNIEnv * jni, jobject obj, jlong jscene) {
+    Scene* scene = reinterpret_cast<Scene*>(jscene);
+    scene->InvalidateChildObjects();
+}
+
 #ifdef __cplusplus 
 } // extern C
 #endif

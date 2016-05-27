@@ -54,6 +54,8 @@ public class Scene extends SceneObject {
 
     private static native void getViewOrientation(long scene, float[] val);
 
+    private static native void invalidateChildObjects(long scene);
+
     private static int getEventType(Frame frame) {
         if (JoyButton.contains(frame.getButtonPressed(), JoyButton.BUTTON_TOUCH)) {
             return MotionEvent.ACTION_DOWN;
@@ -271,5 +273,9 @@ public class Scene extends SceneObject {
         }
 
         return null;
+    }
+
+    public void invalidateChildObjects() {
+        invalidateChildObjects(getNative());
     }
 }

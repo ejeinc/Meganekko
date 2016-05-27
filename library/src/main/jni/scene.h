@@ -23,7 +23,7 @@
 #define SCENE_H_
 
 #include "SceneObject.h"
-#include "Renderer.h"
+#include "OESShader.h"
 
 using namespace OVR;
 
@@ -97,6 +97,10 @@ public:
         return viewPosition;
     }
 
+    void InvalidateChildObjects() {
+        sceneObjectsChanged = true;
+    }
+
 private:
     Scene(const Scene& scene);
     Scene(Scene&& scene);
@@ -114,7 +118,9 @@ private:
 
     bool frustumFlag;
     bool occlusionFlag;
+    bool sceneObjectsChanged;
 
+    void SetFaceCulling(int cullFace);
 };
 
 }

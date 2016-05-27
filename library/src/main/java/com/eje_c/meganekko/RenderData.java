@@ -33,9 +33,8 @@ import static android.opengl.GLES30.GL_TRIANGLE_STRIP;
  * This includes the {@link Mesh mesh} itself, the mesh's {@link Material
  * material}, camera association, rendering order, and various other parameters.
  */
-public class RenderData extends Component {
+public class RenderData extends HybridObject {
 
-    private static final String TAG = "Meganekko";
     private Mesh mMesh;
     private Material mMaterial;
 
