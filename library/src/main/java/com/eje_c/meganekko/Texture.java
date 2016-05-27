@@ -28,14 +28,23 @@ import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class Texture {
+public class Texture extends HybridObject {
 
     private final SurfaceTexture mSurfaceTexture;
     private CanvasRenderer mRenderer;
     private boolean mContinuesUpdate;
 
-    Texture(SurfaceTexture surfaceTexture) {
-        this.mSurfaceTexture = surfaceTexture;
+    public Texture() {
+        this.mSurfaceTexture = getSurfaceTexture(getNative());
+    }
+
+    @Override
+    protected native long initNativeInstance();
+
+    private static native SurfaceTexture getSurfaceTexture(long nativePtr);
+
+    public SurfaceTexture getSurfaceTexture() {
+        return getSurfaceTexture(getNative());
     }
 
     void release() {

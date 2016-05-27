@@ -92,6 +92,8 @@ public class Material extends HybridObject {
 
     private static native void setSide(long material, int side);
 
+    private static native void setTexture(long material, long texture);
+
     @Override
     protected native long initNativeInstance();
 
@@ -159,10 +161,8 @@ public class Material extends HybridObject {
      * @return SurfaceTexture
      */
     public SurfaceTexture getSurfaceTexture() {
-        return getSurfaceTexture(getNative());
+        return texture().getSurfaceTexture();
     }
-
-    private native SurfaceTexture getSurfaceTexture(long nativePtr);
 
     /**
      * Use this to render stereo texture.
@@ -173,15 +173,24 @@ public class Material extends HybridObject {
         setStereoMode(getNative(), stereoMode.ordinal());
     }
 
+    public void setTexture(Texture texture) {
+        mTexture = texture;
+        if (texture != null) {
+            setTexture(getNative(), mTexture.getNative());
+        } else {
+            setTexture(getNative(), 0);
+        }
+    }
+
     public Texture getTexture() {
-        return texture();
+        return mTexture;
     }
 
     public Texture texture() {
         if (mTexture == null) {
-            mTexture = new Texture(getSurfaceTexture());
+            setTexture(new Texture());
         }
-        return mTexture;
+        return getTexture();
     }
 
     public void update(Frame vrFrame) {

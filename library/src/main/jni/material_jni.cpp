@@ -55,7 +55,7 @@ Java_com_eje_1c_meganekko_Material_getOpacity(JNIEnv * env, jobject obj, jlong j
 JNIEXPORT jobject JNICALL
 Java_com_eje_1c_meganekko_Material_getSurfaceTexture(JNIEnv * env, jobject obj, jlong jmaterial) {
     Material* material = reinterpret_cast<Material*>(jmaterial);
-    return material->GetSurfaceTexture();
+    return material->GetTexture()->GetSurfaceTexture();
 }
 
 JNIEXPORT void JNICALL
@@ -68,6 +68,13 @@ JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_Material_setSide(JNIEnv* env, jobject obj, jlong jmaterial, jint jside) {
     Material* material = reinterpret_cast<Material*>(jmaterial);
     material->SetSide(jside);
+}
+
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_Material_setTexture(JNIEnv* env, jobject obj, jlong jmaterial, jlong jtexture) {
+    Material* material = reinterpret_cast<Material*>(jmaterial);
+    Texture* texture = reinterpret_cast<Texture*>(jtexture);
+    material->SetTexture(texture);
 }
 
 #ifdef __cplusplus 
