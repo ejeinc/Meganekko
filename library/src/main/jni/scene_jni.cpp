@@ -115,6 +115,12 @@ Java_com_eje_1c_meganekko_Scene_invalidateChildObjects(JNIEnv * jni, jobject obj
     scene->InvalidateChildObjects();
 }
 
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_Scene_setBackgroundColor(JNIEnv * jni, jobject obj, jlong jscene, jfloat r, jfloat g, jfloat b, jfloat a) {
+    Scene* scene = reinterpret_cast<Scene*>(jscene);
+    scene->SetBackgroundColor(Vector4f(r, g, b, a));
+}
+
 #ifdef __cplusplus 
 } // extern C
 #endif

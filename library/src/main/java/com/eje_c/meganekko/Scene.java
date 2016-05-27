@@ -56,6 +56,8 @@ public class Scene extends SceneObject {
 
     private static native void invalidateChildObjects(long scene);
 
+    private static native void setBackgroundColor(long scene, float r, float g, float b, float a);
+
     private static int getEventType(Frame frame) {
         if (JoyButton.contains(frame.getButtonPressed(), JoyButton.BUTTON_TOUCH)) {
             return MotionEvent.ACTION_DOWN;
@@ -277,5 +279,9 @@ public class Scene extends SceneObject {
 
     public void invalidateChildObjects() {
         invalidateChildObjects(getNative());
+    }
+
+    public void setBackgroundColor(float r, float g, float b, float a) {
+        setBackgroundColor(getNative(), r, g, b, a);
     }
 }

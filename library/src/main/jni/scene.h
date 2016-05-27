@@ -101,6 +101,18 @@ public:
         sceneObjectsChanged = true;
     }
 
+    void SetBackgroundColor(const Vector4f & backgroundColor) {
+        this->backgroundColor = backgroundColor;
+    }
+
+    const Vector4f & GetBackgroundColor() {
+        return backgroundColor;
+    }
+
+    const Vector4f & GetBackgroundColor() const {
+        return backgroundColor;
+    }
+
 private:
     Scene(const Scene& scene);
     Scene(Scene&& scene);
@@ -115,6 +127,7 @@ private:
     Matrix4f viewM;
     Matrix4f projectionM;
     std::vector<SceneObject*> sceneObjects; // will be rendererd
+    Vector4f backgroundColor;
 
     bool frustumFlag;
     bool occlusionFlag;

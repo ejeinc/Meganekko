@@ -30,6 +30,7 @@ namespace mgn {
         occlusionFlag(false),
         sceneObjectsChanged(true) {
     oesShader = new OESShader();
+    backgroundColor = Vector4f(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 Scene::~Scene() {
@@ -71,8 +72,7 @@ Matrix4f Scene::Render(const int eye) {
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     glDisable (GL_POLYGON_OFFSET_FILL);
 
-    // TODO background color as parameter
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
     // Render all children
