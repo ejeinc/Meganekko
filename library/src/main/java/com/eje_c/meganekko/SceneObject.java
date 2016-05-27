@@ -288,10 +288,7 @@ public class SceneObject extends HybridObject {
         child.updateOpacity();
         addChildObject(getNative(), child.getNative());
 
-        Scene scene = getScene();
-        if (scene != null) {
-            scene.invalidateChildObjects();
-        }
+        notifySceneObjectsChanged();
     }
 
     /**
@@ -304,6 +301,18 @@ public class SceneObject extends HybridObject {
         mChildren.remove(child);
         child.mParent = null;
         removeChildObject(getNative(), child.getNative());
+
+        notifySceneObjectsChanged();
+    }
+
+    /**
+     * Notify to {@link Scene} to update all {@link SceneObject} cache.
+     */
+    private void notifySceneObjectsChanged() {
+        Scene scene = getScene();
+        if (scene != null) {
+            scene.invalidateChildObjects();
+        }
     }
 
     /**
