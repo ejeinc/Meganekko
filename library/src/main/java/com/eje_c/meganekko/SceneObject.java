@@ -1109,4 +1109,21 @@ public class SceneObject extends HybridObject {
         mEventEmitter.off(eventName);
         return this;
     }
+
+    public SceneObject add(SceneObject child) {
+        addChildObject(child);
+        return this;
+    }
+
+    public SceneObject remove(SceneObject child) {
+        removeChildObject(child);
+        return this;
+    }
+
+    public SceneObject clear() {
+        while (getChildrenCount() > 0) {
+            removeChildObject(getChildByIndex(0));
+        }
+        return this;
+    }
 }
