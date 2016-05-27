@@ -31,6 +31,7 @@ import android.view.ViewGroup;
 public class Texture extends HybridObject {
 
     private final SurfaceTexture mSurfaceTexture;
+    private Surface mSurface;
     private CanvasRenderer mRenderer;
     private boolean mContinuesUpdate;
 
@@ -122,14 +123,14 @@ public class Texture extends HybridObject {
 
                 mSurfaceTexture.setDefaultBufferSize(mRenderer.getWidth(), mRenderer.getHeight());
 
-                Surface surface = new Surface(mSurfaceTexture);
+                if (mSurface == null) {
+                    mSurface = new Surface(mSurfaceTexture);
+                }
 
-                try {
-                    Canvas canvas = surface.lockCanvas(null);
+                Canvas canvas = mSurface.lockCanvas(null);
+                if (canvas != null) {
                     mRenderer.render(canvas, vrFrame);
-                    surface.unlockCanvasAndPost(canvas);
-                } finally {
-                    surface.release();
+                    mSurface.unlockCanvasAndPost(canvas);
                 }
 
                 mSurfaceTexture.updateTexImage();
