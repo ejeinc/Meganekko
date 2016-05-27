@@ -1,6 +1,7 @@
 package com.eje_c.meganekko.xml;
 
 import android.content.Context;
+import android.content.res.XmlResourceParser;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.annotation.RawRes;
@@ -23,6 +24,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -311,6 +314,16 @@ public class XmlDocumentParser {
         }
 
         return null;
+    }
+
+    public Scene parseSceneFromXml(int xmlRes) throws XmlDocumentParserException {
+        try {
+            XmlResourceParser xmlResourceParser = mContext.getResources().getXml(xmlRes);
+            Document document = from(xmlResourceParser);
+            return parseScene(document);
+        } catch (XmlPullParserException | ParserConfigurationException | IOException e) {
+            throw new XmlDocumentParserException(e);
+        }
     }
 
     public static class ParserChain {
@@ -634,5 +647,45 @@ public class XmlDocumentParser {
                 }
             }
         }
+    }
+
+    /**
+     * Create {@link Document} from {@link XmlPullParser}.
+     *
+     * @param parser XmlPullParser
+     * @return Document
+     * @throws ParserConfigurationException
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
+    public static Document from(XmlPullParser parser) throws ParserConfigurationException, IOException, XmlPullParserException {
+
+        Document document = defaultDocumentBuilder().newDocument();
+        Node parent = document;
+
+        int type;
+        while (true) {
+            type = parser.next();
+            if (type == XmlPullParser.END_DOCUMENT) break;
+
+            switch (type) {
+                case XmlPullParser.START_TAG:
+                    Element element = document.createElement(parser.getName());
+                    for (int i = 0; i < parser.getAttributeCount(); i++) {
+                        String attr = parser.getAttributeName(i);
+                        String value = parser.getAttributeValue(i);
+                        element.setAttribute(attr, value);
+                    }
+                    parent.appendChild(element);
+                    parent = element;
+                    break;
+
+                case XmlPullParser.END_TAG:
+                    parent = parent.getParentNode();
+                    break;
+            }
+        }
+
+        return document;
     }
 }

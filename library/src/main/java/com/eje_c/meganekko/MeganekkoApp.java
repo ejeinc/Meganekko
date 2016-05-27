@@ -12,12 +12,7 @@ import android.support.annotation.RawRes;
 import com.eje_c.meganekko.javascript.JS;
 import com.eje_c.meganekko.xml.XmlDocumentParser;
 import com.eje_c.meganekko.xml.XmlDocumentParserException;
-import com.eje_c.meganekko.xml.XmlSceneParser;
-import com.eje_c.meganekko.xml.XmlSceneParserFactory;
 
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.IOException;
 import java.lang.ref.Reference;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -271,15 +266,14 @@ public abstract class MeganekkoApp {
         mScene = scene;
     }
 
-    @Deprecated
     public void setSceneFromXML(int xmlRes) {
 
-        XmlSceneParser parser = XmlSceneParserFactory.getInstance(meganekko.getContext()).getSceneParser();
+        ensureToHaveXmlDocumentParser();
 
         try {
-            Scene scene = parser.parse(meganekko.getContext().getResources().getXml(xmlRes), null);
+            Scene scene = mXmlDocumentParser.parseSceneFromXml(xmlRes);
             setScene(scene);
-        } catch (XmlPullParserException | IOException e) {
+        } catch (XmlDocumentParserException e) {
             e.printStackTrace();
             throw new IllegalArgumentException(e);
         }
