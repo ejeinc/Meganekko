@@ -152,6 +152,9 @@ public:
     
     void Invalidate(bool rotationUpdated);
 
+    /**
+     * Compare function used with std::sort
+     */
     static bool CompareWithRenderingOrder(const SceneObject * left, const SceneObject * right) {
         if (left->renderData == nullptr || right->renderData == nullptr) {
             return true;
