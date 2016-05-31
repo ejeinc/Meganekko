@@ -22,9 +22,7 @@ public class DrawableParser implements XmlAttributeParser {
             object.attachRenderData(renderData);
         }
 
-        Material material = new Material();
-        material.texture().set(d);
-        renderData.setMaterial(material);
+        renderData.setMaterial(Material.from(d));
 
         // Set auto sized mesh
         if (object.mesh() == null

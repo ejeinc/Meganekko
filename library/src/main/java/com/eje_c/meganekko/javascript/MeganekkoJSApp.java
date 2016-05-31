@@ -1,8 +1,20 @@
-package com.eje_c.meganekko.javascript;
+/*
+ * Copyright 2016 eje inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import android.app.Activity;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
+package com.eje_c.meganekko.javascript;
 
 import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
@@ -14,15 +26,9 @@ public class MeganekkoJSApp extends MeganekkoApp {
 
     public MeganekkoJSApp(Meganekko meganekko) {
         super(meganekko);
+    }
 
-        try {
-            ActivityInfo info = getContext().getPackageManager().getActivityInfo(((Activity) getContext()).getComponentName(), PackageManager.GET_META_DATA);
-            String main = info.metaData.getString("com.eje_c.meganekko.js.main");
-            if (main != null) {
-                JS.execURL(URI.create(main));
-            }
-        } catch (PackageManager.NameNotFoundException | IOException e) {
-            e.printStackTrace();
-        }
+    public void runScriptFromUri(String uri) throws IOException {
+        JS.execURL(URI.create(uri));
     }
 }

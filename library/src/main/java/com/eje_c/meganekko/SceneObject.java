@@ -23,6 +23,7 @@ import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.SystemClock;
 import android.support.annotation.DrawableRes;
@@ -41,6 +42,8 @@ import com.eje_c.meganekko.animation.VectorEvaluator;
 import com.eje_c.meganekko.event.EventEmitter;
 import com.eje_c.meganekko.event.EventHandler;
 import com.eje_c.meganekko.event.KeyEvent;
+import com.eje_c.meganekko.texture.Texture;
+import com.eje_c.meganekko.texture.ViewTexture;
 import com.eje_c.meganekko.utility.Log;
 import com.eje_c.meganekko.xml.XmlSceneObjectParser;
 
@@ -83,6 +86,7 @@ public class SceneObject extends HybridObject {
     private String mName;
     private RenderData mRenderData;
     private SceneObject mParent;
+    private Scene mScene;
     private float mOpacity = 1.0f;
     private boolean mVisible = true;
 
@@ -110,6 +114,19 @@ public class SceneObject extends HybridObject {
     public static SceneObject fromLayout(Context context, @LayoutRes int layoutRes) {
         View view = LayoutInflater.from(context).inflate(layoutRes, null);
         return from(view);
+    }
+
+    /**
+     * Create {@link SceneObject} from {@code Drawable}.
+     *
+     * @param bitmap
+     * @return
+     */
+    public static SceneObject from(Bitmap bitmap) {
+        SceneObject sceneObject = new SceneObject();
+        sceneObject.mesh(Mesh.from(bitmap));
+        sceneObject.material(Material.from(bitmap));
+        return sceneObject;
     }
 
     /**
@@ -574,22 +591,28 @@ public class SceneObject extends HybridObject {
 
     /**
      * Get {@link Scene}. If this object is not in scene, return null.
-     * This method uses recursive call. So you should not call it in render loop.
      *
      * @return {@link Scene}.
      */
     public Scene getScene() {
 
+        if (mScene != null) {
+            return mScene;
+        }
+
         if (this instanceof Scene) {
             return (Scene) this;
         }
+
+        // Get scene from parent and cache it
 
         SceneObject parent = getParent();
         if (parent == null) {
             return null;
         }
 
-        return parent.getScene();
+        mScene = parent.getScene();
+        return mScene;
     }
 
     public boolean onKeyShortPress(int keyCode, int repeatCount) {
@@ -857,16 +880,12 @@ public class SceneObject extends HybridObject {
             return null;
         }
 
-        Texture.CanvasRenderer renderer = material.texture().getRenderer();
-        if (renderer == null) {
-            Log.d(TAG, "Texture renderer is not attached");
-            return null;
-        } else if (!(renderer instanceof Texture.ViewRenderer)) {
-            Log.d(TAG, "Texture renderer is not an instance of ViewRenderer");
+        Texture texture = material.getTexture();
+        if (texture instanceof ViewTexture) {
+            return ((ViewTexture) texture).getView();
+        } else {
             return null;
         }
-
-        return ((Texture.ViewRenderer) renderer).getView();
     }
 
     /**
@@ -883,7 +902,7 @@ public class SceneObject extends HybridObject {
             material = material();
         }
 
-        material.texture().set(view);
+        material.setTexture(new ViewTexture(view));
     }
 
     public void updateViewLayout() {
