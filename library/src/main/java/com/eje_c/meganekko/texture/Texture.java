@@ -26,10 +26,7 @@ import com.eje_c.meganekko.HybridObject;
  */
 public abstract class Texture extends HybridObject {
 
-    private final SurfaceTexture mSurfaceTexture;
-
     public Texture() {
-        this.mSurfaceTexture = getSurfaceTexture(getNative());
     }
 
     @Override
@@ -43,14 +40,7 @@ public abstract class Texture extends HybridObject {
      * @return SurfaceTexture.
      */
     public SurfaceTexture getSurfaceTexture() {
-        return mSurfaceTexture;
-    }
-
-    /**
-     * Release native resources.
-     */
-    public void release() {
-        mSurfaceTexture.release();
+        return getSurfaceTexture(getNative());
     }
 
     /**
