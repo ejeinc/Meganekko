@@ -23,6 +23,7 @@ import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.SystemClock;
 import android.support.annotation.DrawableRes;
@@ -113,6 +114,19 @@ public class SceneObject extends HybridObject {
     public static SceneObject fromLayout(Context context, @LayoutRes int layoutRes) {
         View view = LayoutInflater.from(context).inflate(layoutRes, null);
         return from(view);
+    }
+
+    /**
+     * Create {@link SceneObject} from {@code Drawable}.
+     *
+     * @param bitmap
+     * @return
+     */
+    public static SceneObject from(Bitmap bitmap) {
+        SceneObject sceneObject = new SceneObject();
+        sceneObject.mesh(Mesh.from(bitmap));
+        sceneObject.material(Material.from(bitmap));
+        return sceneObject;
     }
 
     /**
