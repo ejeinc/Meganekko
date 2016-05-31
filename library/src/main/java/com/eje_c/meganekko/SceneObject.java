@@ -85,6 +85,7 @@ public class SceneObject extends HybridObject {
     private String mName;
     private RenderData mRenderData;
     private SceneObject mParent;
+    private Scene mScene;
     private float mOpacity = 1.0f;
     private boolean mVisible = true;
 
@@ -576,22 +577,28 @@ public class SceneObject extends HybridObject {
 
     /**
      * Get {@link Scene}. If this object is not in scene, return null.
-     * This method uses recursive call. So you should not call it in render loop.
      *
      * @return {@link Scene}.
      */
     public Scene getScene() {
 
+        if (mScene != null) {
+            return mScene;
+        }
+
         if (this instanceof Scene) {
             return (Scene) this;
         }
+
+        // Get scene from parent and cache it
 
         SceneObject parent = getParent();
         if (parent == null) {
             return null;
         }
 
-        return parent.getScene();
+        mScene = parent.getScene();
+        return mScene;
     }
 
     public boolean onKeyShortPress(int keyCode, int repeatCount) {
