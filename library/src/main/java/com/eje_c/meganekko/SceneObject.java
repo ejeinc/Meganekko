@@ -41,6 +41,8 @@ import com.eje_c.meganekko.animation.VectorEvaluator;
 import com.eje_c.meganekko.event.EventEmitter;
 import com.eje_c.meganekko.event.EventHandler;
 import com.eje_c.meganekko.event.KeyEvent;
+import com.eje_c.meganekko.texture.Texture;
+import com.eje_c.meganekko.texture.ViewTexture;
 import com.eje_c.meganekko.utility.Log;
 import com.eje_c.meganekko.xml.XmlSceneObjectParser;
 
@@ -857,16 +859,12 @@ public class SceneObject extends HybridObject {
             return null;
         }
 
-        Texture.CanvasRenderer renderer = material.texture().getRenderer();
-        if (renderer == null) {
-            Log.d(TAG, "Texture renderer is not attached");
-            return null;
-        } else if (!(renderer instanceof Texture.ViewRenderer)) {
-            Log.d(TAG, "Texture renderer is not an instance of ViewRenderer");
+        Texture texture = material.getTexture();
+        if (texture instanceof ViewTexture) {
+            return ((ViewTexture) texture).getView();
+        } else {
             return null;
         }
-
-        return ((Texture.ViewRenderer) renderer).getView();
     }
 
     /**
@@ -883,7 +881,7 @@ public class SceneObject extends HybridObject {
             material = material();
         }
 
-        material.texture().set(view);
+        material.setTexture(new ViewTexture(view));
     }
 
     public void updateViewLayout() {

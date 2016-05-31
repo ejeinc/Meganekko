@@ -23,12 +23,12 @@ extern "C" {
 #endif
 
 JNIEXPORT jlong JNICALL
-Java_com_eje_1c_meganekko_Texture_initNativeInstance(JNIEnv * env, jobject obj) {
+Java_com_eje_1c_meganekko_texture_Texture_initNativeInstance(JNIEnv * env, jobject obj) {
     return reinterpret_cast<jlong>(new Texture(env));
 }
 
 JNIEXPORT jobject JNICALL
-Java_com_eje_1c_meganekko_Texture_getSurfaceTexture(JNIEnv * env, jobject obj, jlong jtexture) {
+Java_com_eje_1c_meganekko_texture_Texture_getSurfaceTexture(JNIEnv * env, jobject obj, jlong jtexture) {
     Texture* texture = reinterpret_cast<Texture*>(jtexture);
     return texture->GetSurfaceTexture();
 }

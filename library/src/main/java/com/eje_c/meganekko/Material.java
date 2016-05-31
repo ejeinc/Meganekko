@@ -15,13 +15,19 @@
 
 package com.eje_c.meganekko;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.view.View;
 
+import com.eje_c.meganekko.texture.DrawableTexture;
+import com.eje_c.meganekko.texture.Texture;
+import com.eje_c.meganekko.texture.VideoTexture;
+import com.eje_c.meganekko.texture.ViewTexture;
 import com.eje_c.meganekko.utility.Colors;
 
 /**
@@ -40,7 +46,7 @@ public class Material extends HybridObject {
      */
     public static Material from(View view) {
         Material material = new Material();
-        material.texture().set(view);
+        material.setTexture(new ViewTexture(view));
         return material;
     }
 
@@ -52,7 +58,7 @@ public class Material extends HybridObject {
      */
     public static Material from(Drawable drawable) {
         Material material = new Material();
-        material.texture().set(drawable);
+        material.setTexture(new DrawableTexture(drawable));
         return material;
     }
 
@@ -64,7 +70,7 @@ public class Material extends HybridObject {
      */
     public static Material from(Bitmap bitmap) {
         Material material = new Material();
-        material.texture().set(bitmap);
+        material.setTexture(new DrawableTexture(new BitmapDrawable(Resources.getSystem(), bitmap)));
         return material;
     }
 
@@ -76,7 +82,7 @@ public class Material extends HybridObject {
      */
     public static Material from(MediaPlayer mediaPlayer) {
         Material material = new Material();
-        material.texture().set(mediaPlayer);
+        material.setTexture(new VideoTexture(mediaPlayer));
         return material;
     }
 
@@ -160,8 +166,9 @@ public class Material extends HybridObject {
      *
      * @return SurfaceTexture
      */
+    @Deprecated
     public SurfaceTexture getSurfaceTexture() {
-        return texture().getSurfaceTexture();
+        return getTexture().getSurfaceTexture();
     }
 
     /**
@@ -184,13 +191,6 @@ public class Material extends HybridObject {
 
     public Texture getTexture() {
         return mTexture;
-    }
-
-    public Texture texture() {
-        if (mTexture == null) {
-            setTexture(new Texture());
-        }
-        return getTexture();
     }
 
     public void update(Frame vrFrame) {
