@@ -54,6 +54,7 @@ public class JS {
         // Initialize global properties
         ScriptableObject.putConstProperty(sGlobals, "app", Context.javaToJS(app, sGlobals));
         ScriptableObject.putConstProperty(sGlobals, "console", Context.javaToJS(new Console(), sGlobals));
+        ScriptableObject.putConstProperty(sGlobals, "http", Context.javaToJS(new Http(app), sGlobals));
 
         // import global classes
         sJSContext.evaluateString(sGlobals, "importPackage(Packages.org.joml)", "", 1, null);

@@ -21,6 +21,7 @@ dependencies {
     compile 'com.android.support:support-v4:23.4.0'
     compile 'org.joml:joml:+'
     compile 'org.mozilla:rhino:1.7.7.1'
+    compile 'com.android.volley:volley:1.0.0'
 }
 
 android {
