@@ -74,7 +74,6 @@ public class VideoTexture extends Texture {
     /**
      * Release native resources.
      */
-    @Override
     public void release() {
 
         if (ref != null) {
@@ -89,7 +88,5 @@ public class VideoTexture extends Texture {
             surface.release();
             surface = null;
         }
-
-        super.release();
     }
 }
