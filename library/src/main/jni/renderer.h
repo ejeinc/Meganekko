@@ -27,11 +27,9 @@
 
 namespace mgn
 {
-class Camera;
 class Scene;
 class SceneObject;
 class RenderData;
-class RenderTexture;
 
 class Renderer
 {
