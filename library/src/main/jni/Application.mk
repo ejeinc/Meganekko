@@ -14,13 +14,8 @@
  # limitations under the License.
  #
 
-ifndef OVR_SDK_MOBILE
-    OVR_SDK_MOBILE := $(dir $(lastword $(MAKEFILE_LIST)))../../../../../ovr_sdk_mobile_1.0.0.0
-endif
-
 APP_ABI := armeabi-v7a
 APP_PLATFORM := android-19
-APP_STL := gnustl_static
-NDK_TOOLCHAIN_VERSION := 4.9
+NDK_TOOLCHAIN_VERSION := clang
 
 NDK_MODULE_PATH := $(OVR_SDK_MOBILE)
