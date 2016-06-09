@@ -135,9 +135,7 @@ Matrix4f MeganekkoActivity::Frame( const VrFrame & vrFrame )
     // Update GUI systems last, but before rendering anything.
     GuiSys->Frame( vrFrame, centerViewMatrix);
 
-    gl_delete.processQueues();
     scene->PrepareForRendering();
-
 
     return centerViewMatrix;
 }

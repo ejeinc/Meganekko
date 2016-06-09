@@ -25,6 +25,4 @@
 #define GL( func )  func; GL_CheckErrors(#func);
 #define __gl2_h_
 
-#include "util/GlDelete.h"
-
 #endif
