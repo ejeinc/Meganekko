@@ -66,9 +66,6 @@ public:
             float *transformed_bounding_box); //Get Bounding box info transformed by matrix
     const BoundingSphereInfo & GetBoundingSphereInfo(); // Get bounding sphere based on the bounding box
 
-    // generate VAO
-    void GenerateVAO();
-
 private:
     Mesh(const Mesh& mesh);
     Mesh(Mesh&& mesh);
