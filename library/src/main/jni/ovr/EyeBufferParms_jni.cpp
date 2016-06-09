@@ -26,50 +26,50 @@ extern "C"
 
 jint Java_ovr_EyeBufferParms_getResolutionWidth(JNIEnv * jni, jclass clazz, jlong nativePtr)
 {
-	ovrEyeBufferParms * eyeBufferParms = reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
-	return eyeBufferParms->resolutionWidth;
+    ovrEyeBufferParms * eyeBufferParms = reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
+    return eyeBufferParms->resolutionWidth;
 }
 
 void Java_ovr_EyeBufferParms_setResolutionWidth(JNIEnv * jni, jclass clazz, jlong nativePtr, jint resolutionWidth)
 {
-	ovrEyeBufferParms * eyeBufferParms = reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
-	eyeBufferParms->resolutionWidth = resolutionWidth;
+    ovrEyeBufferParms * eyeBufferParms = reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
+    eyeBufferParms->resolutionWidth = resolutionWidth;
 }
 
 jint Java_ovr_EyeBufferParms_getResolutionHeight(JNIEnv * jni, jclass clazz, jlong nativePtr)
 {
-	ovrEyeBufferParms * eyeBufferParms = reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
-	return eyeBufferParms->resolutionHeight;
+    ovrEyeBufferParms * eyeBufferParms = reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
+    return eyeBufferParms->resolutionHeight;
 }
 
 void Java_ovr_EyeBufferParms_setResolutionHeight(JNIEnv * jni, jclass clazz, jlong nativePtr, jint resolutionHeight)
 {
-	ovrEyeBufferParms * eyeBufferParms = reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
-	eyeBufferParms->resolutionHeight = resolutionHeight;
+    ovrEyeBufferParms * eyeBufferParms = reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
+    eyeBufferParms->resolutionHeight = resolutionHeight;
 }
 
 jint Java_ovr_EyeBufferParms_getMultisamples(JNIEnv * jni, jclass clazz, jlong nativePtr)
 {
-	ovrEyeBufferParms * eyeBufferParms = reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
-	return eyeBufferParms->multisamples;
+    ovrEyeBufferParms * eyeBufferParms = reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
+    return eyeBufferParms->multisamples;
 }
 
 void Java_ovr_EyeBufferParms_setMultisamples(JNIEnv * jni, jclass clazz, jlong nativePtr, jint multisamples)
 {
-	ovrEyeBufferParms * eyeBufferParms = reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
-	eyeBufferParms->multisamples = multisamples;
+    ovrEyeBufferParms * eyeBufferParms = reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
+    eyeBufferParms->multisamples = multisamples;
 }
 
 jboolean Java_ovr_EyeBufferParms_getResolveDepth(JNIEnv * jni, jclass clazz, jlong nativePtr)
 {
-	ovrEyeBufferParms * eyeBufferParms = reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
-	return eyeBufferParms->resolveDepth;
+    ovrEyeBufferParms * eyeBufferParms = reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
+    return eyeBufferParms->resolveDepth;
 }
 
 void Java_ovr_EyeBufferParms_setResolveDepth(JNIEnv * jni, jclass clazz, jlong nativePtr, jboolean resolveDepth)
 {
-	ovrEyeBufferParms * eyeBufferParms = reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
-	eyeBufferParms->resolveDepth = resolveDepth;
+    ovrEyeBufferParms * eyeBufferParms = reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
+    eyeBufferParms->resolveDepth = resolveDepth;
 }
 
 } // extern "C"
