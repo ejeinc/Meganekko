@@ -16,22 +16,15 @@
 
 LOCAL_PATH := $(call my-dir)
 
-
-include $(CLEAR_VARS)
-LOCAL_MODULE    := assimp
-LOCAL_SRC_FILES := ../../../libs/libassimp.so
-include $(PREBUILT_SHARED_LIBRARY)
-
 include $(CLEAR_VARS)
 
 include $(OVR_SDK_MOBILE)/cflags.mk
 
 LOCAL_MODULE := meganekko
 
-# jni/** all .cpp .c .s files
+# jni/** all .cpp
 FILE_LIST := $(wildcard $(LOCAL_PATH)/*.cpp)
 FILE_LIST += $(wildcard $(LOCAL_PATH)/**/*.cpp)
-FILE_LIST += $(wildcard $(LOCAL_PATH)/**/**/*.cpp)
 LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
 
 # Include directories
@@ -46,21 +39,16 @@ LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrAppSupport/VrSound/Include
 LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrAppSupport/SystemUtils/Include
 
 LOCAL_C_INCLUDES += $(LOCAL_PATH)
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/contrib/assimp
-LOCAL_C_INCLUDES +=	$(LOCAL_PATH)/contrib/assimp/include
-LOCAL_C_INCLUDES +=	$(LOCAL_PATH)/contrib/assimp/include/Compiler
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/contrib
 
-LOCAL_SHARED_LIBRARIES += assimp
 LOCAL_SHARED_LIBRARIES += vrapi
 LOCAL_STATIC_LIBRARIES += systemutils vrsound vrlocale vrgui vrappframework libovrkernel
 
 LOCAL_ARM_NEON := true
 
-LOCAL_CPPFLAGS += -fexceptions -std=c++11 -D__GXX_EXPERIMENTAL_CXX0X__
+LOCAL_CPPFLAGS += -fexceptions -std=c++11
 LOCAL_CFLAGS := -Wattributes
 
-LOCAL_LDLIBS += -ljnigraphics -llog -lGLESv3 -lEGL -lz -landroid
+LOCAL_LDLIBS += -llog -lGLESv3 -lEGL -landroid
 
 include $(BUILD_SHARED_LIBRARY)
 
