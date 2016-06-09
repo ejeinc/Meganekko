@@ -62,7 +62,7 @@ OESShader::~OESShader() {
     DeleteProgram(program);
 }
 
-void OESShader::Render(const Matrix4f & mvpMatrix, const GlGeometry & geometry, const Material * material, const int eye) {
+void OESShader::Render(const Matrix4f & mvpMatrix, const GlGeometry & geometry, const Material * material, const int eye) const {
 
     Vector4f color = material->GetColor();
 
@@ -80,7 +80,7 @@ void OESShader::Render(const Matrix4f & mvpMatrix, const GlGeometry & geometry, 
     GL(glBindTexture( GL_TEXTURE_EXTERNAL_OES, 0 ));
 }
 
-const Matrix4f & OESShader::TexmForVideo(const Material::StereoMode stereoMode, const int eye )
+const Matrix4f & OESShader::TexmForVideo(const Material::StereoMode stereoMode, const int eye ) const
 {
     switch (stereoMode) {
         case Material::StereoMode::TOP_BOTTOM:

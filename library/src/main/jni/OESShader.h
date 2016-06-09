@@ -36,7 +36,7 @@ class RenderData;
 public:
     OESShader();
     ~OESShader();
-    void Render(const Matrix4f & mvpMatrix, const GlGeometry & geometry, const Material * material, const int eye);
+    void Render(const Matrix4f & mvpMatrix, const GlGeometry & geometry, const Material * material, const int eye) const;
 
 private:
     OESShader(const OESShader& oesShader);
@@ -44,7 +44,7 @@ private:
     OESShader& operator=(const OESShader& oesShader);
     OESShader& operator=(OESShader&& oesShader);
 
-    const Matrix4f & TexmForVideo(const Material::StereoMode stereoMode, const int eye);
+    const Matrix4f & TexmForVideo(const Material::StereoMode stereoMode, const int eye) const;
 private:
     GlProgram program;
     GLuint opacity;

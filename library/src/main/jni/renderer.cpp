@@ -28,7 +28,7 @@ using namespace OVR;
 
 namespace mgn {
 
-void Renderer::RenderEyeView(const Scene* scene, const Array<SceneObject*> & scene_objects, OESShader* oesShader,
+void Renderer::RenderEyeView(const Scene* scene, const Array<SceneObject*> & scene_objects, const OESShader* oesShader,
         const Matrix4f &eyeViewMatrix, const Matrix4f &eyeProjectionMatrix, const Matrix4f &eyeViewProjection, const int eye) {
     // there is no need to flat and sort every frame.
     // however let's keep it as is and assume we are not changed
@@ -112,7 +112,7 @@ void Renderer::OcclusionCull(const Scene * scene, const Array<SceneObject*> & sc
 void Renderer::FrustumCull(const Scene * scene, const Vector3f& camera_position,
         const Array<SceneObject*> & scene_objects,
         Array<RenderData*> & render_data_vector, const Matrix4f &vp_matrix,
-        OESShader * oesShader) {
+        const OESShader * oesShader) {
     for (auto it = scene_objects.Begin(); it != scene_objects.End(); ++it) {
         SceneObject *scene_object = (*it);
         RenderData* render_data = scene_object->GetRenderData();
@@ -322,7 +322,7 @@ bool Renderer::IsCubeInFrustum(float frustum[6][4], const BoundingBoxInfo & vert
 
 void Renderer::RenderRenderData(RenderData* renderData,
         const Matrix4f& view_matrix, const Matrix4f& projection_matrix,
-        OESShader * oesShader, const int eye) {
+        const OESShader * oesShader, const int eye) {
 
     if (!renderData->IsVisible()) return;
 
