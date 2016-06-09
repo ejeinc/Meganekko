@@ -40,7 +40,7 @@ private:
 
 public:
 
-    static void RenderEyeView(Scene* scene, const Array<SceneObject*> &,
+    static void RenderEyeView(const Scene * scene, const Array<SceneObject*> &,
             OESShader * oesShader,
             const OVR::Matrix4f &eyeViewMatrix,
             const OVR::Matrix4f &eyeProjectionMatrix,
@@ -53,8 +53,8 @@ private:
             const OVR::Matrix4f& projectionMatrix,
             OESShader * oesShader, const int eye);
 
-    static void OcclusionCull(Scene* scene, const Array<SceneObject*> & sceneObjects);
-    static void FrustumCull(Scene* scene, const OVR::Vector3f& cameraPosition,
+    static void OcclusionCull(const Scene * scene, const Array<SceneObject*> & sceneObjects);
+    static void FrustumCull(const Scene * scene, const OVR::Vector3f& cameraPosition,
             const Array<SceneObject*> & sceneObjects,
             Array<RenderData*> & renderDataVector, const OVR::Matrix4f &vpMatrix,
             OESShader * oesShader);

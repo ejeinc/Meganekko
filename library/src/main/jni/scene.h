@@ -47,12 +47,20 @@ public:
         this->frustumFlag = frustumFlag;
     }
 
+    bool GetFrustumCulling() const {
+        return frustumFlag;
+    }
+
     bool GetFrustumCulling() {
         return frustumFlag;
     }
 
     void SetOcclusionCulling(bool occlusionFlag) {
         this->occlusionFlag = occlusionFlag;
+    }
+
+    bool GetOcclusionCulling() const {
+        return occlusionFlag;
     }
 
     bool GetOcclusionCulling() {

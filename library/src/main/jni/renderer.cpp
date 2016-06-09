@@ -28,7 +28,7 @@ using namespace OVR;
 
 namespace mgn {
 
-void Renderer::RenderEyeView(Scene* scene, const Array<SceneObject*> & scene_objects, OESShader* oesShader,
+void Renderer::RenderEyeView(const Scene* scene, const Array<SceneObject*> & scene_objects, OESShader* oesShader,
         const Matrix4f &eyeViewMatrix, const Matrix4f &eyeProjectionMatrix, const Matrix4f &eyeViewProjection, const int eye) {
     // there is no need to flat and sort every frame.
     // however let's keep it as is and assume we are not changed
@@ -73,7 +73,7 @@ void Renderer::RenderEyeView(Scene* scene, const Array<SceneObject*> & scene_obj
 
 }
 
-void Renderer::OcclusionCull(Scene* scene, const Array<SceneObject*> & scene_objects) {
+void Renderer::OcclusionCull(const Scene * scene, const Array<SceneObject*> & scene_objects) {
     if (!scene->GetOcclusionCulling()) {
         return;
     }
@@ -109,7 +109,7 @@ void Renderer::OcclusionCull(Scene* scene, const Array<SceneObject*> & scene_obj
     }
 }
 
-void Renderer::FrustumCull(Scene* scene, const Vector3f& camera_position,
+void Renderer::FrustumCull(const Scene * scene, const Vector3f& camera_position,
         const Array<SceneObject*> & scene_objects,
         Array<RenderData*> & render_data_vector, const Matrix4f &vp_matrix,
         OESShader * oesShader) {
