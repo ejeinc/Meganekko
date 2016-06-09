@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Meganekko Sample2</string>
+    <string name="text">Tap to spawn object\nLong tap to clear</string>
+</resources>

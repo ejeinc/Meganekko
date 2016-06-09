@@ -1,0 +1,7 @@
+<scene class="com.eje_c.meganekko.sample2.MyScene">
+
+    <object
+        texture="@layout/text"
+        z="-7.0"/>
+
+</scene>
