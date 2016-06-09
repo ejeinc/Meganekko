@@ -34,12 +34,12 @@ Scene::~Scene() {
     delete oesShader;
 }
 
-std::vector<SceneObject*> Scene::GetWholeSceneObjects() {
-    std::vector<SceneObject*> sceneObjects(GetChildren());
-    for (int i = 0; i < sceneObjects.size(); ++i) {
-        std::vector<SceneObject*> children(sceneObjects[i]->GetChildren());
-        for (auto it = children.begin(); it != children.end(); ++it) {
-            sceneObjects.push_back(*it);
+Array<SceneObject*> Scene::GetWholeSceneObjects() {
+    Array<SceneObject*> sceneObjects(GetChildren());
+    for (int i = 0; i < sceneObjects.GetSize(); ++i) {
+        Array<SceneObject*> children(sceneObjects[i]->GetChildren());
+        for (auto it = children.Begin(); it != children.End(); ++it) {
+            sceneObjects.PushBack(*it);
         }
     }
 

@@ -77,23 +77,28 @@ void SceneObject::AddChildObject(SceneObject* self, SceneObject* child) {
             throw error;
         }
     }
-    children.push_back(child);
+    children.PushBack(child);
     child->parent = self;
 }
 
 void SceneObject::RemoveChildObject(SceneObject* child) {
     if (child->parent == this) {
-        children.erase(std::remove(children.begin(), children.end(), child), children.end());
-        child->parent = nullptr;
+        for (auto it = children.Begin(); it != children.End(); ++it) {
+            if (child == *it) {
+                it.Remove();
+                child->parent = nullptr;
+                return;
+            }
+        }
     }
 }
 
 int SceneObject::GetChildrenCount() const {
-    return children.size();
+    return children.GetSize();
 }
 
 SceneObject* SceneObject::GetChildByIndex(int index) {
-    if (index < children.size()) {
+    if (index < children.GetSize()) {
         return children[index];
     } else {
         std::string error = "SceneObject::getChildByIndex() : Out of index.";
@@ -223,8 +228,8 @@ void SceneObject::SetMatrixLocal(const Matrix4f & matrix) {
 void SceneObject::Invalidate(bool rotationUpdated) {
 
     if (!matrixWorldNeedsUpdate) {
-        std::vector<SceneObject*> objects = GetChildren();
-        for (auto it = objects.begin(); it != objects.end(); ++it) {
+        Array<SceneObject*> objects = GetChildren();
+        for (auto it = objects.Begin(); it != objects.End(); ++it) {
             (*it)->Invalidate(false);
         }
     }

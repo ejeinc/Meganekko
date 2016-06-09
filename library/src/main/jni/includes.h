@@ -22,12 +22,10 @@
 /*
  * std
  */
-#include <algorithm>
 #include <limits>
 #include <memory>
 #include <map>
 #include <string>
-#include <vector>
 
 /*
  * Android
@@ -40,6 +38,7 @@
  * LibOVR Kernel
  */
 #include "Android/JniUtils.h"
+#include "Kernel/OVR_Alg.h"
 #include "Kernel/OVR_Math.h"
 #include "Kernel/OVR_Geometry.h"
 

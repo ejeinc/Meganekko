@@ -41,7 +41,7 @@ class Scene: public SceneObject {
 public:
     Scene();
     virtual ~Scene();
-    std::vector<SceneObject*> GetWholeSceneObjects();
+    Array<SceneObject*> GetWholeSceneObjects();
 
     void SetFrustumCulling( bool frustumFlag) {
         this->frustumFlag = frustumFlag;
@@ -110,7 +110,7 @@ private:
     Matrix4f centerViewM;
     Matrix4f viewM;
     Matrix4f projectionM;
-    std::vector<SceneObject*> sceneObjects; // will be rendererd
+    Array<SceneObject*> sceneObjects; // will be rendererd
 
     bool frustumFlag;
     bool occlusionFlag;

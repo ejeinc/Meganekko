@@ -40,7 +40,7 @@ private:
 
 public:
 
-    static void RenderEyeView(Scene* scene, std::vector<SceneObject*>,
+    static void RenderEyeView(Scene* scene, Array<SceneObject*>,
             OESShader * oesShader,
             const OVR::Matrix4f &eyeViewMatrix,
             const OVR::Matrix4f &eyeProjectionMatrix,
@@ -53,10 +53,10 @@ private:
             const OVR::Matrix4f& projectionMatrix,
             OESShader * oesShader, const int eye);
 
-    static void OcclusionCull(Scene* scene, std::vector<SceneObject*> sceneObjects);
+    static void OcclusionCull(Scene* scene, Array<SceneObject*> sceneObjects);
     static void FrustumCull(Scene* scene, const OVR::Vector3f& cameraPosition,
-            std::vector<SceneObject*> sceneObjects,
-            std::vector<RenderData*>& renderDataVector, const OVR::Matrix4f &vpMatrix,
+            Array<SceneObject*> sceneObjects,
+            Array<RenderData*>& renderDataVector, const OVR::Matrix4f &vpMatrix,
             OESShader * oesShader);
     static void BuildFrustum(float frustum[6][4], float mvpMatrix[16]);
     static bool IsCubeInFrustum(float frustum[6][4], const BoundingBoxInfo & vertexLimit);

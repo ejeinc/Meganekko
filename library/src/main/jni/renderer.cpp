@@ -28,7 +28,7 @@ using namespace OVR;
 
 namespace mgn {
 
-void Renderer::RenderEyeView(Scene* scene, std::vector<SceneObject*> scene_objects, OESShader* oesShader,
+void Renderer::RenderEyeView(Scene* scene, Array<SceneObject*> scene_objects, OESShader* oesShader,
         const Matrix4f &eyeViewMatrix, const Matrix4f &eyeProjectionMatrix, const Matrix4f &eyeViewProjection, const int eye) {
     // there is no need to flat and sort every frame.
     // however let's keep it as is and assume we are not changed
@@ -36,7 +36,7 @@ void Renderer::RenderEyeView(Scene* scene, std::vector<SceneObject*> scene_objec
     // bone/weight/joint and other assimp data, we will put general model conversion
     // on hold and do this kind of conversion fist
 
-    std::vector<RenderData*> render_data_vector;
+    Array<RenderData*> render_data_vector;
 
     // do occlusion culling, if enabled
     OcclusionCull(scene, scene_objects);
@@ -47,11 +47,9 @@ void Renderer::RenderEyeView(Scene* scene, std::vector<SceneObject*> scene_objec
 
     // do sorting based on render order
     if (!scene->GetFrustumCulling()) {
-        std::sort(render_data_vector.begin(), render_data_vector.end(),
-                compareRenderData);
+        Alg::QuickSort(render_data_vector, compareRenderData);
     } else {
-        std::sort(render_data_vector.begin(), render_data_vector.end(),
-                compareRenderDataWithFrustumCulling);
+        Alg::QuickSort(render_data_vector, compareRenderDataWithFrustumCulling);
     }
 
     glEnable (GL_DEPTH_TEST);
@@ -68,19 +66,19 @@ void Renderer::RenderEyeView(Scene* scene, std::vector<SceneObject*> scene_objec
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-    for (auto it = render_data_vector.begin();
-            it != render_data_vector.end(); ++it) {
+    for (auto it = render_data_vector.Begin();
+            it != render_data_vector.End(); ++it) {
         RenderRenderData(*it, eyeViewMatrix, eyeProjectionMatrix, oesShader, eye);
     }
 
 }
 
-void Renderer::OcclusionCull(Scene* scene, std::vector<SceneObject*> scene_objects) {
+void Renderer::OcclusionCull(Scene* scene, Array<SceneObject*> scene_objects) {
     if (!scene->GetOcclusionCulling()) {
         return;
     }
 
-    for (auto it = scene_objects.begin(); it != scene_objects.end(); ++it) {
+    for (auto it = scene_objects.Begin(); it != scene_objects.End(); ++it) {
         RenderData* render_data = (*it)->GetRenderData();
         if (render_data == nullptr) {
             continue;
@@ -112,10 +110,10 @@ void Renderer::OcclusionCull(Scene* scene, std::vector<SceneObject*> scene_objec
 }
 
 void Renderer::FrustumCull(Scene* scene, const Vector3f& camera_position,
-        std::vector<SceneObject*> scene_objects,
-        std::vector<RenderData*>& render_data_vector, const Matrix4f &vp_matrix,
+        Array<SceneObject*> scene_objects,
+        Array<RenderData*>& render_data_vector, const Matrix4f &vp_matrix,
         OESShader * oesShader) {
-    for (auto it = scene_objects.begin(); it != scene_objects.end(); ++it) {
+    for (auto it = scene_objects.Begin(); it != scene_objects.End(); ++it) {
         SceneObject *scene_object = (*it);
         RenderData* render_data = scene_object->GetRenderData();
         if (render_data == nullptr || render_data->GetMaterial() == nullptr) {
@@ -125,7 +123,7 @@ void Renderer::FrustumCull(Scene* scene, const Vector3f& camera_position,
         // Check for frustum culling flag
         if (!scene->GetFrustumCulling()) {
             //No occlusion or frustum tests enabled
-            render_data_vector.push_back(render_data);
+            render_data_vector.PushBack(render_data);
             continue;
         }
 
@@ -185,7 +183,7 @@ void Renderer::FrustumCull(Scene* scene, const Vector3f& camera_position,
         //If visibility flag was set by an earlier occlusion query,
         //turn visibility on for the object
         if (visible) {
-            render_data_vector.push_back(render_data);
+            render_data_vector.PushBack(render_data);
         }
 
         if (render_data->GetMaterial() == nullptr

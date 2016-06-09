@@ -69,7 +69,7 @@ public:
         return parent;
     }
 
-    const std::vector<SceneObject*>& GetChildren() const {
+    const Array<SceneObject*>& GetChildren() const {
         return children;
     }
 
@@ -172,7 +172,7 @@ private:
 
     RenderData *              renderData;
     SceneObject *             parent;
-    std::vector<SceneObject*> children;
+    Array<SceneObject*> children;
 
     float lodMinRange;
     float lodMaxRange;
