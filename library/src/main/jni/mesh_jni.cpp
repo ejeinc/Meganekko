@@ -48,13 +48,13 @@ Java_com_eje_1c_meganekko_Mesh_build(JNIEnv * env, jobject obj, jlong jmesh,
         attribs.color.PushBack(Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
 
         // calc mins and maxs
-        mins.x = std::min(mins.x, x);
-        mins.y = std::min(mins.y, y);
-        mins.z = std::min(mins.z, z);
+        mins.x = Alg::Min(mins.x, x);
+        mins.y = Alg::Min(mins.y, y);
+        mins.z = Alg::Min(mins.z, z);
 
-        maxs.x = std::max(maxs.x, x);
-        maxs.y = std::max(maxs.y, y);
-        maxs.z = std::max(maxs.z, z);
+        maxs.x = Alg::Max(maxs.x, x);
+        maxs.y = Alg::Max(maxs.y, y);
+        maxs.z = Alg::Max(maxs.z, z);
     }
 
     env->ReleaseFloatArrayElements(jPositions, jPositionsElements, 0);

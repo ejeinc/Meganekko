@@ -20,14 +20,6 @@
  */
 
 /*
- * std
- */
-#include <limits>
-#include <memory>
-#include <map>
-#include <string>
-
-/*
  * Android
  */
 #include <android/log.h>
