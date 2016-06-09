@@ -352,8 +352,8 @@ void Renderer::RenderRenderData(RenderData* renderData,
     Matrix4f mvp_matrix = projection_matrix * mv_matrix;
     try {
         oesShader->Render(mvp_matrix, mesh->GetGeometry(), material, eye);
-    } catch (std::string error) {
-        __android_log_print(ANDROID_LOG_ERROR, "mgn", "Error detected in Renderer::renderRenderData; error : %s", error.c_str());
+    } catch (String error) {
+        __android_log_print(ANDROID_LOG_ERROR, "mgn", "Error detected in Renderer::renderRenderData; error : %s", error.ToCStr());
     }
 
     // Restoring to Default.

@@ -72,7 +72,7 @@ void SceneObject::DetachRenderData() {
 void SceneObject::AddChildObject(SceneObject* self, SceneObject* child) {
     for (SceneObject* parent = this->parent; parent; parent = parent->parent) {
         if (child == parent) {
-            std::string error =
+            String error =
                     "SceneObject::addChildObject() : cycle of scene objects is not allowed.";
             throw error;
         }
@@ -101,7 +101,7 @@ SceneObject* SceneObject::GetChildByIndex(int index) {
     if (index < children.GetSize()) {
         return children[index];
     } else {
-        std::string error = "SceneObject::getChildByIndex() : Out of index.";
+        String error = "SceneObject::getChildByIndex() : Out of index.";
         throw error;
     }
 }
