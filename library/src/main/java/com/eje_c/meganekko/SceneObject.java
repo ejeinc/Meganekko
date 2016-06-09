@@ -151,7 +151,7 @@ public class SceneObject extends HybridObject {
 
     private static native void addChildObject(long sceneObject, long child);
 
-    private static native void removeChildObject(long sceneObject, long child);
+    private static native void removeChildAt(long sceneObject, int index);
 
     private static native boolean isColliding(long sceneObject, long otherObject);
 
@@ -294,9 +294,28 @@ public class SceneObject extends HybridObject {
      *              object.
      */
     public void removeChildObject(SceneObject child) {
-        mChildren.remove(child);
-        child.mParent = null;
-        removeChildObject(getNative(), child.getNative());
+        final int index = mChildren.indexOf(child);
+        if (index != -1) {
+            removeChildAt(index);
+        }
+    }
+
+    /**
+     * Remove {@code child} with index.
+     *
+     * @param index Child {@link SceneObject object} index to remove.
+     */
+    public void removeChildAt(int index) {
+
+        // Assert index
+        if (index > mChildren.size())
+            throw new IllegalArgumentException("Index " + index + " is larger than children count " + mChildren.size());
+
+        SceneObject removed = mChildren.remove(index);
+        if (removed != null) {
+            removed.mParent = null;
+            removeChildAt(getNative(), index);
+        }
     }
 
     /**

@@ -81,16 +81,8 @@ void SceneObject::AddChildObject(SceneObject* self, SceneObject* child) {
     child->parent = self;
 }
 
-void SceneObject::RemoveChildObject(SceneObject* child) {
-    if (child->parent == this) {
-        for (auto it = children.Begin(); it != children.End(); ++it) {
-            if (child == *it) {
-                it.Remove();
-                child->parent = nullptr;
-                return;
-            }
-        }
-    }
+void SceneObject::RemoveChildAt(int index) {
+    children.RemoveAt(index);
 }
 
 int SceneObject::GetChildrenCount() const {

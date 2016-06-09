@@ -75,7 +75,7 @@ public:
 
     void AddChildObject(SceneObject* self, SceneObject* child);
 
-    void RemoveChildObject(SceneObject* child);
+    void RemoveChildAt(int index);
 
     int GetChildrenCount() const;
 

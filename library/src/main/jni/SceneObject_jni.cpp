@@ -48,10 +48,9 @@ Java_com_eje_1c_meganekko_SceneObject_addChildObject(JNIEnv * env, jobject obj, 
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_removeChildObject(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jchild) {
+Java_com_eje_1c_meganekko_SceneObject_removeChildAt(JNIEnv * env, jobject obj, jlong jsceneObject, jint jindex) {
     SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
-    SceneObject* child = reinterpret_cast<SceneObject*>(jchild);
-    sceneObject->RemoveChildObject(child);
+    sceneObject->RemoveChildAt(jindex);
 }
 
 JNIEXPORT bool JNICALL
