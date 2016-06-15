@@ -3,6 +3,7 @@ package com.eje_c.meganekko;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -264,12 +265,28 @@ public abstract class MeganekkoApp {
         mScene = scene;
     }
 
+    /**
+     * Create {@link Scene} from XML resource and set it to current scene.
+     *
+     * @param xmlRes Scene graph XML resource.
+     */
     public void setSceneFromXML(int xmlRes) {
+        setSceneFromXML(xmlRes, null);
+    }
+
+    /**
+     * Create {@link Scene} from XML resource and set it to current scene.
+     *
+     * @param xmlRes Scene graph XML resource.
+     * @param args   Arguments passed to scene.
+     */
+    public void setSceneFromXML(int xmlRes, @Nullable Bundle args) {
 
         XmlSceneParser parser = XmlSceneParserFactory.getInstance(meganekko.getContext()).getSceneParser();
 
         try {
             Scene scene = parser.parse(meganekko.getContext().getResources().getXml(xmlRes), null);
+            scene.setArguments(args);
             setScene(scene);
         } catch (XmlPullParserException | IOException e) {
             e.printStackTrace();

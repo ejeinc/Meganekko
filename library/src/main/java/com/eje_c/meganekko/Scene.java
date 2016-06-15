@@ -17,6 +17,8 @@
 
 package com.eje_c.meganekko;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -33,6 +35,7 @@ public class Scene extends SceneObject {
     private boolean mInitialized;
     private MeganekkoApp mApp;
     private float simulateTouchAdditionalY;
+    private Bundle mArguments;
 
     private static native void setFrustumCulling(long scene, boolean flag);
 
@@ -73,6 +76,26 @@ public class Scene extends SceneObject {
 
     @Override
     protected native long initNativeInstance();
+
+    /**
+     * Supply the construction arguments for this scene.
+     * This can only be called after {@link MeganekkoApp#setSceneFromXML(int, Bundle)} is called.
+     *
+     * @param args Bundle
+     */
+    public void setArguments(@Nullable Bundle args) {
+        this.mArguments = args;
+    }
+
+    /**
+     * Return the arguments supplied to setArguments(Bundle), if any.
+     *
+     * @return arguments supplied to {@link #setArguments(Bundle)}, or null.
+     */
+    @Nullable
+    public final Bundle getArguments() {
+        return mArguments;
+    }
 
     /**
      * Sets the frustum culling for the {@link Scene}.
