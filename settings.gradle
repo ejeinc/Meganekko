@@ -1,1 +1,2 @@
 include ':sample', ':sample2', ':library'
+include 'sample-exoplayer'
