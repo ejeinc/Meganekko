@@ -1,2 +1,3 @@
 include ':sample', ':sample2', ':library'
 include 'sample-exoplayer'
+include 'sample-quadbinaural'

@@ -1,0 +1,5 @@
+<scene>
+    <object
+        texture="@mipmap/ic_launcher"
+        z="-5"/>
+</scene>
