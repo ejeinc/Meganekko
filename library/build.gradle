@@ -19,7 +19,7 @@ dependencies {
      * Dependencies
      */
     compile 'com.android.support:support-v4:24.0.0'
-    compile 'org.joml:joml:+'
+    compile 'org.joml:joml:1.8.1'
 }
 
 android {
