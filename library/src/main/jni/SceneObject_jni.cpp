@@ -119,10 +119,10 @@ Java_com_eje_1c_meganekko_SceneObject_getRotation(JNIEnv * env, jobject obj, jlo
 
 JNIEXPORT jobject JNICALL
 Java_com_eje_1c_meganekko_SceneObject_setMatrix(JNIEnv * env, jobject obj, jlong jsceneObject,
-        float m11, float m12, float m13, float m14,
-        float m21, float m22, float m23, float m24,
-        float m31, float m32, float m33, float m34,
-        float m41, float m42, float m43, float m44) {
+        jfloat m11, jfloat m12, jfloat m13, jfloat m14,
+        jfloat m21, jfloat m22, jfloat m23, jfloat m24,
+        jfloat m31, jfloat m32, jfloat m33, jfloat m34,
+        jfloat m41, jfloat m42, jfloat m43, jfloat m44) {
 
     SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
     sceneObject->SetMatrixLocal(Matrix4f(
