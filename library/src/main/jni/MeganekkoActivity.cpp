@@ -39,21 +39,19 @@ void MeganekkoActivity::Configure(ovrSettings & settings)
 {
 }
 
-void MeganekkoActivity::OneTimeInit(const char * fromPackage, const char * launchIntentJSON, const char * launchIntentURI)
+void MeganekkoActivity::EnteredVrMode( const ovrIntentType intentType, const char * intentFromPackage, const char * intentJSON, const char * intentURI )
 {
+
     const ovrJava * java = app->GetJava();
     SoundEffectContext = new ovrSoundEffectContext( *java->Env, java->ActivityObject );
     SoundEffectContext->Initialize();
     SoundEffectPlayer = new OvrGuiSys::ovrDummySoundEffectPlayer();
 
-    Locale = ovrLocale::Create( *app, "default" );
+    Locale = ovrLocale::Create( *java->Env, java->ActivityObject, "default" );
 
     String fontName;
     GetLocale().GetString( "@string/font_name", "efigs.fnt", fontName );
     GuiSys->Init( this->app, *SoundEffectPlayer, fontName.ToCStr(), &app->GetDebugLines() );
-
-    jmethodID oneTimeInitMethodId = GetMethodID("oneTimeInit", "()V");
-    app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, oneTimeInitMethodId);
 
     // cache method IDs
     enteredVrModeMethodId = GetMethodID("enteredVrMode", "()V");
@@ -68,28 +66,19 @@ void MeganekkoActivity::OneTimeInit(const char * fromPackage, const char * launc
     onKeyUpMethodId = GetMethodID("onKeyUp", "(II)Z");
     onKeyMaxMethodId = GetMethodID("onKeyMax", "(II)Z");
     getNativeSceneMethodId = GetMethodID("getNativeScene", "()J");
-}
 
-void MeganekkoActivity::OneTimeShutdown()
-{
-    delete SoundEffectPlayer;
-    SoundEffectPlayer = nullptr;
-
-    delete SoundEffectContext;
-    SoundEffectContext = nullptr;
-
-    jmethodID oneTimeShutdownMethodId = GetMethodID("oneTimeShutDown", "()V");
-    app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, oneTimeShutdownMethodId);
-}
-
-void MeganekkoActivity::EnteredVrMode()
-{
     app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, enteredVrModeMethodId);
 }
 
 void MeganekkoActivity::LeavingVrMode()
 {
     app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, leavingVrModeMethodId);
+
+    delete SoundEffectPlayer;
+    SoundEffectPlayer = nullptr;
+
+    delete SoundEffectContext;
+    SoundEffectContext = nullptr;
 }
 
 Matrix4f MeganekkoActivity::DrawEyeView(const int eye, const float fovDegreesX, const float fovDegreesY, ovrFrameParms & frameParms)
@@ -103,17 +92,37 @@ Matrix4f MeganekkoActivity::DrawEyeView(const int eye, const float fovDegreesX, 
     scene->SetProjectionMatrix(eyeProjectionMatrix);
     const Matrix4f eyeViewProjection = scene->Render(eye);
 
-    GuiSys->RenderEyeView(centerViewMatrix, eyeViewMatrix, eyeProjectionMatrix);
+    //GuiSys->RenderEyeView(centerViewMatrix, eyeViewMatrix, eyeProjectionMatrix);
 
     return eyeViewProjection;
 
 }
 
-Matrix4f MeganekkoActivity::Frame( const VrFrame & vrFrame )
+ovrFrameResult MeganekkoActivity::Frame( const ovrFrameInput & vrFrame )
 {
+    // process input events first because this mirrors the behavior when OnKeyEvent was
+    // a virtual function on VrAppInterface and was called by VrAppFramework.
+    for ( int i = 0; i < vrFrame.Input.NumKeyEvents; i++ )
+    {
+        const int keyCode = vrFrame.Input.KeyEvents[i].KeyCode;
+        const int repeatCount = vrFrame.Input.KeyEvents[i].RepeatCount;
+        const KeyEventType eventType = vrFrame.Input.KeyEvents[i].EventType;
+
+        // Key event handling
+        if ( OnKeyEvent( keyCode, repeatCount, eventType ) )
+        {
+            continue;   // consumed the event
+        }
+        // If nothing consumed the key and it's a short-press of the back key, then exit the application to OculusHome.
+        if ( keyCode == OVR_KEY_BACK && eventType == KEY_EVENT_SHORT_PRESS )
+        {
+            app->StartSystemActivity( PUI_CONFIRM_QUIT );
+            continue;
+        }
+    }
+
     Scene * scene = GetScene();
     JNIEnv * jni = app->GetJava()->Env;
-
     jni->CallVoidMethod(app->GetJava()->ActivityObject, frameMethodId, (jlong)(intptr_t)&vrFrame);
 
     const bool headsetIsMounted = vrFrame.DeviceStatus.HeadsetIsMounted;
@@ -137,7 +146,12 @@ Matrix4f MeganekkoActivity::Frame( const VrFrame & vrFrame )
 
     scene->PrepareForRendering();
 
-    return centerViewMatrix;
+    ovrFrameResult res;
+    res.FrameMatrices.CenterView = centerViewMatrix;
+
+    GuiSys->AppendSurfaceList( res.FrameMatrices.CenterView, &res.Surfaces );
+
+    return res;
 }
 
 bool MeganekkoActivity::OnKeyEvent(const int keyCode, const int repeatCount, const KeyEventType eventType)

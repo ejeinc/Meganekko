@@ -35,8 +35,6 @@ public class Mesh extends HybridObject {
 
     private static native void buildTesselatedQuad(long renderData, int horizontal, int vertical, boolean twoSided);
 
-    private static native void buildFadedScreenMask(long renderData, float xFraction, float yFraction);
-
     private static native void buildVignette(long renderData, float xFraction, float yFraction);
 
     private static native void buildTesselatedCylinder(long renderData, float radius, float height, int horizontal, int vertical, float uScale, float vScale);
@@ -186,10 +184,6 @@ public class Mesh extends HybridObject {
 
     public void buildTesselatedQuad(int horizontal, int vertical, boolean twoSided) {
         buildTesselatedQuad(getNative(), horizontal, vertical, twoSided);
-    }
-
-    public void buildFadedScreenMask(float xFraction, float yFraction) {
-        buildFadedScreenMask(getNative(), xFraction, yFraction);
     }
 
     public void buildVignette(float xFraction, float yFraction) {

@@ -111,13 +111,6 @@ Java_com_eje_1c_meganekko_Mesh_buildTesselatedQuad(JNIEnv * env, jobject obj, jl
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Mesh_buildFadedScreenMask(JNIEnv * env, jobject obj, jlong jmesh, jfloat xFraction, jfloat yFraction) {
-    Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
-    mesh->SetGeometry(BuildFadedScreenMask(xFraction, yFraction));
-    mesh->SetBoundingBox(Vector3f(-1.0f, -1.0f, 0.0f), Vector3f(1.0f, 1.0f, 0.0f));
-}
-
-JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_Mesh_buildVignette(JNIEnv * env, jobject obj, jlong jmesh, jfloat xFraction, jfloat yFraction) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     mesh->SetGeometry(BuildVignette(xFraction, yFraction));

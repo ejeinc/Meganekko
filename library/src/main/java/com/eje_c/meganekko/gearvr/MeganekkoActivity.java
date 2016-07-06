@@ -110,18 +110,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
     }
 
     /**
-     * Called from native AppInterface::oneTimeInit().
-     */
-    private void oneTimeInit() {
-
-        meganekkoApp = createMeganekkoApp(this);
-
-        if (!mDocked) {
-            mInternalSensorManager.start();
-        }
-    }
-
-    /**
      * Called from native AppInterface::frame().
      */
     private void frame(long vrFramePtr) {
@@ -137,27 +125,26 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
     }
 
     /**
-     * Called from native AppInterface::oneTimeShutDown().
-     */
-    private void oneTimeShutDown() {
-
-        meganekkoApp.shutdown();
-
-        if (!mDocked) {
-            mInternalSensorManager.stop();
-        }
-    }
-
-    /**
      * Called from native AppInterface::EnteredVrMode().
      */
     protected void enteredVrMode() {
+
+        meganekkoApp = createMeganekkoApp(this);
+
+        if (!mDocked) {
+            mInternalSensorManager.start();
+        }
     }
 
     /**
      * Called from native AppInterface::LeavingVrMode().
      */
     protected void leavingVrMode() {
+        meganekkoApp.shutdown();
+
+        if (!mDocked) {
+            mInternalSensorManager.stop();
+        }
     }
 
     protected void onHmdMounted() {

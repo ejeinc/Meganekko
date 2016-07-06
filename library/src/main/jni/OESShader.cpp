@@ -55,7 +55,7 @@ static const char FRAGMENT_SHADER[] =
 
 OESShader::OESShader() {
     program = BuildProgram(VERTEX_SHADER, FRAGMENT_SHADER);
-    opacity = glGetUniformLocation(program.program, "Opacity");
+    opacity = glGetUniformLocation(program.Program, "Opacity");
 }
 
 OESShader::~OESShader() {
@@ -66,7 +66,7 @@ void OESShader::Render(const Matrix4f & mvpMatrix, const GlGeometry & geometry, 
 
     Vector4f color = material->GetColor();
 
-    GL(glUseProgram(program.program));
+    GL(glUseProgram(program.Program));
 
     GL(glUniformMatrix4fv(program.uMvp, 1, GL_TRUE, mvpMatrix.M[0]));
     GL(glUniformMatrix4fv(program.uTexm, 1, GL_TRUE, TexmForVideo(material->GetStereoMode(), eye).M[ 0 ] ));

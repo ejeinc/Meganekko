@@ -35,12 +35,10 @@ public:
                         ~MeganekkoActivity();
 
     virtual void        Configure( ovrSettings & settings );
-    virtual void        OneTimeInit( const char * fromPackage, const char * launchIntentJSON, const char * launchIntentURI );
-    virtual void        OneTimeShutdown();
-    virtual void        EnteredVrMode();
+    virtual void        EnteredVrMode( const ovrIntentType intentType, const char * intentFromPackage, const char * intentJSON, const char * intentURI );
     virtual void        LeavingVrMode();
     virtual Matrix4f    DrawEyeView( const int eye, const float fovDegreesX, const float fovDegreesY, ovrFrameParms & frameParms );
-    virtual Matrix4f    Frame( const VrFrame & vrFrame );
+    virtual ovrFrameResult Frame( const ovrFrameInput & vrFrame );
     virtual bool        OnKeyEvent( const int keyCode, const int repeatCount, const KeyEventType eventType );
 
     ovrLocale &         GetLocale() { return *Locale; }
