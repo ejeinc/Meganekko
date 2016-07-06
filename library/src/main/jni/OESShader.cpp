@@ -28,24 +28,27 @@
 
 namespace mgn {
 
+static const char * ImageExternalDirectives =
+    "#extension GL_OES_EGL_image_external : enable\n"
+    "#extension GL_OES_EGL_image_external_essl3 : enable\n";
+
 static const char VERTEX_SHADER[] =
-        "attribute vec4 Position;\n"
-        "attribute vec2 TexCoord;\n"
+        "in vec4 Position;\n"
+        "in vec2 TexCoord;\n"
         "uniform highp mat4 Mvpm;\n"
         "uniform highp mat4 Texm;\n"
-        "varying highp vec2 oTexCoord;\n"
+        "out highp vec2 oTexCoord;\n"
         "void main() {\n"
         "  oTexCoord = vec2(Texm * vec4(TexCoord, 0, 1));\n"
         "  gl_Position = Mvpm * Position;\n"
         "}\n";
 
 static const char FRAGMENT_SHADER[] =
-        "#extension GL_OES_EGL_image_external : require\n"
         "precision highp float;\n"
         "uniform samplerExternalOES Texture0;\n"
         "uniform vec4 UniformColor;\n"
         "uniform float Opacity;\n"
-        "varying highp vec2 oTexCoord;\n"
+        "in highp vec2 oTexCoord;\n"
         "void main() {\n"
         "  vec4 texel = texture2D(Texture0, oTexCoord) * UniformColor * Opacity;\n"
         "  if (texel.a < 0.1)\n"
@@ -54,7 +57,7 @@ static const char FRAGMENT_SHADER[] =
         "}\n";
 
 OESShader::OESShader() {
-    program = BuildProgram(VERTEX_SHADER, FRAGMENT_SHADER);
+    program = BuildProgram(NULL, VERTEX_SHADER, ImageExternalDirectives, FRAGMENT_SHADER);
     opacity = glGetUniformLocation(program.Program, "Opacity");
 }
 
