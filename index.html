@@ -12,7 +12,7 @@
   <body>
     <section class="page-header">
       <h1 class="project-name">Meganekko</h1>
-      <h2 class="project-tagline">Meganekko is a VR rendering framework built on Oculus Mobile SDK. Forked from GearVRf. http://www.gearvrf.org/</h2>
+      <h2 class="project-tagline">Meganekko is a VR rendering framework built on Oculus Mobile SDK.</h2>
       <a href="https://github.com/ejeinc/Meganekko" class="btn">View on GitHub</a>
       <a href="https://github.com/ejeinc/Meganekko/zipball/master" class="btn">Download .zip</a>
       <a href="https://github.com/ejeinc/Meganekko/tarball/master" class="btn">Download .tar.gz</a>
@@ -20,46 +20,148 @@
 
     <section class="main-content">
       <h1>
-<a id="meganekko" class="anchor" href="#meganekko" aria-hidden="true"><span class="octicon octicon-link"></span></a>Meganekko</h1>
+<a id="meganekko" class="anchor" href="#meganekko" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Meganekko</h1>
 
-<p>VR rendering framework built on Oculus Mobile SDK. Forked from GearVRf. <a href="http://www.gearvrf.org/">http://www.gearvrf.org/</a></p>
+<p>3D rendering framework for Gear VR built on Oculus Mobile SDK.</p>
 
 <h2>
-<a id="setup" class="anchor" href="#setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setup</h2>
+<a id="how-to-use" class="anchor" href="#how-to-use" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to Use</h2>
 
-<p>I'm working to migrate new Oculus Mobile SDK. These instructions would be changed. </p>
+<p>Make new project with Android Studio.</p>
+
+<h3>
+<a id="add-dependency" class="anchor" href="#add-dependency" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Add dependency</h3>
+
+<p>Add repository URL in project's root <strong>build.gradle</strong>.</p>
+
+<div class="highlight highlight-source-groovy-gradle"><pre><span class="pl-c">// Top-level build file where you can add configuration options common to all sub-projects/modules.</span>
+<span class="pl-en">allprojects</span> {
+    repositories {
+        jcenter()
+        maven { url <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>http://ejeinc.github.io/Meganekko/repository<span class="pl-pds">'</span></span> } <span class="pl-c">// Add this line</span>
+    }
+}</pre></div>
+
+<p>Add dependency in module's <strong>build.gradle</strong>.</p>
+
+<div class="highlight highlight-source-groovy-gradle"><pre><span class="pl-en">dependencies</span> {
+    compile fileTree(<span class="pl-c1">dir</span>: <span class="pl-s"><span class="pl-pds">'</span>libs<span class="pl-pds">'</span></span>, <span class="pl-c1">include</span>: [<span class="pl-s"><span class="pl-pds">'</span>*.jar<span class="pl-pds">'</span></span>])
+    compile <span class="pl-s"><span class="pl-pds">'</span>com.eje_c:meganekko:2.1.2<span class="pl-pds">'</span></span> <span class="pl-c">// Add this line</span>
+}</pre></div>
+
+<p>Click "Sync Now".</p>
+
+<h3>
+<a id="hello-world" class="anchor" href="#hello-world" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Hello World</h3>
+
+<h4>
+<a id="creating-vr-scene" class="anchor" href="#creating-vr-scene" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creating VR scene</h4>
+
+<p>Create VR scene with XML. XML file is localed at<em>res/xml/scene.xml</em>. File name is arbitrary.</p>
+
+<div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">scene</span>&gt;
+    &lt;<span class="pl-ent">object</span>
+        <span class="pl-e">layout</span>=<span class="pl-s"><span class="pl-pds">"</span>@layout/hello_world<span class="pl-pds">"</span></span>
+        <span class="pl-e">z</span>=<span class="pl-s"><span class="pl-pds">"</span>-5.0<span class="pl-pds">"</span></span> /&gt;
+&lt;/<span class="pl-ent">scene</span>&gt;</pre></div>
+
+<p><code>@layout/hello_world</code> is normal layout file.</p>
+
+<div class="highlight highlight-text-xml"><pre>&lt;?<span class="pl-ent">xml</span><span class="pl-e"> version</span>=<span class="pl-s"><span class="pl-pds">"</span>1.0<span class="pl-pds">"</span></span><span class="pl-e"> encoding</span>=<span class="pl-s"><span class="pl-pds">"</span>utf-8<span class="pl-pds">"</span></span>?&gt;
+&lt;<span class="pl-ent">FrameLayout</span> <span class="pl-e">xmlns</span><span class="pl-e">:</span><span class="pl-e">android</span>=<span class="pl-s"><span class="pl-pds">"</span>http://schemas.android.com/apk/res/android<span class="pl-pds">"</span></span>
+    <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">layout_width</span>=<span class="pl-s"><span class="pl-pds">"</span>match_parent<span class="pl-pds">"</span></span>
+    <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">layout_height</span>=<span class="pl-s"><span class="pl-pds">"</span>match_parent<span class="pl-pds">"</span></span>&gt;
+
+    &lt;<span class="pl-ent">TextView</span>
+        <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">layout_width</span>=<span class="pl-s"><span class="pl-pds">"</span>wrap_content<span class="pl-pds">"</span></span>
+        <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">layout_height</span>=<span class="pl-s"><span class="pl-pds">"</span>wrap_content<span class="pl-pds">"</span></span>
+        <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">text</span>=<span class="pl-s"><span class="pl-pds">"</span>Hello World!<span class="pl-pds">"</span></span>
+        <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">textColor</span>=<span class="pl-s"><span class="pl-pds">"</span>#fff<span class="pl-pds">"</span></span> /&gt;
+&lt;/<span class="pl-ent">FrameLayout</span>&gt;</pre></div>
+
+<h4>
+<a id="render-scene" class="anchor" href="#render-scene" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Render scene</h4>
+
+<p>Meganekko app is started from subclass of <code>MeganekkoApp</code> sucha as <code>MyApp</code>. Call <code>setSceneFromXML</code> in <code>MyApp</code> constructor.</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">import</span> <span class="pl-smi">com.eje_c.meganekko.Meganekko</span>;
+<span class="pl-k">import</span> <span class="pl-smi">com.eje_c.meganekko.MeganekkoApp</span>;
+
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">MyApp</span> <span class="pl-k">extends</span> <span class="pl-e">MeganekkoApp</span> {
+    <span class="pl-k">public</span> <span class="pl-en">MyApp</span>(<span class="pl-smi">Meganekko</span> <span class="pl-v">meganekko</span>) {
+        <span class="pl-v">super</span>(meganekko);
+        setSceneFromXML(<span class="pl-smi">R</span><span class="pl-k">.</span>xml<span class="pl-k">.</span>scene);
+    }
+}</pre></div>
+
+<p>Finally, create <code>MainActivity</code> extends <code>MeganekkoActivity</code> and implement abstract <code>createMeganekkoApp</code> method.</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">import</span> <span class="pl-smi">com.eje_c.meganekko.Meganekko</span>;
+<span class="pl-k">import</span> <span class="pl-smi">com.eje_c.meganekko.MeganekkoApp</span>;
+<span class="pl-k">import</span> <span class="pl-smi">com.eje_c.meganekko.gearvr.MeganekkoActivity</span>;
+
+<span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">MainActivity</span> <span class="pl-k">extends</span> <span class="pl-e">MeganekkoActivity</span> {
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-smi">MeganekkoApp</span> <span class="pl-en">createMeganekkoApp</span>(<span class="pl-smi">Meganekko</span> <span class="pl-v">meganekko</span>) {
+        <span class="pl-k">return</span> <span class="pl-k">new</span> <span class="pl-smi">MyApp</span>(meganekko);
+    }
+}</pre></div>
+
+<p>You have to modify AndroidManifest.</p>
+
+<p>Add <code>android.permission.ACCESS_NETWORK_STATE</code> permission.</p>
+
+<div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">uses-permission</span> <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>android.permission.ACCESS_NETWORK_STATE<span class="pl-pds">"</span></span> /&gt;</pre></div>
+
+<p>And other recommended attributes and elements. See <a href="https://developer.oculus.com/documentation/mobilesdk/latest/concepts/mobile-new-apps-intro/#mobile-native-manifest">Oculus developer document</a>.</p>
+
+<div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">application</span>
+    <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">icon</span>=<span class="pl-s"><span class="pl-pds">"</span>@mipmap/ic_launcher<span class="pl-pds">"</span></span>
+    <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">label</span>=<span class="pl-s"><span class="pl-pds">"</span>@string/app_name<span class="pl-pds">"</span></span>&gt;
+
+    &lt;<span class="pl-ent">meta-data</span>
+        <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>com.samsung.android.vr.application.mode<span class="pl-pds">"</span></span>
+        <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">value</span>=<span class="pl-s"><span class="pl-pds">"</span>vr_only<span class="pl-pds">"</span></span> /&gt;
+
+    &lt;<span class="pl-ent">activity</span>
+        <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>.MainActivity<span class="pl-pds">"</span></span>
+        <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">configChanges</span>=<span class="pl-s"><span class="pl-pds">"</span>orientation|screenSize|keyboard|keyboardHidden<span class="pl-pds">"</span></span>
+        <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">excludeFromRecents</span>=<span class="pl-s"><span class="pl-pds">"</span>true<span class="pl-pds">"</span></span>
+        <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">label</span>=<span class="pl-s"><span class="pl-pds">"</span>@string/app_name<span class="pl-pds">"</span></span>
+        <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">launchMode</span>=<span class="pl-s"><span class="pl-pds">"</span>singleTask<span class="pl-pds">"</span></span>
+        <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">screenOrientation</span>=<span class="pl-s"><span class="pl-pds">"</span>landscape<span class="pl-pds">"</span></span>&gt;
+
+        <span class="pl-c">&lt;!-- Only in debugging. Remove this when upload to Oculus Store. --&gt;</span>
+        &lt;<span class="pl-ent">intent-filter</span>&gt;
+            &lt;<span class="pl-ent">action</span> <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>android.intent.action.MAIN<span class="pl-pds">"</span></span> /&gt;
+            &lt;<span class="pl-ent">category</span> <span class="pl-e">android</span><span class="pl-e">:</span><span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>android.intent.category.LAUNCHER<span class="pl-pds">"</span></span> /&gt;
+        &lt;/<span class="pl-ent">intent-filter</span>&gt;
+
+    &lt;/<span class="pl-ent">activity</span>&gt;
+&lt;/<span class="pl-ent">application</span>&gt;</pre></div>
+
+<p>osig file is required to launch Meganekko app in Gear VR. See <a href="https://developer.oculus.com/osig/">Oculus developer document</a> for more information.</p>
+
+<p>Put your osig file in <code>app/src/main/assets</code>.</p>
+
+<p>That's all! Build, Connect Galaxy device to PC, install APK, and launch app. You will see white text "Hello World!".</p>
+
+<h2>
+<a id="build-meganekko" class="anchor" href="#build-meganekko" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Build Meganekko</h2>
+
+<p>If you wish customize Meganekko, follow these steps:</p>
 
 <ol>
-<li>Download Oculus Mobile SDK 0.6.1.0</li>
-<li>Extract Oculus Mobile SDK 0.6.1.0</li>
-<li>Set environment variable <code>OVR_MOBILE_SDK</code> to point extracted Oculus Mobile SDK directory</li>
-<li>Import these projects to Eclipse workspace (<em>Do not</em> check to Copy projects into workspace)
-
-<ul>
-<li>VrApi_Prebuilt</li>
-<li>VrAppFramework_Prebuilt</li>
-<li>VrGUI</li>
-<li>VrLocale</li>
-<li>VrModel</li>
-<li>VrSound</li>
-</ul>
-</li>
-<li>Import Meganekko project to Eclipse workspace</li>
-<li>Right click Meganekko project and select Properties</li>
-<li>Navigate to Android section.</li>
-<li>In Library section, select cross icon of list and click remove.</li>
-<li>Click Add</li>
-<li>Select each project and click OK
-
-<ul>
-<li>VrAppFramework_Prebuilt</li>
-<li>VrGUI</li>
-<li>VrLocale</li>
-<li>VrSound</li>
-</ul>
-</li>
-<li>Build All</li>
+<li>Download <a href="https://developer.oculus.com/downloads/">Oculus Mobile SDK 1.0.0.1</a>.</li>
+<li>Extract Oculus Mobile SDK.</li>
+<li>Create environment variable <code>OVR_SDK_MOBILE</code> and point it to Oculus Mobile SDK directory.</li>
+<li>Launch Android Studio.</li>
+<li>Open Meganekko repository's root directory.</li>
 </ol>
+
+<p>Put your osig file in <strong>sample/src/main/assets</strong> and build sample module.</p>
+
+<p>Pull request is welcome!</p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/ejeinc/Meganekko">Meganekko</a> is maintained by <a href="https://github.com/ejeinc">ejeinc</a>.</span>
@@ -69,6 +171,16 @@
 
     </section>
 
-  
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-70783019-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
   </body>
 </html>
