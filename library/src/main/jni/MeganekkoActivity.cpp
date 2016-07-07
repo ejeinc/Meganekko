@@ -32,6 +32,9 @@ MeganekkoActivity::MeganekkoActivity() :
 
 MeganekkoActivity::~MeganekkoActivity()
 {
+    // Call MeganekkoActivity.oneTimeShutDown()
+    app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, GetMethodID("oneTimeShutDown", "()V"));
+
     OvrGuiSys::Destroy( GuiSys );
 }
 
@@ -69,13 +72,18 @@ void MeganekkoActivity::EnteredVrMode( const ovrIntentType intentType, const cha
         onKeyUpMethodId         = GetMethodID("onKeyUp", "(II)Z");
         onKeyMaxMethodId        = GetMethodID("onKeyMax", "(II)Z");
         getNativeSceneMethodId  = GetMethodID("getNativeScene", "()J");
+
+        // Call MeganekkoActivity.oneTimeInit()
+        app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, GetMethodID("oneTimeInit", "()V"));
     }
 
+    // Call MeganekkoActivity.enteredVrMode()
     app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, enteredVrModeMethodId);
 }
 
 void MeganekkoActivity::LeavingVrMode()
 {
+    // Call MeganekkoActivity.leavingVrMode()
     app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, leavingVrModeMethodId);
 
     delete SoundEffectPlayer;

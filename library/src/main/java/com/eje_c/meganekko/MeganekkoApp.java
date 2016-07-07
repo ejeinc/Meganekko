@@ -36,6 +36,19 @@ public abstract class MeganekkoApp {
         this.meganekko = meganekko;
     }
 
+    /*
+     * Life cycle methods
+     */
+
+    public void init() {
+    }
+
+    /**
+     * This will be called right after entering VR mode.
+     */
+    public void enteredVrMode() {
+    }
+
     /**
      * Will be called on frame update. Any animations or input handlings will be implemented in it.
      * You can override this method but you must call {@code super.update(meganekko, frame)} to work properly.
@@ -60,7 +73,13 @@ public abstract class MeganekkoApp {
     }
 
     /**
-     * Will be called when user leaves from app.
+     * This will be called right before leaving VR mode.
+     */
+    public void leavingVrMode() {
+    }
+
+    /**
+     * This will be called when user exits from app.
      */
     public void shutdown() {
     }
