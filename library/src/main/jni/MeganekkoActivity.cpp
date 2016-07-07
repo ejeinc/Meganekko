@@ -42,30 +42,34 @@ void MeganekkoActivity::Configure(ovrSettings & settings)
 void MeganekkoActivity::EnteredVrMode( const ovrIntentType intentType, const char * intentFromPackage, const char * intentJSON, const char * intentURI )
 {
 
-    const ovrJava * java = app->GetJava();
-    SoundEffectContext = new ovrSoundEffectContext( *java->Env, java->ActivityObject );
-    SoundEffectContext->Initialize();
-    SoundEffectPlayer = new OvrGuiSys::ovrDummySoundEffectPlayer();
+    // Init operation at first time
+    if (intentType == INTENT_LAUNCH) {
 
-    Locale = ovrLocale::Create( *java->Env, java->ActivityObject, "default" );
+        const ovrJava * java = app->GetJava();
+        SoundEffectContext = new ovrSoundEffectContext( *java->Env, java->ActivityObject );
+        SoundEffectContext->Initialize();
+        SoundEffectPlayer = new OvrGuiSys::ovrDummySoundEffectPlayer();
 
-    String fontName;
-    GetLocale().GetString( "@string/font_name", "efigs.fnt", fontName );
-    GuiSys->Init( this->app, *SoundEffectPlayer, fontName.ToCStr(), &app->GetDebugLines() );
+        Locale = ovrLocale::Create( *java->Env, java->ActivityObject, "default" );
 
-    // cache method IDs
-    enteredVrModeMethodId = GetMethodID("enteredVrMode", "()V");
-    leavingVrModeMethodId = GetMethodID("leavingVrMode", "()V");
-    onHmdMountedMethodId = GetMethodID("onHmdMounted", "()V");
-    onHmdUnmountedMethodId = GetMethodID("onHmdUnmounted", "()V");
-    frameMethodId = GetMethodID("frame", "(J)V");
-    onKeyShortPressMethodId = GetMethodID("onKeyShortPress", "(II)Z");
-    onKeyDoubleTapMethodId = GetMethodID("onKeyDoubleTap", "(II)Z");
-    onKeyLongPressMethodId = GetMethodID("onKeyLongPress", "(II)Z");
-    onKeyDownMethodId = GetMethodID("onKeyDown", "(II)Z");
-    onKeyUpMethodId = GetMethodID("onKeyUp", "(II)Z");
-    onKeyMaxMethodId = GetMethodID("onKeyMax", "(II)Z");
-    getNativeSceneMethodId = GetMethodID("getNativeScene", "()J");
+        String fontName;
+        GetLocale().GetString( "@string/font_name", "efigs.fnt", fontName );
+        GuiSys->Init( this->app, *SoundEffectPlayer, fontName.ToCStr(), &app->GetDebugLines() );
+
+        // cache method IDs
+        enteredVrModeMethodId   = GetMethodID("enteredVrMode", "()V");
+        leavingVrModeMethodId   = GetMethodID("leavingVrMode", "()V");
+        onHmdMountedMethodId    = GetMethodID("onHmdMounted", "()V");
+        onHmdUnmountedMethodId  = GetMethodID("onHmdUnmounted", "()V");
+        frameMethodId           = GetMethodID("frame", "(J)V");
+        onKeyShortPressMethodId = GetMethodID("onKeyShortPress", "(II)Z");
+        onKeyDoubleTapMethodId  = GetMethodID("onKeyDoubleTap", "(II)Z");
+        onKeyLongPressMethodId  = GetMethodID("onKeyLongPress", "(II)Z");
+        onKeyDownMethodId       = GetMethodID("onKeyDown", "(II)Z");
+        onKeyUpMethodId         = GetMethodID("onKeyUp", "(II)Z");
+        onKeyMaxMethodId        = GetMethodID("onKeyMax", "(II)Z");
+        getNativeSceneMethodId  = GetMethodID("getNativeScene", "()J");
+    }
 
     app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, enteredVrModeMethodId);
 }
