@@ -112,7 +112,6 @@ private:
     Scene& operator=(Scene&& scene);
 
 private:
-    OESShader* oesShader;
 
     Vector3f viewPosition;
     Matrix4f centerViewM;

@@ -35,21 +35,8 @@ public:
         Background = 1000, Geometry = 2000, Transparent = 3000, Overlay = 4000
     };
 
-    RenderData() : Component(),
-        material(nullptr),
-        mesh(nullptr),
-        visible(true),
-        renderingOrder(DEFAULT_RENDERING_ORDER),
-        offset(false),
-        offsetFactor(0.0f),
-        offsetUnits(0.0f),
-        depthTest(true),
-        alphaBlend(true),
-        drawMode(GL_TRIANGLES) {
-    }
-
-    ~RenderData() {
-    }
+    RenderData();
+    ~RenderData();
 
     Mesh* GetMesh() const {
         return mesh;
@@ -147,6 +134,8 @@ public:
         this->drawMode = draw_mode;
     }
 
+    void Render(const Matrix4f & mvpMatrix, const GlGeometry & geometry, const Material * material, const int eye);
+
 private:
     RenderData(const RenderData& renderData);
     RenderData(RenderData&& renderData);
@@ -166,6 +155,32 @@ private:
     bool alphaBlend;
     GLenum drawMode;
     float cameraDistance;
+    GlProgram program;
+    GLuint opacity;
+
+    Matrix4f normalM = Matrix4f::Identity();
+    Matrix4f topM = Matrix4f(
+            1, 0, 0, 0,
+            0, 0.5f, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1 );
+    Matrix4f bottomM = Matrix4f(
+            1, 0, 0, 0,
+            0, 0.5f, 0, 0.5f,
+            0, 0, 1, 0,
+            0, 0, 0, 1 );
+    Matrix4f leftM = Matrix4f(
+            0.5f, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1 );
+    Matrix4f rightM = Matrix4f(
+            0.5f, 0, 0, 0.5f,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1 );
+
+    const Matrix4f & TexmForVideo(const Material::StereoMode stereoMode, const int eye) const;
 };
 
 inline bool compareRenderData(RenderData* i, RenderData* j) {

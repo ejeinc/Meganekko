@@ -1,6 +1,5 @@
 /*
- * Copyright 2015 eje inc.
- * Copyright 2015 Samsung Electronics Co., LTD
+ * Copyright 2016 eje inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +16,6 @@
 
 #include "includes.h"
 
-/***************************************************************************
- * Renders a GL_TEXTURE_EXTERNAL_OES texture.
- ***************************************************************************/
-
-#include "OESShader.h"
-#include "Material.h"
-#include "mesh.h"
 #include "RenderData.h"
 
 namespace mgn {
@@ -56,16 +48,26 @@ static const char FRAGMENT_SHADER[] =
         "  gl_FragColor = texel;\n"
         "}\n";
 
-OESShader::OESShader() {
+RenderData::RenderData() : Component(),
+                            material(nullptr),
+                            mesh(nullptr),
+                            visible(true),
+                            renderingOrder(DEFAULT_RENDERING_ORDER),
+                            offset(false),
+                            offsetFactor(0.0f),
+                            offsetUnits(0.0f),
+                            depthTest(true),
+                            alphaBlend(true),
+                            drawMode(GL_TRIANGLES) {
     program = GlProgram::Build(NULL, VERTEX_SHADER, ImageExternalDirectives, FRAGMENT_SHADER, NULL, 0);
     opacity = glGetUniformLocation(program.Program, "Opacity");
 }
 
-OESShader::~OESShader() {
+RenderData::~RenderData() {
     DeleteProgram(program);
 }
 
-void OESShader::Render(const Matrix4f & mvpMatrix, const GlGeometry & geometry, const Material * material, const int eye) const {
+void RenderData::Render(const Matrix4f & mvpMatrix, const GlGeometry & geometry, const Material * material, const int eye) {
 
     Vector4f color = material->GetColor();
 
@@ -83,7 +85,7 @@ void OESShader::Render(const Matrix4f & mvpMatrix, const GlGeometry & geometry, 
     GL(glBindTexture( GL_TEXTURE_EXTERNAL_OES, 0 ));
 }
 
-const Matrix4f & OESShader::TexmForVideo(const Material::StereoMode stereoMode, const int eye ) const
+inline const Matrix4f & RenderData::TexmForVideo(const Material::StereoMode stereoMode, const int eye ) const
 {
     switch (stereoMode) {
         case Material::StereoMode::TOP_BOTTOM:

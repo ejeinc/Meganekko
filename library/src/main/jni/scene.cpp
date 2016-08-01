@@ -27,11 +27,9 @@ namespace mgn {
     Scene::Scene() : SceneObject(),
         frustumFlag(false),
         occlusionFlag(false) {
-    oesShader = new OESShader();
 }
 
 Scene::~Scene() {
-    delete oesShader;
 }
 
 Array<SceneObject*> Scene::GetWholeSceneObjects() {
@@ -52,7 +50,7 @@ void Scene::PrepareForRendering() {
 
 Matrix4f Scene::Render(const int eye) {
     const Matrix4f viewProjectionM = projectionM * viewM;
-    Renderer::RenderEyeView(this, sceneObjects, oesShader, viewM, projectionM, viewProjectionM, eye);
+    Renderer::RenderEyeView(this, sceneObjects, viewM, projectionM, viewProjectionM, eye);
     return viewProjectionM;
 }
 

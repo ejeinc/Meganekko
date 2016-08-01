@@ -28,7 +28,7 @@ using namespace OVR;
 
 namespace mgn {
 
-void Renderer::RenderEyeView(const Scene* scene, const Array<SceneObject*> & scene_objects, const OESShader* oesShader,
+void Renderer::RenderEyeView(const Scene* scene, const Array<SceneObject*> & scene_objects,
         const Matrix4f &eyeViewMatrix, const Matrix4f &eyeProjectionMatrix, const Matrix4f &eyeViewProjection, const int eye) {
     // there is no need to flat and sort every frame.
     // however let's keep it as is and assume we are not changed
@@ -43,7 +43,7 @@ void Renderer::RenderEyeView(const Scene* scene, const Array<SceneObject*> & sce
 
     // do frustum culling, if enabled
     FrustumCull(scene, eyeViewMatrix.GetTranslation(), scene_objects, render_data_vector,
-            eyeViewProjection, oesShader);
+            eyeViewProjection);
 
     // do sorting based on render order
     if (!scene->GetFrustumCulling()) {
@@ -68,7 +68,7 @@ void Renderer::RenderEyeView(const Scene* scene, const Array<SceneObject*> & sce
 
     for (auto it = render_data_vector.Begin();
             it != render_data_vector.End(); ++it) {
-        RenderRenderData(*it, eyeViewMatrix, eyeProjectionMatrix, oesShader, eye);
+        RenderRenderData(*it, eyeViewMatrix, eyeProjectionMatrix, eye);
     }
 
 }
@@ -111,8 +111,7 @@ void Renderer::OcclusionCull(const Scene * scene, const Array<SceneObject*> & sc
 
 void Renderer::FrustumCull(const Scene * scene, const Vector3f& camera_position,
         const Array<SceneObject*> & scene_objects,
-        Array<RenderData*> & render_data_vector, const Matrix4f &vp_matrix,
-        const OESShader * oesShader) {
+        Array<RenderData*> & render_data_vector, const Matrix4f &vp_matrix) {
     for (auto it = scene_objects.Begin(); it != scene_objects.End(); ++it) {
         SceneObject *scene_object = (*it);
         RenderData* render_data = scene_object->GetRenderData();
@@ -321,8 +320,7 @@ bool Renderer::IsCubeInFrustum(float frustum[6][4], const BoundingBoxInfo & vert
 }
 
 void Renderer::RenderRenderData(RenderData* renderData,
-        const Matrix4f& view_matrix, const Matrix4f& projection_matrix,
-        const OESShader * oesShader, const int eye) {
+        const Matrix4f& view_matrix, const Matrix4f& projection_matrix, const int eye) {
 
     if (!renderData->IsVisible()) return;
 
@@ -351,7 +349,7 @@ void Renderer::RenderRenderData(RenderData* renderData,
     Matrix4f mv_matrix(view_matrix * model_matrix);
     Matrix4f mvp_matrix = projection_matrix * mv_matrix;
     try {
-        oesShader->Render(mvp_matrix, mesh->GetGeometry(), material, eye);
+        renderData->Render(mvp_matrix, mesh->GetGeometry(), material, eye);
     } catch (String error) {
         __android_log_print(ANDROID_LOG_ERROR, "mgn", "Error detected in Renderer::renderRenderData; error : %s", error.ToCStr());
     }

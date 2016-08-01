@@ -21,7 +21,6 @@
 #define ACTIVITY_JNI_H
 
 #include "Scene.h"
-#include "OESShader.h"
 
 using namespace OVR;
 
