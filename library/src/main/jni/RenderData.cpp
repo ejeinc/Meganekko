@@ -59,26 +59,36 @@ RenderData::RenderData() : Component(),
                             depthTest(true),
                             alphaBlend(true),
                             drawMode(GL_TRIANGLES) {
-    program = GlProgram::Build(NULL, VERTEX_SHADER, ImageExternalDirectives, FRAGMENT_SHADER, NULL, 0);
-    opacity = glGetUniformLocation(program.Program, "Opacity");
+
+    ovrProgramParm parms[] = {
+        {"Mvpm",         ovrProgramParmType::FLOAT_MATRIX4},
+        {"UniformColor", ovrProgramParmType::FLOAT_VECTOR4},
+        {"Texture0",     ovrProgramParmType::TEXTURE_SAMPLED},
+        {"Opacity",      ovrProgramParmType::FLOAT},
+        {"Texm",         ovrProgramParmType::FLOAT_MATRIX4}
+    };
+    program = GlProgram::Build(NULL, VERTEX_SHADER, ImageExternalDirectives, FRAGMENT_SHADER,
+                               parms, sizeof(parms) / sizeof(ovrProgramParm));
 }
 
 RenderData::~RenderData() {
     DeleteProgram(program);
 }
 
-void RenderData::Render(const Matrix4f & mvpMatrix, const GlGeometry & geometry, const Material * material, const int eye) {
+void RenderData::Render(const Matrix4f & modelM, const Matrix4f & viewM, const Matrix4f & projectionM,
+                        const GlGeometry & geometry, const Material * material, const int eye) {
 
     Vector4f color = material->GetColor();
 
     GL(glUseProgram(program.Program));
 
-    GL(glUniformMatrix4fv(program.uMvp, 1, GL_TRUE, mvpMatrix.M[0]));
-    GL(glUniformMatrix4fv(program.uTexm, 1, GL_TRUE, TexmForVideo(material->GetStereoMode(), eye).M[ 0 ] ));
+    Matrix4f mvpMatrix = projectionM * viewM * modelM;
+    GL(glUniformMatrix4fv(program.Uniforms[0].Location, 1, GL_TRUE, mvpMatrix.M[0]));
+    GL(glUniformMatrix4fv(program.Uniforms[4].Location, 1, GL_TRUE, TexmForVideo(material->GetStereoMode(), eye).M[ 0 ] ));
     GL(glActiveTexture (GL_TEXTURE0));
     GL(glBindTexture(GL_TEXTURE_EXTERNAL_OES, material->GetTextureId()));
-    GL(glUniform4f(program.uColor, color.x, color.y, color.z, color.w));
-    GL(glUniform1f(opacity, material->GetOpacity()));
+    GL(glUniform4f(program.Uniforms[1].Location, color.x, color.y, color.z, color.w));
+    GL(glUniform1f(program.Uniforms[3].Location, material->GetOpacity()));
 
     geometry.Draw();
 

@@ -346,10 +346,8 @@ void Renderer::RenderRenderData(RenderData* renderData,
     SetFaceCulling(material->GetSide());
 
     Matrix4f model_matrix = renderData->GetOwnerObject()->GetMatrixWorld();
-    Matrix4f mv_matrix(view_matrix * model_matrix);
-    Matrix4f mvp_matrix = projection_matrix * mv_matrix;
     try {
-        renderData->Render(mvp_matrix, mesh->GetGeometry(), material, eye);
+        renderData->Render(model_matrix, view_matrix, projection_matrix, mesh->GetGeometry(), material, eye);
     } catch (String error) {
         __android_log_print(ANDROID_LOG_ERROR, "mgn", "Error detected in Renderer::renderRenderData; error : %s", error.ToCStr());
     }
