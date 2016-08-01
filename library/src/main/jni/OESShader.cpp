@@ -57,7 +57,7 @@ static const char FRAGMENT_SHADER[] =
         "}\n";
 
 OESShader::OESShader() {
-    program = BuildProgram(NULL, VERTEX_SHADER, ImageExternalDirectives, FRAGMENT_SHADER);
+    program = GlProgram::Build(NULL, VERTEX_SHADER, ImageExternalDirectives, FRAGMENT_SHADER, NULL, 0);
     opacity = glGetUniformLocation(program.Program, "Opacity");
 }
 
