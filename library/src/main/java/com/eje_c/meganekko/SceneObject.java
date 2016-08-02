@@ -478,11 +478,7 @@ public class SceneObject extends HybridObject {
     private void updateOpacity() {
         RenderData renderData = getRenderData();
         if (renderData != null) {
-            Material material = renderData.getMaterial();
-            if (material != null) {
-                float opacity = getInternalOpacity();
-                material.setOpacity(opacity);
-            }
+            renderData.setOpacity(getInternalOpacity());
         }
 
         for (SceneObject child : mChildren) {

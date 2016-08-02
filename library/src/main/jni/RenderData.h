@@ -138,6 +138,14 @@ public:
 
     void Render(const Matrix4f & modelM, const Matrix4f & viewM, const Matrix4f & projectionM, const int eye);
 
+    void SetOpacity(float opacity) {
+        this->opacity = opacity;
+    }
+
+    float GetOpacity() {
+        return opacity;
+    }
+
 private:
     RenderData(const RenderData& renderData);
     RenderData(RenderData&& renderData);
@@ -159,6 +167,7 @@ private:
     float cameraDistance;
     GlProgram program;
     ovrSurfaceDef surfaceDef;
+    float opacity;
 
     Matrix4f normalM = Matrix4f::Identity();
     Matrix4f topM = Matrix4f(

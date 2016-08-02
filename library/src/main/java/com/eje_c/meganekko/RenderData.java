@@ -75,6 +75,10 @@ public class RenderData extends Component {
 
     private static native void setDrawMode(long renderData, int draw_mode);
 
+    private static native float getOpacity(long renderData);
+
+    private static native void setOpacity(long renderData, float opacity);
+
     @Override
     protected native long initNativeInstance();
 
@@ -266,6 +270,14 @@ public class RenderData extends Component {
      */
     public int getDrawMode() {
         return getDrawMode(getNative());
+    }
+
+    public void setOpacity(float opacity) {
+        setOpacity(getNative(), opacity);
+    }
+
+    public float getOpacity() {
+        return getOpacity(getNative());
     }
 
     /**

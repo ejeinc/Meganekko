@@ -137,6 +137,18 @@ Java_com_eje_1c_meganekko_RenderData_getDrawMode(JNIEnv * env, jobject obj, jlon
     return render_data->GetDrawMode();
 }
 
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_RenderData_setOpacity(JNIEnv * env, jobject obj, jlong jrenderData, jfloat opacity) {
+    RenderData* renderData = reinterpret_cast<RenderData*>(jrenderData);
+    renderData->SetOpacity(opacity);
+}
+
+JNIEXPORT jint JNICALL
+Java_com_eje_1c_meganekko_RenderData_getOpacity(JNIEnv * env, jobject obj, jlong jrenderData) {
+    RenderData* renderData = reinterpret_cast<RenderData*>(jrenderData);
+    return renderData->GetOpacity();
+}
+
 #ifdef __cplusplus 
 } // extern C
 #endif

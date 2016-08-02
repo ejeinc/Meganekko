@@ -40,18 +40,6 @@ Java_com_eje_1c_meganekko_Material_getColor(JNIEnv * env, jobject obj, jlong jma
     FillElementsUnSafe(env, values, color);
 }
 
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Material_setOpacity(JNIEnv * env, jobject obj, jlong jmaterial, jfloat opacity) {
-    Material* material = reinterpret_cast<Material*>(jmaterial);
-    material->SetOpacity(opacity);
-}
-
-JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_Material_getOpacity(JNIEnv * env, jobject obj, jlong jmaterial) {
-    Material* material = reinterpret_cast<Material*>(jmaterial);
-    return material->GetOpacity();
-}
-
 JNIEXPORT jobject JNICALL
 Java_com_eje_1c_meganekko_Material_getSurfaceTexture(JNIEnv * env, jobject obj, jlong jmaterial) {
     Material* material = reinterpret_cast<Material*>(jmaterial);

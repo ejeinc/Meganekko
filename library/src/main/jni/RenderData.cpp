@@ -60,6 +60,7 @@ RenderData::RenderData() : Component(),
                             offsetUnits(0.0f),
                             depthTest(true),
                             alphaBlend(true),
+                            opacity(1.0f),
                             drawMode(GL_TRIANGLES) {
 
     ovrProgramParm parms[] = {
@@ -97,7 +98,7 @@ void RenderData::Render(const Matrix4f & modelM, const Matrix4f & viewM, const M
     GL(glActiveTexture (GL_TEXTURE0));
     GL(glBindTexture(GL_TEXTURE_EXTERNAL_OES, material->GetTextureId()));
     GL(glUniform4f(program.Uniforms[0].Location, color.x, color.y, color.z, color.w));
-    GL(glUniform1f(program.Uniforms[2].Location, material->GetOpacity()));
+    GL(glUniform1f(program.Uniforms[2].Location, opacity));
 
     surfaceDef.geo.Draw();
 

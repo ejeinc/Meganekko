@@ -84,10 +84,6 @@ public class Material extends HybridObject {
 
     private static native void getColor(long material, float[] val);
 
-    private static native void setOpacity(long material, float opacity);
-
-    private static native float getOpacity(long material);
-
     private static native void setStereoMode(long material, int stereoMode);
 
     private static native void setSide(long material, int side);
@@ -132,24 +128,6 @@ public class Material extends HybridObject {
      */
     public void setColor(float r, float g, float b, float a) {
         setColor(getNative(), r, g, b, a);
-    }
-
-    /**
-     * Get the opacity.
-     *
-     * @return The {@code opacity} uniform used to render this material
-     */
-    public float getOpacity() {
-        return getOpacity(getNative());
-    }
-
-    /**
-     * Set the opacity, in a complicated way.
-     *
-     * @param opacity Value between {@code 0.0f} and {@code 1.0f}, inclusive.
-     */
-    public void setOpacity(float opacity) {
-        setOpacity(getNative(), opacity);
     }
 
     /**

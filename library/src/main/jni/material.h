@@ -47,7 +47,6 @@ public:
         side = FrontSide;
         surfaceTexture = new SurfaceTexture(jni);
         color = Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
-        opacity = 1.0f;
     }
 
     ~Material() {
@@ -83,18 +82,6 @@ public:
         this->color = color;
     }
 
-    float GetOpacity() const {
-        return opacity;
-    }
-
-    float GetOpacity() {
-        return opacity;
-    }
-
-    void SetOpacity(const float opacity) {
-        this->opacity = opacity;
-    }
-    
     int GetSide() const {
         return side;
     }
@@ -116,7 +103,6 @@ private:
 private:
     SurfaceTexture *surfaceTexture;
     Vector4f color;
-    float opacity;
     StereoMode Mode;
     int side;
 };
