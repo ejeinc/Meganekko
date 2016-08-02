@@ -347,7 +347,7 @@ void Renderer::RenderRenderData(RenderData* renderData,
 
     Matrix4f model_matrix = renderData->GetOwnerObject()->GetMatrixWorld();
     try {
-        renderData->Render(model_matrix, view_matrix, projection_matrix, mesh->GetGeometry(), material, eye);
+        renderData->Render(model_matrix, view_matrix, projection_matrix, eye);
     } catch (String error) {
         __android_log_print(ANDROID_LOG_ERROR, "mgn", "Error detected in Renderer::renderRenderData; error : %s", error.ToCStr());
     }

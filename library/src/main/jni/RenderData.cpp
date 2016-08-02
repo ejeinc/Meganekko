@@ -79,8 +79,7 @@ RenderData::~RenderData() {
     DeleteProgram(program);
 }
 
-void RenderData::Render(const Matrix4f & modelM, const Matrix4f & viewM, const Matrix4f & projectionM,
-                        const GlGeometry & geometry, const Material * material, const int eye) {
+void RenderData::Render(const Matrix4f & modelM, const Matrix4f & viewM, const Matrix4f & projectionM, const int eye) {
 
     Vector4f color = material->GetColor();
 
@@ -95,7 +94,7 @@ void RenderData::Render(const Matrix4f & modelM, const Matrix4f & viewM, const M
     GL(glUniform4f(program.Uniforms[0].Location, color.x, color.y, color.z, color.w));
     GL(glUniform1f(program.Uniforms[2].Location, material->GetOpacity()));
 
-    geometry.Draw();
+    surfaceDef.geo.Draw();
 
     GL(glBindTexture( GL_TEXTURE_EXTERNAL_OES, 0 ));
 }

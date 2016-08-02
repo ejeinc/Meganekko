@@ -24,6 +24,7 @@
 
 #include "Component.h"
 #include "Material.h"
+#include "Mesh.h"
 #include "util/GL.h"
 
 namespace mgn {
@@ -44,6 +45,7 @@ public:
 
     void SetMesh(Mesh* mesh) {
         this->mesh = mesh;
+        surfaceDef.geo = mesh->GetGeometry();
     }
 
     void SetMaterial(Material* material) {
@@ -134,8 +136,7 @@ public:
         this->drawMode = draw_mode;
     }
 
-    void Render(const Matrix4f & modelM, const Matrix4f & viewM, const Matrix4f & projectionM,
-                const GlGeometry & geometry, const Material * material, const int eye);
+    void Render(const Matrix4f & modelM, const Matrix4f & viewM, const Matrix4f & projectionM, const int eye);
 
 private:
     RenderData(const RenderData& renderData);
@@ -157,6 +158,7 @@ private:
     GLenum drawMode;
     float cameraDistance;
     GlProgram program;
+    ovrSurfaceDef surfaceDef;
 
     Matrix4f normalM = Matrix4f::Identity();
     Matrix4f topM = Matrix4f(
