@@ -105,6 +105,26 @@ void RenderData::Render(const Matrix4f & modelM, const Matrix4f & viewM, const M
     GL(glBindTexture( GL_TEXTURE_EXTERNAL_OES, 0 ));
 }
 
+void RenderData::UpdateSurfaceDef() {
+
+    // UniformColor
+    Vector4f color = material->GetColor();
+    surfaceDef.graphicsCommand.UniformData[0].Data = &color;
+
+    // Texture0
+    programTexture = GlTexture(material->GetTextureId(), GL_TEXTURE_EXTERNAL_OES, 0, 0);
+    surfaceDef.graphicsCommand.UniformData[1].Data = &programTexture;
+
+    // Opacity
+    surfaceDef.graphicsCommand.UniformData[2].Data = &opacity;
+
+    // Texm
+    programMatrices[0] = TexmForVideo(material->GetStereoMode(), 0);
+    programMatrices[1] = TexmForVideo(material->GetStereoMode(), 1);
+    surfaceDef.graphicsCommand.UniformData[3].Data = programMatrices;
+    surfaceDef.graphicsCommand.UniformData[3].Count = 2;
+}
+
 inline const Matrix4f & RenderData::TexmForVideo(const Material::StereoMode stereoMode, const int eye ) const
 {
     switch (stereoMode) {

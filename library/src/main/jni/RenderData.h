@@ -137,6 +137,8 @@ public:
     }
 
     void Render(const Matrix4f & modelM, const Matrix4f & viewM, const Matrix4f & projectionM, const int eye);
+    
+    void UpdateSurfaceDef();
 
     void SetOpacity(float opacity) {
         this->opacity = opacity;
@@ -168,7 +170,9 @@ private:
     GlProgram program;
     ovrSurfaceDef surfaceDef;
     float opacity;
-
+    Matrix4f programMatrices[2];
+    GlTexture programTexture;
+    
     Matrix4f normalM = Matrix4f::Identity();
     Matrix4f topM = Matrix4f(
             1, 0, 0, 0,
