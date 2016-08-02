@@ -95,4 +95,22 @@ void Scene::GetFrameMatrices(const ovrHeadModelParms & headModelParms, const flo
         frameMatrices.EyeProjection[eye] = ovrMatrix4f_CreateProjectionFov( fovDegreesX, fovDegreesY, 0.0f, 0.0f, VRAPI_ZNEAR, 0.0f );
     }
 }
+
+void Scene::GenerateFrameSurfaceList(const ovrFrameMatrices & frameMatrices, Array< ovrDrawSurface > & surfaceList ) {
+
+    // TODO renderingOrder is not supported!
+    Array<SceneObject*> objects = GetWholeSceneObjects();
+    for (int i = 0; i < objects.GetSizeI(); i++) {
+        SceneObject * object = objects[i];
+        RenderData * renderData = object->GetRenderData();
+
+        if (renderData == nullptr
+            || renderData->GetMaterial() == nullptr
+            || renderData->GetMesh() == nullptr) continue;
+
+        renderData->UpdateSurfaceDef();
+        surfaceList.PushBack(ovrDrawSurface(object->GetMatrixWorld(), &renderData->GetSurfaceDef()));
+    }
+
+}
 }

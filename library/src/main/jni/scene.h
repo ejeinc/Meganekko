@@ -109,6 +109,9 @@ public:
     void GetFrameMatrices(const ovrHeadModelParms & headModelParms,
                           const float fovDegreesX, const float fovDegreesY,
                           ovrFrameMatrices & frameMatrices) const;
+    // Generates a sorted surface list for the scene (including emit surfaces).
+    void GenerateFrameSurfaceList(const ovrFrameMatrices & matrices, Array<ovrDrawSurface> & surfaceList);
+
 private:
     Scene(const Scene& scene);
     Scene(Scene&& scene);

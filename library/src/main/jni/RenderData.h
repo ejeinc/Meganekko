@@ -148,6 +148,10 @@ public:
         return opacity;
     }
 
+    const ovrSurfaceDef & GetSurfaceDef() {
+        return surfaceDef;
+    }
+
 private:
     RenderData(const RenderData& renderData);
     RenderData(RenderData&& renderData);
