@@ -73,6 +73,11 @@ RenderData::RenderData() : Component(),
     };
     program = GlProgram::Build(NULL, VERTEX_SHADER, ImageExternalDirectives, FRAGMENT_SHADER,
                                parms, sizeof(parms) / sizeof(ovrProgramParm));
+    
+    surfaceDef.graphicsCommand.Program = program;
+    surfaceDef.graphicsCommand.GpuState.blendEnable = ovrGpuState::BLEND_ENABLE;
+    surfaceDef.graphicsCommand.GpuState.cullEnable = true;
+    surfaceDef.graphicsCommand.GpuState.depthEnable = true;
 }
 
 RenderData::~RenderData() {
