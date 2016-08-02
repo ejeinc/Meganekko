@@ -85,4 +85,14 @@ IntersectRayBoundsResult Scene::IntersectRayBounds(SceneObject *target, bool axi
     return result;
 }
 
+void Scene::GetFrameMatrices(const ovrHeadModelParms & headModelParms, const float fovDegreesX, const float fovDegreesY, ovrFrameMatrices & frameMatrices ) const {
+
+    ovrMatrix4f centerViewMatrix = centerViewM;
+    frameMatrices.CenterView = centerViewMatrix;
+
+    for (int eye = 0; eye < 2; eye++) {
+        frameMatrices.EyeView[eye]       = vrapi_GetEyeViewMatrix(&headModelParms, &centerViewMatrix, eye);
+        frameMatrices.EyeProjection[eye] = ovrMatrix4f_CreateProjectionFov( fovDegreesX, fovDegreesY, 0.0f, 0.0f, VRAPI_ZNEAR, 0.0f );
+    }
+}
 }

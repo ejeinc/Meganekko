@@ -105,6 +105,10 @@ public:
         return viewPosition;
     }
 
+    // Populate frameMatrices with the view and projection matrices for the scene.
+    void GetFrameMatrices(const ovrHeadModelParms & headModelParms,
+                          const float fovDegreesX, const float fovDegreesY,
+                          ovrFrameMatrices & frameMatrices) const;
 private:
     Scene(const Scene& scene);
     Scene(Scene&& scene);
