@@ -142,6 +142,18 @@ public:
         return surfaceDef;
     }
 
+    void SetModelMatrix(const Matrix4f & modelMatrix) {
+        this->modelMatrix = modelMatrix;
+    }
+
+    const Matrix4f & GetModelMatrix() {
+        return modelMatrix;
+    }
+
+    const Matrix4f & GetModelMatrix() const {
+        return modelMatrix;
+    }
+
 private:
     RenderData(const RenderData& renderData);
     RenderData(RenderData&& renderData);
@@ -160,6 +172,7 @@ private:
     float cameraDistance;
     ovrSurfaceDef surfaceDef;
     float opacity;
+    Matrix4f modelMatrix;
     Matrix4f programMatrices[2];
     GlTexture programTexture;
     

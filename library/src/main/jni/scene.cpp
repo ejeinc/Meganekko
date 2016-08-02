@@ -88,8 +88,10 @@ void Scene::GetFrameMatrices(const ovrHeadModelParms & headModelParms, const flo
 
 void Scene::GenerateFrameSurfaceList(const ovrFrameMatrices & frameMatrices, Array< ovrDrawSurface > & surfaceList ) {
 
-    // TODO renderingOrder is not supported!
     Array<SceneObject*> objects = GetWholeSceneObjects();
+    Array<RenderData*> renderDataList;
+
+    // Iterate over all SceneObjects and collect RenderData for rendering
     for (int i = 0; i < objects.GetSizeI(); i++) {
         SceneObject * object = objects[i];
         RenderData * renderData = object->GetRenderData();
@@ -100,9 +102,18 @@ void Scene::GenerateFrameSurfaceList(const ovrFrameMatrices & frameMatrices, Arr
             || renderData->GetMesh() == nullptr
             || !renderData->IsVisible()) continue;
 
+        // Prepare for rendering
+        renderData->SetModelMatrix(object->GetMatrixWorld());
         renderData->UpdateSurfaceDef();
-        surfaceList.PushBack(ovrDrawSurface(object->GetMatrixWorld(), &renderData->GetSurfaceDef()));
+        renderDataList.PushBack(renderData);
     }
 
+    // Sort with renderingOrder
+    Alg::QuickSort(renderDataList, compareRenderData);
+
+    for (int i = 0; i < renderDataList.GetSizeI(); i++) {
+        RenderData * renderData = renderDataList[i];
+        surfaceList.PushBack(ovrDrawSurface(renderData->GetModelMatrix(), &renderData->GetSurfaceDef()));
+    }
 }
 }
