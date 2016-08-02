@@ -126,18 +126,6 @@ Java_com_eje_1c_meganekko_RenderData_setAlphaBlend(JNIEnv * env, jobject obj, jl
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_setDrawMode(JNIEnv * env, jobject obj, jlong jrenderData, jint draw_mode) {
-    RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    render_data->SetDrawMode(draw_mode);
-}
-
-JNIEXPORT jint JNICALL
-Java_com_eje_1c_meganekko_RenderData_getDrawMode(JNIEnv * env, jobject obj, jlong jrenderData) {
-    RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    return render_data->GetDrawMode();
-}
-
-JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_RenderData_setOpacity(JNIEnv * env, jobject obj, jlong jrenderData, jfloat opacity) {
     RenderData* renderData = reinterpret_cast<RenderData*>(jrenderData);
     renderData->SetOpacity(opacity);

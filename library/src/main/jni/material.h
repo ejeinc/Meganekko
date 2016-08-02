@@ -28,15 +28,10 @@
 using namespace OVR;
 
 namespace mgn {
-class Color;
 
 class Material: public HybridObject {
 public:
 
-    enum Side: int {
-        FrontSide = 0, BackSide, DoubleSide
-    };
-    
     enum StereoMode {
         NORMAL = 0, TOP_BOTTOM, BOTTOM_TOP, LEFT_RIGHT, RIGHT_LEFT,
         TOP_ONLY, BOTTOM_ONLY, LEFT_ONLY, RIGHT_ONLY
@@ -44,9 +39,8 @@ public:
 
     explicit Material(JNIEnv * jni) {
         Mode = NORMAL;
-        side = FrontSide;
         surfaceTexture = new SurfaceTexture(jni);
-        color = Vector4f(1.0f, 1.0f, 1.0f, 1.0f);
+        glTexture = GlTexture(surfaceTexture->GetTextureId(), GL_TEXTURE_EXTERNAL_OES, 0, 0);
     }
 
     ~Material() {
@@ -70,28 +64,12 @@ public:
         Mode = stereoMode;
     }
 
-    const Vector4f & GetColor() const {
-        return color;
+    const GlTexture & GetGlTexture() {
+        return glTexture;
     }
 
-    const Vector4f & GetColor() {
-        return color;
-    }
-
-    void SetColor(const Vector4f & color) {
-        this->color = color;
-    }
-
-    int GetSide() const {
-        return side;
-    }
-    
-    int GetSide() {
-        return side;
-    }
-    
-    void SetSide(int side) {
-        this->side = side;
+    const GlTexture & GetGlTexture() const {
+        return glTexture;
     }
 
 private:
@@ -102,9 +80,8 @@ private:
 
 private:
     SurfaceTexture *surfaceTexture;
-    Vector4f color;
     StereoMode Mode;
-    int side;
+    GlTexture glTexture;
 };
 }
 #endif

@@ -98,7 +98,6 @@ public class FirstScene extends Scene {
                 app.runOnGlThread(() -> {
                     bitmapObj.mesh(Mesh.from(bitmap));
                     bitmapObj.material(Material.from(bitmap));
-                    bitmapObj.material().setSide(Material.Side.DoubleSide);
                 });
             } catch (IOException e) {
                 e.printStackTrace();

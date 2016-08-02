@@ -27,19 +27,6 @@ Java_com_eje_1c_meganekko_Material_initNativeInstance(JNIEnv * env, jobject obj)
     return reinterpret_cast<jlong>(new Material(env));
 }
 
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Material_setColor(JNIEnv * env, jobject obj, jlong jmaterial, jfloat r, jfloat g, jfloat b, jfloat a) {
-    Material* material = reinterpret_cast<Material*>(jmaterial);
-    material->SetColor(Vector4f(r, g, b, a));
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Material_getColor(JNIEnv * env, jobject obj, jlong jmaterial, jfloatArray values) {
-    Material* material = reinterpret_cast<Material*>(jmaterial);
-    Vector4f color = material->GetColor();
-    FillElementsUnSafe(env, values, color);
-}
-
 JNIEXPORT jobject JNICALL
 Java_com_eje_1c_meganekko_Material_getSurfaceTexture(JNIEnv * env, jobject obj, jlong jmaterial) {
     Material* material = reinterpret_cast<Material*>(jmaterial);
@@ -50,12 +37,6 @@ JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_Material_setStereoMode(JNIEnv * env, jobject obj, jlong jmaterial, jint jstereoMode) {
     Material* material = reinterpret_cast<Material*>(jmaterial);
     material->SetStereoMode(static_cast<Material::StereoMode>(jstereoMode));
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Material_setSide(JNIEnv* env, jobject obj, jlong jmaterial, jint jside) {
-    Material* material = reinterpret_cast<Material*>(jmaterial);
-    material->SetSide(jside);
 }
 
 #ifdef __cplusplus 

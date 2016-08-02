@@ -51,13 +51,10 @@ RenderData::RenderData() : Component(),
                             mesh(nullptr),
                             visible(true),
                             renderingOrder(DEFAULT_RENDERING_ORDER),
-                            offset(false),
                             offsetFactor(0.0f),
                             offsetUnits(0.0f),
-                            depthTest(true),
                             alphaBlend(true),
-                            opacity(1.0f),
-                            drawMode(GL_TRIANGLES) {
+                            opacity(1.0f) {
 
     ovrProgramParm parms[] = {
         {"Texture0",     ovrProgramParmType::TEXTURE_SAMPLED},
@@ -68,9 +65,6 @@ RenderData::RenderData() : Component(),
                                parms, sizeof(parms) / sizeof(ovrProgramParm));
     
     surfaceDef.graphicsCommand.Program = program;
-    surfaceDef.graphicsCommand.GpuState.blendEnable = ovrGpuState::BLEND_ENABLE;
-    surfaceDef.graphicsCommand.GpuState.depthEnable = false;
-    surfaceDef.graphicsCommand.GpuState.cullEnable = false;
 }
 
 RenderData::~RenderData() {
@@ -79,7 +73,7 @@ RenderData::~RenderData() {
 void RenderData::UpdateSurfaceDef() {
 
     // Texture0
-    programTexture = GlTexture(material->GetTextureId(), GL_TEXTURE_EXTERNAL_OES, 0, 0);
+    programTexture = material->GetGlTexture();
     surfaceDef.graphicsCommand.UniformData[0].Data = &programTexture;
 
     // Opacity

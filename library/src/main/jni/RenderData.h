@@ -81,11 +81,11 @@ public:
     }
 
     bool GetOffset() const {
-        return offset;
+        return surfaceDef.graphicsCommand.GpuState.polygonOffsetEnable;
     }
 
     void SetOffset(bool offset) {
-        this->offset = offset;
+        surfaceDef.graphicsCommand.GpuState.polygonOffsetEnable = offset;
     }
 
     float GetOffsetFactor() const {
@@ -105,11 +105,11 @@ public:
     }
 
     bool GetDepthTest() const {
-        return depthTest;
+        return surfaceDef.graphicsCommand.GpuState.depthEnable;
     }
 
     void SetDepthTest(bool depthTest) {
-        this->depthTest = depthTest;
+        surfaceDef.graphicsCommand.GpuState.depthEnable = depthTest;
     }
 
     bool GetAlphaBlend() const {
@@ -120,20 +120,12 @@ public:
         this->alphaBlend = alphaBlend;
     }
 
-    GLenum GetDrawMode() const {
-        return drawMode;
-    }
-
     void SetCameraDistance(float distance) {
         this->cameraDistance = distance;
     }
 
     float GetCameraDistance() const {
         return cameraDistance;
-    }
-
-    void SetDrawMode(GLenum draw_mode) {
-        this->drawMode = draw_mode;
     }
 
     void UpdateSurfaceDef();
@@ -162,14 +154,10 @@ private:
     Material * material;
     bool visible;
     int renderingOrder;
-    bool offset;
     float offsetFactor;
     float offsetUnits;
-    bool depthTest;
     bool alphaBlend;
-    GLenum drawMode;
     float cameraDistance;
-    GlProgram program;
     ovrSurfaceDef surfaceDef;
     float opacity;
     Matrix4f programMatrices[2];

@@ -19,14 +19,6 @@ import com.eje_c.meganekko.utility.Threads;
 
 import java.util.concurrent.Future;
 
-import static android.opengl.GLES30.GL_LINES;
-import static android.opengl.GLES30.GL_LINE_LOOP;
-import static android.opengl.GLES30.GL_LINE_STRIP;
-import static android.opengl.GLES30.GL_POINTS;
-import static android.opengl.GLES30.GL_TRIANGLES;
-import static android.opengl.GLES30.GL_TRIANGLE_FAN;
-import static android.opengl.GLES30.GL_TRIANGLE_STRIP;
-
 /**
  * One of the key Meganekko classes: Encapsulates the data associated with rendering
  * a mesh.
@@ -70,10 +62,6 @@ public class RenderData extends Component {
     private static native boolean getAlphaBlend(long renderData);
 
     private static native void setAlphaBlend(long renderData, boolean alphaBlend);
-
-    private static native int getDrawMode(long renderData);
-
-    private static native void setDrawMode(long renderData, int draw_mode);
 
     private static native float getOpacity(long renderData);
 
@@ -265,35 +253,12 @@ public class RenderData extends Component {
         setAlphaBlend(getNative(), alphaBlend);
     }
 
-    /**
-     * @return The OpenGL draw mode (e.g. GL_TRIANGLES).
-     */
-    public int getDrawMode() {
-        return getDrawMode(getNative());
-    }
-
     public void setOpacity(float opacity) {
         setOpacity(getNative(), opacity);
     }
 
     public float getOpacity() {
         return getOpacity(getNative());
-    }
-
-    /**
-     * Set the draw mode for this mesh. Default is GL_TRIANGLES.
-     *
-     * @param drawMode
-     */
-    public void setDrawMode(int drawMode) {
-        if (drawMode != GL_POINTS && drawMode != GL_LINES
-                && drawMode != GL_LINE_STRIP && drawMode != GL_LINE_LOOP
-                && drawMode != GL_TRIANGLES && drawMode != GL_TRIANGLE_STRIP
-                && drawMode != GL_TRIANGLE_FAN) {
-            throw new IllegalArgumentException(
-                    "drawMode must be one of GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_TRIANGLES, GL_TRIANGLE_FAN, GL_TRIANGLE_STRIP.");
-        }
-        setDrawMode(getNative(), drawMode);
     }
 
     /**

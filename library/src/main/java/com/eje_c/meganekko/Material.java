@@ -16,13 +16,10 @@
 package com.eje_c.meganekko;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.view.View;
-
-import com.eje_c.meganekko.utility.Colors;
 
 /**
  * This is one of the key Meganekko classes: it holds texture, color, opacity information.
@@ -30,7 +27,6 @@ import com.eje_c.meganekko.utility.Colors;
 public class Material extends HybridObject {
 
     private Texture mTexture;
-    private CullFace mCullFace;
 
     /**
      * Create {@link Material} from {@code View}.
@@ -80,55 +76,10 @@ public class Material extends HybridObject {
         return material;
     }
 
-    private static native void setColor(long material, float r, float g, float b, float a);
-
-    private static native void getColor(long material, float[] val);
-
     private static native void setStereoMode(long material, int stereoMode);
-
-    private static native void setSide(long material, int side);
 
     @Override
     protected native long initNativeInstance();
-
-    /**
-     * Get the {@code color} uniform.
-     *
-     * @return The current {@code vec4 color} as a four-element array [r, g, b, a]
-     */
-    public float[] getColor() {
-        float[] result = new float[4];
-        getColor(getNative(), result);
-        return result;
-    }
-
-    /**
-     * A convenience overload of {@link #setColor(float, float, float, float)} that
-     * lets you use familiar Android {@link Color} values.
-     *
-     * @param color Any Android {@link Color};
-     */
-    public void setColor(int color) {
-        setColor(Colors.byteToGl(Color.red(color)), //
-                Colors.byteToGl(Color.green(color)), //
-                Colors.byteToGl(Color.blue(color)), //
-                Colors.byteToGl(Color.alpha(color)));
-    }
-
-    /**
-     * Set the {@code color} uniform.
-     * By convention, Meganekko shaders can use a {@code vec4} uniform named
-     * {@code UniformColor}. With the default shader, this allows you to add an overlay color on top of the mTexture.
-     * Values are between {@code 0.0f} and {@code 1.0f}, inclusive.
-     *
-     * @param r Red
-     * @param g Green
-     * @param b Blue
-     * @param a Alpha
-     */
-    public void setColor(float r, float g, float b, float a) {
-        setColor(getNative(), r, g, b, a);
-    }
 
     /**
      * Get {@code SurfaceTexture} for direct rendering.
@@ -168,32 +119,8 @@ public class Material extends HybridObject {
         }
     }
 
-    public void setSide(Side side) {
-        setSide(getNative(), side.ordinal());
-    }
-
-    @Deprecated
-    public CullFace getCullFace() {
-        return mCullFace;
-    }
-
-    @Deprecated
-    public void setCullFace(CullFace cullFace) {
-        mCullFace = cullFace;
-        setSide(getNative(), cullFace.ordinal());
-    }
-
     public enum StereoMode {
         NORMAL, TOP_BOTTOM, BOTTOM_TOP, LEFT_RIGHT, RIGHT_LEFT,
         TOP_ONLY, BOTTOM_ONLY, LEFT_ONLY, RIGHT_ONLY
-    }
-
-    @Deprecated
-    public enum CullFace {
-        CullBack, CullFront, CullNone
-    }
-
-    public enum Side {
-        FrontSide, BackSide, DoubleSide
     }
 }
