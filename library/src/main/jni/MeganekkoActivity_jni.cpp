@@ -35,13 +35,13 @@ long Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_nativeSetAppInterface(
 void Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_nativeHideGazeCursor(JNIEnv * jni, jclass clazz, jlong appPtr)
 {
     MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
-    activity->GuiSys->GetGazeCursor().HideCursor();
+    //activity->GuiSys->GetGazeCursor().HideCursor();
 }
 
 void Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_nativeShowGazeCursor(JNIEnv * jni, jclass clazz, jlong appPtr)
 {
     MeganekkoActivity* activity = (MeganekkoActivity*)((App *)appPtr)->GetAppInterface();
-    activity->GuiSys->GetGazeCursor().ShowCursor();
+    //activity->GuiSys->GetGazeCursor().ShowCursor();
 }
 
 void Java_com_eje_1c_meganekko_gearvr_MeganekkoActivity_setDebugOptionEnable(JNIEnv * jni, jclass clazz, jboolean enable)

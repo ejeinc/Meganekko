@@ -27,24 +27,20 @@ static const char * ImageExternalDirectives =
 static const char VERTEX_SHADER[] =
         "in vec4 Position;\n"
         "in vec2 TexCoord;\n"
-        "uniform highp mat4 ProjM;\n"
-        "uniform highp mat4 ViewM;\n"
-        "uniform highp mat4 ModelM;\n"
-        "uniform highp mat4 Texm;\n"
+        "uniform highp mat4 Texm[NUM_VIEWS];\n"
         "out highp vec2 oTexCoord;\n"
         "void main() {\n"
-        "  oTexCoord = vec2(Texm * vec4(TexCoord, 0, 1));\n"
-        "  gl_Position = ProjM * ViewM * ModelM * Position;\n"
+        "  oTexCoord = vec2(Texm[VIEW_ID] * vec4(TexCoord, 0, 1));\n"
+        "  gl_Position = TransformVertex(Position);\n"
         "}\n";
 
 static const char FRAGMENT_SHADER[] =
         "precision highp float;\n"
         "uniform samplerExternalOES Texture0;\n"
-        "uniform vec4 UniformColor;\n"
         "uniform float Opacity;\n"
         "in highp vec2 oTexCoord;\n"
         "void main() {\n"
-        "  vec4 texel = texture2D(Texture0, oTexCoord) * UniformColor * Opacity;\n"
+        "  vec4 texel = texture2D(Texture0, oTexCoord) * Opacity;\n"
         "  if (texel.a < 0.1)\n"
         "    discard;\n"
         "  gl_FragColor = texel;\n"
@@ -64,65 +60,36 @@ RenderData::RenderData() : Component(),
                             drawMode(GL_TRIANGLES) {
 
     ovrProgramParm parms[] = {
-        {"UniformColor", ovrProgramParmType::FLOAT_VECTOR4},
         {"Texture0",     ovrProgramParmType::TEXTURE_SAMPLED},
         {"Opacity",      ovrProgramParmType::FLOAT},
-        {"Texm",         ovrProgramParmType::FLOAT_MATRIX4},
-        {"ProjM",        ovrProgramParmType::FLOAT_MATRIX4},
-        {"ViewM",        ovrProgramParmType::FLOAT_MATRIX4},
-        {"ModelM",       ovrProgramParmType::FLOAT_MATRIX4},
+        {"Texm",         ovrProgramParmType::FLOAT_MATRIX4}
     };
-    program = GlProgram::Build(NULL, VERTEX_SHADER, ImageExternalDirectives, FRAGMENT_SHADER,
+    GlProgram program = GlProgram::Build(NULL, VERTEX_SHADER, ImageExternalDirectives, FRAGMENT_SHADER,
                                parms, sizeof(parms) / sizeof(ovrProgramParm));
     
     surfaceDef.graphicsCommand.Program = program;
     surfaceDef.graphicsCommand.GpuState.blendEnable = ovrGpuState::BLEND_ENABLE;
-    surfaceDef.graphicsCommand.GpuState.cullEnable = true;
-    surfaceDef.graphicsCommand.GpuState.depthEnable = true;
+    surfaceDef.graphicsCommand.GpuState.depthEnable = false;
+    surfaceDef.graphicsCommand.GpuState.cullEnable = false;
 }
 
 RenderData::~RenderData() {
-    DeleteProgram(program);
-}
-
-void RenderData::Render(const Matrix4f & modelM, const Matrix4f & viewM, const Matrix4f & projectionM, const int eye) {
-
-    Vector4f color = material->GetColor();
-
-    GL(glUseProgram(program.Program));
-
-    GL(glUniformMatrix4fv(program.Uniforms[4].Location, 1, GL_TRUE, projectionM.M[0]));
-    GL(glUniformMatrix4fv(program.Uniforms[5].Location, 1, GL_TRUE, viewM.M[0]));
-    GL(glUniformMatrix4fv(program.Uniforms[6].Location, 1, GL_TRUE, modelM.M[0]));
-    GL(glUniformMatrix4fv(program.Uniforms[3].Location, 1, GL_TRUE, TexmForVideo(material->GetStereoMode(), eye).M[ 0 ] ));
-    GL(glActiveTexture (GL_TEXTURE0));
-    GL(glBindTexture(GL_TEXTURE_EXTERNAL_OES, material->GetTextureId()));
-    GL(glUniform4f(program.Uniforms[0].Location, color.x, color.y, color.z, color.w));
-    GL(glUniform1f(program.Uniforms[2].Location, opacity));
-
-    surfaceDef.geo.Draw();
-
-    GL(glBindTexture( GL_TEXTURE_EXTERNAL_OES, 0 ));
 }
 
 void RenderData::UpdateSurfaceDef() {
 
-    // UniformColor
-    Vector4f color = material->GetColor();
-    surfaceDef.graphicsCommand.UniformData[0].Data = &color;
-
     // Texture0
     programTexture = GlTexture(material->GetTextureId(), GL_TEXTURE_EXTERNAL_OES, 0, 0);
-    surfaceDef.graphicsCommand.UniformData[1].Data = &programTexture;
+    surfaceDef.graphicsCommand.UniformData[0].Data = &programTexture;
 
     // Opacity
-    surfaceDef.graphicsCommand.UniformData[2].Data = &opacity;
+    surfaceDef.graphicsCommand.UniformData[1].Data = &opacity;
 
     // Texm
     programMatrices[0] = TexmForVideo(material->GetStereoMode(), 0);
     programMatrices[1] = TexmForVideo(material->GetStereoMode(), 1);
-    surfaceDef.graphicsCommand.UniformData[3].Data = programMatrices;
-    surfaceDef.graphicsCommand.UniformData[3].Count = 2;
+    surfaceDef.graphicsCommand.UniformData[2].Data = &programMatrices[0];
+    surfaceDef.graphicsCommand.UniformData[2].Count = 2;
 }
 
 inline const Matrix4f & RenderData::TexmForVideo(const Material::StereoMode stereoMode, const int eye ) const

@@ -84,12 +84,6 @@ Java_com_eje_1c_meganekko_Scene_setProjectionMatrix(JNIEnv * jni, jobject obj, j
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Scene_render(JNIEnv * jni, jobject obj, jlong jscene, jint eye) {
-    Scene* scene = reinterpret_cast<Scene*>(jscene);
-    scene->Render(eye);
-}
-
-JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_Scene_setViewPosition(JNIEnv * jni, jobject obj, jlong jscene, jfloat x, jfloat y, jfloat z) {
     Scene* scene = reinterpret_cast<Scene*>(jscene);
     scene->SetViewPosition(Vector3f(x, y, z));

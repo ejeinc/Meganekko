@@ -36,7 +36,6 @@ public:
     virtual void        Configure( ovrSettings & settings );
     virtual void        EnteredVrMode( const ovrIntentType intentType, const char * intentFromPackage, const char * intentJSON, const char * intentURI );
     virtual void        LeavingVrMode();
-    virtual Matrix4f    DrawEyeView( const int eye, const float fovDegreesX, const float fovDegreesY, ovrFrameParms & frameParms );
     virtual ovrFrameResult Frame( const ovrFrameInput & vrFrame );
     virtual bool        OnKeyEvent( const int keyCode, const int repeatCount, const KeyEventType eventType );
 
@@ -60,6 +59,8 @@ private:
     ovrSoundEffectContext *        SoundEffectContext;
     OvrGuiSys::SoundEffectPlayer * SoundEffectPlayer;
     ovrLocale *                    Locale;
+
+    ovrFrameParms                  frameParms;
 
     Quatf internalSensorRotation;
 

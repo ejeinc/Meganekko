@@ -44,16 +44,6 @@ Array<SceneObject*> Scene::GetWholeSceneObjects() {
     return sceneObjects;
 }
 
-void Scene::PrepareForRendering() {
-    sceneObjects = GetWholeSceneObjects();
-}
-
-Matrix4f Scene::Render(const int eye) {
-    const Matrix4f viewProjectionM = projectionM * viewM;
-    Renderer::RenderEyeView(this, sceneObjects, viewM, projectionM, viewProjectionM, eye);
-    return viewProjectionM;
-}
-
 IntersectRayBoundsResult Scene::IntersectRayBounds(SceneObject *target, bool axisInWorld) {
 
     Matrix4f worldToModelM = target->GetMatrixWorld().Inverted();
@@ -104,9 +94,11 @@ void Scene::GenerateFrameSurfaceList(const ovrFrameMatrices & frameMatrices, Arr
         SceneObject * object = objects[i];
         RenderData * renderData = object->GetRenderData();
 
+        // Skip rendering
         if (renderData == nullptr
             || renderData->GetMaterial() == nullptr
-            || renderData->GetMesh() == nullptr) continue;
+            || renderData->GetMesh() == nullptr
+            || !renderData->IsVisible()) continue;
 
         renderData->UpdateSurfaceDef();
         surfaceList.PushBack(ovrDrawSurface(object->GetMatrixWorld(), &renderData->GetSurfaceDef()));

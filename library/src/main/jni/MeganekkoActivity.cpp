@@ -22,6 +22,7 @@
 
 namespace mgn
 {
+static const Vector4f CLEAR_COLOR( 0.125f, 0.0f, 0.125f, 1.0f );
 
 MeganekkoActivity::MeganekkoActivity() :
       GuiSys( OvrGuiSys::Create() ),
@@ -40,6 +41,7 @@ MeganekkoActivity::~MeganekkoActivity()
 
 void MeganekkoActivity::Configure(ovrSettings & settings)
 {
+    settings.RenderMode = RENDERMODE_MULTIVIEW;
 }
 
 void MeganekkoActivity::EnteredVrMode( const ovrIntentType intentType, const char * intentFromPackage, const char * intentJSON, const char * intentURI )
@@ -93,23 +95,6 @@ void MeganekkoActivity::LeavingVrMode()
     SoundEffectContext = nullptr;
 }
 
-Matrix4f MeganekkoActivity::DrawEyeView(const int eye, const float fovDegreesX, const float fovDegreesY, ovrFrameParms & frameParms)
-{
-    Scene* scene = GetScene();
-    ovrMatrix4f centerViewMatrix = scene->GetCenterViewMatrix();
-    const Matrix4f eyeViewMatrix = vrapi_GetEyeViewMatrix( &app->GetHeadModelParms(), &centerViewMatrix, eye );
-	const Matrix4f eyeProjectionMatrix = ovrMatrix4f_CreateProjectionFov( fovDegreesX, fovDegreesY, 0.0f, 0.0f, 1.0f, 0.0f );
-
-    scene->SetViewMatrix(eyeViewMatrix);
-    scene->SetProjectionMatrix(eyeProjectionMatrix);
-    const Matrix4f eyeViewProjection = scene->Render(eye);
-
-    GuiSys->RenderEyeView(centerViewMatrix, eyeViewMatrix, eyeProjectionMatrix, app->GetSurfaceRender());
-
-    return eyeViewProjection;
-
-}
-
 ovrFrameResult MeganekkoActivity::Frame( const ovrFrameInput & vrFrame )
 {
     // process input events first because this mirrors the behavior when OnKeyEvent was
@@ -156,10 +141,25 @@ ovrFrameResult MeganekkoActivity::Frame( const ovrFrameInput & vrFrame )
     // Update GUI systems last, but before rendering anything.
     GuiSys->Frame( vrFrame, centerViewMatrix);
 
-    scene->PrepareForRendering();
-
     ovrFrameResult res;
-    res.FrameMatrices.CenterView = centerViewMatrix;
+	res.ClearColorBuffer = true;
+	res.ClearColor = CLEAR_COLOR;
+	scene->GetFrameMatrices(app->GetHeadModelParms(), vrFrame.FovX, vrFrame.FovY, res.FrameMatrices);
+	scene->GenerateFrameSurfaceList(res.FrameMatrices, res.Surfaces);
+
+    frameParms = vrapi_DefaultFrameParms(app->GetJava(), VRAPI_FRAME_INIT_DEFAULT, vrapi_GetTimeInSeconds(), NULL);
+
+    ovrFrameLayer & layer = frameParms.Layers[VRAPI_FRAME_LAYER_TYPE_WORLD];
+    layer.Flags |= VRAPI_FRAME_LAYER_FLAG_CHROMATIC_ABERRATION_CORRECTION;
+    for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ ) {
+        layer.Textures[eye].ColorTextureSwapChain = vrFrame.ColorTextureSwapChain[eye];
+        layer.Textures[eye].DepthTextureSwapChain = vrFrame.DepthTextureSwapChain[eye];
+        layer.Textures[eye].TextureSwapChainIndex = vrFrame.TextureSwapChainIndex;
+        layer.Textures[eye].TexCoordsFromTanAngles = vrFrame.TexCoordsFromTanAngles;
+        layer.Textures[eye].HeadPose = vrFrame.Tracking.HeadPose;
+    }
+
+    res.FrameParms = (ovrFrameParmsExtBase *) & frameParms;
 
     GuiSys->AppendSurfaceList( res.FrameMatrices.CenterView, &res.Surfaces );
 

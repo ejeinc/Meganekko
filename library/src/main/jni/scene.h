@@ -23,7 +23,6 @@
 #define SCENE_H_
 
 #include "SceneObject.h"
-#include "Renderer.h"
 
 using namespace OVR;
 
@@ -86,10 +85,6 @@ public:
     void SetProjectionMatrix(const Matrix4f & m){
         projectionM = m;
     }
-
-    void PrepareForRendering();
-
-    Matrix4f Render(const int eye);
 
     IntersectRayBoundsResult IntersectRayBounds(SceneObject * target, bool axisInWorld);
 

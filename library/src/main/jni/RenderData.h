@@ -136,8 +136,6 @@ public:
         this->drawMode = draw_mode;
     }
 
-    void Render(const Matrix4f & modelM, const Matrix4f & viewM, const Matrix4f & projectionM, const int eye);
-    
     void UpdateSurfaceDef();
 
     void SetOpacity(float opacity) {
