@@ -27,18 +27,6 @@ Java_com_eje_1c_meganekko_Scene_initNativeInstance(JNIEnv * env, jobject obj) {
     return reinterpret_cast<jlong>(new Scene());
 }
 
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Scene_setFrustumCulling(JNIEnv * env, jobject obj, jlong jscene, jboolean flag) {
-    Scene* scene = reinterpret_cast<Scene*>(jscene);
-    scene->SetFrustumCulling(static_cast<bool>(flag));
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Scene_setOcclusionQuery(JNIEnv * env, jobject obj, jlong jscene, jboolean flag) {
-    Scene* scene = reinterpret_cast<Scene*>(jscene);
-    scene->SetOcclusionCulling(static_cast<bool>(flag));
-}
-
 JNIEXPORT jboolean JNICALL
 Java_com_eje_1c_meganekko_Scene_isLookingAt(JNIEnv * env, jobject obj, jlong jscene, jlong jsceneObject) {
     Scene* scene = reinterpret_cast<Scene*>(jscene);
@@ -53,34 +41,6 @@ Java_com_eje_1c_meganekko_Scene_getLookingPoint(JNIEnv * env, jobject obj, jlong
     SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
     IntersectRayBoundsResult result = scene->IntersectRayBounds(sceneObject, axisInWorld);
     FillElementsUnSafe(env, values, result.first);
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Scene_setViewMatrix(JNIEnv * jni, jobject obj, jlong jscene, jfloatArray jarray) {
-    Scene* scene = reinterpret_cast<Scene*>(jscene);
-    jfloat tmp[16];
-    jni->GetFloatArrayRegion(jarray, 0, 16, tmp);
-
-    scene->SetViewMatrix(Matrix4f(
-        tmp[0], tmp[1], tmp[2], tmp[3],
-        tmp[4], tmp[5], tmp[6], tmp[7],
-        tmp[8], tmp[9], tmp[10], tmp[11],
-        tmp[12], tmp[13], tmp[14], tmp[15]
-    ));
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_Scene_setProjectionMatrix(JNIEnv * jni, jobject obj, jlong jscene, jfloatArray jarray) {
-    Scene* scene = reinterpret_cast<Scene*>(jscene);
-    jfloat tmp[16];
-    jni->GetFloatArrayRegion(jarray, 0, 16, tmp);
-
-    scene->SetProjectionMatrix(Matrix4f(
-        tmp[0], tmp[1], tmp[2], tmp[3],
-        tmp[4], tmp[5], tmp[6], tmp[7],
-        tmp[8], tmp[9], tmp[10], tmp[11],
-        tmp[12], tmp[13], tmp[14], tmp[15]
-    ));
 }
 
 JNIEXPORT void JNICALL

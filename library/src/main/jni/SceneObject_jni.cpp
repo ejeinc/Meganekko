@@ -31,7 +31,7 @@ JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_SceneObject_attachRenderData(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jrenderData) {
     SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    sceneObject->AttachRenderData(sceneObject, render_data);
+    sceneObject->AttachRenderData(render_data);
 }
 
 JNIEXPORT void JNICALL
@@ -44,7 +44,7 @@ JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_SceneObject_addChildObject(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jchild) {
     SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
     SceneObject* child = reinterpret_cast<SceneObject*>(jchild);
-    sceneObject->AddChildObject(sceneObject, child);
+    sceneObject->AddChildObject(child);
 }
 
 JNIEXPORT void JNICALL
@@ -56,26 +56,8 @@ Java_com_eje_1c_meganekko_SceneObject_removeChildAt(JNIEnv * env, jobject obj, j
 JNIEXPORT bool JNICALL
 Java_com_eje_1c_meganekko_SceneObject_isColliding(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jotherObject) {
     SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
-    SceneObject* other_object = reinterpret_cast<SceneObject*>(jotherObject);
-    return sceneObject->IsColliding(other_object);
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_setLODRange(JNIEnv * env, jobject obj, jlong jsceneObject, jfloat minRange, jfloat maxRange) {
-    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
-    sceneObject->SetLODRange(minRange, maxRange);
-}
-
-JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_SceneObject_getLODMinRange(JNIEnv * env, jobject obj, jlong jsceneObject) {
-    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
-    return sceneObject->GetLODMinRange();
-}
-
-JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_SceneObject_getLODMaxRange(JNIEnv * env, jobject obj, jlong jsceneObject) {
-    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
-    return sceneObject->GetLODMaxRange();
+    SceneObject* otherObject = reinterpret_cast<SceneObject*>(jotherObject);
+    return sceneObject->IsColliding(otherObject);
 }
 
 JNIEXPORT void JNICALL

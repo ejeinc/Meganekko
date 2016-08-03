@@ -155,12 +155,6 @@ public class SceneObject extends HybridObject {
 
     private static native boolean isColliding(long sceneObject, long otherObject);
 
-    private static native void setLODRange(long sceneObject, float minRange, float maxRange);
-
-    private static native float getLODMinRange(long sceneObject);
-
-    private static native float getLODMaxRange(long sceneObject);
-
     private static native void setPosition(long sceneObject, float x, float y, float z);
 
     private static native void setScale(long sceneObject, float x, float y, float z);
@@ -237,7 +231,6 @@ public class SceneObject extends HybridObject {
      */
     public void attachRenderData(RenderData renderData) {
         mRenderData = renderData;
-        renderData.setOwnerObject(this);
         attachRenderData(getNative(), renderData.getNative());
     }
 
@@ -246,9 +239,6 @@ public class SceneObject extends HybridObject {
      * An object with no {@link RenderData} is not visible.
      */
     public void detachRenderData() {
-        if (mRenderData != null) {
-            mRenderData.setOwnerObject(null);
-        }
         mRenderData = null;
         detachRenderData(getNative());
     }
@@ -327,49 +317,6 @@ public class SceneObject extends HybridObject {
      */
     public boolean isColliding(SceneObject otherObject) {
         return isColliding(getNative(), otherObject.getNative());
-    }
-
-    /**
-     * Sets the range of distances from the camera where this object will be
-     * shown.
-     *
-     * @param minRange The closest distance to the camera in which this object should
-     *                 be shown. This should be a positive number between 0 and
-     *                 Float.MAX_VALUE.
-     * @param maxRange The farthest distance to the camera in which this object
-     *                 should be shown. This should be a positive number between 0
-     *                 and Float.MAX_VALUE.
-     */
-    public void setLODRange(float minRange, float maxRange) {
-        if (minRange < 0 || maxRange < 0) {
-            throw new IllegalArgumentException(
-                    "minRange and maxRange must be between 0 and Float.MAX_VALUE");
-        }
-        if (minRange > maxRange) {
-            throw new IllegalArgumentException(
-                    "minRange should not be greater than maxRange");
-        }
-        setLODRange(getNative(), minRange, maxRange);
-    }
-
-    /**
-     * Get the minimum distance from the camera in which to show this object.
-     *
-     * @return the minimum distance from the camera in which to show this
-     * object. Default value is 0.
-     */
-    public float getLODMinRange() {
-        return getLODMinRange(getNative());
-    }
-
-    /**
-     * Get the maximum distance from the camera in which to show this object.
-     *
-     * @return the maximum distance from the camera in which to show this
-     * object. Default value is Float.MAX_VALUE.
-     */
-    public float getLODMaxRange() {
-        return getLODMaxRange(getNative());
     }
 
     /**

@@ -66,42 +66,6 @@ Java_com_eje_1c_meganekko_RenderData_setRenderingOrder( JNIEnv * env, jobject ob
 }
 
 JNIEXPORT jboolean JNICALL
-Java_com_eje_1c_meganekko_RenderData_getOffset(JNIEnv * env, jobject obj, jlong jrenderData) {
-    RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    return static_cast<jboolean>(render_data->GetOffset());
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_setOffset(JNIEnv * env, jobject obj, jlong jrenderData, jboolean offset) {
-    RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    render_data->SetOffset(static_cast<bool>(offset));
-}
-
-JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_RenderData_getOffsetFactor(JNIEnv * env, jobject obj, jlong jrenderData) {
-    RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    return render_data->GetOffsetFactor();
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_setOffsetFactor(JNIEnv * env, jobject obj, jlong jrenderData, jfloat offsetFactor) {
-    RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    render_data->SetOffsetFactor(offsetFactor);
-}
-
-JNIEXPORT jfloat JNICALL
-Java_com_eje_1c_meganekko_RenderData_getOffsetUnits(JNIEnv * env, jobject obj, jlong jrenderData) {
-    RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    return render_data->GetOffsetUnits();
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_setOffsetUnits(JNIEnv * env, jobject obj, jlong jrenderData, jfloat offsetUnits) {
-    RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    render_data->SetOffsetUnits(offsetUnits);
-}
-
-JNIEXPORT jboolean JNICALL
 Java_com_eje_1c_meganekko_RenderData_getDepthTest(JNIEnv * env, jobject obj, jlong jrenderData) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
     return static_cast<jboolean>(render_data->GetDepthTest());
@@ -111,18 +75,6 @@ JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_RenderData_setDepthTest(JNIEnv * env, jobject obj, jlong jrenderData, jboolean depthTest) {
     RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
     render_data->SetDepthTest(static_cast<bool>(depthTest));
-}
-
-JNIEXPORT jboolean JNICALL
-Java_com_eje_1c_meganekko_RenderData_getAlphaBlend(JNIEnv * env, jobject obj, jlong jrenderData) {
-    RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    return static_cast<jboolean>(render_data->GetAlphaBlend());
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_RenderData_setAlphaBlend(JNIEnv * env, jobject obj, jlong jrenderData, jboolean alpha_blend) {
-    RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    render_data->SetAlphaBlend(static_cast<bool>(alpha_blend));
 }
 
 JNIEXPORT void JNICALL

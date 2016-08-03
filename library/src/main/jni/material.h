@@ -22,66 +22,52 @@
 #ifndef MATERIAL_H_
 #define MATERIAL_H_
 
-#include "util/GL.h"
 #include "HybridObject.h"
 
 using namespace OVR;
 
 namespace mgn {
 
-class Material: public HybridObject {
+class Material : public HybridObject {
 public:
+  enum StereoMode {
+    NORMAL = 0,
+    TOP_BOTTOM,
+    BOTTOM_TOP,
+    LEFT_RIGHT,
+    RIGHT_LEFT,
+    TOP_ONLY,
+    BOTTOM_ONLY,
+    LEFT_ONLY,
+    RIGHT_ONLY
+  };
 
-    enum StereoMode {
-        NORMAL = 0, TOP_BOTTOM, BOTTOM_TOP, LEFT_RIGHT, RIGHT_LEFT,
-        TOP_ONLY, BOTTOM_ONLY, LEFT_ONLY, RIGHT_ONLY
-    };
+  explicit Material(JNIEnv *jni) : surfaceTexture(jni) {
+    Mode = NORMAL;
+    glTexture =
+        GlTexture(surfaceTexture.GetTextureId(), GL_TEXTURE_EXTERNAL_OES, 0, 0);
+  }
 
-    explicit Material(JNIEnv * jni) {
-        Mode = NORMAL;
-        surfaceTexture = new SurfaceTexture(jni);
-        glTexture = GlTexture(surfaceTexture->GetTextureId(), GL_TEXTURE_EXTERNAL_OES, 0, 0);
-    }
+  jobject GetSurfaceTexture() { return surfaceTexture.GetJavaObject(); }
 
-    ~Material() {
-        delete surfaceTexture;
-        surfaceTexture = nullptr;
-    }
+  StereoMode GetStereoMode() const { return Mode; }
 
-    GLuint GetTextureId() const {
-        return surfaceTexture->GetTextureId();
-    }
+  void SetStereoMode(StereoMode stereoMode) { Mode = stereoMode; }
 
-    jobject GetSurfaceTexture() {
-        return surfaceTexture->GetJavaObject();
-    }
+  const GlTexture &GetGlTexture() { return glTexture; }
 
-    StereoMode GetStereoMode() const {
-        return Mode;
-    }
-
-    void SetStereoMode(StereoMode stereoMode) {
-        Mode = stereoMode;
-    }
-
-    const GlTexture & GetGlTexture() {
-        return glTexture;
-    }
-
-    const GlTexture & GetGlTexture() const {
-        return glTexture;
-    }
+  const GlTexture &GetGlTexture() const { return glTexture; }
 
 private:
-    Material(const Material& material);
-    Material(Material&& material);
-    Material& operator=(const Material& material);
-    Material& operator=(Material&& material);
+  Material(const Material &material);
+  Material(Material &&material);
+  Material &operator=(const Material &material);
+  Material &operator=(Material &&material);
 
 private:
-    SurfaceTexture *surfaceTexture;
-    StereoMode Mode;
-    GlTexture glTexture;
+  SurfaceTexture surfaceTexture;
+  StereoMode Mode;
+  GlTexture glTexture;
 };
 }
 #endif

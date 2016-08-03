@@ -27,10 +27,8 @@
 using namespace OVR;
 
 namespace mgn {
-class SceneObject;
 
-class IntersectRayBoundsResult {
-public:
+struct IntersectRayBoundsResult {
     bool intersected;
     Vector3f first;
     Vector3f second;
@@ -39,32 +37,8 @@ public:
 class Scene: public SceneObject {
 public:
     Scene();
-    virtual ~Scene();
+
     Array<SceneObject*> GetWholeSceneObjects();
-
-    void SetFrustumCulling( bool frustumFlag) {
-        this->frustumFlag = frustumFlag;
-    }
-
-    bool GetFrustumCulling() const {
-        return frustumFlag;
-    }
-
-    bool GetFrustumCulling() {
-        return frustumFlag;
-    }
-
-    void SetOcclusionCulling(bool occlusionFlag) {
-        this->occlusionFlag = occlusionFlag;
-    }
-
-    bool GetOcclusionCulling() const {
-        return occlusionFlag;
-    }
-
-    bool GetOcclusionCulling() {
-        return occlusionFlag;
-    }
 
     void SetCenterViewMatrix(const Matrix4f & m){
         centerViewM = m;
@@ -76,14 +50,6 @@ public:
 
     const Matrix4f & GetCenterViewMatrix() const {
         return centerViewM;
-    }
-
-    void SetViewMatrix(const Matrix4f & m){
-        viewM = m;
-    }
-
-    void SetProjectionMatrix(const Matrix4f & m){
-        projectionM = m;
     }
 
     IntersectRayBoundsResult IntersectRayBounds(SceneObject * target, bool axisInWorld);
@@ -117,12 +83,6 @@ private:
 
     Vector3f viewPosition;
     Matrix4f centerViewM;
-    Matrix4f viewM;
-    Matrix4f projectionM;
-    Array<SceneObject*> sceneObjects; // will be rendererd
-
-    bool frustumFlag;
-    bool occlusionFlag;
 
 };
 

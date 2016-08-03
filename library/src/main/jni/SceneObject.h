@@ -22,26 +22,15 @@
 #define SCENE_OBJECT_H_
 
 #include "HybridObject.h"
-#include "util/GL.h"
+#include "RenderData.h"
 
 using namespace OVR;
 
 namespace mgn {
-class Camera;
-class RenderData;
 
 class SceneObject: public HybridObject {
 public:
     SceneObject();
-    ~SceneObject();
-
-    void SetInFrustum(bool inFrustum = true) {
-        this->inFrustum = inFrustum;
-    }
-
-    bool IsInFrustum() const {
-        return inFrustum;
-    }
 
     void SetVisible(bool visibility);
 
@@ -49,15 +38,7 @@ public:
         return visible;
     }
 
-    void SetQueryIssued(bool issued = true) {
-        queryCurrentlyIssued = issued;
-    }
-
-    bool IsQueryIssued() {
-        return queryCurrentlyIssued;
-    }
-
-    void AttachRenderData(SceneObject* self, RenderData* render_data);
+    void AttachRenderData(RenderData* render_data);
 
     void DetachRenderData();
 
@@ -73,7 +54,7 @@ public:
         return children;
     }
 
-    void AddChildObject(SceneObject* self, SceneObject* child);
+    void AddChildObject(SceneObject* child);
 
     void RemoveChildAt(int index);
 
@@ -81,37 +62,8 @@ public:
 
     SceneObject* GetChildByIndex(int index);
 
-    GLuint * GetOcclusionArray() {
-        return queries;
-    }
-
     bool IsColliding(SceneObject* scene_object);
 
-    void SetLODRange(float minRange, float maxRange) {
-        lodMinRange = minRange * minRange;
-        lodMaxRange = maxRange * maxRange;
-        usingLod = true;
-    }
-
-    float GetLODMinRange() {
-        return lodMinRange;
-    }
-
-    float GetLODMaxRange() {
-        return lodMaxRange;
-    }
-
-    bool InLODRange(float distance_from_camera) {
-        if(!usingLod) {
-            return true;
-        }
-        if(distance_from_camera >= lodMinRange &&
-           distance_from_camera < lodMaxRange) {
-            return true;
-        }
-        return false;
-    }
-    
     const Vector3f & GetPosition() const {
         return position;
     }
@@ -174,18 +126,7 @@ private:
     SceneObject *             parent;
     Array<SceneObject*> children;
 
-    float lodMinRange;
-    float lodMaxRange;
-    bool  usingLod;
-
-    //Flags to check for visibility of a node and
-    //whether there are any pending occlusion queries on it
-    const int checkFrames = 12;
-    int       visCount;
     bool      visible;
-    bool      inFrustum;
-    bool      queryCurrentlyIssued;
-    GLuint *  queries;
 };
 
 }

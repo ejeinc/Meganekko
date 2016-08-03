@@ -24,12 +24,7 @@
 #include "RenderData.h"
 
 namespace mgn {
-    Scene::Scene() : SceneObject(),
-        frustumFlag(false),
-        occlusionFlag(false) {
-}
-
-Scene::~Scene() {
+    Scene::Scene() : SceneObject(){
 }
 
 Array<SceneObject*> Scene::GetWholeSceneObjects() {

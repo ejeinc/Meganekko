@@ -23,7 +23,6 @@
 
 #include "HybridObject.h"
 #include "Material.h"
-#include "util/GL.h"
 
 namespace mgn {
 

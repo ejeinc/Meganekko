@@ -46,14 +46,11 @@ static const char FRAGMENT_SHADER[] =
         "  gl_FragColor = texel;\n"
         "}\n";
 
-RenderData::RenderData() : Component(),
+RenderData::RenderData() : HybridObject(),
                             material(nullptr),
                             mesh(nullptr),
                             visible(true),
                             renderingOrder(DEFAULT_RENDERING_ORDER),
-                            offsetFactor(0.0f),
-                            offsetUnits(0.0f),
-                            alphaBlend(true),
                             opacity(1.0f) {
 
     ovrProgramParm parms[] = {
@@ -71,9 +68,6 @@ RenderData::RenderData() : Component(),
     surfaceDef.graphicsCommand.GpuState.blendSrc = GL_ONE;
     surfaceDef.graphicsCommand.GpuState.blendDst = GL_ONE_MINUS_SRC_ALPHA;
     surfaceDef.graphicsCommand.GpuState.blendEnable = ovrGpuState::BLEND_ENABLE;
-}
-
-RenderData::~RenderData() {
 }
 
 void RenderData::UpdateSurfaceDef() {

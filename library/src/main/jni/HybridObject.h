@@ -26,11 +26,9 @@ namespace mgn {
 
 class HybridObject {
 public:
-    HybridObject() {
-    }
+  HybridObject() {}
 
-    virtual ~HybridObject() {
-    }
+  virtual ~HybridObject() {}
 };
 }
 #endif

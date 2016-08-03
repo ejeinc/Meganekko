@@ -22,22 +22,18 @@
 #ifndef RENDER_DATA_H_
 #define RENDER_DATA_H_
 
-#include "Component.h"
 #include "Material.h"
 #include "Mesh.h"
-#include "util/GL.h"
 
 namespace mgn {
-class Mesh;
 
-class RenderData: public Component {
+class RenderData: public HybridObject {
 public:
     enum Queue {
         Background = 1000, Geometry = 2000, Transparent = 3000, Overlay = 4000
     };
 
     RenderData();
-    ~RenderData();
 
     Mesh* GetMesh() const {
         return mesh;
@@ -80,52 +76,12 @@ public:
         this->renderingOrder = renderingOrder;
     }
 
-    bool GetOffset() const {
-        return surfaceDef.graphicsCommand.GpuState.polygonOffsetEnable;
-    }
-
-    void SetOffset(bool offset) {
-        surfaceDef.graphicsCommand.GpuState.polygonOffsetEnable = offset;
-    }
-
-    float GetOffsetFactor() const {
-        return offsetFactor;
-    }
-
-    void SetOffsetFactor(float offsetFactor) {
-        this->offsetFactor = offsetFactor;
-    }
-
-    float GetOffsetUnits() const {
-        return offsetUnits;
-    }
-
-    void SetOffsetUnits(float offsetUnits) {
-        this->offsetUnits = offsetUnits;
-    }
-
     bool GetDepthTest() const {
         return surfaceDef.graphicsCommand.GpuState.depthEnable;
     }
 
     void SetDepthTest(bool depthTest) {
         surfaceDef.graphicsCommand.GpuState.depthEnable = depthTest;
-    }
-
-    bool GetAlphaBlend() const {
-        return alphaBlend;
-    }
-
-    void SetAlphaBlend(bool alphaBlend) {
-        this->alphaBlend = alphaBlend;
-    }
-
-    void SetCameraDistance(float distance) {
-        this->cameraDistance = distance;
-    }
-
-    float GetCameraDistance() const {
-        return cameraDistance;
     }
 
     void UpdateSurfaceDef();
@@ -166,14 +122,10 @@ private:
     Material * material;
     bool visible;
     int renderingOrder;
-    float offsetFactor;
-    float offsetUnits;
-    bool alphaBlend;
-    float cameraDistance;
     ovrSurfaceDef surfaceDef;
     float opacity;
     Matrix4f modelMatrix;
-    Matrix4f programMatrices[2];
+    Matrix4f programMatrices[2]; // 0: For left eye, 1: For right eye
     GlTexture programTexture;
     
     Matrix4f normalM = Matrix4f::Identity();
@@ -202,32 +154,7 @@ private:
 };
 
 inline bool compareRenderData(RenderData* i, RenderData* j) {
-    // if it is a transparent object, sort by camera distance.
-    if(i->GetRenderingOrder() == j->GetRenderingOrder() &&
-       i->GetRenderingOrder() >= RenderData::Transparent &&
-       i->GetRenderingOrder() < RenderData::Overlay) {
-        return i->GetCameraDistance() > j->GetCameraDistance();
-    }
-
     return i->GetRenderingOrder() < j->GetRenderingOrder();
-}
-
-inline bool compareRenderDataWithFrustumCulling(RenderData* i, RenderData* j) {
-    // if either i or j is a transparent object or an overlay object
-    if (i->GetRenderingOrder() >= RenderData::Transparent
-            || j->GetRenderingOrder() >= RenderData::Transparent) {
-        if (i->GetRenderingOrder() == j->GetRenderingOrder()) {
-            // if both are either transparent or both are overlays
-            // place them in reverse camera order from back to front
-            return i->GetCameraDistance() < j->GetCameraDistance();
-        } else {
-            // if one of them is a transparent or an overlay draw by rendering order
-            return i->GetRenderingOrder() < j->GetRenderingOrder();
-        }
-    }
-
-    // if both are neither transparent nor overlays, place them in camera order front to back
-    return i->GetCameraDistance() > j->GetCameraDistance();
 }
 
 }

@@ -25,7 +25,7 @@ import java.util.concurrent.Future;
  * This includes the {@link Mesh mesh} itself, the mesh's {@link Material
  * material}, camera association, rendering order, and various other parameters.
  */
-public class RenderData extends Component {
+public class RenderData extends HybridObject {
 
     private static final String TAG = "Meganekko";
     private Mesh mMesh;
@@ -43,25 +43,9 @@ public class RenderData extends Component {
 
     private static native void setRenderingOrder(long renderData, int renderingOrder);
 
-    private static native boolean getOffset(long renderData);
-
-    private static native void setOffset(long renderData, boolean offset);
-
-    private static native float getOffsetFactor(long renderData);
-
-    private static native void setOffsetFactor(long renderData, float offsetFactor);
-
-    private static native float getOffsetUnits(long renderData);
-
-    private static native void setOffsetUnits(long renderData, float offsetUnits);
-
     private static native boolean getDepthTest(long renderData);
 
     private static native void setDepthTest(long renderData, boolean depthTest);
-
-    private static native boolean getAlphaBlend(long renderData);
-
-    private static native void setAlphaBlend(long renderData, boolean alphaBlend);
 
     private static native float getOpacity(long renderData);
 
@@ -156,68 +140,6 @@ public class RenderData extends Component {
     }
 
     /**
-     * @return {@code true} if {@code GL_POLYGON_OFFSET_FILL} is enabled,
-     * {@code false} if not.
-     */
-    public boolean getOffset() {
-        return getOffset(getNative());
-    }
-
-    /**
-     * Set the {@code GL_POLYGON_OFFSET_FILL} option
-     *
-     * @param offset {@code true} if {@code GL_POLYGON_OFFSET_FILL} should be
-     *               enabled, {@code false} if not.
-     */
-    public void setOffset(boolean offset) {
-        setOffset(getNative(), offset);
-    }
-
-    /**
-     * @return The {@code factor} value passed to {@code glPolygonOffset()} if
-     * {@code GL_POLYGON_OFFSET_FILL} is enabled.
-     * @see #setOffset(boolean)
-     */
-    public float getOffsetFactor() {
-        return getOffsetFactor(getNative());
-    }
-
-    /**
-     * Set the {@code factor} value passed to {@code glPolygonOffset()} if
-     * {@code GL_POLYGON_OFFSET_FILL} is enabled.
-     *
-     * @param offsetFactor Per OpenGL docs: Specifies a scale factor that is used to
-     *                     create a variable depth offset for each polygon. The initial
-     *                     value is 0.
-     * @see #setOffset(boolean)
-     */
-    public void setOffsetFactor(float offsetFactor) {
-        setOffsetFactor(getNative(), offsetFactor);
-    }
-
-    /**
-     * @return The {@code units} value passed to {@code glPolygonOffset()} if
-     * {@code GL_POLYGON_OFFSET_FILL} is enabled.
-     * @see #setOffset(boolean)
-     */
-    public float getOffsetUnits() {
-        return getOffsetUnits(getNative());
-    }
-
-    /**
-     * Set the {@code units} value passed to {@code glPolygonOffset()} if
-     * {@code GL_POLYGON_OFFSET_FILL} is enabled.
-     *
-     * @param offsetUnits Per OpenGL docs: Is multiplied by an implementation-specific
-     *                    value to create a constant depth offset. The initial value is
-     *                    0.
-     * @see #setOffset(boolean)
-     */
-    public void setOffsetUnits(float offsetUnits) {
-        setOffsetUnits(getNative(), offsetUnits);
-    }
-
-    /**
      * @return {@code true} if {@code GL_DEPTH_TEST} is enabled, {@code false}
      * if not.
      */
@@ -233,24 +155,6 @@ public class RenderData extends Component {
      */
     public void setDepthTest(boolean depthTest) {
         setDepthTest(getNative(), depthTest);
-    }
-
-    /**
-     * @return {@code true} if {@code GL_BLEND} is enabled, {@code false} if
-     * not.
-     */
-    public boolean getAlphaBlend() {
-        return getAlphaBlend(getNative());
-    }
-
-    /**
-     * Set the {@code GL_BLEND} option
-     *
-     * @param alphaBlend {@code true} if {@code GL_BLEND} should be enabled,
-     *                   {@code false} if not.
-     */
-    public void setAlphaBlend(boolean alphaBlend) {
-        setAlphaBlend(getNative(), alphaBlend);
     }
 
     public void setOpacity(float opacity) {

@@ -31,45 +31,20 @@ namespace mgn {
         renderData(nullptr),
         parent(nullptr),
         children(),
-        visible(true),
-        inFrustum(false),
-        queryCurrentlyIssued(false),
-        visCount(0),
-        lodMinRange(0),
-        lodMaxRange(MAXFLOAT),
-        usingLod(false) {
-
-    // Occlusion query setup
-    queries = new GLuint[1];
-    glGenQueries(1, queries);
+        visible(true) {
 }
 
-SceneObject::~SceneObject() {
-    delete queries;
-}
-
-void SceneObject::AttachRenderData(SceneObject* self, RenderData* renderData) {
-    if (renderData) {
-        DetachRenderData();
-    }
-
-    SceneObject* ownerObject(renderData->GetOwnerObject());
-    if (ownerObject) {
-        ownerObject->DetachRenderData();
-    }
-
+void SceneObject::AttachRenderData(RenderData* renderData) {
     this->renderData = renderData;
-    renderData->SetOwnerObject(self);
 }
 
 void SceneObject::DetachRenderData() {
     if (renderData) {
-        renderData->RemoveOwnerObject();
         renderData = nullptr;
     }
 }
 
-void SceneObject::AddChildObject(SceneObject* self, SceneObject* child) {
+void SceneObject::AddChildObject(SceneObject* child) {
     for (SceneObject* parent = this->parent; parent; parent = parent->parent) {
         if (child == parent) {
             String error =
@@ -78,7 +53,7 @@ void SceneObject::AddChildObject(SceneObject* self, SceneObject* child) {
         }
     }
     children.PushBack(child);
-    child->parent = self;
+    child->parent = this;
 }
 
 void SceneObject::RemoveChildAt(int index) {
@@ -98,29 +73,6 @@ SceneObject* SceneObject::GetChildByIndex(int index) {
     }
 }
 
-void SceneObject::SetVisible(bool visibility = true) {
-
-    //HACK
-    //If checked every frame, queries may return
-    //an inconsistent result when used with bounding boxes.
-
-    //We need to make sure that the object's visibility status is consistent before
-    //changing the status to avoid flickering artifacts.
-
-    if (visibility == true)
-        visCount++;
-    else
-        visCount--;
-
-    if (visCount > checkFrames) {
-        this->visible = true;
-        visCount = 0;
-    } else if (visCount < (-1 * checkFrames)) {
-        this->visible = false;
-        visCount = 0;
-    }
-}
-
 bool SceneObject::IsColliding(SceneObject *sceneObject) {
 
     //Get the transformed bounding boxes in world coordinates and check if they intersect
@@ -128,10 +80,10 @@ bool SceneObject::IsColliding(SceneObject *sceneObject) {
 
     float thisObjectBoundingBox[6], checkObjectBoundingBox[6];
 
-    OVR::Matrix4f this_object_model_matrix = this->GetRenderData()->GetOwnerObject()->GetMatrixWorld();
+    OVR::Matrix4f this_object_model_matrix = this->GetMatrixWorld();
     this->GetRenderData()->GetMesh()->GetTransformedBoundingBoxInfo(&this_object_model_matrix, thisObjectBoundingBox);
 
-    OVR::Matrix4f check_object_model_matrix = sceneObject->GetRenderData()->GetOwnerObject()->GetMatrixWorld();
+    OVR::Matrix4f check_object_model_matrix = sceneObject->GetMatrixWorld();
     sceneObject->GetRenderData()->GetMesh()->GetTransformedBoundingBoxInfo(&check_object_model_matrix, checkObjectBoundingBox);
 
     bool result = (thisObjectBoundingBox[3] > checkObjectBoundingBox[0]

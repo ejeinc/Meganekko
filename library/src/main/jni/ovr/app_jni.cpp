@@ -18,76 +18,72 @@
 
 using namespace OVR;
 
-namespace mgn
-{
+namespace mgn {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-extern "C"
-{
-
-void Java_ovr_App_startSystemActivity(JNIEnv * jni, jclass clazz, jlong appPtr, jstring command)
-{
-    JavaUTFChars str(jni, command);
-    return ((App *) appPtr)->StartSystemActivity(str.ToStr());
+void Java_ovr_App_startSystemActivity(JNIEnv *jni, jclass clazz, jlong appPtr,
+                                      jstring command) {
+  JavaUTFChars str(jni, command);
+  return ((App *)appPtr)->StartSystemActivity(str.ToStr());
 }
 
-jlong Java_ovr_App_getEyeBufferParms(JNIEnv * jni, jclass clazz, jlong appPtr)
-{
-    const ovrEyeBufferParms & eyeBufferParms = ((App *) appPtr)->GetEyeBufferParms();
-    return (jlong)(intptr_t)&eyeBufferParms;
+jlong Java_ovr_App_getEyeBufferParms(JNIEnv *jni, jclass clazz, jlong appPtr) {
+  const ovrEyeBufferParms &eyeBufferParms =
+      ((App *)appPtr)->GetEyeBufferParms();
+  return (jlong)(intptr_t)&eyeBufferParms;
 }
 
-void Java_ovr_App_setEyeBufferParms(JNIEnv * jni, jclass clazz, jlong appPtr, jlong nativePtr)
-{
-    ovrEyeBufferParms * eyeBufferParms = reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
-    ((App *) appPtr)->SetEyeBufferParms(*eyeBufferParms);
+void Java_ovr_App_setEyeBufferParms(JNIEnv *jni, jclass clazz, jlong appPtr,
+                                    jlong nativePtr) {
+  ovrEyeBufferParms *eyeBufferParms =
+      reinterpret_cast<ovrEyeBufferParms *>(nativePtr);
+  ((App *)appPtr)->SetEyeBufferParms(*eyeBufferParms);
 }
 
-jint Java_ovr_App_getCpuLevel(JNIEnv * jni, jclass clazz, jlong appPtr)
-{
-    return ((App *) appPtr)->GetCpuLevel();
+jint Java_ovr_App_getCpuLevel(JNIEnv *jni, jclass clazz, jlong appPtr) {
+  return ((App *)appPtr)->GetCpuLevel();
 }
 
-void Java_ovr_App_setCpuLevel(JNIEnv * jni, jclass clazz, jlong appPtr, jint cpuLevel)
-{
-    ((App *) appPtr)->SetCpuLevel(cpuLevel);
+void Java_ovr_App_setCpuLevel(JNIEnv *jni, jclass clazz, jlong appPtr,
+                              jint cpuLevel) {
+  ((App *)appPtr)->SetCpuLevel(cpuLevel);
 }
 
-jint Java_ovr_App_getGpuLevel(JNIEnv * jni, jclass clazz, jlong appPtr)
-{
-    return ((App *) appPtr)->GetGpuLevel();
+jint Java_ovr_App_getGpuLevel(JNIEnv *jni, jclass clazz, jlong appPtr) {
+  return ((App *)appPtr)->GetGpuLevel();
 }
 
-void Java_ovr_App_setGpuLevel(JNIEnv * jni, jclass clazz, jlong appPtr, jint gpuLevel)
-{
-    ((App *) appPtr)->SetGpuLevel(gpuLevel);
+void Java_ovr_App_setGpuLevel(JNIEnv *jni, jclass clazz, jlong appPtr,
+                              jint gpuLevel) {
+  ((App *)appPtr)->SetGpuLevel(gpuLevel);
 }
 
-jboolean Java_ovr_App_getShowFPS(JNIEnv * jni, jclass clazz, jlong appPtr)
-{
-    ((App *) appPtr)->GetShowFPS();
+jboolean Java_ovr_App_getShowFPS(JNIEnv *jni, jclass clazz, jlong appPtr) {
+  ((App *)appPtr)->GetShowFPS();
 }
 
-void Java_ovr_App_setShowFPS(JNIEnv * jni, jclass clazz, jlong appPtr, jboolean show)
-{
-    ((App *) appPtr)->SetShowFPS(show);
+void Java_ovr_App_setShowFPS(JNIEnv *jni, jclass clazz, jlong appPtr,
+                             jboolean show) {
+  ((App *)appPtr)->SetShowFPS(show);
 }
 
-jint Java_ovr_App_getMinimumVsyncs(JNIEnv * jni, jclass clazz, jlong appPtr)
-{
-    ((App *) appPtr)->GetMinimumVsyncs();
+jint Java_ovr_App_getMinimumVsyncs(JNIEnv *jni, jclass clazz, jlong appPtr) {
+  ((App *)appPtr)->GetMinimumVsyncs();
 }
 
-void Java_ovr_App_setMinimumVsyncs(JNIEnv * jni, jclass clazz, jlong appPtr, jint mininumVsyncs)
-{
-    ((App *) appPtr)->SetMinimumVsyncs(mininumVsyncs);
+void Java_ovr_App_setMinimumVsyncs(JNIEnv *jni, jclass clazz, jlong appPtr,
+                                   jint mininumVsyncs) {
+  ((App *)appPtr)->SetMinimumVsyncs(mininumVsyncs);
 }
 
-void Java_ovr_App_showInfoText(JNIEnv * jni, jclass clazz, jlong appPtr, jfloat duration, jstring fmt)
-{
-    JavaUTFChars str(jni, fmt);
-    ((App *) appPtr)->ShowInfoText(duration, str.ToStr());
+void Java_ovr_App_showInfoText(JNIEnv *jni, jclass clazz, jlong appPtr,
+                               jfloat duration, jstring fmt) {
+  JavaUTFChars str(jni, fmt);
+  ((App *)appPtr)->ShowInfoText(duration, str.ToStr());
 }
-
-} // extern "C"
-
+#ifdef __cplusplus
+} // extern C
+#endif
 } // namespace mgn

@@ -37,19 +37,9 @@ public class Scene extends SceneObject {
     private float simulateTouchAdditionalY;
     private Bundle mArguments;
 
-    private static native void setFrustumCulling(long scene, boolean flag);
-
-    private static native void setOcclusionQuery(long scene, boolean flag);
-
     private static native boolean isLookingAt(long scene, long sceneObject);
 
     private static native void getLookingPoint(long scene, long sceneObject, boolean axisInWorld, float[] val);
-
-    private static native void setViewMatrix(long scene, float[] m);
-
-    private static native void setProjectionMatrix(long scene, float[] m);
-
-    private static native void render(long scene, int eye);
 
     private static native void setViewPosition(long scene, float x, float y, float z);
 
@@ -95,20 +85,6 @@ public class Scene extends SceneObject {
     @Nullable
     public final Bundle getArguments() {
         return mArguments;
-    }
-
-    /**
-     * Sets the frustum culling for the {@link Scene}.
-     */
-    public void setFrustumCulling(boolean flag) {
-        setFrustumCulling(getNative(), flag);
-    }
-
-    /**
-     * Sets the occlusion query for the {@link Scene}.
-     */
-    public void setOcclusionQuery(boolean flag) {
-        setOcclusionQuery(getNative(), flag);
     }
 
     /**
@@ -159,18 +135,6 @@ public class Scene extends SceneObject {
             getLookingPoint(getNative(), target.getNative(), axisInWorld, sTempValuesForJni);
             return new Vector3f(sTempValuesForJni[0], sTempValuesForJni[1], sTempValuesForJni[2]);
         }
-    }
-
-    public void setViewMatrix(float[] viewM) {
-        setViewMatrix(getNative(), viewM);
-    }
-
-    public void setProjectionMatrix(float[] projectionM) {
-        setProjectionMatrix(getNative(), projectionM);
-    }
-
-    public void render(int eye) {
-        render(getNative(), eye);
     }
 
     public void setViewPosition(float x, float y, float z) {
