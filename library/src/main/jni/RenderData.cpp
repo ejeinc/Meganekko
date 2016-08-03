@@ -65,6 +65,12 @@ RenderData::RenderData() : Component(),
                                parms, sizeof(parms) / sizeof(ovrProgramParm));
     
     surfaceDef.graphicsCommand.Program = program;
+
+    // Enable alpha blending
+    surfaceDef.graphicsCommand.GpuState.blendMode = GL_FUNC_ADD;
+    surfaceDef.graphicsCommand.GpuState.blendSrc = GL_ONE;
+    surfaceDef.graphicsCommand.GpuState.blendDst = GL_ONE_MINUS_SRC_ALPHA;
+    surfaceDef.graphicsCommand.GpuState.blendEnable = ovrGpuState::BLEND_ENABLE;
 }
 
 RenderData::~RenderData() {
