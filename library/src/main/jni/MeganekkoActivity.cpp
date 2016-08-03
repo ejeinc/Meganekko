@@ -22,7 +22,7 @@
 
 namespace mgn
 {
-static const Vector4f CLEAR_COLOR( 0.125f, 0.0f, 0.125f, 1.0f );
+static const Vector4f CLEAR_COLOR(0.0f, 0.0f, 0.0f, 1.0f);
 
 MeganekkoActivity::MeganekkoActivity() :
       GuiSys( OvrGuiSys::Create() ),
