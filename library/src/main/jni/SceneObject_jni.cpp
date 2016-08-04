@@ -28,16 +28,10 @@ Java_com_eje_1c_meganekko_SceneObject_initNativeInstance(JNIEnv * env, jobject o
 }
 
 JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_attachRenderData(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jrenderData) {
+Java_com_eje_1c_meganekko_SceneObject_setRenderData(JNIEnv * env, jobject obj, jlong jsceneObject, jlong jrenderData) {
     SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
-    RenderData* render_data = reinterpret_cast<RenderData*>(jrenderData);
-    sceneObject->AttachRenderData(render_data);
-}
-
-JNIEXPORT void JNICALL
-Java_com_eje_1c_meganekko_SceneObject_detachRenderData(JNIEnv * env, jobject obj, jlong jsceneObject) {
-    SceneObject* sceneObject = reinterpret_cast<SceneObject*>(jsceneObject);
-    sceneObject->DetachRenderData();
+    RenderData* renderData = reinterpret_cast<RenderData*>(jrenderData);
+    sceneObject->SetRenderData(renderData);
 }
 
 JNIEXPORT void JNICALL

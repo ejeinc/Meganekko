@@ -38,9 +38,7 @@ public:
         return visible;
     }
 
-    void AttachRenderData(RenderData* render_data);
-
-    void DetachRenderData();
+    void SetRenderData(RenderData* renderData);
 
     RenderData* GetRenderData() const {
         return renderData;

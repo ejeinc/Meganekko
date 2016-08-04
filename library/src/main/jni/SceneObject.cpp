@@ -34,14 +34,8 @@ namespace mgn {
         visible(true) {
 }
 
-void SceneObject::AttachRenderData(RenderData* renderData) {
+void SceneObject::SetRenderData(RenderData* renderData) {
     this->renderData = renderData;
-}
-
-void SceneObject::DetachRenderData() {
-    if (renderData) {
-        renderData = nullptr;
-    }
 }
 
 void SceneObject::AddChildObject(SceneObject* child) {

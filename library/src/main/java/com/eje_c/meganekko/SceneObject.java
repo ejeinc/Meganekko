@@ -60,7 +60,7 @@ import java.util.Set;
  * scene objects don't need any {@linkplain SceneObject#getRenderData() render
  * data.}
  * Visible scene objects must have render data
- * {@linkplain SceneObject#attachRenderData(RenderData) attached.} Each
+ * {@linkplain SceneObject#setRenderData(RenderData) attached.} Each
  * {@link RenderData} has a {@link Mesh GL mesh} that defines its geometry, and
  * a {@link Material} that defines its surface.
  */
@@ -145,9 +145,7 @@ public class SceneObject extends HybridObject {
         return parser.parse(context.getResources().getXml(xmlRes));
     }
 
-    private static native void attachRenderData(long sceneObject, long renderData);
-
-    private static native void detachRenderData(long sceneObject);
+    private static native void setRenderData(long sceneObject, long renderData);
 
     private static native void addChildObject(long sceneObject, long child);
 
@@ -229,18 +227,13 @@ public class SceneObject extends HybridObject {
      *
      * @param renderData New rendering data.
      */
-    public void attachRenderData(RenderData renderData) {
+    public void setRenderData(RenderData renderData) {
         mRenderData = renderData;
-        attachRenderData(getNative(), renderData.getNative());
-    }
-
-    /**
-     * Detach the object's current {@linkplain RenderData rendering data}.
-     * An object with no {@link RenderData} is not visible.
-     */
-    public void detachRenderData() {
-        mRenderData = null;
-        detachRenderData(getNative());
+        if (renderData != null) {
+            setRenderData(getNative(), renderData.getNative());
+        } else {
+            setRenderData(getNative(), 0);
+        }
     }
 
     /**
@@ -698,7 +691,7 @@ public class SceneObject extends HybridObject {
 
         // Ensure to have RenderData
         if (mRenderData == null) {
-            attachRenderData(new RenderData());
+            setRenderData(new RenderData());
         }
 
         mRenderData.setMaterial(material);
@@ -712,7 +705,7 @@ public class SceneObject extends HybridObject {
 
         // Ensure to have RenderData
         if (mRenderData == null) {
-            attachRenderData(new RenderData());
+            setRenderData(new RenderData());
         }
 
         mRenderData.setMesh(mesh);
@@ -753,7 +746,7 @@ public class SceneObject extends HybridObject {
         // Ensure SceneObject has material
         Material material = material();
         if (material == null) {
-            attachRenderData(new RenderData());
+            setRenderData(new RenderData());
             material = material();
         }
 

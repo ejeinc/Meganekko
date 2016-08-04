@@ -18,7 +18,7 @@ public class DrawableParser implements XmlAttributeParser {
 
         if (renderData == null) {
             renderData = new RenderData();
-            object.attachRenderData(renderData);
+            object.setRenderData(renderData);
         }
 
         Material material = new Material();
