@@ -14,6 +14,8 @@
  # limitations under the License.
  #
 
+OVR_SDK_MOBILE := ../ovr_sdk_mobile
+
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)

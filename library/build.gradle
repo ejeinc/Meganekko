@@ -1,19 +1,19 @@
 import org.gradle.internal.os.OperatingSystem
 
-def ovrMobile = System.getenv('OVR_SDK_MOBILE')
-
 apply plugin: 'com.android.library'
+
+def ovrSdkMobile = "$rootDir/ovr_sdk_mobile"
 
 dependencies {
     /*
      * Oculus Mobile SDK integration
      */
-    compile files("$ovrMobile/VrApi/Libs/Android/VrApi.jar")
-    compile files("$ovrMobile/VrAppFramework/Libs/Android/VrAppFramework.jar")
-    compile files("$ovrMobile/VrAppSupport/SystemUtils/Libs/Android/SystemUtils.jar")
-    compile files("$ovrMobile/VrAppSupport/VrGUI/Libs/Android/VrGUI.jar")
-    compile files("$ovrMobile/VrAppSupport/VrLocale/Libs/Android/VrLocale.jar")
-    compile files("$ovrMobile/VrAppSupport/VrSound/Libs/Android/VrSound.jar")
+    compile files("$ovrSdkMobile/VrApi/Libs/Android/VrApi.jar")
+    compile files("$ovrSdkMobile/VrAppFramework/Libs/Android/VrAppFramework.jar")
+    compile files("$ovrSdkMobile/VrAppSupport/SystemUtils/Libs/Android/SystemUtils.jar")
+    compile files("$ovrSdkMobile/VrAppSupport/VrGUI/Libs/Android/VrGUI.jar")
+    compile files("$ovrSdkMobile/VrAppSupport/VrLocale/Libs/Android/VrLocale.jar")
+    compile files("$ovrSdkMobile/VrAppSupport/VrSound/Libs/Android/VrSound.jar")
 
     /*
      * Dependencies
@@ -38,8 +38,8 @@ android {
             jni.srcDirs = [] //disable automatic ndk-build call
             res.srcDirs = [
                     'src/main/res',
-                    "$ovrMobile/VrAppFramework/res",
-                    "$ovrMobile/VrAppSupport/VrGUI/res"
+                    "$ovrSdkMobile/VrAppFramework/res",
+                    "$ovrSdkMobile/VrAppSupport/VrGUI/res"
             ]
         }
     }
