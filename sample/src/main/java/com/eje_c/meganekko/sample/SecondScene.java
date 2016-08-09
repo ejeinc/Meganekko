@@ -1,5 +1,6 @@
 package com.eje_c.meganekko.sample;
 
+import com.eje_c.meganekko.MeganekkoApp;
 import com.eje_c.meganekko.Scene;
 import com.eje_c.meganekko.utility.Log;
 
@@ -10,6 +11,14 @@ import ovr.KeyCode;
  */
 public class SecondScene extends Scene {
     private static final String TAG = SecondScene.class.getSimpleName();
+
+    @Override
+    protected void initialize(MeganekkoApp app) {
+        super.initialize(app);
+
+        // Set scene background color
+        setClearColor(0.125f, 0.0f, 0.125f, 1.0f);
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, int repeatCount) {

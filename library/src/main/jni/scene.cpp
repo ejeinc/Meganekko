@@ -24,8 +24,7 @@
 #include "RenderData.h"
 
 namespace mgn {
-    Scene::Scene() : SceneObject(){
-}
+Scene::Scene() : SceneObject(), clearEnabled(true), clearColor(0, 0, 0, 1) {}
 
 Array<SceneObject*> Scene::GetWholeSceneObjects() {
     Array<SceneObject*> sceneObjects(GetChildren());

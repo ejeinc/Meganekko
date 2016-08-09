@@ -63,6 +63,18 @@ Java_com_eje_1c_meganekko_Scene_getViewOrientation(JNIEnv * jni, jobject obj, jl
     FillElementsUnSafe(jni, values, orientation);
 }
 
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_Scene_setClearColor(JNIEnv * jni, jclass clazz, jlong scenePtr, jfloat r, jfloat g, jfloat b, jfloat a) {
+    Scene* scene = reinterpret_cast<Scene*>(scenePtr);
+    scene->SetClearColor(Vector4f(r, g, b, a));
+}
+
+JNIEXPORT void JNICALL
+Java_com_eje_1c_meganekko_Scene_setClearEnabled(JNIEnv * jni, jclass clazz, jlong scenePtr, jboolean clearEnabled) {
+    Scene* scene = reinterpret_cast<Scene*>(scenePtr);
+    scene->SetClearEnabled(clearEnabled);
+}
+
 #ifdef __cplusplus 
 } // extern C
 #endif

@@ -73,6 +73,20 @@ public:
     // Generates a sorted surface list for the scene (including emit surfaces).
     void GenerateFrameSurfaceList(const ovrFrameMatrices & matrices, Array<ovrDrawSurface> & surfaceList);
 
+    void SetClearEnabled(bool clearEnabled) {
+      this->clearEnabled = clearEnabled;
+    }
+
+    bool IsClearEnabled() { return clearEnabled; }
+
+    void SetClearColor(const Vector4f &clearColor) {
+      this->clearColor = clearColor;
+    }
+
+    const Vector4f &GetClearColor() { return clearColor; }
+
+    const Vector4f &GetClearColor() const { return clearColor; }
+
 private:
     Scene(const Scene& scene);
     Scene(Scene&& scene);
@@ -83,6 +97,8 @@ private:
 
     Vector3f viewPosition;
     Matrix4f centerViewM;
+    bool clearEnabled;
+    Vector4f clearColor;
 
 };
 

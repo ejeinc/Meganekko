@@ -22,8 +22,6 @@
 
 namespace mgn
 {
-static const Vector4f CLEAR_COLOR(0.0f, 0.0f, 0.0f, 1.0f);
-
 MeganekkoActivity::MeganekkoActivity() :
       GuiSys( OvrGuiSys::Create() ),
       Locale( nullptr ),
@@ -142,8 +140,8 @@ ovrFrameResult MeganekkoActivity::Frame( const ovrFrameInput & vrFrame )
     GuiSys->Frame( vrFrame, centerViewMatrix);
 
     ovrFrameResult res;
-	res.ClearColorBuffer = true;
-	res.ClearColor = CLEAR_COLOR;
+	res.ClearColorBuffer = scene->IsClearEnabled();
+	res.ClearColor = scene->GetClearColor();
 	scene->GetFrameMatrices(app->GetHeadModelParms(), vrFrame.FovX, vrFrame.FovY, res.FrameMatrices);
 	scene->GenerateFrameSurfaceList(res.FrameMatrices, res.Surfaces);
 

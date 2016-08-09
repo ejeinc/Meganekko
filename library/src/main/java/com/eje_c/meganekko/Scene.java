@@ -47,6 +47,10 @@ public class Scene extends SceneObject {
 
     private static native void getViewOrientation(long scene, float[] val);
 
+    private static native void setClearColor(long scene, float r, float g, float b, float a);
+
+    private static native void setClearEnabled(long scene, boolean clearEnabled);
+
     private static int getEventType(Frame frame) {
         if (JoyButton.contains(frame.getButtonPressed(), JoyButton.BUTTON_TOUCH)) {
             return MotionEvent.ACTION_DOWN;
@@ -157,6 +161,14 @@ public class Scene extends SceneObject {
             getViewOrientation(getNative(), sTempValuesForJni);
             return new Quaternionf(sTempValuesForJni[0], sTempValuesForJni[1], sTempValuesForJni[2], sTempValuesForJni[3]);
         }
+    }
+
+    public void setClearColor(float r, float g, float b, float a) {
+        setClearColor(getNative(), r, g, b, a);
+    }
+
+    public void setClearEnabled(boolean clearEnabled) {
+        setClearEnabled(getNative(), clearEnabled);
     }
 
     /**
