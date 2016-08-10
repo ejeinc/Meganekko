@@ -91,26 +91,7 @@ void MeganekkoActivity::LeavingVrMode()
 
 ovrFrameResult MeganekkoActivity::Frame( const ovrFrameInput & vrFrame )
 {
-    // process input events first because this mirrors the behavior when OnKeyEvent was
-    // a virtual function on VrAppInterface and was called by VrAppFramework.
-    for ( int i = 0; i < vrFrame.Input.NumKeyEvents; i++ )
-    {
-        const int keyCode = vrFrame.Input.KeyEvents[i].KeyCode;
-        const int repeatCount = vrFrame.Input.KeyEvents[i].RepeatCount;
-        const KeyEventType eventType = vrFrame.Input.KeyEvents[i].EventType;
-
-        // Key event handling
-        if ( OnKeyEvent( keyCode, repeatCount, eventType ) )
-        {
-            continue;   // consumed the event
-        }
-        // If nothing consumed the key and it's a short-press of the back key, then exit the application to OculusHome.
-        if ( keyCode == OVR_KEY_BACK && eventType == KEY_EVENT_SHORT_PRESS )
-        {
-            app->StartSystemActivity( PUI_CONFIRM_QUIT );
-            continue;
-        }
-    }
+    HandleInput(vrFrame.Input);
 
     Scene * scene = GetScene();
     JNIEnv * jni = app->GetJava()->Env;
@@ -194,6 +175,26 @@ bool MeganekkoActivity::OnKeyEvent(const int keyCode, const int repeatCount, con
     }
 
     return handled;
+}
+
+void MeganekkoActivity::HandleInput(const VrInput & input) {
+
+    // process input events first because this mirrors the behavior when OnKeyEvent was
+    // a virtual function on VrAppInterface and was called by VrAppFramework.
+    for ( int i = 0; i < input.NumKeyEvents; i++ ) {
+
+        const int keyCode = input.KeyEvents[i].KeyCode;
+        const int repeatCount = input.KeyEvents[i].RepeatCount;
+        const KeyEventType eventType = input.KeyEvents[i].EventType;
+
+        // Key event handling
+        if (OnKeyEvent(keyCode, repeatCount, eventType)) continue;   // consumed the event
+
+        // If nothing consumed the key and it's a short-press of the back key, then exit the application to OculusHome.
+        if (keyCode == OVR_KEY_BACK && eventType == KEY_EVENT_SHORT_PRESS) {
+            app->StartSystemActivity(PUI_CONFIRM_QUIT);
+        }
+    }
 }
 
 }

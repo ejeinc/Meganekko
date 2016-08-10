@@ -88,6 +88,8 @@ private:
         return app->GetJava()->Env->CallBooleanMethod(app->GetJava()->ActivityObject,
                 keyEventMethodId, keyCode, repeatCount);
     }
+
+    inline void HandleInput(const VrInput & input);
 };
 
 }
