@@ -100,21 +100,18 @@ Java_com_eje_1c_meganekko_Mesh_build(JNIEnv * env, jobject obj, jlong jmesh,
 
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     mesh->SetGeometry(GlGeometry(attribs, indices));
-    mesh->SetBoundingBox(mins, maxs);
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_Mesh_buildTesselatedQuad(JNIEnv * env, jobject obj, jlong jmesh, jint horizontal, jint vertical, jboolean twoSided) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     mesh->SetGeometry(BuildTesselatedQuad(horizontal, vertical, twoSided));
-    mesh->SetBoundingBox(Vector3f(-1.0f, -1.0f, 0.0f), Vector3f(1.0f, 1.0f, 0.0f));
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_Mesh_buildVignette(JNIEnv * env, jobject obj, jlong jmesh, jfloat xFraction, jfloat yFraction) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     mesh->SetGeometry(BuildVignette(xFraction, yFraction));
-    mesh->SetBoundingBox(Vector3f(-1.0f, -1.0f, 0.0f), Vector3f(1.0f, 1.0f, 0.0f));
 }
 
 JNIEXPORT void JNICALL
@@ -122,42 +119,36 @@ Java_com_eje_1c_meganekko_Mesh_buildTesselatedCylinder(JNIEnv * env, jobject obj
         jfloat radius, jfloat height, jint horizontal, jint vertical, jfloat uScale, jfloat vScale) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     mesh->SetGeometry(BuildTesselatedCylinder(radius, height, horizontal, vertical, uScale, vScale));
-    mesh->SetBoundingBox(Vector3f(-radius, -radius, -height), Vector3f(radius, radius, height)); // TODO Help! Could you calculate right value?
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_Mesh_buildDome(JNIEnv * env, jobject obj, jlong jmesh, jfloat latRads, jfloat uScale, jfloat vScale) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     mesh->SetGeometry(BuildDome(latRads, uScale, vScale));
-    mesh->SetBoundingBox(Vector3f(-100, -100, -100), Vector3f(100, 100, 100)); // TODO Help! Could you calculate right value?
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_Mesh_buildGlobe(JNIEnv * env, jobject obj, jlong jmesh, jfloat uScale, jfloat vScale) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     mesh->SetGeometry(BuildGlobe(uScale, vScale));
-    mesh->SetBoundingBox(Vector3f(-100, -100, -100), Vector3f(100, 100, 100)); // TODO Help! Could you calculate right value?
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_Mesh_buildSpherePatch(JNIEnv * env, jobject obj, jlong jmesh, jfloat fov) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     mesh->SetGeometry(BuildSpherePatch(fov));
-    mesh->SetBoundingBox(Vector3f(-100, -100, -100), Vector3f(100, 100, 100)); // TODO Help! Could you calculate right value?
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_Mesh_buildCalibrationLines(JNIEnv * env, jobject obj, jlong jmesh, jint extraLines, jboolean fullGrid) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     mesh->SetGeometry(BuildCalibrationLines(extraLines, fullGrid));
-    mesh->SetBoundingBox(Vector3f(-1.0f, -1.0f, -1.0f), Vector3f(1.0f, 1.0f, 1.0f));
 }
 
 JNIEXPORT void JNICALL
 Java_com_eje_1c_meganekko_Mesh_buildUnitCubeLines(JNIEnv * env, jobject obj, jlong jmesh) {
     Mesh* mesh = reinterpret_cast<Mesh*>(jmesh);
     mesh->SetGeometry(BuildUnitCubeLines());
-    mesh->SetBoundingBox(Vector3f(0.0f, 0.0f, 0.0f), Vector3f(1.0f, 1.0f, 1.0f));
 }
 
 #ifdef __cplusplus 

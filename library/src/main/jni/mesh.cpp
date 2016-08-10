@@ -18,27 +18,6 @@
 
 namespace mgn {
 
-void Mesh::SetBoundingBox(const Vector3f & mins, const Vector3f & maxs){
-    boundingBoxInfo.mins = mins;
-    boundingBoxInfo.maxs = maxs;
-
-    Vector3f center = (mins + maxs) * 0.5f;
-
-    // find radius
-    float x_squared = (mins.x - center.x) * (mins.x - center.x);
-    float y_squared = (mins.y - center.y) * (mins.y - center.y);
-    float z_squared = (mins.z - center.z) * (mins.z - center.z);
-    float radius = sqrtf(x_squared + y_squared + z_squared);
-
-    // assign the sphere
-    boundingSphereInfo.center = center;
-    boundingSphereInfo.radius = radius;
-}
-
-const BoundingBoxInfo & Mesh::GetBoundingBoxInfo() {
-    return boundingBoxInfo;
-}
-
 void Mesh::GetTransformedBoundingBoxInfo(OVR::Matrix4f *Mat,
         float *transformed_bounding_box) {
 
@@ -60,8 +39,8 @@ void Mesh::GetTransformedBoundingBoxInfo(OVR::Matrix4f *Mat,
 
     for (int i = 0; i < 3; i++) {
         //x coord
-        a = M.M[0][i] * boundingBoxInfo.mins.x;
-        b = M.M[0][i] * boundingBoxInfo.maxs.x;
+        a = M.M[0][i] * geometry.localBounds.GetMins().x;
+        b = M.M[0][i] * geometry.localBounds.GetMaxs().x;
         if (a < b) {
             transformed_bounding_box[0] += a;
             transformed_bounding_box[3] += b;
@@ -71,8 +50,8 @@ void Mesh::GetTransformedBoundingBoxInfo(OVR::Matrix4f *Mat,
         }
 
         //y coord
-        a = M.M[1][i] * boundingBoxInfo.mins.y;
-        b = M.M[1][i] * boundingBoxInfo.maxs.y;
+        a = M.M[1][i] * geometry.localBounds.GetMins().y;
+        b = M.M[1][i] * geometry.localBounds.GetMaxs().y;
         if (a < b) {
             transformed_bounding_box[1] += a;
             transformed_bounding_box[4] += b;
@@ -82,8 +61,8 @@ void Mesh::GetTransformedBoundingBoxInfo(OVR::Matrix4f *Mat,
         }
 
         //z coord
-        a = M.M[2][i] * boundingBoxInfo.mins.z;
-        b = M.M[2][i] * boundingBoxInfo.maxs.z;
+        a = M.M[2][i] * geometry.localBounds.GetMins().z;
+        b = M.M[2][i] * geometry.localBounds.GetMaxs().z;
         if (a < b) {
             transformed_bounding_box[2] += a;
             transformed_bounding_box[5] += b;
@@ -94,11 +73,6 @@ void Mesh::GetTransformedBoundingBoxInfo(OVR::Matrix4f *Mat,
     }
 
     *Mat = M;
-}
-
-// This gives us a really coarse bounding sphere given the already calcuated bounding box.  This won't be a tight-fitting sphere because it is based on the bounding box.  We can revisit this later if we decide we need a tighter sphere.
-const BoundingSphereInfo & Mesh::GetBoundingSphereInfo() {
-    return boundingSphereInfo;
 }
 
 }

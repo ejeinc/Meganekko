@@ -26,16 +26,6 @@
 
 namespace mgn {
 
-struct BoundingBoxInfo {
-    Vector3f mins;
-    Vector3f maxs;
-};
-
-struct BoundingSphereInfo {
-    Vector3f center;
-    float radius;
-};
-
 class Mesh: public HybridObject {
 public:
     Mesh() {
@@ -58,12 +48,8 @@ public:
         this->geometry = geometry;
     }
 
-    void SetBoundingBox(const Vector3f & mins, const Vector3f & maxs);
-
-    const BoundingBoxInfo & GetBoundingBoxInfo(); // Xmin, Ymin, Zmin and Xmax, Ymax, Zmax
     void GetTransformedBoundingBoxInfo(OVR::Matrix4f *M,
             float *transformed_bounding_box); //Get Bounding box info transformed by matrix
-    const BoundingSphereInfo & GetBoundingSphereInfo(); // Get bounding sphere based on the bounding box
 
 private:
     Mesh(const Mesh& mesh);
@@ -72,11 +58,6 @@ private:
     Mesh& operator=(Mesh&& mesh);
 
 private:
-
-    // bounding box info
-    BoundingBoxInfo boundingBoxInfo;
-    BoundingSphereInfo boundingSphereInfo;
-
     GlGeometry geometry;
 };
 }
