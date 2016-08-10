@@ -34,6 +34,8 @@ MeganekkoActivity::~MeganekkoActivity()
     // Call MeganekkoActivity.oneTimeShutDown()
     app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, GetMethodID("oneTimeShutDown", "()V"));
 
+    delete SoundEffectPlayer;
+    delete SoundEffectContext;
     OvrGuiSys::Destroy( GuiSys );
 }
 
@@ -85,12 +87,6 @@ void MeganekkoActivity::LeavingVrMode()
 {
     // Call MeganekkoActivity.leavingVrMode()
     app->GetJava()->Env->CallVoidMethod(app->GetJava()->ActivityObject, leavingVrModeMethodId);
-
-    delete SoundEffectPlayer;
-    SoundEffectPlayer = nullptr;
-
-    delete SoundEffectContext;
-    SoundEffectContext = nullptr;
 }
 
 ovrFrameResult MeganekkoActivity::Frame( const ovrFrameInput & vrFrame )
