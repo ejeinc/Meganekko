@@ -37,10 +37,13 @@ void Mesh::GetTransformedBoundingBoxInfo(OVR::Matrix4f *Mat,
     transformed_bounding_box[2] = M.M[2][3];
     transformed_bounding_box[5] = M.M[2][3];
 
+    const Vector3f mins = geometry.localBounds.GetMins();
+    const Vector3f maxs = geometry.localBounds.GetMaxs();
+
     for (int i = 0; i < 3; i++) {
         //x coord
-        a = M.M[0][i] * geometry.localBounds.GetMins().x;
-        b = M.M[0][i] * geometry.localBounds.GetMaxs().x;
+        a = M.M[0][i] * mins.x;
+        b = M.M[0][i] * maxs.x;
         if (a < b) {
             transformed_bounding_box[0] += a;
             transformed_bounding_box[3] += b;
@@ -50,8 +53,8 @@ void Mesh::GetTransformedBoundingBoxInfo(OVR::Matrix4f *Mat,
         }
 
         //y coord
-        a = M.M[1][i] * geometry.localBounds.GetMins().y;
-        b = M.M[1][i] * geometry.localBounds.GetMaxs().y;
+        a = M.M[1][i] * mins.y;
+        b = M.M[1][i] * maxs.y;
         if (a < b) {
             transformed_bounding_box[1] += a;
             transformed_bounding_box[4] += b;
@@ -61,8 +64,8 @@ void Mesh::GetTransformedBoundingBoxInfo(OVR::Matrix4f *Mat,
         }
 
         //z coord
-        a = M.M[2][i] * geometry.localBounds.GetMins().z;
-        b = M.M[2][i] * geometry.localBounds.GetMaxs().z;
+        a = M.M[2][i] * mins.z;
+        b = M.M[2][i] * maxs.z;
         if (a < b) {
             transformed_bounding_box[2] += a;
             transformed_bounding_box[5] += b;

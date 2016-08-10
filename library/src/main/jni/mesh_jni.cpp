@@ -36,25 +36,12 @@ Java_com_eje_1c_meganekko_Mesh_build(JNIEnv * env, jobject obj, jlong jmesh,
     jsize jPositionsSize = env->GetArrayLength(jPositions);
     jfloat *jPositionsElements = env->GetFloatArrayElements(jPositions, 0);
 
-    // for bounding box
-    Vector3f mins;
-    Vector3f maxs;
-
     for (int i = 0; i < jPositionsSize; i += 3) {
         float x = jPositionsElements[i];
         float y = jPositionsElements[i + 1];
         float z = jPositionsElements[i + 2];
         attribs.position.PushBack(Vector3f(x, y, z));
         attribs.color.PushBack(Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
-
-        // calc mins and maxs
-        mins.x = Alg::Min(mins.x, x);
-        mins.y = Alg::Min(mins.y, y);
-        mins.z = Alg::Min(mins.z, z);
-
-        maxs.x = Alg::Max(maxs.x, x);
-        maxs.y = Alg::Max(maxs.y, y);
-        maxs.z = Alg::Max(maxs.z, z);
     }
 
     env->ReleaseFloatArrayElements(jPositions, jPositionsElements, 0);
