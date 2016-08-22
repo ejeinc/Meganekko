@@ -11,29 +11,11 @@ Android Studioで新規プロジェクトを作成します。
 プロジェクトのルートの**build.gradle**にリポジトリURLの追記をします。
 
 ```gradle
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.0.0'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
 allprojects {
     repositories {
         jcenter()
         maven { url = 'http://ejeinc.github.io/Meganekko/repository' } // この行を追加
     }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }
 ```
 
@@ -42,7 +24,7 @@ task clean(type: Delete) {
 ```gradle
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.eje_c:meganekko:2.0.12' // この行を追加
+    compile 'com.eje_c:meganekko:2.3.1'
 }
 ```
 
@@ -172,11 +154,8 @@ osigファイルが用意できたら、`app/src/main/assets`ディレクトリ�
 
 Meganekko自体をカスタマイズして利用したい場合は、以下の手順で開発環境を整えてください。
 
-1. [Oculus Mobile SDK 1.0.0.0](https://developer.oculus.com/downloads/)をダウンロードする。
-2. Oculus Mobile SDKのZIPファイルを任意の場所に展開する。
-3. 環境変数`OVR_SDK_MOBILE`を作成して、Oculus Mobile SDKを展開したディレクトリを指すようにする。
-4. Android Studioを起動する。
-5. git clone したMeganekkoリポジトリのディレクトリを開く。
+1. Android Studioを起動する。
+2. git clone したMeganekkoリポジトリのディレクトリを開く。
 
 **sample/src/main/assets**の中にosigファイルをコピーしてからsampleモジュールをビルド、実行してください。正しく設定できていればサンプルアプリケーションが起動します。
 
