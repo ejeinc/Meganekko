@@ -24,7 +24,7 @@ Add dependency in module's **build.gradle**.
 ```gradle
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.eje_c:meganekko:2.1.2' // Add this
+    compile 'com.eje_c:meganekko:2.3.1' // Add this
 }
 ```
 
@@ -143,11 +143,8 @@ That's all! Build, Connect Galaxy device to PC, install APK, and launch app. You
 
 If you wish customize Meganekko, follow these steps:
 
-1. Download [Oculus Mobile SDK 1.0.0.1](https://developer.oculus.com/downloads/).
-2. Extract Oculus Mobile SDK.
-3. Create environment variable `OVR_SDK_MOBILE` and point it to Oculus Mobile SDK directory.
-4. Launch Android Studio.
-5. Open Meganekko repository's root directory.
+1. Launch Android Studio.
+2. Open Meganekko repository's root directory.
 
 Put your osig file in **sample/src/main/assets** and build sample module.
 
