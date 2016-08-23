@@ -15,7 +15,6 @@ import com.eje_c.meganekko.xml.XmlSceneParserFactory;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.lang.ref.Reference;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -63,13 +62,7 @@ public abstract class MeganekkoApp {
 
         mScene.update(frame);
 
-        // Delete native resources related with Garbage Collected objects
-        Reference<? extends HybridObject> ref;
-        while ((ref = NativeReference.sReferenceQueue.poll()) != null) {
-            if (ref instanceof NativeReference) {
-                ((NativeReference) ref).delete();
-            }
-        }
+        NativeReference.gc();
     }
 
     /**
