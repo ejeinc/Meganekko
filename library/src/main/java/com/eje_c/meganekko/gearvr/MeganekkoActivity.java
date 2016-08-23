@@ -42,7 +42,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
         System.loadLibrary("meganekko");
     }
 
-    private InternalSensorManager mInternalSensorManager;
     private App mApp;
     private MeganekkoApp meganekkoApp;
 
@@ -66,8 +65,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
         String uriString = getUriStringFromIntent(intent);
 
         setAppPtr(nativeSetAppInterface(this, fromPackageNameString, commandString, uriString));
-
-        mInternalSensorManager = new InternalSensorManager(this, getAppPtr());
 
         mApp = new App(getAppPtr());
     }
@@ -97,7 +94,6 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
 
         meganekkoApp = createMeganekkoApp(this);
         meganekkoApp.init();
-        mInternalSensorManager.start();
     }
 
     /**
@@ -134,12 +130,9 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
      */
     protected void oneTimeShutDown() {
         meganekkoApp.shutdown();
-        mInternalSensorManager.stop();
     }
 
     protected void onHmdMounted() {
-        // Disable internal sensor when Gear VR is attached
-        mInternalSensorManager.stop();
     }
 
     protected void onHmdUnmounted() {

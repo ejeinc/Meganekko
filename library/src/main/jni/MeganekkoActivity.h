@@ -51,18 +51,12 @@ public:
         return reinterpret_cast<Scene*>(jni->CallLongMethod(app->GetJava()->ActivityObject, getNativeSceneMethodId));
     }
 
-    void SetInternalSensorRotation(const Quatf & q) {
-        internalSensorRotation = q;
-    }
-
 private:
     ovrSoundEffectContext *        SoundEffectContext;
     OvrGuiSys::SoundEffectPlayer * SoundEffectPlayer;
     ovrLocale *                    Locale;
 
     ovrFrameParms                  frameParms;
-
-    Quatf internalSensorRotation;
 
     bool                HmdMounted; // true if the HMT was mounted on the previous frame
 

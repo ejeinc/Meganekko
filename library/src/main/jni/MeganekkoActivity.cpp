@@ -106,9 +106,7 @@ ovrFrameResult MeganekkoActivity::Frame( const ovrFrameInput & vrFrame )
     HmdMounted = headsetIsMounted;
 
     // Apply Camera movement to centerViewMatrix
-    ovrMatrix4f input = vrFrame.DeviceStatus.DeviceIsDocked
-            ? Matrix4f::Translation(scene->GetViewPosition())
-            : Matrix4f::Translation(scene->GetViewPosition()) * Matrix4f(internalSensorRotation);
+    ovrMatrix4f input = Matrix4f::Translation(scene->GetViewPosition());
     Matrix4f centerViewMatrix = vrapi_GetCenterEyeViewMatrix( &app->GetHeadModelParms(), &vrFrame.Tracking, &input );
 
     scene->SetCenterViewMatrix(centerViewMatrix);
