@@ -24,11 +24,13 @@ Add dependency in module's **build.gradle**.
 ```gradle
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.eje_c:meganekko:2.3.1' // Add this
+    compile 'com.eje_c:meganekko:2.3.2' // Add this
 }
 ```
 
 Click "Sync Now".
+
+Note: Since 2.3.0 Meganekko uses multi-view rendering. This feature is not working on prior Android M devices. See also https://developer3.oculus.com/documentation/mobilesdk/latest/concepts/release/
 
 ### Hello World
 

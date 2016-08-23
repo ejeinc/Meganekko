@@ -24,13 +24,15 @@ allprojects {
 ```gradle
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.eje_c:meganekko:2.3.1'
+    compile 'com.eje_c:meganekko:2.3.2'
 }
 ```
 
 `allprojects`ブロックをいじりたくない場合は、`repositories`ブロックをモジュールの中の**build.gradle**に記述することもできます。
 
-画面右上に表示されるのSync Nowをクリックします。正しく設定できていればプロジェクトにMeganekkoライブラリーが追加されます。
+画面右上に表示されるSync Nowをクリックします。正しく設定できていればプロジェクトにMeganekkoライブラリーが追加されます。
+
+注意: バージョン2.3.0からMeganekkoはマルチビューレンダリングを使用していますが、この機能はAndroid M以前の端末では動作しません。詳しくはこちら https://developer3.oculus.com/documentation/mobilesdk/latest/concepts/release/
 
 ### Hello World
 
