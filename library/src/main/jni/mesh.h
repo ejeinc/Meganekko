@@ -28,25 +28,15 @@ namespace mgn {
 
 class Mesh: public HybridObject {
 public:
-    Mesh() {
-    }
+    Mesh();
 
-    ~Mesh() {
-        geometry.Free();
-    }
+    ~Mesh();
 
-    const GlGeometry & GetGeometry() const {
-        return geometry;
-    }
+    const GlGeometry & GetGeometry() const;
 
-    const GlGeometry & GetGeometry() {
-        return geometry;
-    }
+    const GlGeometry & GetGeometry();
 
-    void SetGeometry(const GlGeometry & geometry) {
-        this->geometry.Free();
-        this->geometry = geometry;
-    }
+    void SetGeometry(const GlGeometry & geometry);
 
     void GetTransformedBoundingBoxInfo(OVR::Matrix4f *M,
             float *transformed_bounding_box); //Get Bounding box info transformed by matrix

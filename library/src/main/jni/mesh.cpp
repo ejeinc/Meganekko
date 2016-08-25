@@ -18,6 +18,26 @@
 
 namespace mgn {
 
+Mesh::Mesh() {
+}
+
+Mesh::~Mesh() {
+    geometry.Free();
+}
+
+const GlGeometry & Mesh::GetGeometry() const {
+    return geometry;
+}
+
+const GlGeometry & Mesh::GetGeometry() {
+    return geometry;
+}
+
+void Mesh::SetGeometry(const GlGeometry & geometry) {
+    this->geometry.Free();
+    this->geometry = geometry;
+}
+
 void Mesh::GetTransformedBoundingBoxInfo(OVR::Matrix4f *Mat,
         float *transformed_bounding_box) {
 
