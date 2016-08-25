@@ -32,25 +32,13 @@ class SceneObject: public HybridObject {
 public:
     SceneObject();
 
-    void SetVisible(bool visibility);
-
-    bool IsVisible() const {
-        return visible;
-    }
-
     void SetRenderData(RenderData* renderData);
 
-    RenderData* GetRenderData() const {
-        return renderData;
-    }
+    RenderData* GetRenderData() const;
 
-    SceneObject* GetParent() const {
-        return parent;
-    }
+    SceneObject* GetParent() const;
 
-    const Array<SceneObject*>& GetChildren() const {
-        return children;
-    }
+    const Array<SceneObject*>& GetChildren() const;
 
     void AddChildObject(SceneObject* child);
 
@@ -62,29 +50,17 @@ public:
 
     bool IsColliding(SceneObject* scene_object);
 
-    const Vector3f & GetPosition() const {
-        return position;
-    }
+    const Vector3f & GetPosition() const;
     
-    const Vector3f & GetPosition() {
-        return position;
-    }
+    const Vector3f & GetPosition();
     
-    const Vector3f & GetScale() const {
-        return scale;
-    }
+    const Vector3f & GetScale() const;
     
-    const Vector3f & GetScale() {
-        return scale;
-    }
+    const Vector3f & GetScale();
     
-    const Quatf & GetRotation() const {
-        return rotation;
-    }
+    const Quatf & GetRotation() const;
     
-    const Quatf & GetRotation() {
-        return rotation;
-    }
+    const Quatf & GetRotation();
     
     void SetPosition(const Vector3f& position);
     
@@ -94,9 +70,7 @@ public:
     
     const Matrix4f & GetMatrixWorld();
 
-    const Matrix4f & GetMatrix() {
-        return matrixLocal;
-    }
+    const Matrix4f & GetMatrix();
 
     void SetMatrixLocal(const Matrix4f & matrix);
     

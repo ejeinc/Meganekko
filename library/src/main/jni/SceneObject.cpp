@@ -38,6 +38,18 @@ void SceneObject::SetRenderData(RenderData* renderData) {
     this->renderData = renderData;
 }
 
+RenderData* SceneObject::GetRenderData() const {
+    return renderData;
+}
+
+SceneObject* SceneObject::GetParent() const {
+    return parent;
+}
+
+const Array<SceneObject*>& SceneObject::GetChildren() const {
+    return children;
+}
+
 void SceneObject::AddChildObject(SceneObject* child) {
     for (SceneObject* parent = this->parent; parent; parent = parent->parent) {
         if (child == parent) {
@@ -90,6 +102,30 @@ bool SceneObject::IsColliding(SceneObject *sceneObject) {
     return result;
 }
 
+const Vector3f & SceneObject::GetPosition() const {
+    return position;
+}
+
+const Vector3f & SceneObject::GetPosition() {
+    return position;
+}
+
+const Vector3f & SceneObject::GetScale() const {
+    return scale;
+}
+
+const Vector3f & SceneObject::GetScale() {
+    return scale;
+}
+
+const Quatf & SceneObject::GetRotation() const {
+    return rotation;
+}
+
+const Quatf & SceneObject::GetRotation() {
+    return rotation;
+}
+
 void SceneObject::SetPosition(const Vector3f& position) {
     this->position = position;
     Invalidate(false);
@@ -135,16 +171,16 @@ void SceneObject::UpdateMatrixLocal() {
 
 }
 
-float inline sign(float a) {
-    return a >= 0 ? 1.0f : -1.0f;
+const Matrix4f & SceneObject::GetMatrix() {
+    return matrixLocal;
 }
 
 void SceneObject::SetMatrixLocal(const Matrix4f & matrix) {
 
 
-    float xs = sign(matrix.M[0][0] * matrix.M[1][0] * matrix.M[2][0] * matrix.M[3][0]);
-    float ys = sign(matrix.M[0][1] * matrix.M[1][1] * matrix.M[2][1] * matrix.M[3][1]);
-    float zs = sign(matrix.M[0][2] * matrix.M[1][2] * matrix.M[2][2] * matrix.M[3][2]);
+    float xs = Sign(matrix.M[0][0] * matrix.M[1][0] * matrix.M[2][0] * matrix.M[3][0]);
+    float ys = Sign(matrix.M[0][1] * matrix.M[1][1] * matrix.M[2][1] * matrix.M[3][1]);
+    float zs = Sign(matrix.M[0][2] * matrix.M[1][2] * matrix.M[2][2] * matrix.M[3][2]);
 
     Vector3f newScale(
             xs * Vector3f(matrix.M[0][0], matrix.M[1][0], matrix.M[2][0]).Length(),
