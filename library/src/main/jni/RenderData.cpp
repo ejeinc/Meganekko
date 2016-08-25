@@ -70,6 +70,54 @@ RenderData::RenderData() : HybridObject(),
     surfaceDef.graphicsCommand.GpuState.blendEnable = ovrGpuState::BLEND_ENABLE;
 }
 
+void RenderData::SetMesh(Mesh* mesh) {
+    this->mesh = mesh;
+
+    if (mesh) {
+        surfaceDef.geo = mesh->GetGeometry();
+    }
+}
+
+void RenderData::SetMaterial(Material* material) {
+    this->material = material;
+}
+
+Material* RenderData::GetMaterial() const {
+    return material;
+}
+
+Material* RenderData::GetMaterial() {
+    return material;
+}
+
+bool RenderData::IsVisible() const {
+    return visible;
+}
+
+bool RenderData::IsVisible() {
+    return visible;
+}
+
+void RenderData::SetVisible(bool visible) {
+    this->visible = visible;
+}
+
+int RenderData::GetRenderingOrder() const {
+    return renderingOrder;
+}
+
+void RenderData::SetRenderingOrder(int renderingOrder) {
+    this->renderingOrder = renderingOrder;
+}
+
+bool RenderData::GetDepthTest() const {
+    return surfaceDef.graphicsCommand.GpuState.depthEnable;
+}
+
+void RenderData::SetDepthTest(bool depthTest) {
+    surfaceDef.graphicsCommand.GpuState.depthEnable = depthTest;
+}
+
 void RenderData::UpdateSurfaceDef() {
 
     // Texture0
@@ -86,8 +134,31 @@ void RenderData::UpdateSurfaceDef() {
     surfaceDef.graphicsCommand.UniformData[2].Count = 2;
 }
 
-inline const Matrix4f & RenderData::TexmForVideo(const Material::StereoMode stereoMode, const int eye ) const
-{
+void RenderData::SetOpacity(float opacity) {
+    this->opacity = opacity;
+}
+
+float RenderData::GetOpacity() {
+    return opacity;
+}
+
+const ovrSurfaceDef & RenderData::GetSurfaceDef() {
+    return surfaceDef;
+}
+
+void RenderData::SetModelMatrix(const Matrix4f & modelMatrix) {
+    this->modelMatrix = modelMatrix;
+}
+
+const Matrix4f & RenderData::GetModelMatrix() {
+    return modelMatrix;
+}
+
+const Matrix4f & RenderData::GetModelMatrix() const {
+    return modelMatrix;
+}
+
+inline const Matrix4f & RenderData::TexmForVideo(const Material::StereoMode stereoMode, const int eye ) const {
     switch (stereoMode) {
         case Material::StereoMode::TOP_BOTTOM:
             return eye ? bottomM : topM;
@@ -119,4 +190,3 @@ inline const Matrix4f & RenderData::TexmForVideo(const Material::StereoMode ster
     }
 }
 }
-;

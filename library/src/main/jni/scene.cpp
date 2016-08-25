@@ -104,7 +104,7 @@ void Scene::GenerateFrameSurfaceList(const ovrFrameMatrices & frameMatrices, Arr
     }
 
     // Sort with renderingOrder
-    Alg::QuickSort(renderDataList, compareRenderData);
+    Alg::QuickSort(renderDataList, RenderData::compareRenderData);
 
     for (int i = 0; i < renderDataList.GetSizeI(); i++) {
         RenderData * renderData = renderDataList[i];

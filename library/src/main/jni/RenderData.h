@@ -39,75 +39,44 @@ public:
         return mesh;
     }
 
-    void SetMesh(Mesh* mesh) {
-        this->mesh = mesh;
-        surfaceDef.geo = mesh->GetGeometry();
-    }
+    void SetMesh(Mesh* mesh);
 
-    void SetMaterial(Material* material) {
-        this->material = material;
-    }
+    void SetMaterial(Material* material);
     
-    Material* GetMaterial() const {
-        return material;
-    }
+    Material* GetMaterial() const;
     
-    Material* GetMaterial() {
-        return material;
-    }
+    Material* GetMaterial();
 
-    bool IsVisible() const {
-        return visible;
-    }
+    bool IsVisible() const;
 
-    bool IsVisible() {
-        return visible;
-    }
+    bool IsVisible();
 
-    void SetVisible(bool visible) {
-        this->visible = visible;
-    }
+    void SetVisible(bool visible);
 
-    int GetRenderingOrder() const {
-        return renderingOrder;
-    }
+    int GetRenderingOrder() const;
 
-    void SetRenderingOrder(int renderingOrder) {
-        this->renderingOrder = renderingOrder;
-    }
+    void SetRenderingOrder(int renderingOrder);
 
-    bool GetDepthTest() const {
-        return surfaceDef.graphicsCommand.GpuState.depthEnable;
-    }
+    bool GetDepthTest() const;
 
-    void SetDepthTest(bool depthTest) {
-        surfaceDef.graphicsCommand.GpuState.depthEnable = depthTest;
-    }
+    void SetDepthTest(bool depthTest);
 
     void UpdateSurfaceDef();
 
-    void SetOpacity(float opacity) {
-        this->opacity = opacity;
-    }
+    void SetOpacity(float opacity);
 
-    float GetOpacity() {
-        return opacity;
-    }
+    float GetOpacity();
 
-    const ovrSurfaceDef & GetSurfaceDef() {
-        return surfaceDef;
-    }
+    const ovrSurfaceDef & GetSurfaceDef();
 
-    void SetModelMatrix(const Matrix4f & modelMatrix) {
-        this->modelMatrix = modelMatrix;
-    }
+    void SetModelMatrix(const Matrix4f & modelMatrix);
 
-    const Matrix4f & GetModelMatrix() {
-        return modelMatrix;
-    }
+    const Matrix4f & GetModelMatrix();
 
-    const Matrix4f & GetModelMatrix() const {
-        return modelMatrix;
+    const Matrix4f & GetModelMatrix() const;
+
+    static bool compareRenderData(RenderData* i, RenderData* j) {
+        return i->GetRenderingOrder() < j->GetRenderingOrder();
     }
 
 private:
@@ -152,10 +121,6 @@ private:
 
     const Matrix4f & TexmForVideo(const Material::StereoMode stereoMode, const int eye) const;
 };
-
-inline bool compareRenderData(RenderData* i, RenderData* j) {
-    return i->GetRenderingOrder() < j->GetRenderingOrder();
-}
 
 }
 #endif
