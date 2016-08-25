@@ -14,21 +14,11 @@
  */
 
 #include "includes.h"
-
-/***************************************************************************
- * For convenience in Java.
- ***************************************************************************/
-
-#ifndef HYBRID_OBJECT_H_
-#define HYBRID_OBJECT_H_
+#include "HybridObject.h"
 
 namespace mgn {
 
-class HybridObject {
-public:
-  HybridObject();
+HybridObject::HybridObject() {}
 
-  virtual ~HybridObject();
-};
+HybridObject::~HybridObject() {}
 }
-#endif
