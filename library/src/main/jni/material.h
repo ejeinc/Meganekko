@@ -42,21 +42,17 @@ public:
     RIGHT_ONLY
   };
 
-  explicit Material(JNIEnv *jni) : surfaceTexture(jni) {
-    Mode = NORMAL;
-    glTexture =
-        GlTexture(surfaceTexture.GetTextureId(), GL_TEXTURE_EXTERNAL_OES, 0, 0);
-  }
+  explicit Material(JNIEnv *jni);
 
-  jobject GetSurfaceTexture() { return surfaceTexture.GetJavaObject(); }
+  jobject GetSurfaceTexture();
 
-  StereoMode GetStereoMode() const { return Mode; }
+  StereoMode GetStereoMode() const;
 
-  void SetStereoMode(StereoMode stereoMode) { Mode = stereoMode; }
+  void SetStereoMode(StereoMode stereoMode);
 
-  const GlTexture &GetGlTexture() { return glTexture; }
+  const GlTexture &GetGlTexture();
 
-  const GlTexture &GetGlTexture() const { return glTexture; }
+  const GlTexture &GetGlTexture() const;
 
 private:
   Material(const Material &material);
