@@ -38,6 +38,18 @@ Array<SceneObject*> Scene::GetWholeSceneObjects() {
     return sceneObjects;
 }
 
+void Scene::SetCenterViewMatrix(const Matrix4f & m){
+    centerViewM = m;
+}
+
+const Matrix4f & Scene::GetCenterViewMatrix() {
+    return centerViewM;
+}
+
+const Matrix4f & Scene::GetCenterViewMatrix() const {
+    return centerViewM;
+}
+
 IntersectRayBoundsResult Scene::IntersectRayBounds(SceneObject *target, bool axisInWorld) {
 
     Matrix4f worldToModelM = target->GetMatrixWorld().Inverted();
@@ -68,6 +80,18 @@ IntersectRayBoundsResult Scene::IntersectRayBounds(SceneObject *target, bool axi
     }
 
     return result;
+}
+
+void Scene::SetViewPosition(const Vector3f & pos) {
+    viewPosition = pos;
+}
+
+const Vector3f & Scene::GetViewPosition() {
+    return viewPosition;
+}
+
+const Vector3f & Scene::GetViewPosition() const {
+    return viewPosition;
 }
 
 void Scene::GetFrameMatrices(const ovrHeadModelParms & headModelParms, const float fovDegreesX, const float fovDegreesY, ovrFrameMatrices & frameMatrices ) const {
@@ -111,4 +135,18 @@ void Scene::GenerateFrameSurfaceList(const ovrFrameMatrices & frameMatrices, Arr
         surfaceList.PushBack(ovrDrawSurface(renderData->GetModelMatrix(), &renderData->GetSurfaceDef()));
     }
 }
+
+void Scene::SetClearEnabled(bool clearEnabled) {
+    this->clearEnabled = clearEnabled;
+}
+
+bool Scene::IsClearEnabled() { return clearEnabled; }
+
+void Scene::SetClearColor(const Vector4f &clearColor) {
+    this->clearColor = clearColor;
+}
+
+const Vector4f &Scene::GetClearColor() { return clearColor; }
+
+const Vector4f &Scene::GetClearColor() const { return clearColor; }
 }

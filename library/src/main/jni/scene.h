@@ -40,31 +40,19 @@ public:
 
     Array<SceneObject*> GetWholeSceneObjects();
 
-    void SetCenterViewMatrix(const Matrix4f & m){
-        centerViewM = m;
-    }
+    void SetCenterViewMatrix(const Matrix4f & m);
 
-    const Matrix4f & GetCenterViewMatrix() {
-        return centerViewM;
-    }
+    const Matrix4f & GetCenterViewMatrix();
 
-    const Matrix4f & GetCenterViewMatrix() const {
-        return centerViewM;
-    }
+    const Matrix4f & GetCenterViewMatrix() const;
 
     IntersectRayBoundsResult IntersectRayBounds(SceneObject * target, bool axisInWorld);
 
-    void SetViewPosition(const Vector3f & pos) {
-        viewPosition = pos;
-    }
+    void SetViewPosition(const Vector3f & pos);
 
-    const Vector3f & GetViewPosition() {
-        return viewPosition;
-    }
+    const Vector3f & GetViewPosition();
 
-    const Vector3f & GetViewPosition() const {
-        return viewPosition;
-    }
+    const Vector3f & GetViewPosition() const;
 
     // Populate frameMatrices with the view and projection matrices for the scene.
     void GetFrameMatrices(const ovrHeadModelParms & headModelParms,
@@ -73,19 +61,15 @@ public:
     // Generates a sorted surface list for the scene (including emit surfaces).
     void GenerateFrameSurfaceList(const ovrFrameMatrices & matrices, Array<ovrDrawSurface> & surfaceList);
 
-    void SetClearEnabled(bool clearEnabled) {
-      this->clearEnabled = clearEnabled;
-    }
+    void SetClearEnabled(bool clearEnabled);
 
-    bool IsClearEnabled() { return clearEnabled; }
+    bool IsClearEnabled();
 
-    void SetClearColor(const Vector4f &clearColor) {
-      this->clearColor = clearColor;
-    }
+    void SetClearColor(const Vector4f &clearColor);
 
-    const Vector4f &GetClearColor() { return clearColor; }
+    const Vector4f &GetClearColor();
 
-    const Vector4f &GetClearColor() const { return clearColor; }
+    const Vector4f &GetClearColor() const;
 
 private:
     Scene(const Scene& scene);
