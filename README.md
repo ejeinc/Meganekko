@@ -24,7 +24,7 @@ Add dependency in module's **build.gradle**.
 ```gradle
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.eje_c:meganekko:2.3.2' // Add this
+    compile 'com.eje_c:meganekko:2.3.3' // Add this
 }
 ```
 
@@ -37,13 +37,14 @@ Note: Since 2.3.0 Meganekko uses multi-view rendering. This feature is not worki
 Meganekko app is started from subclass of `MeganekkoApp`.
 
 ```java
-import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
 
 public class MyApp extends MeganekkoApp {
 
-    public MyApp(Meganekko meganekko) {
-        super(meganekko);
+    @Override
+    public void init() {
+        super.init();
+        // Init application here
     }
 }
 ```
@@ -77,29 +78,14 @@ Create VR scene with XML. XML file is localed at*res/xml/scene.xml*. File name i
 Call `setSceneFromXML` in `MyApp`.
 
 ```java
-import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
 
 public class MyApp extends MeganekkoApp {
 
-    public MyApp(Meganekko meganekko) {
-        super(meganekko);
-        setSceneFromXML(R.xml.scene); // Add this line
-    }
-}
-```
-
-Finally, create `MainActivity` extends `MeganekkoActivity` and implement abstract `createMeganekkoApp` method.
-
-```java
-import com.eje_c.meganekko.Meganekko;
-import com.eje_c.meganekko.MeganekkoApp;
-import com.eje_c.meganekko.gearvr.MeganekkoActivity;
-
-public class MainActivity extends MeganekkoActivity {
     @Override
-    public MeganekkoApp createMeganekkoApp(Meganekko meganekko) {
-        return new MyApp(meganekko);
+    public void init() {
+        super.init();
+        setSceneFromXML(R.xml.scene);
     }
 }
 ```
@@ -114,8 +100,13 @@ Add recommended attributes and elements. See [Oculus developer document](https:/
     android:label="@string/app_name"
     android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
 
+
+    <meta-data
+        android:name="com.eje_c.meganekko.App"
+        android:value="com.eje_c.meganekko.sample.MyApp"/> <!-- This is your App class name -->
+
     <activity
-        android:name=".MainActivity"
+        android:name="com.eje_c.meganekko.gearvr.MeganekkoActivity"
         android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
         android:excludeFromRecents="true"
         android:label="@string/app_name"
