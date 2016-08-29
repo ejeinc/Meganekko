@@ -24,7 +24,7 @@ allprojects {
 ```gradle
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.eje_c:meganekko:2.3.2'
+    compile 'com.eje_c:meganekko:2.3.3'
 }
 ```
 
@@ -39,13 +39,14 @@ dependencies {
 Meganekkoのアプリケーションは`MeganekkoApp`を継承したクラスがメインになります。
 
 ```java
-import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
 
 public class MyApp extends MeganekkoApp {
 
-    public MyApp(Meganekko meganekko) {
-        super(meganekko);
+    @Override
+    public void init() {
+        super.init();
+        // Init application here
     }
 }
 ```
@@ -82,30 +83,14 @@ public class MyApp extends MeganekkoApp {
 作成したXMLシーンを利用するために`MyApp`の中で`setSceneFromXML`を呼び出します。
 
 ```java
-import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
 
 public class MyApp extends MeganekkoApp {
 
-    public MyApp(Meganekko meganekko) {
-        super(meganekko);
-        setSceneFromXML(R.xml.scene); // この行を追加
-    }
-}
-```
-
-最後に、AndroidアプリはActivityがないと起動できないので、エントリーポイントとなるActivityを作成します。
-Meganekkoアプリでは通常のActivityの代わりに`MeganekkoActivity`を継承します。そして`createMeganekkoApp`メソッドで`MyApp`のインスタンスを作成します。
-
-```java
-import com.eje_c.meganekko.Meganekko;
-import com.eje_c.meganekko.MeganekkoApp;
-import com.eje_c.meganekko.gearvr.MeganekkoActivity;
-
-public class MainActivity extends MeganekkoActivity {
     @Override
-    public MeganekkoApp createMeganekkoApp(Meganekko meganekko) {
-        return new MyApp(meganekko);
+    public void init() {
+        super.init();
+        setSceneFromXML(R.xml.scene);
     }
 }
 ```
@@ -119,8 +104,12 @@ Meganekkoを使うためにはAndroidManifestにも手を加える必要があ�
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name">
 
+    <meta-data
+        android:name="com.eje_c.meganekko.App"
+        android:value="com.eje_c.meganekko.sample.MyApp"/> <!-- Appクラスのフルネームを指定する -->
+
     <activity
-        android:name=".MainActivity"
+        android:name="com.eje_c.meganekko.gearvr.MeganekkoActivity"
         android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
         android:excludeFromRecents="true"
         android:label="@string/app_name"
