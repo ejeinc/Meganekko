@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.view.Surface;
 
 import com.eje_c.meganekko.Material;
-import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
 import com.eje_c.meganekko.SceneObject;
 import com.google.android.exoplayer.ExoPlayer;
@@ -30,8 +29,9 @@ public class MyApp extends MeganekkoApp {
     private SurfaceTexture surfaceTexture;
     private Surface surface;
 
-    public MyApp(Meganekko meganekko) {
-        super(meganekko);
+    @Override
+    public void init() {
+        super.init();
         setSceneFromXML(R.xml.scene);
 
         // Get scene object

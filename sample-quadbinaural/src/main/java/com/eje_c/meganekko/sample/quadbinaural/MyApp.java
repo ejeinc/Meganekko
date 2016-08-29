@@ -1,6 +1,5 @@
 package com.eje_c.meganekko.sample.quadbinaural;
 
-import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
 
 import org.joml.Quaternionf;
@@ -13,13 +12,14 @@ import java.io.IOException;
 import ovr.JoyButton;
 
 public class MyApp extends MeganekkoApp {
-    private final QuadBinauralPlayer player;
+    private QuadBinauralPlayer player;
     private final Vector3f forward = new Vector3f(0, 0, -1);
     private final Vector3f vec = new Vector3f();
     private final float[] values = new float[3];
 
-    public MyApp(Meganekko meganekko) {
-        super(meganekko);
+    @Override
+    public void init() {
+        super.init();
         setSceneFromXML(R.xml.scene);
 
         File audio = new File(getContext().getFilesDir(), "audio.ogg");
