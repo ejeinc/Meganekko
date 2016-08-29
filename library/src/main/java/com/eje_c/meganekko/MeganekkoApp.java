@@ -25,16 +25,23 @@ public abstract class MeganekkoApp {
 
     private static final int MAX_EVENTS_PER_FRAME = 16;
 
-    private final Meganekko meganekko;
+    private Meganekko meganekko;
     private final Queue<Runnable> mRunnables = new LinkedBlockingQueue<>();
     private final Handler handler = new Handler(Looper.getMainLooper());
     private Scene mScene;
     private Frame frame;
 
+    protected MeganekkoApp() {
+    }
+
+    @Deprecated
     protected MeganekkoApp(Meganekko meganekko) {
         this.meganekko = meganekko;
     }
 
+    public void setMeganekko(Meganekko meganekko) {
+        this.meganekko = meganekko;
+    }
     /*
      * Life cycle methods
      */
@@ -60,7 +67,9 @@ public abstract class MeganekkoApp {
             event.run();
         }
 
-        mScene.update(frame);
+        if (mScene != null) {
+            mScene.update(frame);
+        }
 
         NativeReference.gc();
     }

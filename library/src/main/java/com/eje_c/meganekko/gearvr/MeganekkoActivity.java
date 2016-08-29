@@ -26,7 +26,11 @@ import android.view.KeyEvent;
 import com.eje_c.meganekko.Frame;
 import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
+import com.eje_c.meganekko.Scene;
 import com.oculus.vrappframework.VrActivity;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import ovr.App;
 import ovr.VrFrame;
@@ -36,7 +40,7 @@ import ovr.VrFrame;
  * not directly from {@code Activity}. {@code MeganekkoActivity} creates and manages the internal classes which use
  * sensor data to manage a viewpoint, and thus present an appropriate stereoscopic view of your scene graph.
  */
-public abstract class MeganekkoActivity extends VrActivity implements Meganekko {
+public class MeganekkoActivity extends VrActivity implements Meganekko {
 
     static {
         System.loadLibrary("meganekko");
@@ -54,6 +58,46 @@ public abstract class MeganekkoActivity extends VrActivity implements Meganekko 
     public static native void setDebugOptionEnable(boolean enable);
 
     private static native void recenterPose(long appPtr);
+
+    @Override
+    public MeganekkoApp createMeganekkoApp(Meganekko meganekko) {
+
+        final Bundle metaData = getApplicationInfo().metaData;
+        if (metaData == null) return null;
+
+        String appClass = metaData.getString("com.eje_c.meganekko.App");
+        if (appClass == null) return null;
+
+        try {
+            Class<? extends MeganekkoApp> clazz = (Class<? extends MeganekkoApp>) Class.forName(appClass);
+            for (Constructor<?> constructor : clazz.getConstructors()) {
+                Class<?>[] params = constructor.getParameterTypes();
+
+                if (params.length == 1 && params[0].equals(Meganekko.class)) {
+
+                    // Old constructor MeganekkoApp(Meganekko)
+                    return (MeganekkoApp) constructor.newInstance(this);
+
+                } else if (params.length == 0) {
+
+                    // Call default constructor
+                    MeganekkoApp app = (MeganekkoApp) constructor.newInstance();
+                    app.setMeganekko(this);
+
+                    return app;
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

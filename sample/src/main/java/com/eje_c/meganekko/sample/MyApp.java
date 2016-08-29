@@ -1,6 +1,5 @@
 package com.eje_c.meganekko.sample;
 
-import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
 import com.eje_c.meganekko.utility.Log;
 
@@ -13,8 +12,9 @@ public class MyApp extends MeganekkoApp {
     private static final String TAG = "MGN";
     private FirstScene firstScene; // cache first scene for returning from switched scene
 
-    public MyApp(Meganekko meganekko) {
-        super(meganekko);
+    @Override
+    public void init() {
+        super.init();
 
         // Set first scene
         setSceneFromXML(R.xml.first_scene);
