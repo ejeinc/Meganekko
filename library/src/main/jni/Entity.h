@@ -13,17 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef ENTITY_H
+#define ENTITY_H
 
 #include "HybridObject.h"
-#include <jni.h>
+#include "SurfaceRender.h"
+
+using namespace OVR;
 
 namespace mgn {
-extern "C" {
+class Entity : public HybridObject {
 
-void Java_org_meganekkovr_NativeReference_delete(JNIEnv *env, jclass clazz,
-                                                 jlong nativePointer) {
-  delete reinterpret_cast<HybridObject *>(nativePointer);
+public:
+  Entity();
+  virtual ~Entity();
+
+  void SetWorldModelMatrix(const Matrix4f &m);
+  const Matrix4f &GetWorldModelMatrix();
+  ovrSurfaceDef *GetOrCreateSurfaceDef();
+  ovrSurfaceDef *GetSurfaceDef();
+
+private:
+  Matrix4f modelMatrix;
+  ovrSurfaceDef *surfaceDef;
+};
 }
 
-} // extern C
-} // namespace mgn
+#endif

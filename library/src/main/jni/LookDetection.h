@@ -13,17 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef LOOK_DETECTION_H
+#define LOOK_DETECTION_H
 
-#include "HybridObject.h"
-#include <jni.h>
+#include "GlGeometry.h"
+#include "Kernel/OVR_Geometry.h"
+#include "Kernel/OVR_Math.h"
+
+using namespace OVR;
 
 namespace mgn {
-extern "C" {
 
-void Java_org_meganekkovr_NativeReference_delete(JNIEnv *env, jclass clazz,
-                                                 jlong nativePointer) {
-  delete reinterpret_cast<HybridObject *>(nativePointer);
+struct IntersectRayBoundsResult {
+  bool intersected;
+  Vector3f first;
+  Vector3f second;
+};
+
+IntersectRayBoundsResult IntersectRayBounds(const Matrix4f &centerViewMatrix,
+                                            const Matrix4f &targetWorldMatrix,
+                                            const GlGeometry &targetGeometry,
+                                            bool axisInWorld);
 }
 
-} // extern C
-} // namespace mgn
+#endif

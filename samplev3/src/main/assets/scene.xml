@@ -1,0 +1,25 @@
+<scene class="org.meganekkovr.sample.FirstScene">
+    <entity geometry="primitive: globe;" surface="renderer: @drawable/background"/>
+
+    <entity geometry="primitive: plane; width: 1; height: 1"
+            id="@id/plane" opacity="0.7"
+            position="0 0.5 -5" scale="1 1.2 1"
+            surface="renderer: org.meganekkovr.sample.PlaneRenderer">
+        <view position="0 -1 0.1" src="@layout/hello_world"/>
+    </entity>
+
+    <view id="button"
+          position="3 0 -7"
+          src="@layout/button"/>
+
+    <img
+        id="videocam"
+        position="-5 0 -5"
+        rotation="0 45 0"
+        src="@drawable/ic_videocam"/>
+
+    <camera>
+        <img position="0 0 -4" src="@drawable/cursor"/>
+    </camera>
+
+</scene>

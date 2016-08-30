@@ -55,3 +55,4 @@ libs/armeabi-v7a/
 /captures
 *.iml
 .idea/*
+.*

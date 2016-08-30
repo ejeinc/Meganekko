@@ -1,0 +1,6 @@
+<scene class="org.meganekkovr.sample.SecondScene">
+
+    <view position="0 0 -5.0"
+          src="@layout/text"/>
+
+</scene>

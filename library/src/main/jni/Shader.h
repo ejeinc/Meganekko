@@ -13,17 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef SHADER_H
+#define SHADER_H
 
-#include "HybridObject.h"
-#include <jni.h>
+#include "GlProgram.h"
+
+using namespace OVR;
 
 namespace mgn {
-extern "C" {
+class Shader {
+public:
+  Shader();
+  ~Shader();
 
-void Java_org_meganekkovr_NativeReference_delete(JNIEnv *env, jclass clazz,
-                                                 jlong nativePointer) {
-  delete reinterpret_cast<HybridObject *>(nativePointer);
+  GlProgram GetProgram();
+
+private:
+  GlProgram program;
+};
 }
-
-} // extern C
-} // namespace mgn
+#endif
