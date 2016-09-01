@@ -26,7 +26,6 @@ import android.view.KeyEvent;
 import com.eje_c.meganekko.Frame;
 import com.eje_c.meganekko.Meganekko;
 import com.eje_c.meganekko.MeganekkoApp;
-import com.eje_c.meganekko.Scene;
 import com.oculus.vrappframework.VrActivity;
 
 import java.lang.reflect.Constructor;
@@ -177,9 +176,11 @@ public class MeganekkoActivity extends VrActivity implements Meganekko {
     }
 
     protected void onHmdMounted() {
+        meganekkoApp.onHmdMounted();
     }
 
     protected void onHmdUnmounted() {
+        meganekkoApp.onHmdUnmounted();
     }
 
     public void hideGazeCursor() {

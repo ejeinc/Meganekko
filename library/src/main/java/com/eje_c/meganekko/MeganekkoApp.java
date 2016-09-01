@@ -314,4 +314,16 @@ public abstract class MeganekkoApp {
             throw new IllegalArgumentException(e);
         }
     }
+
+    /**
+     * Called when Gear VR was mounted.
+     */
+    public void onHmdMounted() {
+    }
+
+    /**
+     * Called when Gear VR was unmounted.
+     */
+    public void onHmdUnmounted() {
+    }
 }

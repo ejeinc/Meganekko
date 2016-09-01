@@ -20,6 +20,18 @@ public class MyApp extends MeganekkoApp {
         setSceneFromXML(R.xml.first_scene);
     }
 
+    @Override
+    public void onHmdMounted() {
+        super.onHmdMounted();
+        Log.d(TAG, "onHmdMounted");
+    }
+
+    @Override
+    public void onHmdUnmounted() {
+        super.onHmdUnmounted();
+        Log.d(TAG, "onHmdUnmounted");
+    }
+
     /**
      * Called on every frame update.
      */
