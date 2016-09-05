@@ -24,7 +24,7 @@ Add dependency in module's **build.gradle**.
 ```gradle
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.eje_c:meganekko:2.3.3' // Add this
+    compile 'com.eje_c:meganekko:2.3.4' // Add this
 }
 ```
 
