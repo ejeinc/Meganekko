@@ -24,7 +24,7 @@ allprojects {
 ```gradle
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.eje_c:meganekko:2.3.3'
+    compile 'com.eje_c:meganekko:2.3.4'
 }
 ```
 
