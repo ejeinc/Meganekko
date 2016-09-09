@@ -25,6 +25,7 @@ public class XmlAttributeParser {
         parser.install(new RotationHandler());
         parser.install(new ScaleHandler());
         parser.install(new SurfaceHandler());
+        parser.install(new VisibleHandler());
     }
 
     public interface XmlAttributeHandler {
