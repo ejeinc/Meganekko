@@ -25,7 +25,7 @@ using namespace OVR;
 
 namespace mgn {
 
-GearVRActivity::GearVRActivity() {}
+GearVRActivity::GearVRActivity() : hmdMounted(false) {}
 
 GearVRActivity::~GearVRActivity() { delete shader; }
 
@@ -56,6 +56,8 @@ void GearVRActivity::EnteredVrMode(const ovrIntentType intentType,
     updateMethodID = GetMethodID("update", "(J)V");
     collectSurfaceDefsMethodID = GetMethodID("collectSurfaceDefs", "(J)V");
     onKeyEventMethodID = GetMethodID("onKeyEvent", "(III)Z");
+    onHmdMountedMethodID = GetMethodID("onHmdMounted", "()V");
+    onHmdUnmountedMethodID = GetMethodID("onHmdUnmounted", "()V");
 
     shader = new Shader();
   }
@@ -69,6 +71,15 @@ ovrFrameResult GearVRActivity::Frame(const ovrFrameInput &frame) {
 
   const ovrJava *java = app->GetJava();
   JNIEnv *jni = java->Env;
+
+  // onHmdMounted, onHmdUnmounted
+  const bool headsetIsMounted = frame.DeviceStatus.HeadsetIsMounted;
+  if (!hmdMounted && headsetIsMounted) {
+    jni->CallVoidMethod(app->GetJava()->ActivityObject, onHmdMountedMethodID);
+  } else if (hmdMounted && !headsetIsMounted) {
+    jni->CallVoidMethod(app->GetJava()->ActivityObject, onHmdUnmountedMethodID);
+  }
+  hmdMounted = headsetIsMounted;
 
   // Input handling
   HandleInput(frame.Input);

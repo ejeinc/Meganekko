@@ -70,6 +70,20 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
 
     /**
      * Called from native thread.
+     */
+    protected void onHmdMounted() {
+        app.onHmdMounted();
+    }
+
+    /**
+     * Called from native thread.
+     */
+    protected void onHmdUnmounted() {
+        app.onHmdUnmounted();
+    }
+
+    /**
+     * Called from native thread.
      *
      * @param frameInputPointer native {@code ovrFrameInput}'s pointer
      */

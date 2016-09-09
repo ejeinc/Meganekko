@@ -288,4 +288,10 @@ public class MeganekkoApp {
             }
         });
     }
+
+    public void onHmdMounted() {
+    }
+
+    public void onHmdUnmounted() {
+    }
 }

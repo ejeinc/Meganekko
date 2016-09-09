@@ -36,11 +36,14 @@ public:
   const ovrMatrix4f &GetCenterEyeViewMatrix();
 
 private:
+  bool hmdMounted;
   ovrMatrix4f centerEyeViewMatrix;
   ovrFrameParms frameParms;
   jmethodID updateMethodID;
   jmethodID collectSurfaceDefsMethodID;
   jmethodID onKeyEventMethodID;
+  jmethodID onHmdMountedMethodID;
+  jmethodID onHmdUnmountedMethodID;
   Shader *shader;
 
   inline jmethodID GetMethodID(const char *name, const char *signature);
