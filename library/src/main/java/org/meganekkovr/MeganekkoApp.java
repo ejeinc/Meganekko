@@ -294,4 +294,20 @@ public class MeganekkoApp {
 
     public void onHmdUnmounted() {
     }
+
+    /**
+     * This is called when Activity is resumed.
+     * Note that it is called on Android's main thread.
+     * If you do something with GL related tasks, use {@link #runOnGlThread(Runnable)}.
+     */
+    public void onResume() {
+    }
+
+    /**
+     * This is called when Activity is paused.
+     * Note that it is called on Android's main thread.
+     * If you do something with GL related tasks, use {@link #runOnGlThread(Runnable)}.
+     */
+    public void onPause() {
+    }
 }

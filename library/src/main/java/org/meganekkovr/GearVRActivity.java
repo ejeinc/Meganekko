@@ -82,6 +82,18 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
         app.onHmdUnmounted();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        app.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        app.onPause();
+        super.onPause();
+    }
+
     /**
      * Called from native thread.
      *
