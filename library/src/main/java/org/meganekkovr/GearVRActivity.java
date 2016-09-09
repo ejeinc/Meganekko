@@ -37,6 +37,8 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
 
     private static native void showInfoText(long appPtr, float duration, String infoText);
 
+    private static native void recenterYaw(long appPtr, boolean showBlack);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -192,5 +194,9 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
 
     public void showInfoText(float duration, String fmt, Object... args) {
         showInfoText(getAppPtr(), duration, String.format(fmt, args));
+    }
+
+    public void recenterYaw(boolean showBlack) {
+        recenterYaw(getAppPtr(), showBlack);
     }
 }

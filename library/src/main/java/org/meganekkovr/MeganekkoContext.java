@@ -15,4 +15,6 @@ interface MeganekkoContext {
     Quaternionf getCenterViewRotation();
 
     void runOnUiThread(Runnable command);
+
+    void recenterYaw(boolean showBlack);
 }

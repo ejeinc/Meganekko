@@ -247,4 +247,11 @@ void Java_org_meganekkovr_GearVRActivity_showInfoText(JNIEnv *jni, jclass clazz,
   JavaUTFChars str(jni, text);
   app->ShowInfoText(duration, str.ToStr());
 }
+
+void Java_org_meganekkovr_GearVRActivity_recenterYaw(JNIEnv *jni, jclass clazz,
+                                                     jlong appPtr,
+                                                     jboolean showBlack) {
+  App *app = reinterpret_cast<App *>(appPtr);
+  app->RecenterYaw(showBlack);
+}
 } // extern "C"

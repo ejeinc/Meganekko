@@ -310,4 +310,8 @@ public class MeganekkoApp {
      */
     public void onPause() {
     }
+
+    public void recenterYaw(boolean showBlack) {
+        context.recenterYaw(showBlack);
+    }
 }
