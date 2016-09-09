@@ -1,0 +1,3 @@
+<scene class="org.meganekkovr.sample.VideoScene">
+    <entity geometry="primitive: globe;" id="@id/player"/>
+</scene>

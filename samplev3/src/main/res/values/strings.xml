@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name" translatable="false">MGN Sample V3</string>
+    <string name="text">Press back key to return to previous scene</string>
+</resources>

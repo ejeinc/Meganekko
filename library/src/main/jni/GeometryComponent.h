@@ -13,17 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifndef GEOMETRY_COMPONENT_H
+#define GEOMETRY_COMPONENT_H
 
+#include "Entity.h"
 #include "HybridObject.h"
-#include <jni.h>
+
+using namespace OVR;
 
 namespace mgn {
-extern "C" {
 
-void Java_org_meganekkovr_NativeReference_delete(JNIEnv *env, jclass clazz,
-                                                 jlong nativePointer) {
-  delete reinterpret_cast<HybridObject *>(nativePointer);
+class GeometryComponent : public HybridObject {
+public:
+  GeometryComponent();
+  ~GeometryComponent();
+
+  GlGeometry &GetGeometry();
+  void SetGeometry(const GlGeometry &geo);
+
+private:
+  GlGeometry geometry;
+};
 }
 
-} // extern C
-} // namespace mgn
+#endif
