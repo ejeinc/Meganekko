@@ -158,6 +158,10 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
     @Override
     public boolean isLookingAt(Entity entity) {
 
+        if (!entity.isShown()) {
+            return false;
+        }
+
         // Check if entity has geometry
         GeometryComponent geometryComponent = entity.getComponent(GeometryComponent.class);
         if (geometryComponent == null) return false;

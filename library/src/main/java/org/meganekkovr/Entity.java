@@ -483,4 +483,18 @@ public class Entity {
     public boolean isVisible() {
         return visible;
     }
+
+    /**
+     * @return {@code true} if this entity and ancestors are all visible. Otherwise {@code false}.
+     */
+    public boolean isShown() {
+
+        if (!visible) return false;
+
+        // Check parent visibility
+        Entity parent = getParent();
+        if (parent == null) return true;
+
+        return parent.isShown();
+    }
 }
