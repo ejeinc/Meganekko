@@ -43,6 +43,8 @@ public class SurfaceRendererComponent extends Component {
 
     private static native void setEntityTexture(long entityPtr, long nativePtr);
 
+    private static native void removeEntityTexture(long entityPtr, long nativePtr);
+
     private static native void setOpacity(long nativePtr, float opacity);
 
     private static native void setStereoMode(long nativePtr, int stereoMode);
@@ -55,6 +57,12 @@ public class SurfaceRendererComponent extends Component {
     public void onAttach(Entity entity) {
         super.onAttach(entity);
         setEntityTexture(entity.getNativePointer(), nativePointer.get());
+    }
+
+    @Override
+    public void onDetach(Entity entity) {
+        super.onDetach(entity);
+        removeEntityTexture(entity.getNativePointer(), nativePointer.get());
     }
 
     @Override

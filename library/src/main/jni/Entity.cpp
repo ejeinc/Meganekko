@@ -62,8 +62,10 @@ void Java_org_meganekkovr_Entity_addSurfaceDef(JNIEnv *jni, jclass clazz,
       reinterpret_cast<Array<ovrDrawSurface> *>(surfacesPtr);
   ovrSurfaceDef *surfaceDef = entity->GetSurfaceDef();
 
-  if (surfaceDef) {
-    // TODO
+  // Only draw if surfaceDef is valid
+  if (surfaceDef && surfaceDef->graphicsCommand.UniformData[0].Data &&
+      surfaceDef->graphicsCommand.UniformData[1].Data &&
+      surfaceDef->graphicsCommand.UniformData[2].Data) {
     surfaces->PushBack(
         ovrDrawSurface(entity->GetWorldModelMatrix(), surfaceDef));
   }

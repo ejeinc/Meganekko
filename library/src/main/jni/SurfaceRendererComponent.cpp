@@ -188,6 +188,19 @@ void Java_org_meganekkovr_SurfaceRendererComponent_setEntityTexture(
   surfaceDef->graphicsCommand.UniformData[2].Data = &sur->GetTexture();
 }
 
+void Java_org_meganekkovr_SurfaceRendererComponent_removeEntityTexture(
+    JNIEnv *jni, jobject thiz, jlong entityPtr, jlong nativePtr) {
+
+  mgn::Entity *entity = reinterpret_cast<mgn::Entity *>(entityPtr);
+  mgn::SurfaceRendererComponent *sur =
+      reinterpret_cast<mgn::SurfaceRendererComponent *>(nativePtr);
+
+  ovrSurfaceDef *surfaceDef = entity->GetOrCreateSurfaceDef();
+  surfaceDef->graphicsCommand.UniformData[0].Data = NULL;
+  surfaceDef->graphicsCommand.UniformData[1].Data = NULL;
+  surfaceDef->graphicsCommand.UniformData[2].Data = NULL;
+}
+
 void Java_org_meganekkovr_SurfaceRendererComponent_setOpacity(JNIEnv *jni,
                                                               jobject thiz,
                                                               jlong nativePtr,
