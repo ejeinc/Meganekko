@@ -222,11 +222,21 @@ public class Entity {
      * @return {@code true} if Successfully removed. Otherwise {@code false}.
      */
     public boolean remove(Component component) {
-        final Class<? extends Component> componentClass = component.getClass();
-        if (components.containsKey(componentClass)) {
+        return remove(component.getClass());
+    }
+
+    /**
+     * Remove {@link Component} with associated class.
+     *
+     * @param clazz Class of Component.
+     * @return {@code true} if Successfully removed. Otherwise {@code false}.
+     */
+    public <T extends Component> boolean remove(Class<T> clazz) {
+        if (components.containsKey(clazz)) {
+            Component component = components.get(clazz);
             component.onDetach(this);
             component.setEntity(null);
-            components.remove(componentClass);
+            components.remove(clazz);
             return true;
         }
         return false;
