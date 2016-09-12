@@ -215,6 +215,21 @@ public class MeganekkoApp {
         }
     }
 
+    public Scene setSceneFromXml(int xmlRes) {
+        try {
+            Entity entity = getXmlParser().parseXmlResource(xmlRes);
+            if (entity instanceof Scene) {
+                Scene scene = (Scene) entity;
+                setScene(scene);
+                return scene;
+            } else {
+                throw new IllegalArgumentException("XML first element must be <scene>.");
+            }
+        } catch (XmlParserException e) {
+            throw new RuntimeException("Cannot parse XML from " + getContext().getResources().getResourceName(xmlRes), e);
+        }
+    }
+
     public Scene setSceneFromXml(File file) {
         try {
             Entity entity = getXmlParser().parseFile(file);
