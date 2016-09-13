@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name" translatable="false">MGN ExoPlayer</string>
+    <string name="video_url">http://kolor.com/360-videos-files/kolor-balloon-icare-full-hd.mp4</string>
+</resources>

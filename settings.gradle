@@ -1,3 +1,4 @@
 include ':library', ':samplev3'
 include ':sample-tbe'
 include ':sample-360video'
+include ':sample-exoplayer'

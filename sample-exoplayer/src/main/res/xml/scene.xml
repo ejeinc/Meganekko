@@ -1,0 +1,5 @@
+<scene>
+    <entity
+        geometry="primitive: globe"
+        id="background"/>
+</scene>
