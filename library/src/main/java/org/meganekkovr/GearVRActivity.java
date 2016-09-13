@@ -9,6 +9,9 @@ import com.oculus.vrappframework.VrActivity;
 
 import org.joml.Quaternionf;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 public class GearVRActivity extends VrActivity implements MeganekkoContext {
 
     private static final float[] tmpValues = new float[4];
@@ -47,8 +50,26 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
         String appClassName = getApplicationInfo().metaData.getString("org.meganekkovr.App", "org.meganekkovr.MeganekkoApp");
         try {
             Class appClass = Class.forName(appClassName);
-            app = (MeganekkoApp) appClass.newInstance();
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+
+            // Support AndroidAnnotations @EBean
+            for (Method method : appClass.getDeclaredMethods()) {
+
+                // Generated class has static getInstance_(Context) method. Use it if exists.
+                if ("getInstance_".equals(method.getName())
+                        && method.getParameterTypes().length == 1
+                        && method.getParameterTypes()[0].equals(Context.class)) {
+
+                    app = (MeganekkoApp) method.invoke(null, this);
+                    break;
+                }
+            }
+
+            if (app == null) {
+                // With default constructor
+                app = (MeganekkoApp) appClass.newInstance();
+            }
+
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             finish();
             return;
