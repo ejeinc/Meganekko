@@ -220,4 +220,8 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
     public void recenterYaw(boolean showBlack) {
         recenterYaw(getAppPtr(), showBlack);
     }
+
+    public MeganekkoApp getApp() {
+        return app;
+    }
 }

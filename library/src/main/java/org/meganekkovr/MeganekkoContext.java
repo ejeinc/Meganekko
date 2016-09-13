@@ -10,6 +10,13 @@ import org.joml.Quaternionf;
 interface MeganekkoContext {
     Context getContext();
 
+    /**
+     * Get Meganekko application
+     *
+     * @return MeganekkoApp
+     */
+    MeganekkoApp getApp();
+
     boolean isLookingAt(Entity entity);
 
     Quaternionf getCenterViewRotation();
