@@ -9,6 +9,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * To add custom attribute, use {@code XmlAttributeParser.getInstance().install(new YourAttrHandler())}.
@@ -128,5 +130,56 @@ public class XmlAttributeParser {
         }
 
         return map;
+    }
+
+    /**
+     * @param str string
+     * @return {@code true} if str represents raw resource.
+     */
+    public static boolean isRawResource(String str) {
+        return str.startsWith("@raw/");
+    }
+
+    /**
+     * @param str string
+     * @return {@code true} if str represents layout resource.
+     */
+    public static boolean isLayoutResource(String str) {
+        return str.startsWith("@layout/");
+    }
+
+    /**
+     * @param str string
+     * @return {@code true} if str represents drawable resource.
+     */
+    public static boolean isDrawableResource(String str) {
+        return str.startsWith("@drawable/") || str.startsWith("@color/") || str.startsWith("@mipmap/");
+    }
+
+    /**
+     * @param str string
+     * @return {@code true} if str represents id resource.
+     */
+    public static boolean isIdResource(String str) {
+        return str.matches("^@\\+?id/.+$");
+    }
+
+    /**
+     * @param str     string
+     * @param context Android context
+     * @return Resurce ID or {@code 0} if str don't represent resource.
+     */
+    public static int toResourceId(String str, Context context) {
+
+        Pattern pattern = Pattern.compile("@(.+)/(.+)");
+        Matcher matcher = pattern.matcher(str);
+
+        if (matcher.find()) {
+            String name = matcher.group(2);
+            String defType = matcher.group(1);
+            return context.getResources().getIdentifier(name, defType, context.getPackageName());
+        }
+
+        return 0;
     }
 }
