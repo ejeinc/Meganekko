@@ -1,0 +1,12 @@
+<scene>
+
+    <entity
+        geometry="primitive: globe;"
+        surface="renderer: @drawable/background"/>
+
+    <!-- obj attribute is defined with ObjHandler -->
+    <entity
+        obj="@raw/custom_geometry"
+        position="0 0 -4"
+        surface="renderer: @drawable/cat"/>
+</scene>
