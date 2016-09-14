@@ -25,7 +25,8 @@ using namespace OVR;
 
 namespace mgn {
 
-GearVRActivity::GearVRActivity() : hmdMounted(false) {}
+GearVRActivity::GearVRActivity()
+    : hmdMounted(false), clearColorBuffer(true), clearColor(0, 0, 0, 1) {}
 
 GearVRActivity::~GearVRActivity() { delete shader; }
 
@@ -92,8 +93,8 @@ ovrFrameResult GearVRActivity::Frame(const ovrFrameInput &frame) {
 
   // Create frame result
   ovrFrameResult res;
-  res.ClearColorBuffer = true;
-  res.ClearColor = Vector4f(0, 0, 0, 1);
+  res.ClearColorBuffer = clearColorBuffer;
+  res.ClearColor = clearColor;
   res.FrameMatrices.CenterView = centerEyeViewMatrix;
 
   // Collect ovrDrawSurfaces from Scene
@@ -253,5 +254,40 @@ void Java_org_meganekkovr_GearVRActivity_recenterYaw(JNIEnv *jni, jclass clazz,
                                                      jboolean showBlack) {
   App *app = reinterpret_cast<App *>(appPtr);
   app->RecenterYaw(showBlack);
+}
+
+void Java_org_meganekkovr_GearVRActivity_setClearColorBuffer(
+    JNIEnv *jni, jclass clazz, jlong appPtr, jboolean clearColorBuffer) {
+  mgn::GearVRActivity *activity =
+      (mgn::GearVRActivity *)((App *)appPtr)->GetAppInterface();
+  activity->SetClearColorBuffer(clearColorBuffer);
+}
+
+jboolean Java_org_meganekkovr_GearVRActivity_getClearColorBuffer(JNIEnv *jni,
+                                                                 jclass clazz,
+                                                                 jlong appPtr) {
+  mgn::GearVRActivity *activity =
+      (mgn::GearVRActivity *)((App *)appPtr)->GetAppInterface();
+  return activity->GetClearColorBuffer();
+}
+
+void Java_org_meganekkovr_GearVRActivity_setClearColor(JNIEnv *jni,
+                                                       jclass clazz,
+                                                       jlong appPtr, jfloat r,
+                                                       jfloat g, jfloat b,
+                                                       jfloat a) {
+  mgn::GearVRActivity *activity =
+      (mgn::GearVRActivity *)((App *)appPtr)->GetAppInterface();
+  activity->SetClearColor(Vector4f(r, g, b, a));
+}
+
+void Java_org_meganekkovr_GearVRActivity_getClearColor(JNIEnv *jni,
+                                                       jclass clazz,
+                                                       jlong appPtr,
+                                                       jfloatArray clearColor) {
+  mgn::GearVRActivity *activity =
+      (mgn::GearVRActivity *)((App *)appPtr)->GetAppInterface();
+  Vector4f color = activity->GetClearColor();
+  mgn::FillElementsUnSafe(jni, clearColor, color);
 }
 } // extern "C"

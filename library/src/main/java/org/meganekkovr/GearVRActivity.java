@@ -42,6 +42,14 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
 
     private static native void recenterYaw(long appPtr, boolean showBlack);
 
+    private static native void setClearColorBuffer(long appPtr, boolean clearColorBuffer);
+
+    private static native boolean getClearColorBuffer(long appPtr);
+
+    private static native void setClearColor(long appPtr, float r, float g, float b, float a);
+
+    private static native void getClearColor(long appPtr, float[] clearColor);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -223,5 +231,24 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
 
     public MeganekkoApp getApp() {
         return app;
+    }
+
+    public void setClearColorBuffer(boolean clearColorBuffer) {
+        setClearColorBuffer(getAppPtr(), clearColorBuffer);
+    }
+
+    public boolean getClearColorBuffer() {
+        return getClearColorBuffer(getAppPtr());
+    }
+
+    public void setClearColor(float r, float g, float b, float a) {
+        setClearColor(getAppPtr(), r, g, b, a);
+    }
+
+    public void getClearColor(float[] clearColor) {
+        if (clearColor.length != 4) {
+            throw new IllegalArgumentException("clearColor must be 4 element array.");
+        }
+        getClearColor(getAppPtr(), clearColor);
     }
 }

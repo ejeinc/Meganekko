@@ -35,8 +35,22 @@ public:
   virtual ovrFrameResult Frame(const ovrFrameInput &vrFrame);
   const ovrMatrix4f &GetCenterEyeViewMatrix();
 
+  void SetClearColorBuffer(const bool clearColorBuffer) {
+    this->clearColorBuffer = clearColorBuffer;
+  }
+
+  bool GetClearColorBuffer() { return clearColorBuffer; }
+
+  void SetClearColor(const Vector4f &clearColor) {
+    this->clearColor = clearColor;
+  }
+
+  const Vector4f &GetClearColor() { return clearColor; }
+
 private:
   bool hmdMounted;
+  bool clearColorBuffer;
+  Vector4f clearColor;
   ovrMatrix4f centerEyeViewMatrix;
   ovrFrameParms frameParms;
   jmethodID updateMethodID;
