@@ -11,7 +11,7 @@ Add dependency in module's **build.gradle**.
 ```gradle
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'org.meganekkovr:meganekko:3.0.1'
+    compile 'org.meganekkovr:meganekko:3.0.4'
 }
 ```
 
