@@ -186,6 +186,10 @@ public class Entity {
         if (parent != null) {
             Matrix4f parentMatrix = parent.getWorldModelMatrix();
             parentMatrix.mul(localMatrix, worldModelMatrix);
+        } else {
+
+            // worldModelMatrix = localMatrix
+            worldModelMatrix.set(localMatrix);
         }
     }
 
