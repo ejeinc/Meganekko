@@ -171,7 +171,7 @@ public class XmlAttributeParser {
      */
     public static int toResourceId(String str, Context context) {
 
-        Pattern pattern = Pattern.compile("@(.+)/(.+)");
+        Pattern pattern = Pattern.compile("@\\+?(.+)/(.+)");
         Matcher matcher = pattern.matcher(str);
 
         if (matcher.find()) {
