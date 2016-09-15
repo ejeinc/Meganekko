@@ -36,7 +36,7 @@ public class EntityAnimator {
 
     public EntityAnimator moveTo(Vector3f position) {
         Vector3f fromPos = lastPos != null ? lastPos : target.getPosition();
-        ValueAnimator animator = ValueAnimator.ofObject(new VectorEvaluator(), fromPos, position);
+        ValueAnimator animator = ValueAnimator.ofObject(new VectorEvaluator(), new Vector3f(fromPos), new Vector3f(position));
         animator.addUpdateListener(new PositionUpdateListener(target));
         animators.add(animator);
         lastPos = position;
@@ -52,7 +52,7 @@ public class EntityAnimator {
 
     public EntityAnimator scaleTo(Vector3f scale) {
         Vector3f fromScale = lastScale != null ? lastScale : target.getScale();
-        ValueAnimator animator = ValueAnimator.ofObject(new VectorEvaluator(), fromScale, scale);
+        ValueAnimator animator = ValueAnimator.ofObject(new VectorEvaluator(), new Vector3f(fromScale), new Vector3f(scale));
         animator.addUpdateListener(new ScaleUpdateListener(target));
         animators.add(animator);
         lastScale = scale;
@@ -68,7 +68,7 @@ public class EntityAnimator {
 
     public EntityAnimator rotateTo(Quaternionf rotation) {
         Quaternionf fromRotation = lastRotation != null ? lastRotation : target.getRotation();
-        ValueAnimator animator = ValueAnimator.ofObject(new QuaternionEvaluator(), fromRotation, rotation);
+        ValueAnimator animator = ValueAnimator.ofObject(new QuaternionEvaluator(), new Quaternionf(fromRotation), new Quaternionf(rotation));
         animator.addUpdateListener(new RotationUpdateListener(target));
         animators.add(animator);
         lastRotation = rotation;
