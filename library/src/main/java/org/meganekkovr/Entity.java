@@ -335,69 +335,143 @@ public class Entity {
         }
     }
 
+    /**
+     * Set Entity's local position.
+     *
+     * @param position position
+     */
     public void setPosition(Vector3f position) {
         this.position.set(position);
         localMatrixUpdateRequired = true;
     }
 
+    /**
+     * Set Entity's local position.
+     *
+     * @param x X component of position
+     * @param y Y component of position
+     * @param z Z component of position
+     */
     public void setPosition(float x, float y, float z) {
         this.position.set(x, y, z);
         localMatrixUpdateRequired = true;
     }
 
+    /**
+     * Set Entity's local position.
+     *
+     * @param x X component of position
+     */
     public void setX(float x) {
         this.position.x = x;
         localMatrixUpdateRequired = true;
     }
 
+    /**
+     * Set Entity's local position.
+     *
+     * @param y Y component of position
+     */
     public void setY(float y) {
         this.position.y = y;
         localMatrixUpdateRequired = true;
     }
 
+    /**
+     * Set Entity's local position.
+     *
+     * @param z Z component of position
+     */
     public void setZ(float z) {
         this.position.z = z;
         localMatrixUpdateRequired = true;
     }
 
+    /**
+     * Get Entity's local position.
+     *
+     * @return position
+     */
     public Vector3f getPosition() {
         return position;
     }
 
+    /**
+     * Set Entity's local scale.
+     *
+     * @param scale scale
+     */
     public void setScale(Vector3f scale) {
         this.scale.set(scale);
         localMatrixUpdateRequired = true;
     }
 
+    /**
+     * Set Entity's local scale.
+     *
+     * @param x X component of scale
+     * @param y Y component of scale
+     * @param z Z component of scale
+     */
     public void setScale(float x, float y, float z) {
         this.scale.set(x, y, z);
         localMatrixUpdateRequired = true;
     }
 
+    /**
+     * Set Entity's local scale.
+     *
+     * @param x X component of scale
+     */
     public void setScaleX(float x) {
         this.scale.x = x;
         localMatrixUpdateRequired = true;
     }
 
+    /**
+     * Set Entity's local scale.
+     *
+     * @param y Y component of scale
+     */
     public void setScaleY(float y) {
         this.scale.y = y;
         localMatrixUpdateRequired = true;
     }
 
+    /**
+     * Set Entity's local scale.
+     *
+     * @param z Z component of scale
+     */
     public void setScaleZ(float z) {
         this.scale.z = z;
         localMatrixUpdateRequired = true;
     }
 
+    /**
+     * Get Entity's local scale.
+     *
+     * @return scale
+     */
     public Vector3f getScale() {
         return scale;
     }
 
+    /**
+     * Set rotation, as a quaternion. Sets the transform's current rotation in quaternion terms.
+     *
+     * @param rotation rotation
+     */
     public void setRotation(Quaternionf rotation) {
         this.rotation.set(rotation);
         localMatrixUpdateRequired = true;
     }
 
+    /**
+     * Get Entity's local rotation.
+     *
+     * @return rotation
+     */
     public Quaternionf getRotation() {
         return rotation;
     }
@@ -466,7 +540,23 @@ public class Entity {
         return new EntityAnimator(this);
     }
 
+    /**
+     * Set Entity's opacity.
+     *
+     * @param opacity Float in the range of 0.0 - 1.0 indicating how transparent the Entity is.
+     */
     public void setOpacity(float opacity) {
+
+        // Prevent out of range
+        if (opacity < 0) {
+            opacity = 0;
+        } else if (opacity > 1) {
+            opacity = 1;
+        }
+
+        // Do nothing if previous value is same to new value
+        if (this.opacity == opacity) return;
+
         this.opacity = opacity;
         updateOpacityRequired = true;
     }
@@ -475,7 +565,7 @@ public class Entity {
 
         SurfaceRendererComponent surfaceRendererComponent = getComponent(SurfaceRendererComponent.class);
         if (surfaceRendererComponent != null) {
-            surfaceRendererComponent.setOpacity(renderOpacity());
+            surfaceRendererComponent.setOpacity(getRenderingOpacity());
         }
 
         for (Entity child : children) {
@@ -488,18 +578,41 @@ public class Entity {
         return parent != null ? parent.getOpacity() : 1.0f;
     }
 
-    private float renderOpacity() {
+    /**
+     * Get actual opacity used in rendering.
+     * This value can be different with value returned from {@link #getOpacity()}.
+     *
+     * @return Rendering opacity
+     */
+    public float getRenderingOpacity() {
         return opacity * parentOpacity();
     }
 
+    /**
+     * Get opacity set with {@link #setOpacity(float)}.
+     * Actual opacity used in rendering can get with {@link #getRenderingOpacity()}.
+     *
+     * @return opacity
+     */
     public float getOpacity() {
         return opacity;
     }
 
+    /**
+     * Set visibility. If set to {@code false}, its children also become not be rendered.
+     * Default value is {@code true}.
+     *
+     * @param visible visibility
+     */
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
 
+    /**
+     * Get visibility of this {@link Entity}. Note that this will return <b>its own visibility</b>.
+     *
+     * @return visibility
+     */
     public boolean isVisible() {
         return visible;
     }
