@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "Entity.h"
+#include "util/convert.h"
 
 namespace mgn {
 
@@ -75,16 +76,9 @@ void Java_org_meganekkovr_Entity_setWorldModelMatrix(JNIEnv *jni, jclass clazz,
                                                      jlong entityPtr,
                                                      jfloatArray matrix) {
 
+  OVR::Matrix4f m = mgn::floatArrayToMatrix4f(jni, matrix);
+
   mgn::Entity *entity = reinterpret_cast<mgn::Entity *>(entityPtr);
-
-  jfloat *values = jni->GetFloatArrayElements(matrix, 0);
-
-  Matrix4f m(values[0], values[4], values[8], values[12],  //
-             values[1], values[5], values[9], values[13],  //
-             values[2], values[6], values[10], values[14], //
-             values[3], values[7], values[11], values[15]);
   entity->SetWorldModelMatrix(m);
-
-  jni->ReleaseFloatArrayElements(matrix, values, 0);
 }
 } // extern "C"

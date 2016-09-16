@@ -28,6 +28,10 @@ public:
 
   GlProgram GetProgram();
 
+  static const int PARM_TEXM = 0;
+  static const int PARM_OPACITY = 1;
+  static const int PARM_TEXTURE = 2;
+
 private:
   GlProgram program;
 };

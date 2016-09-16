@@ -17,13 +17,11 @@
 #include "HybridObject.h"
 #include <jni.h>
 
-namespace mgn {
 extern "C" {
 
 void Java_org_meganekkovr_NativeReference_delete(JNIEnv *env, jclass clazz,
                                                  jlong nativePointer) {
-  delete reinterpret_cast<HybridObject *>(nativePointer);
+  delete reinterpret_cast<mgn::HybridObject *>(nativePointer);
 }
 
 } // extern C
-} // namespace mgn

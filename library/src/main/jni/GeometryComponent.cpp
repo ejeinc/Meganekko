@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "GeometryComponent.h"
+#include "util/convert.h"
 
 namespace mgn {
 
@@ -53,58 +54,11 @@ void Java_org_meganekkovr_GeometryComponent_build(
 
   VertexAttribs attribs;
 
-  // positions
-  jsize jPositionsSize = env->GetArrayLength(jPositions);
-  jfloat *jPositionsElements = env->GetFloatArrayElements(jPositions, 0);
+  attribs.position = mgn::floatArrayToVector3fArray(env, jPositions);
+  attribs.color = mgn::floatArrayToVector4fArray(env, jColors);
+  attribs.uv0 = mgn::floatArrayToVector2fArray(env, jUVs);
 
-  for (int i = 0; i < jPositionsSize; i += 3) {
-    float x = jPositionsElements[i];
-    float y = jPositionsElements[i + 1];
-    float z = jPositionsElements[i + 2];
-    attribs.position.PushBack(Vector3f(x, y, z));
-    attribs.color.PushBack(Vector4f(1.0f, 1.0f, 1.0f, 1.0f));
-  }
-
-  env->ReleaseFloatArrayElements(jPositions, jPositionsElements, 0);
-
-  // colors
-  jsize jColorsSize = env->GetArrayLength(jColors);
-  jfloat *jColorsElements = env->GetFloatArrayElements(jColors, 0);
-
-  for (int i = 0; i < jColorsSize; i += 4) {
-    float r = jColorsElements[i];
-    float g = jColorsElements[i + 1];
-    float b = jColorsElements[i + 2];
-    float a = jColorsElements[i + 3];
-    attribs.color.PushBack(Vector4f(r, g, b, a));
-  }
-
-  env->ReleaseFloatArrayElements(jColors, jColorsElements, 0);
-
-  // UVs
-  jsize jUVsSize = env->GetArrayLength(jUVs);
-  jfloat *jUVsElements = env->GetFloatArrayElements(jUVs, 0);
-
-  for (int i = 0; i < jUVsSize; i += 2) {
-    float x = jUVsElements[i];
-    float y = jUVsElements[i + 1];
-    attribs.uv0.PushBack(Vector2f(x, y));
-  }
-
-  env->ReleaseFloatArrayElements(jUVs, jUVsElements, 0);
-
-  // triangles
-  jsize jTrianglesSize = env->GetArrayLength(jTriangles);
-  jint *jTrianglesElements = env->GetIntArrayElements(jTriangles, 0);
-
-  Array<TriangleIndex> indices;
-  indices.Resize(jTrianglesSize);
-
-  for (int i = 0; i < jTrianglesSize; ++i) {
-    indices[i] = jTrianglesElements[i];
-  }
-
-  env->ReleaseIntArrayElements(jTriangles, jTrianglesElements, 0);
+  Array<TriangleIndex> indices = mgn::intArrayToTriangleIndex(env, jTriangles);
 
   mgn::GeometryComponent *geometry =
       reinterpret_cast<mgn::GeometryComponent *>(nativePtr);

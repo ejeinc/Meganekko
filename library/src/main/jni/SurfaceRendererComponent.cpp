@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 #include "SurfaceRendererComponent.h"
+#include "Shader.h"
 #include "Kernel/OVR_LogUtils.h"
 
 namespace mgn {
@@ -182,10 +183,13 @@ void Java_org_meganekkovr_SurfaceRendererComponent_setEntityTexture(
       reinterpret_cast<mgn::SurfaceRendererComponent *>(nativePtr);
 
   ovrSurfaceDef *surfaceDef = entity->GetOrCreateSurfaceDef();
-  surfaceDef->graphicsCommand.UniformData[0].Data = &sur->programMatrices[0];
-  surfaceDef->graphicsCommand.UniformData[0].Count = 2;
-  surfaceDef->graphicsCommand.UniformData[1].Data = &sur->GetOpacity();
-  surfaceDef->graphicsCommand.UniformData[2].Data = &sur->GetTexture();
+  surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_TEXM].Data =
+      &sur->programMatrices[0];
+  surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_TEXM].Count = 2;
+  surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_OPACITY].Data =
+      &sur->GetOpacity();
+  surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_TEXTURE].Data =
+      &sur->GetTexture();
 }
 
 void Java_org_meganekkovr_SurfaceRendererComponent_removeEntityTexture(
@@ -196,9 +200,11 @@ void Java_org_meganekkovr_SurfaceRendererComponent_removeEntityTexture(
       reinterpret_cast<mgn::SurfaceRendererComponent *>(nativePtr);
 
   ovrSurfaceDef *surfaceDef = entity->GetOrCreateSurfaceDef();
-  surfaceDef->graphicsCommand.UniformData[0].Data = NULL;
-  surfaceDef->graphicsCommand.UniformData[1].Data = NULL;
-  surfaceDef->graphicsCommand.UniformData[2].Data = NULL;
+  surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_TEXM].Data = NULL;
+  surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_OPACITY].Data =
+      NULL;
+  surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_TEXTURE].Data =
+      NULL;
 }
 
 void Java_org_meganekkovr_SurfaceRendererComponent_setOpacity(JNIEnv *jni,

@@ -44,9 +44,9 @@ static const char *FragmentShaderSrc =
 Shader::Shader() {
 
   static ovrProgramParm parms[] = {
-      {"Texm", ovrProgramParmType::FLOAT_MATRIX4},
-      {"Opacity", ovrProgramParmType::FLOAT},
-      {"Texture0", ovrProgramParmType::TEXTURE_SAMPLED},
+      {"Texm", ovrProgramParmType::FLOAT_MATRIX4},       // PARM_TEXM
+      {"Opacity", ovrProgramParmType::FLOAT},            // PARM_OPACITY
+      {"Texture0", ovrProgramParmType::TEXTURE_SAMPLED}, // PARM_TEXTURE
   };
 
   program = GlProgram::Build(NULL, VertexShaderSrc, ImageExternalDirectives,
