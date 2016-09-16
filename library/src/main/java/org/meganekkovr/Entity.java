@@ -10,6 +10,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.meganekkovr.animation.EntityAnimator;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -280,8 +281,13 @@ public class Entity {
         return removed;
     }
 
+    /**
+     * Get children of Entity. Returned {@link List} can not be modified.
+     *
+     * @return Children of Entity.
+     */
     public List<Entity> getChildren() {
-        return children;
+        return Collections.unmodifiableList(children);
     }
 
     /**
