@@ -87,7 +87,7 @@ ovrFrameResult GearVRActivity::Frame(const ovrFrameInput &frame) {
 
   // Update frame
   centerEyeViewMatrix = vrapi_GetCenterEyeViewMatrix(&app->GetHeadModelParms(),
-                                                     &frame.Tracking, NULL);
+                                                     &frame.Tracking, nullptr);
 
   jni->CallVoidMethod(java->ActivityObject, updateMethodID, (jlong)&frame);
 
@@ -110,7 +110,7 @@ ovrFrameResult GearVRActivity::Frame(const ovrFrameInput &frame) {
   }
 
   frameParms = vrapi_DefaultFrameParms(java, VRAPI_FRAME_INIT_DEFAULT,
-                                       vrapi_GetTimeInSeconds(), NULL);
+                                       vrapi_GetTimeInSeconds(), nullptr);
   ovrFrameLayer &layer = frameParms.Layers[VRAPI_FRAME_LAYER_TYPE_WORLD];
 
   for (int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++) {

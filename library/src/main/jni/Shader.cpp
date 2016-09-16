@@ -49,7 +49,7 @@ Shader::Shader() {
       {"Texture0", ovrProgramParmType::TEXTURE_SAMPLED}, // PARM_TEXTURE
   };
 
-  program = GlProgram::Build(NULL, VertexShaderSrc, ImageExternalDirectives,
+  program = GlProgram::Build(nullptr, VertexShaderSrc, ImageExternalDirectives,
                              FragmentShaderSrc, parms,
                              sizeof(parms) / sizeof(ovrProgramParm));
 }

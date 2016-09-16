@@ -26,27 +26,27 @@ SurfaceRendererComponent::SurfaceRendererComponent(JNIEnv *jni)
   // Get Surface class
   static const char *className = "android/view/Surface";
   const jclass surfaceClass = jni->FindClass(className);
-  if (surfaceClass == NULL) {
+  if (surfaceClass == nullptr) {
     FAIL("FindClass( %s ) failed", className);
   }
 
   // Get constructor
   const jmethodID constructor = jni->GetMethodID(
       surfaceClass, "<init>", "(Landroid/graphics/SurfaceTexture;)V");
-  if (constructor == NULL) {
+  if (constructor == nullptr) {
     FAIL("GetMethodID( <init> ) failed");
   }
 
   // Create instance
   jobject obj =
       jni->NewObject(surfaceClass, constructor, surfaceTexture.GetJavaObject());
-  if (obj == NULL) {
+  if (obj == nullptr) {
     FAIL("NewObject() failed");
   }
 
   // Store to field
   surface = jni->NewGlobalRef(obj);
-  if (surface == NULL) {
+  if (surface == nullptr) {
     FAIL("NewGlobalRef() failed");
   }
 
@@ -68,13 +68,13 @@ SurfaceRendererComponent::~SurfaceRendererComponent() {
     // Call Surface.release()
     static const char *className = "android/view/Surface";
     const jclass surfaceClass = jni->FindClass(className);
-    if (surfaceClass == NULL) {
+    if (surfaceClass == nullptr) {
       FAIL("FindClass( %s ) failed", className);
     }
 
     const jmethodID releaseMethodID =
         jni->GetMethodID(surfaceClass, "release", "()V");
-    if (releaseMethodID == NULL) {
+    if (releaseMethodID == nullptr) {
       FAIL("GetMethodID( release ) failed");
     }
 
@@ -82,7 +82,7 @@ SurfaceRendererComponent::~SurfaceRendererComponent() {
 
     // Delete reference for garbage collection
     jni->DeleteGlobalRef(surface);
-    surface = NULL;
+    surface = nullptr;
   }
 }
 
@@ -200,11 +200,12 @@ void Java_org_meganekkovr_SurfaceRendererComponent_removeEntityTexture(
       reinterpret_cast<mgn::SurfaceRendererComponent *>(nativePtr);
 
   ovrSurfaceDef *surfaceDef = entity->GetOrCreateSurfaceDef();
-  surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_TEXM].Data = NULL;
+  surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_TEXM].Data =
+      nullptr;
   surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_OPACITY].Data =
-      NULL;
+      nullptr;
   surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_TEXTURE].Data =
-      NULL;
+      nullptr;
 }
 
 void Java_org_meganekkovr_SurfaceRendererComponent_setOpacity(JNIEnv *jni,
