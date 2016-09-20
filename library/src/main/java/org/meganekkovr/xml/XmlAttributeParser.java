@@ -20,6 +20,7 @@ public class XmlAttributeParser {
     static {
         // Install default attribute handlers
         XmlAttributeParser parser = XmlAttributeParser.getInstance();
+        parser.install(new ComponentHandler());
         parser.install(new GeometryHandler());
         parser.install(new IdHandler());
         parser.install(new OpacityHandler());
