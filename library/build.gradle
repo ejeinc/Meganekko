@@ -1,5 +1,3 @@
-import org.gradle.internal.os.OperatingSystem
-
 apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release'
 
@@ -53,48 +51,6 @@ android {
     lintOptions {
         abortOnError false
     }
-}
-
-/*
- * NDK integration
- */
-
-def GetNDKBuildCmd() {
-
-    def ndkDir = System.getenv('ANDROID_NDK_HOME')
-    if (ndkDir == null) {
-        ndkDir = System.getenv('ANDROID_NDK')
-    }
-    if (ndkDir == null) {
-        ndkDir = System.getenv('NDKROOT')
-    }
-    if (ndkDir == null) {
-        Properties properties = new Properties()
-        properties.load(project.rootProject.file('local.properties').newDataInputStream())
-        ndkDir = properties.getProperty('ndk.dir')
-    }
-    if (ndkDir == null) {
-        throw new GradleException('NDK not found! Check your environment for ANDROID_NDK or your local.properties contains ndk.dir')
-    }
-    if (OperatingSystem.current().isWindows()) {
-        return ndkDir + '/ndk-build.cmd'
-    } else {
-        return ndkDir + '/ndk-build'
-    }
-}
-
-project.afterEvaluate {
-    compileDebugNdk.dependsOn 'NDKBuild'
-    compileReleaseNdk.dependsOn 'NDKBuild'
-    clean.dependsOn 'NDKBuildCleanMGN'
-}
-
-task NDKBuild(type: Exec) {
-    commandLine GetNDKBuildCmd(), "NDK_PROJECT_PATH=$projectDir/src/main"
-}
-
-task NDKBuildCleanMGN(type: Exec) {
-    commandLine GetNDKBuildCmd(), 'clean', "NDK_PROJECT_PATH=$projectDir/src/main"
 }
 
 /*
