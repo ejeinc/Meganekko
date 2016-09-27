@@ -83,11 +83,8 @@ def GetNDKBuildCmd() {
     }
 }
 
-project.afterEvaluate {
-    compileDebugNdk.dependsOn 'NDKBuild'
-    compileReleaseNdk.dependsOn 'NDKBuild'
-    clean.dependsOn 'NDKBuildCleanMGN'
-}
+build.dependsOn 'NDKBuild'
+clean.dependsOn 'NDKBuildCleanMGN'
 
 task NDKBuild(type: Exec) {
     commandLine GetNDKBuildCmd(), "NDK_PROJECT_PATH=$projectDir/src/main"
