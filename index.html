@@ -36,13 +36,11 @@
 <h2>
 <a id="how-to-use" class="anchor" href="#how-to-use" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to Use</h2>
 
-<p>Make new project with Android Studio.</p>
-
 <p>Add dependency in module's <strong>build.gradle</strong>.</p>
 
 <div class="highlight highlight-source-groovy-gradle"><pre><span class="pl-en">dependencies</span> {
     compile fileTree(<span class="pl-c1">dir</span>: <span class="pl-s"><span class="pl-pds">'</span>libs<span class="pl-pds">'</span></span>, <span class="pl-c1">include</span>: [<span class="pl-s"><span class="pl-pds">'</span>*.jar<span class="pl-pds">'</span></span>])
-    compile <span class="pl-s"><span class="pl-pds">'</span>org.meganekkovr:meganekko:3.0.4<span class="pl-pds">'</span></span>
+    compile <span class="pl-s"><span class="pl-pds">'</span>org.meganekkovr:meganekko:3.0.+<span class="pl-pds">'</span></span>
 }</pre></div>
 
 <p>Click "Sync Now".</p>
@@ -65,7 +63,7 @@
     }
 }</pre></div>
 
-<p>Create VR scene with XML. XML file can be localed in asset directory. For example: <em>assets/scene.xml</em>.</p>
+<p>Create VR scene with XML. XML file can be localed from xml resource. For example: <em>res/xml/scene.xml</em>.</p>
 
 <div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">scene</span>&gt;
     &lt;<span class="pl-ent">view</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>@layout/hello_world<span class="pl-pds">"</span></span> <span class="pl-e">position</span>=<span class="pl-s"><span class="pl-pds">"</span>0 0 -5<span class="pl-pds">"</span></span> /&gt;
@@ -92,7 +90,7 @@
     <span class="pl-k">@Override</span>
     <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">init</span>() {
         <span class="pl-v">super</span><span class="pl-k">.</span>init();
-        setSceneFromXmlAsset(<span class="pl-s"><span class="pl-pds">"</span>scene.xml<span class="pl-pds">"</span></span>); <span class="pl-c">// Set scene</span>
+        setSceneFromXml(<span class="pl-smi">R</span><span class="pl-k">.</span>xml<span class="pl-k">.</span>scene); <span class="pl-c">// Set scene</span>
     }
 }</pre></div>
 
