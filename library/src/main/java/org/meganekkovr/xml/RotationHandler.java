@@ -23,9 +23,9 @@ public class RotationHandler implements XmlAttributeParser.XmlAttributeHandler {
         String[] strs = rawValue.split("\\s+", 3);
         if (strs.length >= 3) {
 
-            float x = Float.parseFloat(strs[0]);
-            float y = Float.parseFloat(strs[1]);
-            float z = Float.parseFloat(strs[2]);
+            float x = (float) Math.toRadians(Float.parseFloat(strs[0]));
+            float y = (float) Math.toRadians(Float.parseFloat(strs[1]));
+            float z = (float) Math.toRadians(Float.parseFloat(strs[2]));
 
             String rotOrder = strs.length == 4 ? strs[3].toUpperCase(Locale.US) : "XYZ";
             Quaternionf q = new Quaternionf();
