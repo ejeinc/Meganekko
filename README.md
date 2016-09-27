@@ -4,14 +4,12 @@ Gear VR Application Framework.
 
 ## How to Use
 
-Make new project with Android Studio.
-
 Add dependency in module's **build.gradle**.
 
 ```gradle
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'org.meganekkovr:meganekko:3.0.4'
+    compile 'org.meganekkovr:meganekko:3.0.+'
 }
 ```
 
@@ -36,7 +34,7 @@ public class MyApp extends MeganekkoApp {
 }
 ```
 
-Create VR scene with XML. XML file can be localed in asset directory. For example: *assets/scene.xml*.
+Create VR scene with XML. XML file can be localed from xml resource. For example: *res/xml/scene.xml*.
 
 ```xml
 <scene>
@@ -68,7 +66,7 @@ public class MyApp extends MeganekkoApp {
     @Override
     public void init() {
         super.init();
-        setSceneFromXmlAsset("scene.xml"); // Set scene
+        setSceneFromXml(R.xml.scene); // Set scene
     }
 }
 ```
