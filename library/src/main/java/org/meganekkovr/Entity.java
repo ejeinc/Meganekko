@@ -252,6 +252,10 @@ public class Entity {
         return (T) components.get(clazz);
     }
 
+    public boolean hasComponent(Class<? extends Component> clazz) {
+        return components.containsKey(clazz);
+    }
+
     /**
      * Add child {@link Entity}.
      *
