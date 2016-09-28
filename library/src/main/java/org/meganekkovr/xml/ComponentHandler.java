@@ -5,9 +5,9 @@ import android.util.Log;
 
 import org.meganekkovr.Component;
 import org.meganekkovr.Entity;
+import org.meganekkovr.util.ObjectFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * Define {@code component} attribute. Attribute value can be a class name or names separated by space.
@@ -37,25 +37,7 @@ public class ComponentHandler implements XmlAttributeParser.XmlAttributeHandler 
                     continue;
                 }
 
-                Component component = null;
-
-                // Support AndroidAnnotations @EBean
-                for (Method method : clazz.getDeclaredMethods()) {
-
-                    // Generated class has static getInstance_(Context) method. Use it if exists.
-                    if ("getInstance_".equals(method.getName())
-                            && method.getParameterTypes().length == 1
-                            && method.getParameterTypes()[0].equals(Context.class)) {
-                        component = (Component) method.invoke(null, context);
-                        break;
-                    }
-                }
-
-                // Or use default constructor
-                if (component == null) {
-                    component = (Component) clazz.newInstance();
-                }
-
+                Component component = (Component) ObjectFactory.newInstance(clazz, context);
                 entity.add(component);
 
             } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException e) {

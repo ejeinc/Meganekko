@@ -6,7 +6,9 @@ import android.view.LayoutInflater;
 
 import org.meganekkovr.Entity;
 import org.meganekkovr.SurfaceRendererComponent;
+import org.meganekkovr.util.ObjectFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 /**
@@ -52,10 +54,11 @@ public class SurfaceHandler implements XmlAttributeParser.XmlAttributeHandler {
                 // renderer is a class that extends CanvasRenderer
                 if (SurfaceRendererComponent.CanvasRenderer.class.isAssignableFrom(clazz)) {
                     surfaceRendererComponent = new SurfaceRendererComponent();
-                    surfaceRendererComponent.setCanvasRenderer((SurfaceRendererComponent.CanvasRenderer) clazz.newInstance());
+                    SurfaceRendererComponent.CanvasRenderer canvasRenderer = (SurfaceRendererComponent.CanvasRenderer) ObjectFactory.newInstance(clazz, context);
+                    surfaceRendererComponent.setCanvasRenderer(canvasRenderer);
                 }
 
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
         }

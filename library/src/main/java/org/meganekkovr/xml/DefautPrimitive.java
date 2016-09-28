@@ -11,10 +11,10 @@ import android.view.View;
 import org.meganekkovr.CameraComponent;
 import org.meganekkovr.Entity;
 import org.meganekkovr.Scene;
+import org.meganekkovr.util.ObjectFactory;
 import org.w3c.dom.Node;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,23 +33,7 @@ class DefautPrimitive implements XmlPrimitiveFactory.XmlPrimitiveHandler {
             String className = classAttr.getNodeValue();
 
             try {
-                Class<?> clazz = Class.forName(className);
-                if (Entity.class.isAssignableFrom(clazz)) {
-
-                    // Support AndroidAnnotations @EBean
-                    for (Method method : clazz.getDeclaredMethods()) {
-
-                        // Generated class has static getInstance_(Context) method. Use it if exists.
-                        if ("getInstance_".equals(method.getName())
-                                && method.getParameterTypes().length == 1
-                                && method.getParameterTypes()[0].equals(Context.class)) {
-                            return (Entity) method.invoke(null, context);
-                        }
-                    }
-
-                    // Default constructor
-                    return (Entity) clazz.newInstance();
-                }
+                return (Entity) ObjectFactory.newInstance(className, context);
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
                 return null;
