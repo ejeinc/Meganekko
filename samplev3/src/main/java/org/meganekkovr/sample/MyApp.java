@@ -1,5 +1,7 @@
 package org.meganekkovr.sample;
 
+import org.meganekkovr.FrameInput;
+import org.meganekkovr.JoyButton;
 import org.meganekkovr.MeganekkoApp;
 
 public class MyApp extends MeganekkoApp {
@@ -12,6 +14,19 @@ public class MyApp extends MeganekkoApp {
         firstScene = (FirstScene) setSceneFromXmlAsset("scene.xml");
 //        Scene scene = setSceneFromXml("https://dl.dropboxusercontent.com/u/11794879/scene.xml");
 //        Scene scene = setSceneFromXml(new File(Environment.getExternalStorageDirectory(), "Download/scene.xml"));
+    }
+
+    @Override
+    public void update(FrameInput frame) {
+
+        // Handle long press touch gesture.
+        if (JoyButton.contains(frame.getButtonPressed(), JoyButton.BUTTON_TOUCH_LONGPRESS)) {
+
+            // Reset head tracking orientation.
+            recenterYaw(true);
+        }
+
+        super.update(frame);
     }
 
     /**

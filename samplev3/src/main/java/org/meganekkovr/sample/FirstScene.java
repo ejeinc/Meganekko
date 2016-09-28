@@ -7,12 +7,11 @@ import com.eje_c.meganekko.sample3.R;
 
 import org.joml.Vector3f;
 import org.meganekkovr.Entity;
+import org.meganekkovr.FrameInput;
+import org.meganekkovr.JoyButton;
 import org.meganekkovr.LookDetectorComponent;
 import org.meganekkovr.Scene;
 import org.meganekkovr.SurfaceRendererComponent;
-
-import org.meganekkovr.FrameInput;
-import org.meganekkovr.JoyButton;
 
 public class FirstScene extends Scene {
     private static final String TAG = "FirstScene";
@@ -20,8 +19,6 @@ public class FirstScene extends Scene {
     private Entity button;
     private Entity videocam;
     private PlaneRenderer planeRenderer;
-//    private SceneObject cursor, customViewSceneObject, bitmapObj, button, videocam;
-//    private ObjectLookingStateDetector buttonLookingStateDetector, videocamLookingStateDetector;
 
     @Override
     public void init() {
@@ -29,13 +26,17 @@ public class FirstScene extends Scene {
 
         Log.d(TAG, "init");
 
+        // Entity can be retrieve by R.id.xxx
         planeEntity = findById(R.id.plane);
         planeRenderer = (PlaneRenderer) planeEntity.getComponent(SurfaceRendererComponent.class).getCanvasRenderer();
 
-        // Cache SceneObjects
+        // Or, String ID
         button = findById("button");
         videocam = findById("videocam");
 
+        /*
+         * To control Entity by looking use LookDetectorComponent.
+         */
         LookDetectorComponent lookDetectorComponent = new LookDetectorComponent(new LookDetectorComponent.LookListener() {
 
             @Override
@@ -102,33 +103,6 @@ public class FirstScene extends Scene {
 
         super.update(frame);
     }
-
-//        // To simulate touch control, call this on every frame update
-//        simulateTouch(frame, customViewSceneObject, false);
-//
-//        /*
-//         * Swipe event handling and SceneObject animation
-//         */
-//        if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_UP)) {
-//            bitmapObj.animate()
-//                    .moveBy(new Vector3f(0, 1, 0))
-//                    .start(getApp());
-//        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_DOWN)) {
-//            bitmapObj.animate()
-//                    .moveBy(new Vector3f(0, -1, 0))
-//                    .start(getApp());
-//        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_FORWARD)) {
-//            bitmapObj.animate()
-//                    .rotateBy(0, (float) (Math.PI / 4), 0)
-//                    .start(getApp());
-//        } else if (JoyButton.contains(buttonPressed, JoyButton.BUTTON_SWIPE_BACK)) {
-//            bitmapObj.animate()
-//                    .rotateBy(0, (float) (-Math.PI / 4), 0)
-//                    .start(getApp());
-//        }
-//
-//        super.update(frame);
-//    }
 
     private void onSingleTouchDetected() {
         if (getApp().isLookingAt(button)) {
