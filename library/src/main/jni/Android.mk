@@ -20,8 +20,6 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-include $(OVR_SDK_MOBILE)/cflags.mk
-
 LOCAL_MODULE := meganekko
 
 # jni/** all .cpp
@@ -33,30 +31,16 @@ LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
 LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrAppFramework/Include
 LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/LibOVRKernel/Src
 LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrApi/Include
-LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrAppSupport/VrGUI/Src
-LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrAppSupport/VrLocale/Src
-LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrAppSupport/VrModel/Src
-LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrAppSupport/VrSound/Include
-LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrAppSupport/SystemUtils/Include
 
 LOCAL_C_INCLUDES += $(LOCAL_PATH)
 
-LOCAL_SHARED_LIBRARIES += vrapi
-LOCAL_STATIC_LIBRARIES += systemutils vrsound vrlocale vrgui vrappframework libovrkernel
+LOCAL_SHARED_LIBRARIES := vrapi
+LOCAL_STATIC_LIBRARIES := vrappframework 
 
-LOCAL_ARM_NEON := true
-
-LOCAL_CPPFLAGS += -fexceptions -std=c++11
-LOCAL_CFLAGS := -Wattributes
-
-LOCAL_LDLIBS += -llog -lGLESv3 -lEGL -landroid
+LOCAL_CPPFLAGS := -std=c++11
 
 include $(BUILD_SHARED_LIBRARY)
 
-$(call import-module,LibOVRKernel/Projects/AndroidPrebuilt/jni)
 $(call import-module,VrApi/Projects/AndroidPrebuilt/jni)
 $(call import-module,VrAppFramework/Projects/AndroidPrebuilt/jni)
-$(call import-module,VrAppSupport/VrGui/Projects/AndroidPrebuilt/jni)
-$(call import-module,VrAppSupport/VrLocale/Projects/AndroidPrebuilt/jni)
-$(call import-module,VrAppSupport/VrSound/Projects/AndroidPrebuilt/jni)
 $(call import-module,VrAppSupport/SystemUtils/Projects/AndroidPrebuilt/jni)
