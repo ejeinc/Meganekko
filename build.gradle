@@ -22,6 +22,9 @@ allprojects {
 
         jcenter()
     }
+    tasks.withType(Javadoc) {
+        options.addStringOption('encoding', 'UTF-8')
+    }
 }
 
 task clean(type: Delete) {
