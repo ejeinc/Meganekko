@@ -2,7 +2,6 @@ package org.meganekkovr;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -252,7 +251,7 @@ public class MeganekkoApp {
      * @param endCallback Callback for animation end. This is <b>not</b> called when animation is canceled.
      *                    If you require more complicated callbacks, use {@code AnimatorListener} instead of this.
      */
-    public void animate(@NonNull final AnimatorSet anim, @Nullable final Runnable endCallback) {
+    public void animate(@NonNull final Animator anim, @Nullable final Runnable endCallback) {
 
         if (anim.isRunning()) {
             cancel(anim, new Runnable() {
