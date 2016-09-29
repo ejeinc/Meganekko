@@ -2,6 +2,8 @@
 
 Gear VR Application Framework.
 
+* [Javadoc](http://www.meganekkovr.org/javadoc/)
+
 ## How to Use
 
 Add dependency in module's **build.gradle**.
