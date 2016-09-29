@@ -7,7 +7,7 @@ import org.meganekkovr.Entity;
 /**
  * Define {@code id} attribute.
  */
-public class IdHandler implements XmlAttributeParser.XmlAttributeHandler {
+class IdHandler implements XmlAttributeParser.XmlAttributeHandler {
 
     @Override
     public String attributeName() {

@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Define {@code geometry} attribute.
  */
-public class GeometryHandler implements XmlAttributeParser.XmlAttributeHandler {
+class GeometryHandler implements XmlAttributeParser.XmlAttributeHandler {
 
     @Override
     public String attributeName() {

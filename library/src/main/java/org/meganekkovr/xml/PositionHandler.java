@@ -7,7 +7,7 @@ import org.meganekkovr.Entity;
 /**
  * Define {@code position} attribute.
  */
-public class PositionHandler implements XmlAttributeParser.XmlAttributeHandler {
+class PositionHandler implements XmlAttributeParser.XmlAttributeHandler {
 
     @Override
     public String attributeName() {

@@ -7,7 +7,7 @@ import org.meganekkovr.Entity;
 /**
  * Define {@code opacity} attribute.
  */
-public class OpacityHandler implements XmlAttributeParser.XmlAttributeHandler {
+class OpacityHandler implements XmlAttributeParser.XmlAttributeHandler {
 
     @Override
     public String attributeName() {

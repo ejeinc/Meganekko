@@ -12,7 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Define {@code component} attribute. Attribute value can be a class name or names separated by space.
  */
-public class ComponentHandler implements XmlAttributeParser.XmlAttributeHandler {
+class ComponentHandler implements XmlAttributeParser.XmlAttributeHandler {
     private static final String TAG = "ComponentHandler";
 
     @Override

@@ -10,7 +10,7 @@ import java.util.Locale;
 /**
  * Define {@code rotation} attribute.
  */
-public class RotationHandler implements XmlAttributeParser.XmlAttributeHandler {
+class RotationHandler implements XmlAttributeParser.XmlAttributeHandler {
 
     @Override
     public String attributeName() {

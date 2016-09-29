@@ -7,7 +7,7 @@ import org.meganekkovr.Entity;
 /**
  * Define {@code visible} attribute.
  */
-public class VisibleHandler implements XmlAttributeParser.XmlAttributeHandler {
+class VisibleHandler implements XmlAttributeParser.XmlAttributeHandler {
 
     @Override
     public String attributeName() {

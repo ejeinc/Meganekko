@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Define {@code surface} attribute.
  */
-public class SurfaceHandler implements XmlAttributeParser.XmlAttributeHandler {
+class SurfaceHandler implements XmlAttributeParser.XmlAttributeHandler {
 
     @Override
     public String attributeName() {

@@ -7,7 +7,7 @@ import org.meganekkovr.Entity;
 /**
  * Define {@code scale} attribute.
  */
-public class ScaleHandler implements XmlAttributeParser.XmlAttributeHandler {
+class ScaleHandler implements XmlAttributeParser.XmlAttributeHandler {
 
     @Override
     public String attributeName() {
