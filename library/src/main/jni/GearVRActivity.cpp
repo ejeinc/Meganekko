@@ -62,10 +62,18 @@ void GearVRActivity::EnteredVrMode(const ovrIntentType intentType,
 
     shader = new Shader();
   }
+
+  // GearVRActivity.enteredVrMode()
+  JNIEnv *jni = app->GetJava()->Env;
+  jni->CallVoidMethod(app->GetJava()->ActivityObject,
+                      GetMethodID("enteredVrMode", "()V"));
 }
 
 void GearVRActivity::LeavingVrMode() {
-  // LeavingVrMode
+  // GearVRActivity.leavingVrMode()
+  JNIEnv *jni = app->GetJava()->Env;
+  jni->CallVoidMethod(app->GetJava()->ActivityObject,
+                      GetMethodID("leavingVrMode", "()V"));
 }
 
 ovrFrameResult GearVRActivity::Frame(const ovrFrameInput &frame) {

@@ -2,6 +2,7 @@ package org.meganekkovr;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -327,5 +328,19 @@ public class MeganekkoApp {
 
     public void recenterYaw(boolean showBlack) {
         context.recenterYaw(showBlack);
+    }
+
+    /**
+     * This will be called right after entering VR mode.
+     * This can be considered as GL version of {@link Activity#onResume()}.
+     */
+    public void enteredVrMode() {
+    }
+
+    /**
+     * This will be called right before leaving VR mode.
+     * This can be considered as GL version of {@link Activity#onPause()}.
+     */
+    public void leavingVrMode() {
     }
 }
