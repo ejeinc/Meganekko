@@ -227,43 +227,6 @@ void Java_org_meganekkovr_GearVRActivity_getCenterViewRotation(
   mgn::FillElementsUnSafe(jni, values, orientation);
 }
 
-void Java_org_meganekkovr_GearVRActivity_setCpuLevel(JNIEnv *jni, jclass clazz,
-                                                     jlong appPtr,
-                                                     jint cpuLevel) {
-  App *app = reinterpret_cast<App *>(appPtr);
-  app->SetCpuLevel(cpuLevel);
-}
-
-void Java_org_meganekkovr_GearVRActivity_setGpuLevel(JNIEnv *jni, jclass clazz,
-                                                     jlong appPtr,
-                                                     jint gpuLevel) {
-  App *app = reinterpret_cast<App *>(appPtr);
-  app->SetGpuLevel(gpuLevel);
-}
-
-void Java_org_meganekkovr_GearVRActivity_setShowFPS(JNIEnv *jni, jclass clazz,
-                                                    jlong appPtr,
-                                                    jboolean show) {
-  App *app = reinterpret_cast<App *>(appPtr);
-  app->SetShowFPS(show);
-}
-
-void Java_org_meganekkovr_GearVRActivity_showInfoText(JNIEnv *jni, jclass clazz,
-                                                      jlong appPtr,
-                                                      jfloat duration,
-                                                      jstring text) {
-  App *app = reinterpret_cast<App *>(appPtr);
-  JavaUTFChars str(jni, text);
-  app->ShowInfoText(duration, str.ToStr());
-}
-
-void Java_org_meganekkovr_GearVRActivity_recenterYaw(JNIEnv *jni, jclass clazz,
-                                                     jlong appPtr,
-                                                     jboolean showBlack) {
-  App *app = reinterpret_cast<App *>(appPtr);
-  app->RecenterYaw(showBlack);
-}
-
 void Java_org_meganekkovr_GearVRActivity_setClearColorBuffer(
     JNIEnv *jni, jclass clazz, jlong appPtr, jboolean clearColorBuffer) {
   mgn::GearVRActivity *activity =

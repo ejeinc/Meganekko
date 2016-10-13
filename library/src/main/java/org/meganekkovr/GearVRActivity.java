@@ -8,6 +8,7 @@ import android.util.Log;
 import com.oculus.vrappframework.VrActivity;
 
 import org.joml.Quaternionf;
+import org.meganekkovr.ovrjni.OVRApp;
 import org.meganekkovr.util.ObjectFactory;
 
 import java.lang.reflect.InvocationTargetException;
@@ -31,16 +32,6 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
     private static native boolean isLookingAt(long appPtr, long entityPointer, long geometryComponentPointer);
 
     private static native void getCenterViewRotation(long appPtr, float[] values);
-
-    private static native void setCpuLevel(long appPtr, int cpuLevel);
-
-    private static native void setGpuLevel(long appPtr, int gpuLevel);
-
-    private static native void setShowFPS(long appPtr, boolean show);
-
-    private static native void showInfoText(long appPtr, float duration, String infoText);
-
-    private static native void recenterYaw(long appPtr, boolean showBlack);
 
     private static native void setClearColorBuffer(long appPtr, boolean clearColorBuffer);
 
@@ -69,7 +60,11 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
         String fromPackageNameString = VrActivity.getPackageStringFromIntent(intent);
         String uriString = VrActivity.getUriStringFromIntent(intent);
 
-        setAppPtr(nativeSetAppInterface(this, fromPackageNameString, commandString, uriString));
+        // Create native GearVRActivity and get OVR::App pointer
+        long appPtr = nativeSetAppInterface(this, fromPackageNameString, commandString, uriString);
+        setAppPtr(appPtr);
+
+        OVRApp.init(appPtr);
     }
 
     /**
@@ -205,23 +200,23 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
     }
 
     public void setCpuLevel(int cpuLevel) {
-        setCpuLevel(getAppPtr(), cpuLevel);
+        OVRApp.getInstance().setCpuLevel(cpuLevel);
     }
 
     public void setGpuLevel(int gpuLevel) {
-        setGpuLevel(getAppPtr(), gpuLevel);
+        OVRApp.getInstance().setGpuLevel(gpuLevel);
     }
 
     public void setShowFPS(boolean show) {
-        setShowFPS(getAppPtr(), show);
+        OVRApp.getInstance().setShowFPS(show);
     }
 
     public void showInfoText(float duration, String fmt, Object... args) {
-        showInfoText(getAppPtr(), duration, String.format(fmt, args));
+        OVRApp.getInstance().showInfoText(duration, String.format(fmt, args));
     }
 
     public void recenterYaw(boolean showBlack) {
-        recenterYaw(getAppPtr(), showBlack);
+        OVRApp.getInstance().recenterYaw(showBlack);
     }
 
     public MeganekkoApp getApp() {
