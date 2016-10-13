@@ -29,8 +29,6 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
 
     private static native long nativeSetAppInterface(VrActivity act, String fromPackageNameString, String commandString, String uriString);
 
-    private static native boolean isLookingAt(long appPtr, long entityPointer, long geometryComponentPointer);
-
     private static native void getCenterViewRotation(long appPtr, float[] values);
 
     private static native void setClearColorBuffer(long appPtr, boolean clearColorBuffer);
@@ -65,6 +63,7 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
         setAppPtr(appPtr);
 
         OVRApp.init(appPtr);
+        LookDetector.init(appPtr);
     }
 
     /**
@@ -178,16 +177,7 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
 
     @Override
     public boolean isLookingAt(Entity entity) {
-
-        if (!entity.isShown()) {
-            return false;
-        }
-
-        // Check if entity has geometry
-        GeometryComponent geometryComponent = entity.getComponent(GeometryComponent.class);
-        if (geometryComponent == null) return false;
-
-        return isLookingAt(getAppPtr(), entity.getNativePointer(), geometryComponent.getNativePointer());
+        return LookDetector.getInstance().isLookingAt(entity);
     }
 
     @Override

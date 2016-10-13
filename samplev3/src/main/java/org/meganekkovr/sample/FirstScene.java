@@ -9,6 +9,7 @@ import org.joml.Vector3f;
 import org.meganekkovr.Entity;
 import org.meganekkovr.FrameInput;
 import org.meganekkovr.JoyButton;
+import org.meganekkovr.LookDetector;
 import org.meganekkovr.LookDetectorComponent;
 import org.meganekkovr.Scene;
 import org.meganekkovr.SurfaceRendererComponent;
@@ -85,7 +86,7 @@ public class FirstScene extends Scene {
     @Override
     public void update(FrameInput frame) {
 
-        if (getApp().isLookingAt(planeEntity)) {
+        if (LookDetector.getInstance().isLookingAt(planeEntity)) {
             planeRenderer.color = Color.RED;
         } else {
             planeRenderer.color = Color.YELLOW;
@@ -105,10 +106,11 @@ public class FirstScene extends Scene {
     }
 
     private void onSingleTouchDetected() {
-        if (getApp().isLookingAt(button)) {
+        LookDetector lookDetector = LookDetector.getInstance();
+        if (lookDetector.isLookingAt(button)) {
             MyApp app = (MyApp) getApp();
             app.onTapButton();
-        } else if (getApp().isLookingAt(videocam)) {
+        } else if (lookDetector.isLookingAt(videocam)) {
             MyApp app = (MyApp) getApp();
             app.onTapVideocam();
         }

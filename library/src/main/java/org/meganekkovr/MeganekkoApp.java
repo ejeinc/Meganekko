@@ -149,7 +149,7 @@ public class MeganekkoApp {
      * @return {@code true} if user is looking at. Otherwise {@code false}.
      */
     public boolean isLookingAt(Entity entity) {
-        return context.isLookingAt(entity);
+        return LookDetector.getInstance().isLookingAt(entity);
     }
 
     /**

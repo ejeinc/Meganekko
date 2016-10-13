@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "LookDetection.h"
+#include "LookDetector.h"
+#include "App.h"
+#include "GeometryComponent.h"
 
 using namespace OVR;
 
@@ -57,3 +59,26 @@ IntersectRayBoundsResult IntersectRayBounds(const Matrix4f &centerViewMatrix,
   return result;
 }
 }
+
+extern "C" {
+
+jboolean Java_org_meganekkovr_LookDetector_isLookingAt(JNIEnv *jni,
+                                                       jclass clazz,
+                                                       jlong appPtr,
+                                                       jlong entityPtr,
+                                                       jlong geoCompPtr) {
+  App *app = reinterpret_cast<App *>(appPtr);
+  Matrix4f viewM = app->GetLastViewMatrix();
+
+  mgn::Entity *entity = reinterpret_cast<mgn::Entity *>(entityPtr);
+  Matrix4f modelM = entity->GetWorldModelMatrix();
+
+  mgn::GeometryComponent *geoComp =
+      reinterpret_cast<mgn::GeometryComponent *>(geoCompPtr);
+  GlGeometry geo = geoComp->GetGeometry();
+
+  mgn::IntersectRayBoundsResult result =
+      mgn::IntersectRayBounds(viewM, modelM, geo, false);
+  return result.intersected;
+}
+} // extern "C"

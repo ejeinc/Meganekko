@@ -17,7 +17,6 @@
 #include "Android/JniUtils.h"
 #include "Entity.h"
 #include "GeometryComponent.h"
-#include "LookDetection.h"
 #include "util/convert.h"
 #include <jni.h>
 
@@ -195,27 +194,6 @@ jlong Java_org_meganekkovr_GearVRActivity_nativeSetAppInterface(
   return (new mgn::GearVRActivity())
       ->SetActivity(jni, clazz, activity, fromPackageName, commandString,
                     uriString);
-}
-
-jboolean Java_org_meganekkovr_GearVRActivity_isLookingAt(JNIEnv *jni,
-                                                         jclass clazz,
-                                                         jlong appPtr,
-                                                         jlong entityPtr,
-                                                         jlong geoCompPtr) {
-  mgn::GearVRActivity *activity =
-      (mgn::GearVRActivity *)((App *)appPtr)->GetAppInterface();
-  Matrix4f centerM = activity->GetCenterEyeViewMatrix();
-
-  mgn::Entity *entity = reinterpret_cast<mgn::Entity *>(entityPtr);
-  Matrix4f m = entity->GetWorldModelMatrix();
-
-  mgn::GeometryComponent *geoComp =
-      reinterpret_cast<mgn::GeometryComponent *>(geoCompPtr);
-  GlGeometry geo = geoComp->GetGeometry();
-
-  mgn::IntersectRayBoundsResult result =
-      mgn::IntersectRayBounds(centerM, m, geo, false);
-  return result.intersected;
 }
 
 void Java_org_meganekkovr_GearVRActivity_getCenterViewRotation(

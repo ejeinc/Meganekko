@@ -32,6 +32,7 @@ public class LookDetectorComponent extends Component {
         void onLooking(Entity entity, FrameInput frame);
     }
 
+    private final LookDetector lookDetector = LookDetector.getInstance();
     private final LookListener lookListener;
     private boolean looking;
 
@@ -43,7 +44,7 @@ public class LookDetectorComponent extends Component {
     public void update(FrameInput frame) {
 
         Entity entity = getEntity();
-        boolean isLookingNow = entity.getApp().isLookingAt(entity);
+        boolean isLookingNow = lookDetector.isLookingAt(entity);
 
         if (isLookingNow) {
 
