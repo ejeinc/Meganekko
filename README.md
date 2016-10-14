@@ -2,15 +2,30 @@
 
 Gear VR Application Framework.
 
+The aim of the project is to create an easy to use, lightweight, application framework for Gear VR. The library enables to write an app entirely in Java.
+
+## Features 
+
+* No C++ (NDK) required (for apps)
+* Simple [XML scene-graph](https://github.com/ejeinc/Meganekko/wiki/%5B3.0%5D-0:-XML-scene-graph)
+* [entity-component-system](https://en.wikipedia.org/wiki/Entity_component_system)
+* Use [View](https://developer.android.com/reference/android/view/View.html), [Layouts](https://developer.android.com/guide/topics/ui/declaring-layout.html), [Drawable](https://developer.android.com/guide/topics/resources/drawable-resource.html) or [Canvas](https://developer.android.com/reference/android/graphics/Canvas.html) as texture
+* [Multi-View](https://developer3.oculus.com/documentation/mobilesdk/latest/concepts/mobile-multiview/) rendering
+* [Playing 360 videos](https://github.com/ejeinc/Meganekko/wiki/%5B3.0%5D-Example:-360-Video-player)
+* Easy integration with [Facebook 360 Spatial Workstation Rendering SDK](https://github.com/ejeinc/Meganekko/wiki/%5B3.0%5D-Example:-Integrate-with-TBEngine) and [Google VR Spatial Audio](https://github.com/ejeinc/Meganekko/wiki/%5B3.0%5D-Example:-Integrate-with-GvrAudioEngine)
+* Built in support for Oculus's [Reserved User Interactions](https://developer3.oculus.com/documentation/mobilesdk/latest/concepts/mobile-umenu-intro/#mobile-umenu-reserved) (it can be overrided if you want)
+
+## Documentation
+
+* [Wiki](https://github.com/ejeinc/Meganekko/wiki)
 * [Javadoc](http://www.meganekkovr.org/javadoc/)
 
-## How to Use
+## Usage
 
-Add dependency in module's **build.gradle**.
+Add a dependency in your module's **build.gradle**.
 
 ```gradle
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'org.meganekkovr:meganekko:3.0.+'
 }
 ```
