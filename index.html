@@ -24,17 +24,39 @@
 
 <p>Gear VR Application Framework.</p>
 
+<p>The aim of the project is to create an easy to use, lightweight, application framework for Gear VR. The library enables to write an app entirely in Java.</p>
+
+<h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h2>
+
 <ul>
+<li>No C++ (NDK) required (for apps)</li>
+<li>Simple <a href="https://github.com/ejeinc/Meganekko/wiki/%5B3.0%5D-0:-XML-scene-graph">XML scene-graph</a>
+</li>
+<li><a href="https://en.wikipedia.org/wiki/Entity_component_system">entity-component-system</a></li>
+<li>Use <a href="https://developer.android.com/reference/android/view/View.html">View</a>, <a href="https://developer.android.com/guide/topics/ui/declaring-layout.html">Layouts</a>, <a href="https://developer.android.com/guide/topics/resources/drawable-resource.html">Drawable</a> or <a href="https://developer.android.com/reference/android/graphics/Canvas.html">Canvas</a> as texture</li>
+<li>
+<a href="https://developer3.oculus.com/documentation/mobilesdk/latest/concepts/mobile-multiview/">Multi-View</a> rendering</li>
+<li><a href="https://github.com/ejeinc/Meganekko/wiki/%5B3.0%5D-Example:-360-Video-player">Playing 360 videos</a></li>
+<li>Easy integration with <a href="https://github.com/ejeinc/Meganekko/wiki/%5B3.0%5D-Example:-Integrate-with-TBEngine">Facebook 360 Spatial Workstation Rendering SDK</a> and <a href="https://github.com/ejeinc/Meganekko/wiki/%5B3.0%5D-Example:-Integrate-with-GvrAudioEngine">Google VR Spatial Audio</a>
+</li>
+<li>Built in support for Oculus's <a href="https://developer3.oculus.com/documentation/mobilesdk/latest/concepts/mobile-umenu-intro/#mobile-umenu-reserved">Reserved User Interactions</a> (it can be overrided if you want)</li>
+</ul>
+
+<h2>
+<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Documentation</h2>
+
+<ul>
+<li><a href="https://github.com/ejeinc/Meganekko/wiki">Wiki</a></li>
 <li><a href="http://www.meganekkovr.org/javadoc/">Javadoc</a></li>
 </ul>
 
 <h2>
-<a id="how-to-use" class="anchor" href="#how-to-use" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to Use</h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
 
-<p>Add dependency in module's <strong>build.gradle</strong>.</p>
+<p>Add a dependency in your module's <strong>build.gradle</strong>.</p>
 
 <div class="highlight highlight-source-groovy-gradle"><pre><span class="pl-en">dependencies</span> {
-    compile fileTree(<span class="pl-c1">dir</span>: <span class="pl-s"><span class="pl-pds">'</span>libs<span class="pl-pds">'</span></span>, <span class="pl-c1">include</span>: [<span class="pl-s"><span class="pl-pds">'</span>*.jar<span class="pl-pds">'</span></span>])
     compile <span class="pl-s"><span class="pl-pds">'</span>org.meganekkovr:meganekko:3.0.+<span class="pl-pds">'</span></span>
 }</pre></div>
 
