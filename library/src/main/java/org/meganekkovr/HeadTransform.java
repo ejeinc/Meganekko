@@ -54,6 +54,19 @@ public class HeadTransform {
 
     /**
      * Provides the quaternion representing the head rotation.
+     * Note that the result of this method is shared with other callers for performance.
+     * You must not modify it directly. It will be a cause of unpredictable bug.
+     * If you would like to modify the result, do like
+     * <code>
+     * Quaternionf q = new Quaternionf(HeadTransform.getInstance().getQuaternion());
+     * q.rotateX(1); // modify
+     * </code>
+     * or
+     * <code>
+     * Quaternionf q = new Quaternionf();
+     * q.set(HeadTransform.getInstance().getQuaternion());
+     * q.x = 0; // modify
+     * </code>
      *
      * @return The quaternion representing the head rotation.
      */
@@ -72,6 +85,20 @@ public class HeadTransform {
     /**
      * Provides the direction the head is looking towards as a 3x1 unit vector.
      * Note that in OpenGL the forward vector points into the -Z direction. Make sure to invert it if ever used to compute the basis of a right-handed system.
+     * <br>
+     * Note that the result of this method is shared with other callers for performance.
+     * You must not modify it directly. It will be a cause of unpredictable bug.
+     * If you would like to modify the result, do like
+     * <code>
+     * Vector3f v = new Vector3f(HeadTransform.getInstance().getForwardVector());
+     * v.mul(3); // modify
+     * </code>
+     * or
+     * <code>
+     * Vector3f v = new Vector3f();
+     * v.set(HeadTransform.getInstance().getForwardVector());
+     * v.x = 0; // modify
+     * </code>
      *
      * @return The forward vector.
      */
@@ -89,6 +116,20 @@ public class HeadTransform {
 
     /**
      * Provides the upwards direction of the head.
+     * <br>
+     * Note that the result of this method is shared with other callers for performance.
+     * You must not modify it directly. It will be a cause of unpredictable bug.
+     * If you would like to modify the result, do like
+     * <code>
+     * Vector3f v = new Vector3f(HeadTransform.getInstance().getUpVector());
+     * v.mul(3); // modify
+     * </code>
+     * or
+     * <code>
+     * Vector3f v = new Vector3f();
+     * v.set(HeadTransform.getInstance().getUpVector());
+     * v.x = 0; // modify
+     * </code>
      *
      * @return The upwards direction of the head.
      */
@@ -106,6 +147,20 @@ public class HeadTransform {
 
     /**
      * Provides the rightwards direction of the head.
+     * <br>
+     * Note that the result of this method is shared with other callers for performance.
+     * You must not modify it directly. It will be a cause of unpredictable bug.
+     * If you would like to modify the result, do like
+     * <code>
+     * Vector3f v = new Vector3f(HeadTransform.getInstance().getRightVector());
+     * v.mul(3); // modify
+     * </code>
+     * or
+     * <code>
+     * Vector3f v = new Vector3f();
+     * v.set(HeadTransform.getInstance().getRightVector());
+     * v.x = 0; // modify
+     * </code>
      *
      * @return The rightwards direction of the head.
      */
