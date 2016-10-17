@@ -2,8 +2,6 @@ package org.meganekkovr;
 
 import android.content.Context;
 
-import org.joml.Quaternionf;
-
 /**
  * Abstraction interface for Activity.
  */
@@ -30,11 +28,6 @@ interface MeganekkoContext {
      * @return {@code true} if user is looking at it. Otherwise {@code false}.
      */
     boolean isLookingAt(Entity entity);
-
-    /**
-     * @return Head rotation.
-     */
-    Quaternionf getCenterViewRotation();
 
     /**
      * Run some code on Android UI thread.

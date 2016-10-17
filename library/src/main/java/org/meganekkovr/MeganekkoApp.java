@@ -160,7 +160,7 @@ public class MeganekkoApp {
      * @return center view rotation
      */
     public Quaternionf getCenterViewRotation() {
-        return context.getCenterViewRotation();
+        return HeadTransform.getInstance().getQuaternion();
     }
 
     /**

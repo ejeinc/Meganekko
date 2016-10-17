@@ -196,15 +196,6 @@ jlong Java_org_meganekkovr_GearVRActivity_nativeSetAppInterface(
                     uriString);
 }
 
-void Java_org_meganekkovr_GearVRActivity_getCenterViewRotation(
-    JNIEnv *jni, jclass clazz, jlong appPtr, jfloatArray values) {
-  mgn::GearVRActivity *activity =
-      (mgn::GearVRActivity *)((App *)appPtr)->GetAppInterface();
-  Matrix4f centerM = activity->GetCenterEyeViewMatrix();
-  Quatf orientation = Quatf(centerM.InvertedHomogeneousTransform());
-  mgn::FillElementsUnSafe(jni, values, orientation);
-}
-
 void Java_org_meganekkovr_GearVRActivity_setClearColorBuffer(
     JNIEnv *jni, jclass clazz, jlong appPtr, jboolean clearColorBuffer) {
   mgn::GearVRActivity *activity =

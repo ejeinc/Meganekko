@@ -29,8 +29,6 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
 
     private static native long nativeSetAppInterface(VrActivity act, String fromPackageNameString, String commandString, String uriString);
 
-    private static native void getCenterViewRotation(long appPtr, float[] values);
-
     private static native void setClearColorBuffer(long appPtr, boolean clearColorBuffer);
 
     private static native boolean getClearColorBuffer(long appPtr);
@@ -64,6 +62,7 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
 
         OVRApp.init(appPtr);
         LookDetector.init(appPtr);
+        HeadTransform.init(appPtr);
     }
 
     /**
@@ -125,6 +124,8 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
             frame = new FrameInput(frameInputPointer);
         }
 
+        HeadTransform.getInstance().invalidate();
+
         app.update(frame);
 
         // Clean native resources
@@ -178,15 +179,6 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
     @Override
     public boolean isLookingAt(Entity entity) {
         return LookDetector.getInstance().isLookingAt(entity);
-    }
-
-    @Override
-    public Quaternionf getCenterViewRotation() {
-        synchronized (this) {
-            getCenterViewRotation(getAppPtr(), tmpValues);
-            centerViewRotation.set(tmpValues[0], tmpValues[1], tmpValues[2], tmpValues[3]);
-        }
-        return centerViewRotation;
     }
 
     public void setCpuLevel(int cpuLevel) {
