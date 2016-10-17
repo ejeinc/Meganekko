@@ -3,6 +3,7 @@ package org.meganekkovr.sample;
 import org.meganekkovr.FrameInput;
 import org.meganekkovr.JoyButton;
 import org.meganekkovr.MeganekkoApp;
+import org.meganekkovr.ovrjni.OVRApp;
 
 public class MyApp extends MeganekkoApp {
     private FirstScene firstScene; // cache first scene for returning from switched scene
@@ -23,7 +24,7 @@ public class MyApp extends MeganekkoApp {
         if (JoyButton.contains(frame.getButtonPressed(), JoyButton.BUTTON_TOUCH_LONGPRESS)) {
 
             // Reset head tracking orientation.
-            recenterYaw(true);
+            OVRApp.getInstance().recenterYaw(true);
         }
 
         super.update(frame);

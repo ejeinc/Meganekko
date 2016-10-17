@@ -148,6 +148,7 @@ public class MeganekkoApp {
      *
      * @param entity Target {@link Entity}.
      * @return {@code true} if user is looking at. Otherwise {@code false}.
+     * @deprecated Use {@link LookDetector#isLookingAt(Entity)}.
      */
     public boolean isLookingAt(Entity entity) {
         return LookDetector.getInstance().isLookingAt(entity);
@@ -159,6 +160,7 @@ public class MeganekkoApp {
      * If you want to save this value over frames, copy it manually.
      *
      * @return center view rotation
+     * @deprecated Use {@link HeadTransform#getQuaternion()}.
      */
     public Quaternionf getCenterViewRotation() {
         return HeadTransform.getInstance().getQuaternion();
@@ -327,6 +329,12 @@ public class MeganekkoApp {
     public void onPause() {
     }
 
+    /**
+     * Will be removed in future update.
+     *
+     * @param showBlack
+     * @deprecated Use {@link OVRApp#recenterYaw(boolean)}.
+     */
     public void recenterYaw(boolean showBlack) {
         OVRApp.getInstance().recenterYaw(showBlack);
     }
