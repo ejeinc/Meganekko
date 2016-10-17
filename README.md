@@ -12,7 +12,7 @@ The aim of the project is to create an easy to use, lightweight, application fra
 * Use [View](https://developer.android.com/reference/android/view/View.html), [Layouts](https://developer.android.com/guide/topics/ui/declaring-layout.html), [Drawable](https://developer.android.com/guide/topics/resources/drawable-resource.html) or [Canvas](https://developer.android.com/reference/android/graphics/Canvas.html) as texture
 * [Multi-View](https://developer3.oculus.com/documentation/mobilesdk/latest/concepts/mobile-multiview/) rendering
 * [Playing 360 videos](https://github.com/ejeinc/Meganekko/wiki/%5B3.0%5D-Example:-360-Video-player)
-* Easy integration with [Facebook 360 Spatial Workstation Rendering SDK](https://github.com/ejeinc/Meganekko/wiki/%5B3.0%5D-Example:-Integrate-with-TBEngine) and [Google VR Spatial Audio](https://github.com/ejeinc/Meganekko/wiki/%5B3.0%5D-Example:-Integrate-with-GvrAudioEngine)
+* Easy integration with [Facebook 360 Spatial Workstation Rendering SDK](https://github.com/ejeinc/Meganekko/wiki/%5B3.0%5D-Example:-Integrate-with-Facebook-Spatial-Workstation-Rendering-SDK) and [Google VR Spatial Audio](https://github.com/ejeinc/Meganekko/wiki/%5B3.0%5D-Example:-Integrate-with-GvrAudioEngine)
 * Built in support for Oculus's [Reserved User Interactions](https://developer3.oculus.com/documentation/mobilesdk/latest/concepts/mobile-umenu-intro/#mobile-umenu-reserved) (it can be overrided if you want)
 
 ## Documentation
