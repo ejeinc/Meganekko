@@ -24,6 +24,8 @@ allprojects {
     }
     tasks.withType(Javadoc) {
         options.addStringOption('encoding', 'UTF-8')
+        options.addStringOption('windowtitle', 'Meganekko')
+        options.addStringOption('doctitle', 'Meganekko')
     }
 }
 
