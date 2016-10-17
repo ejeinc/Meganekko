@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.joml.Quaternionf;
+import org.meganekkovr.ovrjni.OVRApp;
 import org.meganekkovr.xml.XmlParser;
 import org.meganekkovr.xml.XmlParserException;
 
@@ -327,7 +328,7 @@ public class MeganekkoApp {
     }
 
     public void recenterYaw(boolean showBlack) {
-        context.recenterYaw(showBlack);
+        OVRApp.getInstance().recenterYaw(showBlack);
     }
 
     /**

@@ -176,11 +176,6 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
         return this;
     }
 
-    @Override
-    public boolean isLookingAt(Entity entity) {
-        return LookDetector.getInstance().isLookingAt(entity);
-    }
-
     public void setCpuLevel(int cpuLevel) {
         OVRApp.getInstance().setCpuLevel(cpuLevel);
     }
@@ -195,10 +190,6 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
 
     public void showInfoText(float duration, String fmt, Object... args) {
         OVRApp.getInstance().showInfoText(duration, String.format(fmt, args));
-    }
-
-    public void recenterYaw(boolean showBlack) {
-        OVRApp.getInstance().recenterYaw(showBlack);
     }
 
     public MeganekkoApp getApp() {
