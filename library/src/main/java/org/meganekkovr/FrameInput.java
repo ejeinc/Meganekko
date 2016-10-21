@@ -108,4 +108,13 @@ public class FrameInput {
     public int getButtonReleased() {
         return getButtonReleased(mNativePtr);
     }
+
+    /**
+     * Get native {@code ovrFrameInput*} value.
+     *
+     * @return Native ovrFrameInput* value.
+     */
+    public long getNativePointer() {
+        return mNativePtr;
+    }
 }
