@@ -12,7 +12,7 @@ import java.util.Set;
  * <p/>
  * object *---1 {@link NativePointer} 1---1 {@link NativeReference}
  */
-class NativePointer {
+public class NativePointer {
     // This holds all instance references
     private static final Set<WeakReference<NativePointer>> sInstances = new HashSet<>();
 
