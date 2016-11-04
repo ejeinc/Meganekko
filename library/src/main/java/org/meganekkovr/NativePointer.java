@@ -9,7 +9,6 @@ import java.util.Set;
  * Many objects can have single {@link NativePointer}.
  * If no object has reference to {@link NativePointer}, it will be garbage collected.
  * If {@link NativePointer} is garbage collected, {@link NativeReference#gc()} will delete native pointer.
- * <p/>
  * object *---1 {@link NativePointer} 1---1 {@link NativeReference}
  */
 public class NativePointer {

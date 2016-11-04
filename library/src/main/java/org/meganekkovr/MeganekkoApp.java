@@ -332,7 +332,7 @@ public class MeganekkoApp {
     /**
      * Will be removed in future update.
      *
-     * @param showBlack
+     * @param showBlack Show black
      * @deprecated Use {@link OVRApp#recenterYaw(boolean)}.
      */
     public void recenterYaw(boolean showBlack) {

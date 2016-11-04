@@ -264,6 +264,7 @@ public class Entity {
      * Remove {@link Component} with associated class.
      *
      * @param clazz Class of Component.
+     * @param <T>   Type
      * @return {@code true} if Successfully removed. Otherwise {@code false}.
      */
     public <T extends Component> boolean remove(Class<T> clazz) {

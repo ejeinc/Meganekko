@@ -180,7 +180,7 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
     /**
      * Will be removed in future update.
      *
-     * @param cpuLevel
+     * @param cpuLevel CPU level
      * @deprecated Use {@link OVRApp#setCpuLevel(int)}.
      */
     public void setCpuLevel(int cpuLevel) {
@@ -190,7 +190,7 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
     /**
      * Will be removed in future update.
      *
-     * @param gpuLevel
+     * @param gpuLevel GPU level
      * @deprecated Use {@link OVRApp#setGpuLevel(int)}.
      */
     public void setGpuLevel(int gpuLevel) {
@@ -200,7 +200,7 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
     /**
      * Will be removed in future update.
      *
-     * @param show
+     * @param show show
      * @deprecated Use {@link OVRApp#setShowFPS(boolean)}.
      */
     public void setShowFPS(boolean show) {
@@ -210,9 +210,9 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
     /**
      * Will be removed in future update.
      *
-     * @param duration
-     * @param fmt
-     * @param args
+     * @param duration Showing duration
+     * @param fmt      Format
+     * @param args     Arguments
      * @deprecated Use {@link OVRApp#showInfoText(float, String)}.
      */
     public void showInfoText(float duration, String fmt, Object... args) {
