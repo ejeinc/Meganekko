@@ -26,20 +26,58 @@ public class Entity {
     private final NativePointer nativePointer;
     private final Map<Class<? extends Component>, Component> components = new ArrayMap<>();
     private final List<Entity> children = new CopyOnWriteArrayList<>();
-    private MeganekkoApp app;
-    private Entity parent;
-    private boolean localMatrixUpdateRequired = true;
-    private boolean worldMatrixUpdateRequired = true;
     private final Vector3f position = new Vector3f();
     private final Vector3f scale = new Vector3f(1, 1, 1);
     private final Quaternionf rotation = new Quaternionf();
     private final Matrix4f localMatrix = new Matrix4f();
     private final Matrix4f worldModelMatrix = new Matrix4f();
     private final float[] matrixValues = new float[16];
+    private MeganekkoApp app;
+    private Entity parent;
+    private boolean localMatrixUpdateRequired = true;
+    private boolean worldMatrixUpdateRequired = true;
     private int id;
     private float opacity = 1.0f;
     private boolean updateOpacityRequired;
     private boolean visible = true;
+
+    public Entity() {
+        nativePointer = NativePointer.getInstance(newInstance());
+    }
+
+    private static native void addSurfaceDef(long nativePtr, long surfacesPointer);
+
+    private static native void setWorldModelMatrix(long nativePtr, float[] matrix);
+
+    /**
+     * Create Entity from {@link View}. New Entity has plane geometry.
+     *
+     * @param view View for surface.
+     * @return new Entity
+     */
+    public static Entity from(View view) {
+
+        final Entity entity = new Entity();
+        entity.add(SurfaceRendererComponent.from(view));
+        entity.add(GeometryComponent.from(view));
+
+        return entity;
+    }
+
+    /**
+     * Create Entity from {@link Drawable}. New Entity has plane geometry.
+     *
+     * @param drawable Drawable for surface.
+     * @return new Entity
+     */
+    public static Entity from(Drawable drawable) {
+
+        final Entity entity = new Entity();
+        entity.add(SurfaceRendererComponent.from(drawable));
+        entity.add(GeometryComponent.from(drawable));
+
+        return entity;
+    }
 
     /**
      * Override this to create own native instance.
@@ -49,12 +87,13 @@ public class Entity {
      */
     protected native long newInstance();
 
-    private static native void addSurfaceDef(long nativePtr, long surfacesPointer);
-
-    private static native void setWorldModelMatrix(long nativePtr, float[] matrix);
-
-    public Entity() {
-        nativePointer = NativePointer.getInstance(newInstance());
+    /**
+     * This method is not valid until this is attached to {@link Scene}.
+     *
+     * @return MeganekkoApp.
+     */
+    public MeganekkoApp getApp() {
+        return app;
     }
 
     /**
@@ -71,21 +110,21 @@ public class Entity {
         }
     }
 
-    /**
-     * This method is not valid until this is attached to {@link Scene}.
-     *
-     * @return MeganekkoApp.
-     */
-    public MeganekkoApp getApp() {
-        return app;
-    }
-
     public void setId(int id) {
         this.id = id;
     }
 
     public int getId() {
         return id;
+    }
+
+    /**
+     * Set string id.
+     *
+     * @param id ID
+     */
+    public void setId(String id) {
+        setId(id.hashCode());
     }
 
     /**
@@ -105,15 +144,6 @@ public class Entity {
         }
 
         return null;
-    }
-
-    /**
-     * Set string id.
-     *
-     * @param id ID
-     */
-    public void setId(String id) {
-        setId(id.hashCode());
     }
 
     /**
@@ -342,16 +372,6 @@ public class Entity {
     /**
      * Set Entity's local position.
      *
-     * @param position position
-     */
-    public void setPosition(Vector3f position) {
-        this.position.set(position);
-        localMatrixUpdateRequired = true;
-    }
-
-    /**
-     * Set Entity's local position.
-     *
      * @param x X component of position
      * @param y Y component of position
      * @param z Z component of position
@@ -401,12 +421,12 @@ public class Entity {
     }
 
     /**
-     * Set Entity's local scale.
+     * Set Entity's local position.
      *
-     * @param scale scale
+     * @param position position
      */
-    public void setScale(Vector3f scale) {
-        this.scale.set(scale);
+    public void setPosition(Vector3f position) {
+        this.position.set(position);
         localMatrixUpdateRequired = true;
     }
 
@@ -462,12 +482,12 @@ public class Entity {
     }
 
     /**
-     * Set rotation, as a quaternion. Sets the transform's current rotation in quaternion terms.
+     * Set Entity's local scale.
      *
-     * @param rotation rotation
+     * @param scale scale
      */
-    public void setRotation(Quaternionf rotation) {
-        this.rotation.set(rotation);
+    public void setScale(Vector3f scale) {
+        this.scale.set(scale);
         localMatrixUpdateRequired = true;
     }
 
@@ -481,33 +501,13 @@ public class Entity {
     }
 
     /**
-     * Create Entity from {@link View}. New Entity has plane geometry.
+     * Set rotation, as a quaternion. Sets the transform's current rotation in quaternion terms.
      *
-     * @param view View for surface.
-     * @return new Entity
+     * @param rotation rotation
      */
-    public static Entity from(View view) {
-
-        final Entity entity = new Entity();
-        entity.add(SurfaceRendererComponent.from(view));
-        entity.add(GeometryComponent.from(view));
-
-        return entity;
-    }
-
-    /**
-     * Create Entity from {@link Drawable}. New Entity has plane geometry.
-     *
-     * @param drawable Drawable for surface.
-     * @return new Entity
-     */
-    public static Entity from(Drawable drawable) {
-
-        final Entity entity = new Entity();
-        entity.add(SurfaceRendererComponent.from(drawable));
-        entity.add(GeometryComponent.from(drawable));
-
-        return entity;
+    public void setRotation(Quaternionf rotation) {
+        this.rotation.set(rotation);
+        localMatrixUpdateRequired = true;
     }
 
     /**
@@ -542,27 +542,6 @@ public class Entity {
      */
     public EntityAnimator animate() {
         return new EntityAnimator(this);
-    }
-
-    /**
-     * Set Entity's opacity.
-     *
-     * @param opacity Float in the range of 0.0 - 1.0 indicating how transparent the Entity is.
-     */
-    public void setOpacity(float opacity) {
-
-        // Prevent out of range
-        if (opacity < 0) {
-            opacity = 0;
-        } else if (opacity > 1) {
-            opacity = 1;
-        }
-
-        // Do nothing if previous value is same to new value
-        if (this.opacity == opacity) return;
-
-        this.opacity = opacity;
-        updateOpacityRequired = true;
     }
 
     private void updateOpacity() {
@@ -603,13 +582,24 @@ public class Entity {
     }
 
     /**
-     * Set visibility. If set to {@code false}, its children also become not be rendered.
-     * Default value is {@code true}.
+     * Set Entity's opacity.
      *
-     * @param visible visibility
+     * @param opacity Float in the range of 0.0 - 1.0 indicating how transparent the Entity is.
      */
-    public void setVisible(boolean visible) {
-        this.visible = visible;
+    public void setOpacity(float opacity) {
+
+        // Prevent out of range
+        if (opacity < 0) {
+            opacity = 0;
+        } else if (opacity > 1) {
+            opacity = 1;
+        }
+
+        // Do nothing if previous value is same to new value
+        if (this.opacity == opacity) return;
+
+        this.opacity = opacity;
+        updateOpacityRequired = true;
     }
 
     /**
@@ -619,6 +609,16 @@ public class Entity {
      */
     public boolean isVisible() {
         return visible;
+    }
+
+    /**
+     * Set visibility. If set to {@code false}, its children also become not be rendered.
+     * Default value is {@code true}.
+     *
+     * @param visible visibility
+     */
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
     /**

@@ -11,7 +11,9 @@ public class GeometryComponent extends Component {
 
     private final NativePointer nativePointer;
 
-    protected native long newInstance();
+    public GeometryComponent() {
+        nativePointer = NativePointer.getInstance(newInstance());
+    }
 
     private static native void setEntityGeometry(long entityPtr, long nativePtr);
 
@@ -19,9 +21,54 @@ public class GeometryComponent extends Component {
 
     private static native void buildGlobe(long nativePtr);
 
-    public GeometryComponent() {
-        nativePointer = NativePointer.getInstance(newInstance());
+    /**
+     * Build plane geometry from {@link View}.
+     *
+     * @param view View
+     * @return new instance
+     */
+    public static GeometryComponent from(View view) {
+
+        view.measure(0, 0);
+        final int width = view.getMeasuredWidth();
+        final int height = view.getMeasuredHeight();
+        view.layout(0, 0, width, height);
+
+        GeometryComponent geometryComponent = new GeometryComponent();
+        geometryComponent.buildQuad(width * 0.01f, height * 0.01f);
+
+        return geometryComponent;
     }
+
+    /**
+     * Build plane geometry from {@link Drawable}.
+     *
+     * @param drawable Drawable
+     * @return new instance
+     */
+    public static GeometryComponent from(Drawable drawable) {
+
+        GeometryComponent geometryComponent = new GeometryComponent();
+        geometryComponent.buildQuad(drawable.getIntrinsicWidth() * 0.01f, drawable.getIntrinsicHeight() * 0.01f);
+
+        return geometryComponent;
+    }
+
+    /**
+     * Build plane geometry from {@link Bitmap}.
+     *
+     * @param bitmap Bitmap
+     * @return new instance
+     */
+    public static GeometryComponent from(Bitmap bitmap) {
+
+        GeometryComponent geometryComponent = new GeometryComponent();
+        geometryComponent.buildQuad(bitmap.getWidth() * 0.01f, bitmap.getHeight() * 0.01f);
+
+        return geometryComponent;
+    }
+
+    protected native long newInstance();
 
     @Override
     public void onAttach(Entity entity) {
@@ -110,53 +157,6 @@ public class GeometryComponent extends Component {
         };
 
         build(positions, colors, uvs, triangles);
-    }
-
-    /**
-     * Build plane geometry from {@link View}.
-     *
-     * @param view View
-     * @return new instance
-     */
-    public static GeometryComponent from(View view) {
-
-        view.measure(0, 0);
-        final int width = view.getMeasuredWidth();
-        final int height = view.getMeasuredHeight();
-        view.layout(0, 0, width, height);
-
-        GeometryComponent geometryComponent = new GeometryComponent();
-        geometryComponent.buildQuad(width * 0.01f, height * 0.01f);
-
-        return geometryComponent;
-    }
-
-    /**
-     * Build plane geometry from {@link Drawable}.
-     *
-     * @param drawable Drawable
-     * @return new instance
-     */
-    public static GeometryComponent from(Drawable drawable) {
-
-        GeometryComponent geometryComponent = new GeometryComponent();
-        geometryComponent.buildQuad(drawable.getIntrinsicWidth() * 0.01f, drawable.getIntrinsicHeight() * 0.01f);
-
-        return geometryComponent;
-    }
-
-    /**
-     * Build plane geometry from {@link Bitmap}.
-     *
-     * @param bitmap Bitmap
-     * @return new instance
-     */
-    public static GeometryComponent from(Bitmap bitmap) {
-
-        GeometryComponent geometryComponent = new GeometryComponent();
-        geometryComponent.buildQuad(bitmap.getWidth() * 0.01f, bitmap.getHeight() * 0.01f);
-
-        return geometryComponent;
     }
 
     public final long getNativePointer() {

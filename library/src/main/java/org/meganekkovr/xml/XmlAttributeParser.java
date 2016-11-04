@@ -17,6 +17,9 @@ import java.util.regex.Pattern;
  */
 public class XmlAttributeParser {
 
+    // singleton
+    private static XmlAttributeParser instance;
+
     static {
         // Install default attribute handlers
         XmlAttributeParser parser = XmlAttributeParser.getInstance();
@@ -31,63 +34,16 @@ public class XmlAttributeParser {
         parser.install(new VisibleHandler());
     }
 
-    public interface XmlAttributeHandler {
+    private final Map<String, XmlAttributeHandler> handlers = new ArrayMap<>();
 
-        /**
-         * @return Attribute name.
-         */
-        String attributeName();
-
-        /**
-         * Apply XML attribute to entity.
-         *
-         * @param entity   Entity
-         * @param rawValue Attribute value
-         * @param context  Context
-         */
-        void parse(Entity entity, String rawValue, Context context);
+    private XmlAttributeParser() {
     }
-
-    // singleton
-    private static XmlAttributeParser instance;
 
     public static synchronized XmlAttributeParser getInstance() {
         if (instance == null) {
             instance = new XmlAttributeParser();
         }
         return instance;
-    }
-
-    private final Map<String, XmlAttributeHandler> handlers = new ArrayMap<>();
-
-    private XmlAttributeParser() {
-    }
-
-    void parse(Entity entity, Node node, Context context) {
-
-        NamedNodeMap attrs = node.getAttributes();
-        for (int i = 0, len = attrs.getLength(); i < len; ++i) {
-
-            Node attr = attrs.item(i);
-
-            String attrName = attr.getNodeName();
-            String attrValue = attr.getNodeValue();
-
-            // Skip unknown attribute
-            XmlAttributeHandler attributeHandler = handlers.get(attrName);
-            if (attributeHandler == null) continue;
-
-            attributeHandler.parse(entity, attrValue, context);
-        }
-    }
-
-    /**
-     * Add custom {@link XmlAttributeHandler}.
-     *
-     * @param handler Custom attribute handler.
-     */
-    public void install(@NonNull XmlAttributeHandler handler) {
-        handlers.put(handler.attributeName(), handler);
     }
 
     /**
@@ -182,5 +138,49 @@ public class XmlAttributeParser {
         }
 
         return 0;
+    }
+
+    void parse(Entity entity, Node node, Context context) {
+
+        NamedNodeMap attrs = node.getAttributes();
+        for (int i = 0, len = attrs.getLength(); i < len; ++i) {
+
+            Node attr = attrs.item(i);
+
+            String attrName = attr.getNodeName();
+            String attrValue = attr.getNodeValue();
+
+            // Skip unknown attribute
+            XmlAttributeHandler attributeHandler = handlers.get(attrName);
+            if (attributeHandler == null) continue;
+
+            attributeHandler.parse(entity, attrValue, context);
+        }
+    }
+
+    /**
+     * Add custom {@link XmlAttributeHandler}.
+     *
+     * @param handler Custom attribute handler.
+     */
+    public void install(@NonNull XmlAttributeHandler handler) {
+        handlers.put(handler.attributeName(), handler);
+    }
+
+    public interface XmlAttributeHandler {
+
+        /**
+         * @return Attribute name.
+         */
+        String attributeName();
+
+        /**
+         * Apply XML attribute to entity.
+         *
+         * @param entity   Entity
+         * @param rawValue Attribute value
+         * @param context  Context
+         */
+        void parse(Entity entity, String rawValue, Context context);
     }
 }

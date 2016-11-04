@@ -23,13 +23,6 @@ public class NativePointer {
         sInstances.add(new NativeReference(this));
     }
 
-    /**
-     * @return Native pointer value
-     */
-    public long get() {
-        return mPtr;
-    }
-
     public static NativePointer getInstance(long ptr) {
 
         // Find existing instance for ptr
@@ -44,5 +37,12 @@ public class NativePointer {
 
         // create new one
         return new NativePointer(ptr);
+    }
+
+    /**
+     * @return Native pointer value
+     */
+    public long get() {
+        return mPtr;
     }
 }

@@ -33,6 +33,57 @@ public class XmlParser {
         this.context = context;
     }
 
+    /**
+     * Create new {@link Document} from {@link XmlPullParser}.
+     *
+     * @param parser
+     * @return
+     * @throws ParserConfigurationException
+     * @throws IOException
+     * @throws XmlPullParserException
+     */
+    @NonNull
+    private static Document createDocumentFrom(@NonNull XmlPullParser parser) throws ParserConfigurationException, IOException, XmlPullParserException {
+
+        Document document = documentBuilderFactory.newDocumentBuilder().newDocument();
+
+        Node parent = document;
+        int type;
+
+        while (true) {
+
+            type = parser.next();
+            if (type == XmlPullParser.END_DOCUMENT) break;
+
+            switch (type) {
+
+                case XmlPullParser.START_TAG:
+                    Element element = document.createElement(parser.getName());
+
+                    // Set attributes
+                    for (int i = 0; i < parser.getAttributeCount(); i++) {
+                        String attr = parser.getAttributeName(i);
+                        String value = parser.getAttributeValue(i);
+                        element.setAttribute(attr, value);
+                    }
+
+                    // Add to parent
+                    parent.appendChild(element);
+
+                    // I'm a parent
+                    parent = element;
+                    break;
+
+                case XmlPullParser.END_TAG:
+                    // Next parent
+                    parent = parent.getParentNode();
+                    break;
+            }
+        }
+
+        return document;
+    }
+
     public Entity parseAsset(String assetName) throws XmlParserException {
         try (InputStream stream = context.getAssets().open(assetName)) {
             return parse(stream);
@@ -105,56 +156,5 @@ public class XmlParser {
         }
 
         return entity;
-    }
-
-    /**
-     * Create new {@link Document} from {@link XmlPullParser}.
-     *
-     * @param parser
-     * @return
-     * @throws ParserConfigurationException
-     * @throws IOException
-     * @throws XmlPullParserException
-     */
-    @NonNull
-    private static Document createDocumentFrom(@NonNull XmlPullParser parser) throws ParserConfigurationException, IOException, XmlPullParserException {
-
-        Document document = documentBuilderFactory.newDocumentBuilder().newDocument();
-
-        Node parent = document;
-        int type;
-
-        while (true) {
-
-            type = parser.next();
-            if (type == XmlPullParser.END_DOCUMENT) break;
-
-            switch (type) {
-
-                case XmlPullParser.START_TAG:
-                    Element element = document.createElement(parser.getName());
-
-                    // Set attributes
-                    for (int i = 0; i < parser.getAttributeCount(); i++) {
-                        String attr = parser.getAttributeName(i);
-                        String value = parser.getAttributeValue(i);
-                        element.setAttribute(attr, value);
-                    }
-
-                    // Add to parent
-                    parent.appendChild(element);
-
-                    // I'm a parent
-                    parent = element;
-                    break;
-
-                case XmlPullParser.END_TAG:
-                    // Next parent
-                    parent = parent.getParentNode();
-                    break;
-            }
-        }
-
-        return document;
     }
 }

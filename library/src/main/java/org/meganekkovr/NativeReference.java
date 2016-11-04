@@ -21,16 +21,6 @@ class NativeReference extends WeakReference<NativePointer> {
     private static native void delete(long nativePointer);
 
     /**
-     * Delete native pointer.
-     */
-    private void delete() {
-        if (mNativePointer != 0) {
-            delete(mNativePointer);
-            mNativePointer = 0;
-        }
-    }
-
-    /**
      * Called from {@link org.meganekkovr.MeganekkoApp#update(FrameInput)}.
      */
     static void gc() {
@@ -42,6 +32,16 @@ class NativeReference extends WeakReference<NativePointer> {
             if (ref instanceof NativeReference) {
                 ((NativeReference) ref).delete();
             }
+        }
+    }
+
+    /**
+     * Delete native pointer.
+     */
+    private void delete() {
+        if (mNativePointer != 0) {
+            delete(mNativePointer);
+            mNativePointer = 0;
         }
     }
 }

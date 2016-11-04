@@ -17,15 +17,16 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
 
     private static final float[] tmpValues = new float[4];
     private static final String TAG = "GearVRActivity";
-    private final Quaternionf centerViewRotation = new Quaternionf();
-    private MeganekkoApp app;
-    private FrameInput frame;
 
     /** Load jni .so on initialization */
     static {
         Log.d(TAG, "LoadLibrary");
         System.loadLibrary("meganekko");
     }
+
+    private final Quaternionf centerViewRotation = new Quaternionf();
+    private MeganekkoApp app;
+    private FrameInput frame;
 
     private static native long nativeSetAppInterface(VrActivity act, String fromPackageNameString, String commandString, String uriString);
 
@@ -222,12 +223,12 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
         return app;
     }
 
-    public void setClearColorBuffer(boolean clearColorBuffer) {
-        setClearColorBuffer(getAppPtr(), clearColorBuffer);
-    }
-
     public boolean getClearColorBuffer() {
         return getClearColorBuffer(getAppPtr());
+    }
+
+    public void setClearColorBuffer(boolean clearColorBuffer) {
+        setClearColorBuffer(getAppPtr(), clearColorBuffer);
     }
 
     public void setClearColor(float r, float g, float b, float a) {

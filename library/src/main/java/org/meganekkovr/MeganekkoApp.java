@@ -62,6 +62,10 @@ public class MeganekkoApp {
         }
     }
 
+    public Scene getScene() {
+        return scene;
+    }
+
     public void setScene(Scene scene) {
         assertGlThread();
 
@@ -76,10 +80,6 @@ public class MeganekkoApp {
             scene.setApp(this);
             scene.onStartRendering();
         }
-    }
-
-    public Scene getScene() {
-        return scene;
     }
 
     /**

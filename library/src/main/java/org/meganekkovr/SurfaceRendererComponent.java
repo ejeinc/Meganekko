@@ -17,25 +17,14 @@ import android.view.ViewGroup;
  */
 public class SurfaceRendererComponent extends Component {
 
-    public enum StereoMode {
-        NORMAL,      // 0
-        TOP_BOTTOM,  // 1
-        BOTTOM_TOP,  // 2
-        LEFT_RIGHT,  // 3
-        RIGHT_LEFT,  // 4
-        TOP_ONLY,    // 5
-        BOTTOM_ONLY, // 6
-        LEFT_ONLY,   // 7
-        RIGHT_ONLY   // 8
-    }
-
     private final NativePointer nativePointer;
     private CanvasRenderer canvasRenderer;
     private boolean continuousUpdate;
     private float opacity = 1.0f;
     private StereoMode stereoMode = StereoMode.NORMAL;
-
-    protected native long newInstance();
+    public SurfaceRendererComponent() {
+        nativePointer = NativePointer.getInstance(newInstance());
+    }
 
     private static native SurfaceTexture getSurfaceTexture(long nativePtr);
 
@@ -55,9 +44,30 @@ public class SurfaceRendererComponent extends Component {
 
     private static native void setChromaKeyColor(long nativePtr, float r, float g, float b);
 
-    public SurfaceRendererComponent() {
-        nativePointer = NativePointer.getInstance(newInstance());
+    public static SurfaceRendererComponent from(View view) {
+
+        view.measure(0, 0);
+        final int width = view.getMeasuredWidth();
+        final int height = view.getMeasuredHeight();
+        view.layout(0, 0, width, height);
+
+        SurfaceRendererComponent component = new SurfaceRendererComponent();
+        component.setCanvasRenderer(ViewRenderer.from(view));
+
+        return component;
     }
+
+    public static SurfaceRendererComponent from(Drawable drawable) {
+
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+
+        SurfaceRendererComponent component = new SurfaceRendererComponent();
+        component.setCanvasRenderer(new DrawableRenderer(drawable));
+
+        return component;
+    }
+
+    protected native long newInstance();
 
     @Override
     public void onAttach(Entity entity) {
@@ -107,39 +117,16 @@ public class SurfaceRendererComponent extends Component {
         return getSurface(nativePointer.get());
     }
 
+    public CanvasRenderer getCanvasRenderer() {
+        return canvasRenderer;
+    }
+
     public void setCanvasRenderer(CanvasRenderer canvasRenderer) {
         this.canvasRenderer = canvasRenderer;
 
         if (canvasRenderer != null) {
             getSurfaceTexture().setDefaultBufferSize(canvasRenderer.width, canvasRenderer.height);
         }
-    }
-
-    public CanvasRenderer getCanvasRenderer() {
-        return canvasRenderer;
-    }
-
-    public static SurfaceRendererComponent from(View view) {
-
-        view.measure(0, 0);
-        final int width = view.getMeasuredWidth();
-        final int height = view.getMeasuredHeight();
-        view.layout(0, 0, width, height);
-
-        SurfaceRendererComponent component = new SurfaceRendererComponent();
-        component.setCanvasRenderer(ViewRenderer.from(view));
-
-        return component;
-    }
-
-    public static SurfaceRendererComponent from(Drawable drawable) {
-
-        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-
-        SurfaceRendererComponent component = new SurfaceRendererComponent();
-        component.setCanvasRenderer(new DrawableRenderer(drawable));
-
-        return component;
     }
 
     /**
@@ -152,10 +139,64 @@ public class SurfaceRendererComponent extends Component {
         this.continuousUpdate = continuousUpdate;
     }
 
+    /**
+     * Get actual opacity for rendering. This value is inherited from parent {@link Entity}.
+     *
+     * @return Actual opacity for rendering
+     */
+    public float getOpacity() {
+        return opacity;
+    }
+
+    void setOpacity(float opacity) {
+
+        if (opacity < 0) {
+            opacity = 0;
+        } else if (opacity > 1) {
+            opacity = 1;
+        }
+
+        this.opacity = opacity;
+        setOpacity(nativePointer.get(), opacity);
+    }
+
+    public StereoMode getStereoMode() {
+        return stereoMode;
+    }
+
+    public void setStereoMode(StereoMode stereoMode) {
+        this.stereoMode = stereoMode;
+        setStereoMode(nativePointer.get(), stereoMode.ordinal());
+    }
+
+    public boolean getUseChromaKey() {
+        return getUseChromaKey(nativePointer.get());
+    }
+
+    public void setUseChromaKey(boolean useChromaKey) {
+        setUseChromaKey(nativePointer.get(), useChromaKey);
+    }
+
+    public void setChromaKeyColor(float r, float g, float b) {
+        setChromaKeyColor(nativePointer.get(), r, g, b);
+    }
+
+    public enum StereoMode {
+        NORMAL,      // 0
+        TOP_BOTTOM,  // 1
+        BOTTOM_TOP,  // 2
+        LEFT_RIGHT,  // 3
+        RIGHT_LEFT,  // 4
+        TOP_ONLY,    // 5
+        BOTTOM_ONLY, // 6
+        LEFT_ONLY,   // 7
+        RIGHT_ONLY   // 8
+    }
+
     public static abstract class CanvasRenderer {
-        private boolean dirty = true;
         public final int width;
         public final int height;
+        private boolean dirty = true;
 
         public CanvasRenderer(int width, int height) {
             this.width = width;
@@ -201,22 +242,6 @@ public class SurfaceRendererComponent extends Component {
             this.view = view;
         }
 
-        @Override
-        public boolean isDirty() {
-            return isDirty(view);
-        }
-
-        @Override
-        protected boolean render(Canvas canvas) {
-            canvas.drawColor(0, PorterDuff.Mode.CLEAR);
-            view.draw(canvas);
-            return true;
-        }
-
-        public View getView() {
-            return view;
-        }
-
         public static ViewRenderer from(View view) {
             view.measure(0, 0);
             final int width = view.getMeasuredWidth();
@@ -246,47 +271,21 @@ public class SurfaceRendererComponent extends Component {
 
             return false;
         }
-    }
 
-    void setOpacity(float opacity) {
-
-        if (opacity < 0) {
-            opacity = 0;
-        } else if (opacity > 1) {
-            opacity = 1;
+        @Override
+        public boolean isDirty() {
+            return isDirty(view);
         }
 
-        this.opacity = opacity;
-        setOpacity(nativePointer.get(), opacity);
-    }
+        @Override
+        protected boolean render(Canvas canvas) {
+            canvas.drawColor(0, PorterDuff.Mode.CLEAR);
+            view.draw(canvas);
+            return true;
+        }
 
-    /**
-     * Get actual opacity for rendering. This value is inherited from parent {@link Entity}.
-     *
-     * @return Actual opacity for rendering
-     */
-    public float getOpacity() {
-        return opacity;
-    }
-
-    public void setStereoMode(StereoMode stereoMode) {
-        this.stereoMode = stereoMode;
-        setStereoMode(nativePointer.get(), stereoMode.ordinal());
-    }
-
-    public StereoMode getStereoMode() {
-        return stereoMode;
-    }
-
-    public void setUseChromaKey(boolean useChromaKey) {
-        setUseChromaKey(nativePointer.get(), useChromaKey);
-    }
-
-    public boolean getUseChromaKey() {
-        return getUseChromaKey(nativePointer.get());
-    }
-
-    public void setChromaKeyColor(float r, float g, float b) {
-        setChromaKeyColor(nativePointer.get(), r, g, b);
+        public View getView() {
+            return view;
+        }
     }
 }

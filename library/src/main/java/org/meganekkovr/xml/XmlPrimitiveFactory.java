@@ -15,36 +15,23 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class XmlPrimitiveFactory {
 
+    // singleton
+    private static XmlPrimitiveFactory instance;
+
     static {
         XmlPrimitiveFactory.getInstance().install(new DefautPrimitive());
     }
 
-    public interface XmlPrimitiveHandler {
-        /**
-         * Create {@link Entity} from {@link Node}.
-         * Typically, this checks {@link Node#getNodeName()} and create instance.
-         *
-         * @param node    Node
-         * @param context Context
-         * @return Created entity or {@code null} if this handler does not support passed node.
-         */
-        @Nullable
-        Entity createEntity(@NonNull Node node, @NonNull Context context);
-    }
+    private final Set<XmlPrimitiveHandler> handlers = new CopyOnWriteArraySet<>();
 
-    // singleton
-    private static XmlPrimitiveFactory instance;
+    private XmlPrimitiveFactory() {
+    }
 
     public static synchronized XmlPrimitiveFactory getInstance() {
         if (instance == null) {
             instance = new XmlPrimitiveFactory();
         }
         return instance;
-    }
-
-    private final Set<XmlPrimitiveHandler> handlers = new CopyOnWriteArraySet<>();
-
-    private XmlPrimitiveFactory() {
     }
 
     Entity parse(Node node, Context context) {
@@ -59,5 +46,18 @@ public class XmlPrimitiveFactory {
 
     public void install(@NonNull XmlPrimitiveHandler handler) {
         handlers.add(handler);
+    }
+
+    public interface XmlPrimitiveHandler {
+        /**
+         * Create {@link Entity} from {@link Node}.
+         * Typically, this checks {@link Node#getNodeName()} and create instance.
+         *
+         * @param node    Node
+         * @param context Context
+         * @return Created entity or {@code null} if this handler does not support passed node.
+         */
+        @Nullable
+        Entity createEntity(@NonNull Node node, @NonNull Context context);
     }
 }

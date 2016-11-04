@@ -5,37 +5,9 @@ package org.meganekkovr;
  */
 public class LookDetectorComponent extends Component {
 
-    public interface LookListener {
-
-        /**
-         * Called when user starts looking at target {@link Entity}.
-         *
-         * @param entity Entity
-         * @param frame  Frame information
-         */
-        void onLookStart(Entity entity, FrameInput frame);
-
-        /**
-         * Called when user stops looking at target {@link Entity}.
-         *
-         * @param entity Entity
-         * @param frame  Frame information
-         */
-        void onLookEnd(Entity entity, FrameInput frame);
-
-        /**
-         * Called when user is looking at target {@link Entity} in every frame update.
-         *
-         * @param entity Entity
-         * @param frame  Frame information
-         */
-        void onLooking(Entity entity, FrameInput frame);
-    }
-
     private final LookDetector lookDetector = LookDetector.getInstance();
     private final LookListener lookListener;
     private boolean looking;
-
     public LookDetectorComponent(LookListener lookListener) {
         this.lookListener = lookListener;
     }
@@ -65,5 +37,32 @@ public class LookDetectorComponent extends Component {
 
         this.looking = isLookingNow;
         super.update(frame);
+    }
+
+    public interface LookListener {
+
+        /**
+         * Called when user starts looking at target {@link Entity}.
+         *
+         * @param entity Entity
+         * @param frame  Frame information
+         */
+        void onLookStart(Entity entity, FrameInput frame);
+
+        /**
+         * Called when user stops looking at target {@link Entity}.
+         *
+         * @param entity Entity
+         * @param frame  Frame information
+         */
+        void onLookEnd(Entity entity, FrameInput frame);
+
+        /**
+         * Called when user is looking at target {@link Entity} in every frame update.
+         *
+         * @param entity Entity
+         * @param frame  Frame information
+         */
+        void onLooking(Entity entity, FrameInput frame);
     }
 }

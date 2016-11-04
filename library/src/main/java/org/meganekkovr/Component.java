@@ -32,21 +32,21 @@ public abstract class Component {
     }
 
     /**
-     * For internal use only.
-     *
-     * @param entity Attached Entity
-     */
-    void setEntity(Entity entity) {
-        this.entity = entity;
-    }
-
-    /**
      * Get attached {@link Entity}.
      *
      * @return Entity which is attached to this Component.
      */
     public Entity getEntity() {
         return entity;
+    }
+
+    /**
+     * For internal use only.
+     *
+     * @param entity Attached Entity
+     */
+    void setEntity(Entity entity) {
+        this.entity = entity;
     }
 
     /**
