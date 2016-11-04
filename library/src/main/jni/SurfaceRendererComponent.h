@@ -46,6 +46,13 @@ public:
   GlTexture &GetTexture();
   void SetOpacity(float opacity);
   float &GetOpacity();
+
+  void SetUseChromaKey(bool useChromaKey);
+  bool &GetUseChromaKey();
+  
+  void SetChromaKeyColor(const Vector3f &chromaKeyColor);
+  Vector3f &GetChromaKeyColor();
+
   void SetStereoMode(StereoMode stereoMode);
   StereoMode GetStereoMode();
   Matrix4f programMatrices[2]; // 0: For left eye, 1: For right eye
@@ -56,6 +63,8 @@ private:
   GlTexture texture;
   float opacity;
   StereoMode stereoMode;
+  bool useChromaKey;
+  Vector3f chromaKeyColor;
 };
 
 static Matrix4f texM_topHalf = Matrix4f( //

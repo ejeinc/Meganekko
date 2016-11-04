@@ -33,11 +33,19 @@ static const char *VertexShaderSrc =
 static const char *FragmentShaderSrc =
     "uniform samplerExternalOES Texture0;\n"
     "uniform lowp float Opacity;\n"
+    "uniform bool UseChromaKey;\n"
+    "uniform highp vec3 ChromaKeyColor;\n"
     "varying highp vec2 oTexCoord;\n"
     "void main() {\n"
     "  gl_FragColor = Opacity * texture2D( Texture0, oTexCoord );\n"
     "  if (gl_FragColor.a < 0.001) {\n"
     "    discard;\n"
+    "  }\n"
+    "  if (UseChromaKey) {\n"
+    "    lowp float similarity = length(gl_FragColor.rgb - ChromaKeyColor.rgb);\n" // similarity: Exact equal color = 0.0
+    "    if (similarity < 0.01) {\n"
+    "      discard;\n"
+    "    }\n"
     "  }\n"
     "}\n";
 
@@ -47,6 +55,8 @@ Shader::Shader() {
       {"Texm", ovrProgramParmType::FLOAT_MATRIX4},       // PARM_TEXM
       {"Opacity", ovrProgramParmType::FLOAT},            // PARM_OPACITY
       {"Texture0", ovrProgramParmType::TEXTURE_SAMPLED}, // PARM_TEXTURE
+      {"UseChromaKey", ovrProgramParmType::INT},         // PARM_USE_CHROMA_KEY
+      {"ChromaKeyColor", ovrProgramParmType::FLOAT_VECTOR3}, // PARM_CHROMA_KEY_COLOR
   };
 
   program = GlProgram::Build(nullptr, VertexShaderSrc, ImageExternalDirectives,

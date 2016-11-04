@@ -20,7 +20,8 @@
 namespace mgn {
 
 SurfaceRendererComponent::SurfaceRendererComponent(JNIEnv *jni)
-    : jni(jni), surfaceTexture(jni), opacity(1.0f) {
+    : jni(jni), surfaceTexture(jni), opacity(1.0f),
+     useChromaKey(false), chromaKeyColor(0.0f) {
 
   // Reference: SurfaceTexture.h
   // Get Surface class
@@ -97,6 +98,22 @@ void SurfaceRendererComponent::SetOpacity(float opacity) {
   this->opacity = opacity;
 }
 float &SurfaceRendererComponent::GetOpacity() { return opacity; }
+
+void SurfaceRendererComponent::SetUseChromaKey(bool useChromaKey) {
+  this->useChromaKey = useChromaKey;
+}
+
+bool &SurfaceRendererComponent::GetUseChromaKey() {
+   return useChromaKey;
+}
+
+void SurfaceRendererComponent::SetChromaKeyColor(const Vector3f &chromaKeyColor) {
+  this->chromaKeyColor = chromaKeyColor;
+}
+
+Vector3f &SurfaceRendererComponent::GetChromaKeyColor() {
+  return chromaKeyColor;
+}
 
 void SurfaceRendererComponent::SetStereoMode(StereoMode stereoMode) {
   this->stereoMode = stereoMode;
@@ -190,6 +207,10 @@ void Java_org_meganekkovr_SurfaceRendererComponent_setEntityTexture(
       &sur->GetOpacity();
   surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_TEXTURE].Data =
       &sur->GetTexture();
+  surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_USE_CHROMA_KEY].Data =
+      &sur->GetUseChromaKey();
+  surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_CHROMA_KEY_COLOR].Data =
+      &sur->GetChromaKeyColor();
 }
 
 void Java_org_meganekkovr_SurfaceRendererComponent_removeEntityTexture(
@@ -225,5 +246,29 @@ void Java_org_meganekkovr_SurfaceRendererComponent_setStereoMode(
       reinterpret_cast<mgn::SurfaceRendererComponent *>(nativePtr);
   sur->SetStereoMode(
       static_cast<mgn::SurfaceRendererComponent::StereoMode>(stereoMode));
+}
+
+void Java_org_meganekkovr_SurfaceRendererComponent_setUseChromaKey(
+    JNIEnv *jni, jobject thiz, jlong nativePtr, jboolean useChromaKey) {
+
+  mgn::SurfaceRendererComponent *sur =
+      reinterpret_cast<mgn::SurfaceRendererComponent *>(nativePtr);
+  sur->SetUseChromaKey(useChromaKey);
+}
+
+jboolean Java_org_meganekkovr_SurfaceRendererComponent_getUseChromaKey(
+    JNIEnv *jni, jobject thiz, jlong nativePtr) {
+
+  mgn::SurfaceRendererComponent *sur =
+      reinterpret_cast<mgn::SurfaceRendererComponent *>(nativePtr);
+  return sur->GetUseChromaKey();
+}
+
+void Java_org_meganekkovr_SurfaceRendererComponent_setChromaKeyColor(
+    JNIEnv *jni, jobject thiz, jlong nativePtr, jfloat r, jfloat g, jfloat b) {
+
+  mgn::SurfaceRendererComponent *sur =
+      reinterpret_cast<mgn::SurfaceRendererComponent *>(nativePtr);
+  sur->SetChromaKeyColor(Vector3f(r, g, b));
 }
 } // extern "C"

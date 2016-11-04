@@ -49,6 +49,12 @@ public class SurfaceRendererComponent extends Component {
 
     private static native void setStereoMode(long nativePtr, int stereoMode);
 
+    private static native void setUseChromaKey(long nativePtr, boolean useChromaKey);
+
+    private static native boolean getUseChromaKey(long nativePtr);
+
+    private static native void setChromaKeyColor(long nativePtr, float r, float g, float b);
+
     public SurfaceRendererComponent() {
         nativePointer = NativePointer.getInstance(newInstance());
     }
@@ -270,5 +276,17 @@ public class SurfaceRendererComponent extends Component {
 
     public StereoMode getStereoMode() {
         return stereoMode;
+    }
+
+    public void setUseChromaKey(boolean useChromaKey) {
+        setUseChromaKey(nativePointer.get(), useChromaKey);
+    }
+
+    public boolean getUseChromaKey() {
+        return getUseChromaKey(nativePointer.get());
+    }
+
+    public void setChromaKeyColor(float r, float g, float b) {
+        setChromaKeyColor(nativePointer.get(), r, g, b);
     }
 }

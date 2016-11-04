@@ -31,6 +31,8 @@ public:
   static const int PARM_TEXM = 0;
   static const int PARM_OPACITY = 1;
   static const int PARM_TEXTURE = 2;
+  static const int PARM_USE_CHROMA_KEY = 3;
+  static const int PARM_CHROMA_KEY_COLOR = 4;
 
 private:
   GlProgram program;
