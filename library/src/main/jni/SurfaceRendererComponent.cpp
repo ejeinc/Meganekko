@@ -21,7 +21,7 @@ namespace mgn {
 
 SurfaceRendererComponent::SurfaceRendererComponent(JNIEnv *jni)
     : jni(jni), surfaceTexture(jni), opacity(1.0f),
-     useChromaKey(false), chromaKeyColor(0.0f) {
+     useChromaKey(false), chromaKeyThreshold(0.1f), chromaKeyColor(0.0f) {
 
   // Reference: SurfaceTexture.h
   // Get Surface class
@@ -105,6 +105,14 @@ void SurfaceRendererComponent::SetUseChromaKey(bool useChromaKey) {
 
 bool &SurfaceRendererComponent::GetUseChromaKey() {
    return useChromaKey;
+}
+
+void SurfaceRendererComponent::SetChromaKeyThreshold(float chromaKeyThreshold) {
+  this->chromaKeyThreshold = chromaKeyThreshold;
+}
+
+float &SurfaceRendererComponent::GetChromaKeyThreshold() {
+   return chromaKeyThreshold;
 }
 
 void SurfaceRendererComponent::SetChromaKeyColor(const Vector3f &chromaKeyColor) {
@@ -211,6 +219,8 @@ void Java_org_meganekkovr_SurfaceRendererComponent_setEntityTexture(
       &sur->GetUseChromaKey();
   surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_CHROMA_KEY_COLOR].Data =
       &sur->GetChromaKeyColor();
+  surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_CHROMA_KEY_THRESHOLD].Data =
+      &sur->GetChromaKeyThreshold();
 }
 
 void Java_org_meganekkovr_SurfaceRendererComponent_removeEntityTexture(
@@ -226,6 +236,12 @@ void Java_org_meganekkovr_SurfaceRendererComponent_removeEntityTexture(
   surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_OPACITY].Data =
       nullptr;
   surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_TEXTURE].Data =
+      nullptr;
+  surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_USE_CHROMA_KEY].Data =
+      nullptr;
+  surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_CHROMA_KEY_COLOR].Data =
+      nullptr;
+  surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_CHROMA_KEY_THRESHOLD].Data =
       nullptr;
 }
 
@@ -262,6 +278,22 @@ jboolean Java_org_meganekkovr_SurfaceRendererComponent_getUseChromaKey(
   mgn::SurfaceRendererComponent *sur =
       reinterpret_cast<mgn::SurfaceRendererComponent *>(nativePtr);
   return sur->GetUseChromaKey();
+}
+
+void Java_org_meganekkovr_SurfaceRendererComponent_setChromaKeyThreshold(
+    JNIEnv *jni, jobject thiz, jlong nativePtr, jfloat chromaKeyThreshold) {
+
+  mgn::SurfaceRendererComponent *sur =
+      reinterpret_cast<mgn::SurfaceRendererComponent *>(nativePtr);
+  sur->SetChromaKeyThreshold(chromaKeyThreshold);
+}
+
+jfloat Java_org_meganekkovr_SurfaceRendererComponent_getChromaKeyThreshold(
+    JNIEnv *jni, jobject thiz, jlong nativePtr) {
+
+  mgn::SurfaceRendererComponent *sur =
+      reinterpret_cast<mgn::SurfaceRendererComponent *>(nativePtr);
+  return sur->GetChromaKeyThreshold();
 }
 
 void Java_org_meganekkovr_SurfaceRendererComponent_setChromaKeyColor(

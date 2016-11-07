@@ -50,6 +50,9 @@ public:
   void SetUseChromaKey(bool useChromaKey);
   bool &GetUseChromaKey();
   
+  void SetChromaKeyThreshold(float chromaKeyThreshold);
+  float &GetChromaKeyThreshold();
+
   void SetChromaKeyColor(const Vector3f &chromaKeyColor);
   Vector3f &GetChromaKeyColor();
 
@@ -64,6 +67,7 @@ private:
   float opacity;
   StereoMode stereoMode;
   bool useChromaKey;
+  float chromaKeyThreshold;
   Vector3f chromaKeyColor;
 };
 
