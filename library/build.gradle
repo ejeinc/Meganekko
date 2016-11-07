@@ -102,7 +102,7 @@ publish {
     userOrg = 'niusounds'
     groupId = 'org.meganekkovr'
     artifactId = 'meganekko'
-    publishVersion = "3.0.13"
+    publishVersion = "3.0.14"
     desc = 'Gear VR Application Framework.'
     website = 'http://www.meganekkovr.org/'
 }
