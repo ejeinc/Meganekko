@@ -46,6 +46,10 @@ public class SurfaceRendererComponent extends Component {
 
     private static native float getChromaKeyThreshold(long nativePtr);
 
+    private static native void setChromaKeyBlend(long nativePtr, float chromaKeyBlend);
+
+    private static native float getChromaKeyBlend(long nativePtr);
+
     private static native void setChromaKeyColor(long nativePtr, float r, float g, float b);
 
     public static SurfaceRendererComponent from(View view) {
@@ -187,6 +191,14 @@ public class SurfaceRendererComponent extends Component {
 
     public void setChromaKeyThreshold(float chromaKeyThreshold) {
         setChromaKeyThreshold(nativePointer.get(), chromaKeyThreshold);
+    }
+
+    public float getChromaKeyBlend() {
+        return getChromaKeyBlend(nativePointer.get());
+    }
+
+    public void setChromaKeyBlend(float chromaKeyBlend) {
+        setChromaKeyBlend(nativePointer.get(), chromaKeyBlend);
     }
 
     public void setChromaKeyColor(float r, float g, float b) {

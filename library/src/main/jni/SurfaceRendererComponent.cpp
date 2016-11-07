@@ -115,6 +115,14 @@ float &SurfaceRendererComponent::GetChromaKeyThreshold() {
    return chromaKeyThreshold;
 }
 
+void SurfaceRendererComponent::SetChromaKeyBlend(float chromaKeyBlend) {
+  this->chromaKeyBlend = chromaKeyBlend;
+}
+
+float &SurfaceRendererComponent::GetChromaKeyBlend() {
+   return chromaKeyBlend;
+}
+
 void SurfaceRendererComponent::SetChromaKeyColor(const Vector3f &chromaKeyColor) {
   this->chromaKeyColor = chromaKeyColor;
 }
@@ -221,6 +229,8 @@ void Java_org_meganekkovr_SurfaceRendererComponent_setEntityTexture(
       &sur->GetChromaKeyColor();
   surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_CHROMA_KEY_THRESHOLD].Data =
       &sur->GetChromaKeyThreshold();
+  surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_CHROMA_KEY_BLEND].Data =
+      &sur->GetChromaKeyBlend();
 }
 
 void Java_org_meganekkovr_SurfaceRendererComponent_removeEntityTexture(
@@ -242,6 +252,8 @@ void Java_org_meganekkovr_SurfaceRendererComponent_removeEntityTexture(
   surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_CHROMA_KEY_COLOR].Data =
       nullptr;
   surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_CHROMA_KEY_THRESHOLD].Data =
+      nullptr;
+  surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_CHROMA_KEY_BLEND].Data =
       nullptr;
 }
 
@@ -294,6 +306,22 @@ jfloat Java_org_meganekkovr_SurfaceRendererComponent_getChromaKeyThreshold(
   mgn::SurfaceRendererComponent *sur =
       reinterpret_cast<mgn::SurfaceRendererComponent *>(nativePtr);
   return sur->GetChromaKeyThreshold();
+}
+
+void Java_org_meganekkovr_SurfaceRendererComponent_setChromaKeyBlend(
+    JNIEnv *jni, jobject thiz, jlong nativePtr, jfloat chromaKeyBlend) {
+
+  mgn::SurfaceRendererComponent *sur =
+      reinterpret_cast<mgn::SurfaceRendererComponent *>(nativePtr);
+  sur->SetChromaKeyBlend(chromaKeyBlend);
+}
+
+jfloat Java_org_meganekkovr_SurfaceRendererComponent_getChromaKeyBlend(
+    JNIEnv *jni, jobject thiz, jlong nativePtr) {
+
+  mgn::SurfaceRendererComponent *sur =
+      reinterpret_cast<mgn::SurfaceRendererComponent *>(nativePtr);
+  return sur->GetChromaKeyBlend();
 }
 
 void Java_org_meganekkovr_SurfaceRendererComponent_setChromaKeyColor(

@@ -34,6 +34,7 @@ public:
   static const int PARM_USE_CHROMA_KEY = 3;
   static const int PARM_CHROMA_KEY_COLOR = 4;
   static const int PARM_CHROMA_KEY_THRESHOLD = 5;
+  static const int PARM_CHROMA_KEY_BLEND = 6;
 
 private:
   GlProgram program;
