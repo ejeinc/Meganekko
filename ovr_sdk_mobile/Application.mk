@@ -16,7 +16,7 @@ APP_LDFLAGS := -Wl,--build-id
 
 # Explicitly use GCC 4.9 as our toolchain. The previous default, 4.8, is
 # deprecated as of r11.
-NDK_TOOLCHAIN_VERSION := 4.9
+NDK_TOOLCHAIN_VERSION := clang
 
 # Define the directories for $(import-module, ...) to look in
 ROOT_DIR := $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
