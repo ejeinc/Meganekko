@@ -37,6 +37,6 @@ LOCAL_STATIC_LIBRARIES := vrappframework
 
 include $(BUILD_SHARED_LIBRARY)
 
+$(call import-module,LibOVRKernel/Projects/AndroidPrebuilt/jni)
 $(call import-module,VrApi/Projects/AndroidPrebuilt/jni)
 $(call import-module,VrAppFramework/Projects/AndroidPrebuilt/jni)
-$(call import-module,VrAppSupport/SystemUtils/Projects/AndroidPrebuilt/jni)
