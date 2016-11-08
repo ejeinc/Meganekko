@@ -237,8 +237,6 @@ void Java_org_meganekkovr_SurfaceRendererComponent_removeEntityTexture(
     JNIEnv *jni, jobject thiz, jlong entityPtr, jlong nativePtr) {
 
   mgn::Entity *entity = reinterpret_cast<mgn::Entity *>(entityPtr);
-  mgn::SurfaceRendererComponent *sur =
-      reinterpret_cast<mgn::SurfaceRendererComponent *>(nativePtr);
 
   ovrSurfaceDef *surfaceDef = entity->GetOrCreateSurfaceDef();
   surfaceDef->graphicsCommand.UniformData[mgn::Shader::PARM_TEXM].Data =

@@ -19,6 +19,7 @@ OVR_SDK_MOBILE := ../ovr_sdk_mobile
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
+include $(OVR_SDK_MOBILE)/cflags.mk
 
 LOCAL_MODULE := meganekko
 
@@ -33,8 +34,6 @@ LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrApi/Include
 
 LOCAL_SHARED_LIBRARIES := vrapi
 LOCAL_STATIC_LIBRARIES := vrappframework 
-
-LOCAL_CPPFLAGS := -std=c++11
 
 include $(BUILD_SHARED_LIBRARY)
 

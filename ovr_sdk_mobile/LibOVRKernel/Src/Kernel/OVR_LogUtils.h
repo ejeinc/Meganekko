@@ -95,8 +95,8 @@ class LogCpuTime
 {
 public:
 
-	LogCpuTime( const char * fileName, const char * fmt, ... ) :
-		FileName( fileName )
+	LogCpuTime( const char * fileName, const char * fmt, ... ) //:
+		//FileName( fileName )
 	{
 		va_list ap;
 		va_start( ap, fmt );
@@ -115,7 +115,7 @@ public:
 	}
 
 private:
-	const char *	FileName;
+//	const char *	FileName;
 	char			Label[1024];
 	double			StartTimeNanoSec;
 
