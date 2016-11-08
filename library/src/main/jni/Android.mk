@@ -24,15 +24,12 @@ LOCAL_MODULE := meganekko
 
 # jni/** all .cpp
 FILE_LIST := $(wildcard $(LOCAL_PATH)/*.cpp)
-FILE_LIST += $(wildcard $(LOCAL_PATH)/**/*.cpp)
 LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
 
 # Include directories
 LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrAppFramework/Include
 LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/LibOVRKernel/Src
 LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrApi/Include
-
-LOCAL_C_INCLUDES += $(LOCAL_PATH)
 
 LOCAL_SHARED_LIBRARIES := vrapi
 LOCAL_STATIC_LIBRARIES := vrappframework 
