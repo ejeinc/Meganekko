@@ -32,11 +32,7 @@ namespace OVR
 		void Init( VrAppInterface * appInterface );
 		void Shutdown();
 		bool OnKeyEvent( const int keyCode, const int repeatCount, const OVR::KeyEventType eventType );
-		void BeginFrame();
-		void EndFrame();
-		void Frame( const ovrFrameInput & vrFrame );
-		void DrawEyeView( const int eye, const float fovDegreesX, const float fovDegreesY,
-						  ovrFrameParms & frameParms, ovrSurfaceRender & surfaceRender );
+		void Frame( const ovrFrameInput & vrFrame, ovrFrameResult& frameResult );
 
 		//Will render in default console color, which may be easier to read than other colors
 		void Log( const char * fmt, ... );

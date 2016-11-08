@@ -6,7 +6,22 @@ Content     :   Windows specific thread-related (safe) functionality
 Created     :   September 19, 2012
 Notes       : 
 
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
+Copyright   :   Copyright 2014-2016 Oculus VR, LLC All Rights reserved.
+
+Licensed under the Oculus VR Rift SDK License Version 3.3 (the "License"); 
+you may not use the Oculus VR Rift SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
+otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-3.3 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ************************************************************************************/
 
@@ -582,6 +597,7 @@ threadReturn_t Thread::Run()
     // Call pointer to function, if available.
     return ( ThreadFunction != NULL ) ? ThreadFunction( this, UserHandle ) : 0;
 }
+
 void Thread::OnExit()
 {   
 }
@@ -609,17 +625,35 @@ void Thread::PRun()
     }
 
     // Call the virtual run function
-    ExitCode = Run();
+    ExitCode = Run();    
 }
+
+
+
+/* MA: Don't use TLS for now.
+
+// Static function to return a pointer to the current thread
+void    Thread::InitCurrentThread(Thread *pthread)
+{
+    pCurrentThread = pthread;
+}
+
+// Static function to return a pointer to the current thread
+Thread*    Thread::GetThread()
+{
+    return pCurrentThread;
+}
+*/
+
 
 // *** User overridables
 
-bool Thread::GetExitFlag() const
+bool    Thread::GetExitFlag() const
 {
     return (ThreadFlags & OVR_THREAD_EXIT) != 0;
 }       
 
-void Thread::SetExitFlag(bool exitFlag)
+void    Thread::SetExitFlag(bool exitFlag)
 {
     // The below is atomic since ThreadFlags is AtomicInt.
     if (exitFlag)
@@ -628,8 +662,9 @@ void Thread::SetExitFlag(bool exitFlag)
         ThreadFlags &= (uint32_t) ~OVR_THREAD_EXIT;
 }
 
+
 // Determines whether the thread was running and is now finished
-bool Thread::IsFinished() const
+bool    Thread::IsFinished() const
 {
     return (ThreadFlags & OVR_THREAD_FINISHED) != 0;
 }
@@ -638,9 +673,9 @@ bool Thread::IsFinished() const
 Thread::ThreadState Thread::GetThreadState() const
 {
     if (ThreadFlags & OVR_THREAD_START_SUSPENDED)
-        return Suspended;    
+        return Suspended;
     if (ThreadFlags & OVR_THREAD_STARTED)
-        return Running;    
+        return Running;
     return NotRunning;
 }
 
@@ -650,13 +685,14 @@ int Thread::GetOSPriority(ThreadPriority p)
 {
     switch(p)
     {
-    case Thread::CriticalPriority:      return THREAD_PRIORITY_TIME_CRITICAL;
-    case Thread::HighestPriority:       return THREAD_PRIORITY_HIGHEST;
-    case Thread::AboveNormalPriority:   return THREAD_PRIORITY_ABOVE_NORMAL;
-    case Thread::NormalPriority:        return THREAD_PRIORITY_NORMAL;
-    case Thread::BelowNormalPriority:   return THREAD_PRIORITY_BELOW_NORMAL;
-    case Thread::LowestPriority:        return THREAD_PRIORITY_LOWEST;
-    case Thread::IdlePriority:          return THREAD_PRIORITY_IDLE;
+    // If the process is REALTIME_PRIORITY_CLASS then it could have priority values 3 through14 and -3 through -14.
+    case Thread::CriticalPriority:      return THREAD_PRIORITY_TIME_CRITICAL;   //  15
+    case Thread::HighestPriority:       return THREAD_PRIORITY_HIGHEST;         //   2
+    case Thread::AboveNormalPriority:   return THREAD_PRIORITY_ABOVE_NORMAL;    //   1
+    case Thread::NormalPriority:        return THREAD_PRIORITY_NORMAL;          //   0
+    case Thread::BelowNormalPriority:   return THREAD_PRIORITY_BELOW_NORMAL;    //  -1
+    case Thread::LowestPriority:        return THREAD_PRIORITY_LOWEST;          //  -2
+    case Thread::IdlePriority:          return THREAD_PRIORITY_IDLE;            // -15
     }
     return THREAD_PRIORITY_NORMAL;
 }
@@ -732,6 +768,7 @@ bool Thread::Join()
     return ( r != WAIT_FAILED );
 }
 
+
 void Thread::CleanupSystemThread()
 {
     if (ThreadHandle != 0)
@@ -750,7 +787,6 @@ int Thread::GetCPUCount()
 }
 
 // *** Sleep functions
-
 // static
 bool Thread::Sleep(unsigned secs)
 {
@@ -820,6 +856,6 @@ void ThreadRefCounted::Finish()
     Release();
 }
 
-} // namespace OVR
+} // OVR
 
-#endif	// OVR_ENABLE_THREADS
+#endif

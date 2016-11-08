@@ -1,12 +1,26 @@
 /************************************************************************************
 
-PublicHeader:   OVR_Kernel.h
 Filename    :   OVR_ContainerAllocator.h
 Content     :   Template allocators and constructors for containers.
 Created     :   September 19, 2012
 Notes       : 
 
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
+Copyright   :   Copyright 2014-2016 Oculus VR, LLC All Rights reserved.
+
+Licensed under the Oculus VR Rift SDK License Version 3.3 (the "License"); 
+you may not use the Oculus VR Rift SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
+otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-3.3 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ************************************************************************************/
 
@@ -32,10 +46,10 @@ class ContainerAllocatorBase
 public:
     static void* Alloc(size_t size)
     { return OVR_ALLOC(size); }
-
+    
     static void* Realloc(void* p, size_t newSize)
     { return OVR_REALLOC(p, newSize); }
-
+    
     static void  Free(void *p)
     { OVR_FREE(p); }
 };
@@ -82,7 +96,7 @@ public:
 
     static void Destruct(T*)
     {}
-
+    
     static void DestructArray(T*, size_t)
     {}
 
@@ -155,8 +169,7 @@ public:
 
     static void DestructArray(T* p, size_t count)
     {
-        p += count - 1;
-        for (size_t i = 0; i < count; ++i, --p)
+        for(size_t i = 0; i < count; ++i, ++p)
             p->~T();
     }
 
@@ -229,8 +242,7 @@ public:
 
     static void DestructArray(T* p, size_t count)
     {
-        p += count - 1;
-        for(size_t i = 0; i < count; ++i, --p)
+        for(size_t i = 0; i < count; ++i, ++p)
             p->~T();
     }
 

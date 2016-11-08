@@ -81,7 +81,23 @@ enum eTextureFormat
 	Texture_ASTC_10x10		= 0x02600,
 	Texture_ASTC_12x10		= 0x02700,
 	Texture_ASTC_12x12		= 0x02800,
-	Texture_ASTC_End		= 0x02900,
+
+	Texture_ASTC_SRGB_4x4 = 0x02900,
+	Texture_ASTC_SRGB_5x4 = 0x02A00,
+	Texture_ASTC_SRGB_5x5 = 0x02B00,
+	Texture_ASTC_SRGB_6x5 = 0x02C00,
+	Texture_ASTC_SRGB_6x6 = 0x02D00,
+	Texture_ASTC_SRGB_8x5 = 0x02E00,
+	Texture_ASTC_SRGB_8x6 = 0x02F00,
+	Texture_ASTC_SRGB_8x8 = 0x03000,
+	Texture_ASTC_SRGB_10x5 = 0x03100,
+	Texture_ASTC_SRGB_10x6 = 0x03200,
+	Texture_ASTC_SRGB_10x8 = 0x03300,
+	Texture_ASTC_SRGB_10x10 = 0x03400,
+	Texture_ASTC_SRGB_12x10 = 0x03500,
+	Texture_ASTC_SRGB_12x12 = 0x03600,
+
+	Texture_ASTC_End		= 0x03700,
 
 
     Texture_Depth           = 0x08000,
@@ -131,10 +147,11 @@ bool TextureFormatToGlFormat( const eTextureFormat format, const bool useSrgbFor
 bool GlFormatToTextureFormat( eTextureFormat & format, const GLenum glFormat, const GLenum glInternalFormat );
 
 // Allocates a GPU texture and uploads the raw data.
-GlTexture	LoadRGBATextureFromMemory( const unsigned char * texture, const int width, const int height, const bool useSrgbFormat );
-GlTexture	LoadRGBTextureFromMemory( const unsigned char * texture, const int width, const int height, const bool useSrgbFormat );
-GlTexture	LoadRTextureFromMemory( const unsigned char * texture, const int width, const int height );
-GlTexture	LoadASTCTextureFromMemory( const unsigned char * buffer, const size_t bufferSize, const int numPlanes );
+GlTexture	LoadRGBATextureFromMemory( const uint8_t * texture, const int width, const int height, const bool useSrgbFormat );
+GlTexture	LoadRGBACubeTextureFromMemory( const uint8_t * texture, const int dim, const bool useSrgbFormat );
+GlTexture	LoadRGBTextureFromMemory( const uint8_t * texture, const int width, const int height, const bool useSrgbFormat );
+GlTexture	LoadRTextureFromMemory( const uint8_t * texture, const int width, const int height );
+GlTexture	LoadASTCTextureFromMemory( const uint8_t * buffer, const size_t bufferSize, const int numPlanes );
 
 void		MakeTextureClamped( GlTexture texid );
 void		MakeTextureLodClamped( GlTexture texId, int maxLod );
@@ -147,7 +164,7 @@ void		BuildTextureMipmaps( GlTexture texid );
 // Loads an image file to an RGBA buffer.
 // Supported formats are:
 //	.jpg .tga .png .bmp .psd .gif .hdr and .pic
-const unsigned char * LoadImageToRGBABuffer( const char * fileName, const unsigned char * inBuffer, const size_t inBufferLen,
+unsigned char * LoadImageToRGBABuffer( const char * fileName, const unsigned char * inBuffer, const size_t inBufferLen,
 		int & width, int & height );
 
 // Free image data allocated by LoadImageToRGBABuffer
@@ -172,7 +189,7 @@ GlTexture	LoadTextureFromBuffer( const char * fileName, const MemBuffer & buffer
 // For a file placed in the project assets folder, nameInZip would be
 // something like "assets/cube.pvr".
 // See GlTexture.h for supported formats.
-/// DEPRECATED! Use LoadTextureFromFile instead or your asset will not be loadable in Windows ports!
+/// DEPRECATED! Use LoadTextureFromUri instead or your asset will not be loadable in Windows ports!
 GlTexture	LoadTextureFromOtherApplicationPackage( void * zipFile, const char * nameInZip,
 					const TextureFlags_t & flags, int & width, int & height );
 /// DEPRECATED! Use the version that takes a fileSys or your asset will not be loadable in Windows ports!
@@ -207,6 +224,7 @@ unsigned char * LoadPVRBuffer( const char * fileName, int & width, int & height 
 void		FreeTexture( GlTexture texId );
 void		DeleteTexture( GlTexture & texture );
 
+// These are just wrappers over the vrapi swap chain calls, and should probably be removed.
 ovrTextureSwapChain * CreateTextureSwapChain( ovrTextureType type, ovrTextureFormat format, int width, int height, int levels, bool buffered );
 void DestroyTextureSwapChain( ovrTextureSwapChain * chain );
 int GetTextureSwapChainLength( ovrTextureSwapChain * chain );

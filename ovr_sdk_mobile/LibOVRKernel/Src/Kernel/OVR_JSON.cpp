@@ -1,7 +1,7 @@
 /************************************************************************************
 
 PublicHeader:   None
-Filename    :   OVR_JSON.h
+Filename    :   OVR_JSON.cpp
 Content     :   JSON format reader and writer
 Created     :   April 9, 2013
 Author      :   Brant Lewis
@@ -30,7 +30,22 @@ Notes       :
   THE SOFTWARE.
 
 
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
+Copyright   :   Copyright 2014-2016 Oculus VR, LLC All Rights reserved.
+
+Licensed under the Oculus VR Rift SDK License Version 3.3 (the "License"); 
+you may not use the Oculus VR Rift SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
+otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-3.3 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ************************************************************************************/
 
@@ -151,7 +166,7 @@ const char* JSON::parseNumber(const char *num)
         num++;            // is zero
     }
 
-    if (*num>='1' && *num<='9') 
+    if (*num>='1' && *num<='9')    
     {
         do
         {
@@ -490,7 +505,7 @@ const char* JSON::parseValue(const char* buff, const char** perror)
 
 //-----------------------------------------------------------------------------
 // Render a value to text. 
-char* JSON::PrintValue(int depth, bool fmt)
+char* JSON::PrintValue(int depth, bool fmt) const
 {
     char *out=0;
 
@@ -559,7 +574,7 @@ const char* JSON::parseArray(const char* buff, const char** perror)
 
 //-----------------------------------------------------------------------------
 // Render an array to text.  The returned text must be freed
-char* JSON::PrintArray(int depth, bool fmt)
+char* JSON::PrintArray(int depth, bool fmt) const
 {
     char **  entries;
     char *   out = 0, *ptr,*ret;
@@ -583,7 +598,7 @@ char* JSON::PrintArray(int depth, bool fmt)
     memset(entries,0,numentries*sizeof(char*));
 
     //// Retrieve all the results:
-    JSON* child = Children.GetFirst();
+    const JSON* child = Children.GetFirst();
     for (int i=0; i<numentries; i++)
     {
         //JSON* child = Children[i];
@@ -708,7 +723,7 @@ const char* JSON::parseObject(const char* buff, const char** perror)
 
 //-----------------------------------------------------------------------------
 // Render an object to text.  The returned string must be freed
-char* JSON::PrintObject(int depth, bool fmt)
+char* JSON::PrintObject(int depth, bool fmt) const
 {
     char**   entries = 0, **names = 0;
     char*    out = 0;
@@ -757,7 +772,7 @@ char* JSON::PrintObject(int depth, bool fmt)
     if (fmt)
         len+=depth;
 
-    JSON* child = Children.GetFirst();
+    const JSON* child = Children.GetFirst();
     while (!Children.IsNull(child))
     {
         names[i]     = str = PrintString(child->Name.ToCStr());
@@ -856,7 +871,7 @@ char* JSON::PrintObject(int depth, bool fmt)
     *ptr++='}';
     *ptr++='\0';
     
-    return out; 
+    return out;    
 }
 
 
@@ -1004,7 +1019,7 @@ void JSON::AddArrayElement(JSON *item)
 }
 
 // Returns the size of an array
-int JSON::GetArraySize()
+int JSON::GetArraySize() const
 {
     if (Type == JSON_Array)
     {
@@ -1015,11 +1030,11 @@ int JSON::GetArraySize()
 }
 
 // Returns the number value an the give array index
-double JSON::GetArrayNumber(int index)
+double JSON::GetArrayNumber(int index) const
 {
     if (Type == JSON_Array)
     {
-        JSON* number = GetItemByIndex(index);
+        const JSON* number = GetItemByIndex(index);
         return number ? number->dValue : 0.0;
     }
     else
@@ -1029,11 +1044,11 @@ double JSON::GetArrayNumber(int index)
 }
 
 // Returns the string value at the given array index
-const char* JSON::GetArrayString(int index)
+const char* JSON::GetArrayString(int index) const
 {
     if (Type == JSON_Array)
     {
-        JSON* number = GetItemByIndex(index);
+        const JSON* number = GetItemByIndex(index);
         return number ? number->Value.ToCStr() : 0;
     }
     else
@@ -1075,7 +1090,7 @@ JSON* JSON::Load(const char* path, const char** perror)
 
 //-----------------------------------------------------------------------------
 // Serializes the JSON object and writes to the give file path
-bool JSON::Save(const char* path)
+bool JSON::Save(const char* path) const
 {
     SysFile f;
     if (!f.Open(path, File::Open_Write | File::Open_Create | File::Open_Truncate, File::Mode_Write))

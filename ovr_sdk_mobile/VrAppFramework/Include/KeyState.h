@@ -12,7 +12,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #ifndef Ovr_KeyState_h
 #define Ovr_KeyState_h
 
-#include "Input.h"
+#include "OVR_Input.h"
 
 namespace OVR {
 
@@ -47,20 +47,13 @@ namespace OVR {
 // button-up if the user intends a double-tap.  We must wait for some time
 // threshold from the initial down to be exceeded without another down before 
 // we know it's not a double-tap.
-//
-// Long Press
-// |-----------------|
-// down ---> down_time
-//
-// It is notable that the long press is signaled as soon as the long press
-// time is exceeded.
 
 class KeyState
 {
 public:
 	static const int MAX_EVENTS = 3;
 
-					KeyState( float const doubleTapTime, float const longPressTime );
+					KeyState( float const doubleTapTime );
 
 	void			HandleEvent( double const time, bool const down, int const repeatCount );
 
@@ -70,14 +63,13 @@ public:
 
 	bool			IsDown() const { return Down; }
 
-	float			GetLongPressTime() const { return LongPressTime; }
 	float			GetDoubleTapTime() const { return DoubleTapTime; }
+	void			SetDoubleTapTime( const float doubleTapTime ) { DoubleTapTime = doubleTapTime; }
 
 private:
 	int				NumEvents;				// number of events that have occurred
 	double			EventTimes[MAX_EVENTS];	// times for first down, up, second down
 	float			DoubleTapTime;			// two down events must occur within this time for a double-tap to occur
-	float			LongPressTime;			// a single down within this time indicates a long-press
 	bool			Down;					// true if the key is down
 	KeyEventType	PendingEvent;			// next pending event== stored so that the client only has to handle events in one place
 };

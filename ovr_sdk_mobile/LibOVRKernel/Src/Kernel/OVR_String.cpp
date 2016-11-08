@@ -6,7 +6,22 @@ Content     :   String UTF8 string implementation with copy-on-write semantics
 Created     :   September 19, 2012
 Notes       : 
 
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
+Copyright   :   Copyright 2014-2016 Oculus VR, LLC All Rights reserved.
+
+Licensed under the Oculus VR Rift SDK License Version 3.3 (the "License"); 
+you may not use the Oculus VR Rift SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
+otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-3.3 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ************************************************************************************/
 
@@ -139,9 +154,6 @@ size_t String::GetLength() const
     
     return length;
 }
-
-
-//static uint32_t String_CharSearch(const char* buf, )
 
 
 uint32_t String::GetCharAt(size_t index) const 
@@ -361,9 +373,12 @@ String   String::Substring(size_t start, size_t end) const
     if (pdata->LengthIsSize())
         return String(pdata->Data + start, end - start);
     
-    // Get position of starting character.
+    // Get position of starting character and size
     intptr_t byteStart = UTF8Util::GetByteIndex(start, pdata->Data, pdata->GetSize());
-    intptr_t byteSize  = UTF8Util::GetByteIndex(end - start, pdata->Data + byteStart, pdata->GetSize()-byteStart);
+    intptr_t byteSize  = UTF8Util::GetByteIndex(end - start, pdata->Data + byteStart, pdata->GetSize() - byteStart);
+
+    OVR_ASSERT((byteStart >= 0) && (byteSize >= 0));
+
     return String(pdata->Data + byteStart, (size_t)byteSize);
 }
 
@@ -443,18 +458,6 @@ String& String::Insert(const char* substr, size_t posAt, intptr_t strSize)
     poldData->Release();
     return *this;
 }
-
-/*
-String& String::Insert(const uint32_t* substr, size_t posAt, intptr_t len)
-{
-    for (intptr_t i = 0; i < len; ++i)
-    {
-        size_t charw = InsertCharAt(substr[i], posAt);
-        posAt += charw;
-    }
-    return *this;
-}
-*/
 
 size_t String::InsertCharAt(uint32_t c, size_t posAt)
 {
@@ -593,14 +596,15 @@ StringBuffer::~StringBuffer()
     if (pData)
         OVR_FREE(pData);
 }
+
 void StringBuffer::SetGrowSize(size_t growSize) 
 { 
     if (growSize <= 16)
         GrowSize = 16;
     else
     {
-        uint8_t bits = Alg::UpperBit(uint32_t(growSize-1));
-		size_t size = (size_t)1 << bits;
+        uint8_t bits = Alg::UpperBit(uint32_t(growSize - 1));
+        size_t size = (size_t)1 << bits;
         GrowSize = size == growSize ? growSize : size;
     }
 }
@@ -622,13 +626,14 @@ void    StringBuffer::Reserve(size_t _size)
 {
     if (_size >= BufferSize) // >= because of trailing zero! (!AB)
     {
-        BufferSize = (_size + 1 + GrowSize - 1)& ~(GrowSize-1);
+        BufferSize = (_size + 1 + GrowSize - 1) & ~(GrowSize - 1);
         if (!pData)
             pData = (char*)OVR_ALLOC(BufferSize);
         else 
             pData = (char*)OVR_REALLOC(pData, BufferSize);
     }
 }
+
 void    StringBuffer::Resize(size_t _size)
 {
     Reserve(_size);
@@ -641,16 +646,8 @@ void    StringBuffer::Resize(size_t _size)
 void StringBuffer::Clear()
 {
     Resize(0);
-    /*
-    if (pData != pEmptyNullData)
-    {
-        OVR_FREE(pHeap, pData);
-        pData = pEmptyNullData;
-        Size = BufferSize = 0;
-        LengthIsSize = false;
-    }
-    */
 }
+
 // Appends a character
 void     StringBuffer::AppendChar(uint32_t ch)
 {
@@ -665,6 +662,7 @@ void     StringBuffer::AppendChar(uint32_t ch)
     
     size_t size = origSize + srcSize;
     Resize(size);
+    OVR_ASSERT(pData != NULL);
     memcpy(pData + origSize, buff, srcSize);
 }
 
@@ -675,8 +673,8 @@ void     StringBuffer::AppendString(const wchar_t* pstr, intptr_t len)
         return;
 
     intptr_t srcSize  = UTF8Util::GetEncodeStringSize(pstr, len);
-    size_t   origSize = GetSize();
-    size_t   size     = srcSize + origSize;
+    size_t origSize = GetSize();
+    size_t size     = srcSize + origSize;
 
     Resize(size);
     UTF8Util::EncodeString(pData + origSize,  pstr, len);
@@ -693,18 +691,21 @@ void      StringBuffer::AppendString(const char* putf8str, intptr_t utf8StrSz)
     size_t  size     = utf8StrSz + origSize;
 
     Resize(size);
+    OVR_ASSERT(pData != NULL);
     memcpy(pData + origSize, putf8str, utf8StrSz);
 }
 
-
+// If pstr is NULL then the StringBuffer is cleared.
 void      StringBuffer::operator = (const char* pstr)
 {
     pstr = pstr ? pstr : "";
     size_t size = OVR_strlen(pstr);
     Resize(size);
+    OVR_ASSERT((pData != NULL) || (size == 0));
     memcpy(pData, pstr, size);
 }
 
+// If pstr is NULL then the StringBuffer is cleared.
 void      StringBuffer::operator = (const wchar_t* pstr)
 {
     pstr = pstr ? pstr : L"";
@@ -721,8 +722,8 @@ void      StringBuffer::operator = (const String& src)
 
 void      StringBuffer::operator = (const StringBuffer& src)
 {
-	Clear();
-	AppendString(src.ToCStr(), src.GetSize());
+    Clear();
+    AppendString(src.ToCStr(), src.GetSize());
 }
 
 
@@ -730,13 +731,14 @@ void      StringBuffer::operator = (const StringBuffer& src)
 void      StringBuffer::Insert(const char* substr, size_t posAt, intptr_t len)
 {
     size_t    oldSize    = Size;
-    size_t    insertSize = (len < 0) ? OVR_strlen(substr) : (size_t)len;    
+    size_t    insertSize = (len < 0) ? OVR_strlen(substr) : (size_t)len;
     size_t    byteIndex  = LengthIsSize ? posAt : 
                            (size_t)UTF8Util::GetByteIndex(posAt, pData, (intptr_t)Size);
 
     OVR_ASSERT(byteIndex <= oldSize);
     Reserve(oldSize + insertSize);
 
+    OVR_ASSERT(pData != NULL); // pData is unilaterally written to below.
     memmove(pData + byteIndex + insertSize, pData + byteIndex, oldSize - byteIndex + 1);
     memcpy (pData + byteIndex, substr, insertSize);
     LengthIsSize = false;
@@ -747,8 +749,8 @@ void      StringBuffer::Insert(const char* substr, size_t posAt, intptr_t len)
 // Inserts character at posAt
 size_t    StringBuffer::InsertCharAt(uint32_t c, size_t posAt)
 {
-    char    buf[8];
-    intptr_t   len = 0;
+    char buf[8];
+    intptr_t len = 0;
     UTF8Util::EncodeChar(buf, &len, c);
     OVR_ASSERT(len >= 0);
     buf[(size_t)len] = 0;

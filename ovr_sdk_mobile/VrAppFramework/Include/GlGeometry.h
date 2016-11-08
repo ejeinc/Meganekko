@@ -14,6 +14,8 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "Kernel/OVR_Array.h"
 #include "Kernel/OVR_Math.h"
 
+#include "GlProgram.h"
+
 namespace OVR
 {
 
@@ -32,9 +34,6 @@ struct VertexAttribs
 
 typedef unsigned short TriangleIndex;
 //typedef unsigned int TriangleIndex;
-
-static const int32_t MAX_GEOMETRY_VERTICES	= 1 << ( sizeof( TriangleIndex ) * 8 );
-static const int32_t MAX_GEOMETRY_INDICES	= 1024 * 1024 * 3;
 
 class GlGeometry
 {
@@ -74,10 +73,16 @@ public:
 	void	Free();
 
 public:
+	static const int32_t MAX_GEOMETRY_VERTICES	= 1 << ( sizeof( TriangleIndex ) * 8 );
+	static const int32_t MAX_GEOMETRY_INDICES	= 1024 * 1024 * 3;
+
+	static unsigned IndexType;		// GL_UNSIGNED_SHORT, GL_UNSIGNED_INT, etc.
+
+public:
 	unsigned 	vertexBuffer;
 	unsigned 	indexBuffer;
 	unsigned 	vertexArrayObject;
-	unsigned	primitiveType;	// GL_TRIANGLES / GL_LINES / GL_POITNS / etc
+	unsigned	primitiveType;		// GL_TRIANGLES / GL_LINES / GL_POINTS / etc
 	int			vertexCount;
 	int 		indexCount;
 	Bounds3f	localBounds;
@@ -110,15 +115,6 @@ GlGeometry BuildGlobe( const float uScale = 1.0f, const float vScale = 1.0f, con
 // Make a square patch on a sphere that can rotate with the viewer
 // so it always covers the screen.
 GlGeometry BuildSpherePatch( const float fov );
-
-// Builds a grid of lines inside the -1 to 1 bounds.
-// Always has lines through the origin, plus extraLines on each side
-// of the origin.
-// Go from very slightly inside the -1 to 1 bounds so lines won't get
-// clipped at the edge of the projection frustum.
-//
-// If not fullGrid, all lines but x=0 and y=0 will be short hashes
-GlGeometry BuildCalibrationLines( const int extraLines, const bool fullGrid );
 
 // 12 edges of a 0 to 1 unit cube.
 GlGeometry BuildUnitCubeLines();

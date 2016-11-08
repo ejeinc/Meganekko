@@ -1,12 +1,26 @@
 /************************************************************************************
 
-PublicHeader:   OVR_Kernel.h
 Filename    :   OVR_Std.h
 Content     :   Standard C function interface
 Created     :   September 19, 2012
-Notes       : 
+Notes       :
 
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
+Copyright   :   Copyright 2014-2016 Oculus VR, LLC All Rights reserved.
+
+Licensed under the Oculus VR Rift SDK License Version 3.3 (the "License");
+you may not use the Oculus VR Rift SDK except in compliance with the License,
+which is provided at the time of installation or download, or which
+otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-3.3
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ************************************************************************************/
 
@@ -52,14 +66,14 @@ inline char* OVR_itoa(int val, char* dest, size_t len, int radix)
         if (len > 1)
         {
             dest[0] = '0';
-            dest[1] = '\0';  
+            dest[1] = '\0';
         }
         return dest;
     }
 
     // FIXME: Fix the following code to avoid memory write overruns when len is in sufficient.
     int cur = val;
-    size_t i    = 0; 
+    size_t i    = 0;
     size_t sign = 0;
 
     if (val < 0)
@@ -68,7 +82,7 @@ inline char* OVR_itoa(int val, char* dest, size_t len, int radix)
         sign = 1;
     }
 
-    while ((val != 0) && (i < (len - 1 - sign)))        
+    while ((val != 0) && (i < (len - 1 - sign)))
     {
         cur    = val % radix;
         val   /= radix;
@@ -99,7 +113,7 @@ inline char* OVR_itoa(int val, char* dest, size_t len, int radix)
                 dest[i] = (char)('0' + cur);
                 break;
             }
-        } 
+        }
         else
         {
             dest[i] = (char)('0' + cur);
@@ -232,7 +246,7 @@ inline const char* OVR_strrchr(const char* str, char c)
 
 inline const uint8_t* OVR_CDECL OVR_memrchr(const uint8_t* str, size_t size, uint8_t c)
 {
-    for (intptr_t i = (intptr_t)size - 1; i >= 0; i--)     
+    for (intptr_t i = (intptr_t)size - 1; i >= 0; i--)
     {
         if (str[i] == c) 
             return str + i;
@@ -400,18 +414,19 @@ inline size_t OVR_CDECL OVR_vsprintf(char *dest, size_t destsize, const char * f
 	}
 }
 
+
 // Returns the strlen of the resulting formatted string, or a negative value if the format is invalid.
-// Note: If you are planning on printing a string then it's more efficient to just use OVR_vsnprintf and 
+// Note: If you are planning on printing a string then it's more efficient to just use OVR_vsnprintf and
 // look at the return value and handle the uncommon case that there wasn't enough space.
 inline int OVR_CDECL OVR_vscprintf(const char * format, va_list argList)
 {
     int ret;
 #if defined(OVR_CC_MSVC)
     ret = _vscprintf(format, argList);
-#else    
+#else
     ret = vsnprintf(NULL, 0, format, argList);
 #endif
-    return ret;       
+    return ret;
 }
 
 

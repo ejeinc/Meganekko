@@ -84,6 +84,8 @@ public:
 	static bool		IsValidUri( char const * uri );
 
 	static void		DoUnitTest();
+
+	static bool		InUnitTest;
 };
 
 } // namespace OVR

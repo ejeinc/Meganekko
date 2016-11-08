@@ -6,7 +6,22 @@ Content     :   Reference counting implementation headers
 Created     :   September 19, 2012
 Notes       : 
 
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
+Copyright   :   Copyright 2014-2016 Oculus VR, LLC All Rights reserved.
+
+Licensed under the Oculus VR Rift SDK License Version 3.3 (the "License"); 
+you may not use the Oculus VR Rift SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
+otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-3.3 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ************************************************************************************/
 
@@ -316,19 +331,23 @@ public:
     }
     OVR_FORCE_INLINE Ptr(C *pobj)
     {
-        if (pobj) pobj->AddRef();   
+        if (pobj) 
+            pobj->AddRef();   
         pObject = pobj;
     }
+
     OVR_FORCE_INLINE Ptr(const Ptr<C> &src)
     {
-        if (src.pObject) src.pObject->AddRef();     
+        if (src.pObject) 
+            src.pObject->AddRef();     
         pObject = src.pObject;
     }
 
     template<class R>
     OVR_FORCE_INLINE Ptr(Ptr<R> &src)
     {
-        if (src) src->AddRef();
+        if (src) 
+            src->AddRef();
         pObject = src;
     }
     template<class R>
@@ -374,25 +393,32 @@ public:
     template<class R>
     OVR_FORCE_INLINE const Ptr<C>& operator = (const Ptr<R> &src)
     {
-        if (src) src->AddRef();
-        if (pObject) pObject->Release();        
+        // By design we don't check for src == pObject, as we don't expect that to be the case the large majority of the time.
+        if (src)
+            src->AddRef();
+        if (pObject)
+            pObject->Release();        
         pObject = src;
         return *this;
     }
-
+ 
     // Specialization
     OVR_FORCE_INLINE const Ptr<C>& operator = (const Ptr<C> &src)
     {
-        if (src) src->AddRef();
-        if (pObject) pObject->Release();        
+        if (src)
+            src->AddRef();
+        if (pObject)
+            pObject->Release();        
         pObject = src;
         return *this;
     }   
     
     OVR_FORCE_INLINE const Ptr<C>& operator = (C *psrc)
     {
-        if (psrc) psrc->AddRef();
-        if (pObject) pObject->Release();        
+        if (psrc)
+            psrc->AddRef();
+        if (pObject)
+            pObject->Release();        
         pObject = psrc;
         return *this;
     }
@@ -420,24 +446,30 @@ public:
     template<class R>
     OVR_FORCE_INLINE Ptr<C>& SetPtr(const Ptr<R> &src)
     {
-        if (src) src->AddRef();
-        if (pObject) pObject->Release();
+        if (src)
+            src->AddRef();
+        if (pObject)
+            pObject->Release();
         pObject = src;
         return *this;
     }
     // Specialization
     OVR_FORCE_INLINE Ptr<C>& SetPtr(const Ptr<C> &src)
     {
-        if (src) src->AddRef();
-        if (pObject) pObject->Release();
+        if (src)
+            src->AddRef();
+        if (pObject)
+            pObject->Release();
         pObject = src;
         return *this;
     }
 
     OVR_FORCE_INLINE Ptr<C>& SetPtr(C *psrc)
     {
-        if (psrc) psrc->AddRef();
-        if (pObject) pObject->Release();
+        if (psrc)
+            psrc->AddRef();
+        if (pObject)
+            pObject->Release();
         pObject = psrc;
         return *this;
     }
@@ -547,6 +579,7 @@ public:
     }
 
 };
+
 
 } // OVR
 

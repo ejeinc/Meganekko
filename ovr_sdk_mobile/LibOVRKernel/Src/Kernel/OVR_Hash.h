@@ -6,7 +6,22 @@ Content     :   Template hash-table/set implementation
 Created     :   September 19, 2012
 Notes       : 
 
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
+Copyright   :   Copyright 2014-2016 Oculus VR, LLC All Rights reserved.
+
+Licensed under the Oculus VR Rift SDK License Version 3.3 (the "License"); 
+you may not use the Oculus VR Rift SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
+otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-3.3 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ************************************************************************************/
 
@@ -75,8 +90,10 @@ public:
         size_t       h = seed;
         while (size > 0)
         {
-            size--;
+            --size;
+            #ifndef __clang_analyzer__ // It mistakenly thinks data is garbage.
             h = (h << 16) + (h << 6) - h + (size_t)data[size];
+            #endif
         }   
         return h;
     }
@@ -187,7 +204,7 @@ public:
     typedef HashSetBase<C, HashF, AltHashF, Allocator, Entry>    SelfType;
 
     HashSetBase() : pTable(NULL)                       {   }
-    HashSetBase(int sizeHint) : pTable(NULL)           { SetCapacity(this, sizeHint);  }
+    HashSetBase(int sizeHint) : pTable(NULL)           { SetCapacity(this, sizeHint); }
     HashSetBase(const SelfType& src) : pTable(NULL)    { Assign(src); }
 
     ~HashSetBase()                                     
@@ -398,6 +415,7 @@ public:
     {
         return pTable == NULL ? 0 : (size_t)pTable->EntryCount;
     }
+    int GetSizeI() const { return (int)GetSize(); }
 
 
     // Resize the HashSet table to fit one more Entry.  Often this
@@ -468,7 +486,7 @@ public:
             {
                 Index++;
                 while ((size_t)Index <= pHash->pTable->SizeMask &&
-                    pHash->E(Index).IsEmpty())
+                    pHash->E((size_t)Index).IsEmpty())
                 {
                     Index++;
                 }
@@ -536,8 +554,8 @@ public:
         // Allow non-const access to entries.
         C&  operator*() const
         {            
-            OVR_ASSERT(ConstIterator::Index >= 0 && ConstIterator::Index <= (intptr_t)ConstIterator::pHash->pTable->SizeMask);
-            return const_cast<SelfType*>(ConstIterator::pHash)->E(ConstIterator::Index).Value;
+            OVR_ASSERT((ConstIterator::pHash) && ConstIterator::pHash->pTable && (ConstIterator::Index >= 0) && (ConstIterator::Index <= (intptr_t)ConstIterator::pHash->pTable->SizeMask));
+            return const_cast<SelfType*>(ConstIterator::pHash)->E((size_t)ConstIterator::Index).Value;
         }    
 
         C*  operator->() const 
@@ -636,7 +654,7 @@ public:
         {
             i0++;
         }
-        return Iterator(this, i0);
+        return Iterator(this, (intptr_t)i0);
     }
     Iterator        End()           { return Iterator(NULL, 0); }
 
@@ -710,7 +728,7 @@ private:
             if (e->GetCachedHash(pTable->SizeMask) == hashValue && e->Value == key)
             {
                 // Found it.
-                return index;
+                return (intptr_t)index;
             }
             // Values can not be equal at this point.
             // That would mean that the hash key for the same value differs.
@@ -737,8 +755,8 @@ private:
 
         pTable->EntryCount++;
 
-        intptr_t   index        = hashValue;
-        Entry*  naturalEntry = &(E(index));
+        intptr_t   index        = (intptr_t)hashValue;
+        Entry*  naturalEntry = &(E((size_t)index));
 
         if (naturalEntry->IsEmpty())
         {
@@ -1213,6 +1231,7 @@ public:
 
     // Sizing methods - delegate to Hash.
     inline size_t  GetSize() const              { return mHash.GetSize(); }    
+    inline int     GetSizeI() const             { return (int)GetSize(); }
     inline void    Resize(size_t n)              { mHash.Resize(n); }
     inline void    SetCapacity(size_t newSize)   { mHash.SetCapacity(newSize); }
 

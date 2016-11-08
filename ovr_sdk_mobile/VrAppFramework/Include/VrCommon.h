@@ -49,6 +49,16 @@ inline Vector3f GetViewMatrixForward( Matrix4f const & m )
 	return Vector3f( -m.M[2][0], -m.M[2][1], -m.M[2][2] ).Normalized();
 }
 
+inline Vector3f GetViewMatrixUp( Matrix4f const & m )
+{
+	return Vector3f( -m.M[1][0], -m.M[1][1], -m.M[1][2] ).Normalized();
+}
+
+inline Vector3f GetViewMatrixLeft( Matrix4f const & m )
+{
+	return Vector3f( -m.M[0][0], -m.M[0][1], -m.M[0][2] ).Normalized();
+}
+
 // Returns true if the folder or file has the specified permission
 bool HasPermission( const char * fileOrDirName, const permissionFlags_t flags );
 

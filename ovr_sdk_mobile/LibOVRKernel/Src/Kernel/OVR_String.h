@@ -1,13 +1,27 @@
 /************************************************************************************
 
-PublicHeader:   OVR_Kernel.h
 Filename    :   OVR_String.h
 Content     :   String UTF8 string implementation with copy-on-write semantics
                 (thread-safe for assignment but not modification).
 Created     :   September 19, 2012
 Notes       : 
 
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
+Copyright   :   Copyright 2014-2016 Oculus VR, LLC All Rights reserved.
+
+Licensed under the Oculus VR Rift SDK License Version 3.3 (the "License"); 
+you may not use the Oculus VR Rift SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
+otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-3.3 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ************************************************************************************/
 
@@ -77,7 +91,7 @@ protected:
                 OVR_FREE(this);
         }
 
-        static size_t GetLengthFlagBit()     { return size_t(1) << Flag_LengthIsSizeShift; }
+        static size_t GetLengthFlagBit()    { return size_t(1) << Flag_LengthIsSizeShift; }
         size_t      GetSize() const         { return Size & ~GetLengthFlagBit() ; }
         size_t      GetLengthFlag()  const  { return Size & GetLengthFlagBit(); }
         bool        LengthIsSize() const    { return GetLengthFlag() != 0; }
@@ -209,28 +223,24 @@ public:
 	String		Right(size_t count) const { return Substring(GetLength() - count, GetLength()); }
 
     // Case-conversion
-    String   ToUpper() const;
-    String   ToLower() const;
+    String      ToUpper() const;
+    String      ToLower() const;
 
     // Inserts substr at posAt
-    String&    Insert (const char* substr, size_t posAt, intptr_t len = -1);
+    String&     Insert(const char* substr, size_t posAt, intptr_t len = -1);
 
     // Inserts character at posAt
     size_t      InsertCharAt(uint32_t c, size_t posAt);
 
-    // Inserts substr at posAt, which is an index of a character (not byte).
-    // Of size is specified, it is in bytes.
-//  String&    Insert(const uint32_t* substr, size_t posAt, intptr_t size = -1);
-
     // Get Byte index of the character at position = index
-    size_t      GetByteIndex(size_t index) const { return (size_t)UTF8Util::GetByteIndex(index, GetData()->Data); }
+    size_t      GetByteIndex(size_t index) const { return (size_t)UTF8Util::GetByteIndex((intptr_t)index, GetData()->Data); }
 
 	void		StripTrailing(const char * str);
 
     // Utility: case-insensitive string compare.  stricmp() & strnicmp() are not
     // ANSI or POSIX, do not seem to appear in Linux.
-    static int OVR_STDCALL   CompareNoCase(const char* a, const char* b);
-    static int OVR_STDCALL   CompareNoCase(const char* a, const char* b, intptr_t len);
+    static int OVR_STDCALL CompareNoCase(const char* a, const char* b);
+    static int OVR_STDCALL CompareNoCase(const char* a, const char* b, intptr_t len);
 
     // Hash function, case-insensitive
     static size_t OVR_STDCALL BernsteinHashFunctionCIS(const void* pdataIn, size_t size, size_t seed = 5381);
@@ -471,7 +481,7 @@ public:
     void        operator =  (const StringBuffer& src);
 
     // Addition
-    void        operator += (const String& src)      { AppendString(src.ToCStr(),src.GetSize()); }
+    void        operator += (const String& src)      { AppendString(src.ToCStr(),(intptr_t)src.GetSize()); }
     void        operator += (const char* psrc)       { AppendString(psrc); }
     void        operator += (const wchar_t* psrc)    { AppendString(psrc); }
     void        operator += (char  ch)               { AppendChar(ch); }
@@ -555,7 +565,7 @@ public:
 
     // Find last character.
     // init_ind - initial index.
-    intptr_t    FindLastChar(char c, size_t init_ind = ~0) const 
+    intptr_t    FindLastChar(char c, size_t init_ind = (size_t)~0) const 
     {
         if (init_ind == (size_t)~0 || init_ind > GetSize())
             init_ind = GetSize();
