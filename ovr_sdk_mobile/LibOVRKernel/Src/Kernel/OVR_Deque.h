@@ -5,7 +5,22 @@ Content     :   Deque container
 Created     :   Nov. 15, 2013
 Authors     :   Dov Katz
 
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
+Copyright   :   Copyright 2014-2016 Oculus VR, LLC All Rights reserved.
+
+Licensed under the Oculus VR Rift SDK License Version 3.3 (the "License"); 
+you may not use the Oculus VR Rift SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
+otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-3.3 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 *************************************************************************************/
 
@@ -14,7 +29,8 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 #include "OVR_Allocator.h"
 
-namespace OVR{
+namespace OVR { 
+
 
 template <class Elem>
 class Deque
@@ -36,9 +52,9 @@ public:
     virtual const Elem&  PeekBack   (int count = 0) const; // Returns count-th Item from the end
     virtual const Elem&  PeekFront  (int count = 0) const; // Returns count-th Item from the beginning
 
-	virtual inline size_t GetSize    (void)          const; // Returns Number of Elements
+    virtual inline size_t GetSize    (void)          const; // Returns Number of Elements
     virtual inline size_t GetCapacity(void)          const; // Returns the maximum possible number of elements
-    virtual void         Clear      (void);				   // Remove all elements
+    virtual void         Clear      (void);                   // Remove all elements
     virtual inline bool  IsEmpty    ()              const;
     virtual inline bool  IsFull     ()              const;
 
@@ -246,6 +262,7 @@ void CircularBuffer<Elem>::PushFront(const Elem &Item)
         this->PopBack();
     Deque<Elem>::PushFront(Item);
 }
+
 
 };   
 

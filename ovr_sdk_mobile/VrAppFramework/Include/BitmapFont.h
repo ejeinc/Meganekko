@@ -78,6 +78,8 @@ public:
 	virtual void	        CalcTextMetrics( char const * text, size_t & len, float & width, float & height,
 									float & ascent, float & descent, float & fontHeight, float * lineWidths, int const maxLines, int & numLines ) const = 0;
 
+	virtual void			TruncateText( String & inOutText, int const maxLines ) const = 0;
+
 	// Word wraps passed in text based on the passed in width in meters.
 	// Turns any pre-existing escape characters into spaces.
 	virtual bool			WordWrapText( String & inOutText, const float widthMeters, const float fontScale = 1.0f ) const = 0;
@@ -88,6 +90,7 @@ public:
 	// Get the last part of the string that will fit in the provided width. Returns an offset if the entire string doesn't fit. The offset can be used to help
 	// with right justification. It is the width of the part of the last character that would have fit.
 	virtual float			GetLastFitChars( String & inOutText, const float widthMeters, const float fontScale = 1.0f ) const = 0;
+	virtual float			GetFirstFitChars( String & inOutText, const float widthMeters, const float fontScale = 1.0f ) const = 0;
 
 	// Returns a drawable surface with a newly allocated GlGeometry for the text,
 	// allowing it to be sorted or transformed with more control than the global
@@ -141,6 +144,8 @@ public:
 	virtual void 		AppendSurfaceList( BitmapFont const & font, Array< ovrDrawSurface > & surfaceList ) const = 0;
 
 	virtual bool		IsInitialized() const = 0;
+
+	virtual void		SetCullEnabled( const bool enabled ) = 0;
 
 protected:
     virtual     ~BitmapFontSurface() { }

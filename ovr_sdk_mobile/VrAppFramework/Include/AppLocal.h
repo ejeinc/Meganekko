@@ -17,8 +17,6 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "VrFrameBuilder.h"
 #include "Kernel/OVR_Threads.h"
 
-#define EXPLICIT_EGL_OBJECTS	1
-
 namespace OVR {
 
 //==============================================================
@@ -43,19 +41,20 @@ public:
 
 	virtual void				SendIntent( const char * actionName, const char * toPackageName,
 											const char * toClassName, const char * command, const char * uri );
+	virtual void				SendLaunchIntent( const char * toPackageName, const char * command, const char * uri,
+												  const char * action );
 
-	virtual void				StartSystemActivity( const char * command );
-	virtual void				StartSystemActivity( const char * command, const char * jsonExtra );
 	virtual void				FinishActivity( const ovrAppFinishType type );
-	virtual void				FatalError( const ovrAppFatalError error, const char * fileName, const char * messageFormat, ... );
+
+	virtual void				ShowSystemUI( const ovrSystemUIType type );
+	virtual void				FatalError( const ovrAppFatalError error, const char * fileName, const unsigned int lineNumber,
+											const char * messageFormat, ... );
 	virtual void				ShowDependencyError();
 
 	//-----------------------------------------------------------------
 	// interfaces
 	//-----------------------------------------------------------------
 
-	virtual BitmapFont &        	GetDebugFont();
-	virtual BitmapFontSurface & 	GetDebugFontSurface();
 	virtual OvrDebugLines &     	GetDebugLines();
 	virtual const OvrStoragePaths & GetStoragePaths();
 
@@ -91,6 +90,7 @@ public:
 
 	virtual Matrix4f const &			GetLastViewMatrix() const;
 	virtual void						SetLastViewMatrix( Matrix4f const & m );
+	virtual void						RecenterLastViewMatrix();
 
 	virtual ovrMobile *					GetOvrMobile();
 	virtual ovrFileSys &				GetFileSys();
@@ -117,12 +117,6 @@ public:
 	//-----------------------------------------------------------------
 	// debugging
 	//-----------------------------------------------------------------
-
-	virtual void						SetShowFPS( bool const show );
-	virtual bool						GetShowFPS() const;
-
-	virtual	void						ShowInfoText( float const duration, const char * fmt, ... );
-	virtual	void						ShowInfoText( float const duration, Vector3f const & offset, Vector4f const & color, const char * fmt, ... );
 
 	virtual void						RegisterConsoleFunction( char const * name, consoleFn_t function );
 
@@ -157,7 +151,6 @@ private:
 
 	// window surface
 	ANativeWindow *		nativeWindow;
-	EGLSurface 			windowSurface;
 	bool				FramebufferIsSrgb;			// requires KHR_gl_colorspace
 	bool				FramebufferIsProtected;		// requires GPU trust zone extension
 
@@ -180,11 +173,9 @@ private:
 	String				IntentJSON;					// extra JSON data app was launched with
 	String				IntentFromPackage;			// package that sent us the launch intent
 
-	String				packageName;				// package name 
+	String				PackageName;				// package name 
 
-	Matrix4f			lastViewMatrix;
-
-	bool				drawCalibrationLines;		// currently toggled by right trigger
+	Matrix4f			LastViewMatrix;
 
 	float				SuggestedEyeFovDegreesX;
 	float				SuggestedEyeFovDegreesY;
@@ -196,7 +187,6 @@ private:
 	ovrSettings			VrSettings;					// passed to VrAppInterface::Configure()
 
 	ovrSurfaceRender	SurfaceRender;
-	EyePostRender		EyeDecorations;
 
 	Thread				VrThread;					// thread
 	int32_t				ExitCode;					// returned from JoinVrThread
@@ -207,22 +197,7 @@ private:
 	TalkToJava			Ttj;
 #endif
 
-	bool				ShowFPS;				// true to show FPS on screen
-	bool				WasMounted;				// true if the HMT was mounted on the previous frame
-	bool				enableDebugOptions;		// enable debug key-commands for development testing
-	
-	String				InfoText;				// informative text to show in front of the view
-	Vector4f			InfoTextColor;			// color of info text
-	Vector3f			InfoTextOffset;			// offset from center of screen in view space
-	long long			InfoTextEndFrame;		// time to stop showing text
-	OvrPointTracker		InfoTextPointTracker;	// smoothly tracks to text ideal location
-	OvrPointTracker		FPSPointTracker;		// smoothly tracks to ideal FPS text location
-
-	long long 			recenterYawFrameStart;	// Enables reorient before sensor data is read.
-												// Allows apps to reorient without having invalid orientation information for that frame.
-
-	BitmapFont *		DebugFont;
-	BitmapFontSurface *	DebugFontSurface;
+	long long 			RecenterYawFrameStart;	// Allows apps to reorient without having invalid orientation information for that frame.
 
 	OvrDebugLines *		DebugLines;
 	OvrStoragePaths *	StoragePaths;
@@ -266,8 +241,6 @@ private:
 
 	// Android Activity/Surface life cycle handling.
 	void				Configure();
-	void				CreateWindowSurface();
-	void				DestroyWindowSurface();
 	void				EnterVrMode();
 	void				LeaveVrMode();
 	void				HandleVrModeChanges();
@@ -278,9 +251,6 @@ private:
 	void				LatencyTests();
 
 	void				BuildVrFrame();
-
-	void				InitDebugFont();
-	void				ShutdownDebugFont();
 
 	//--- MV_INVALIDATE_WORKAROUND
 	ovrSurfaceDef		ScreenClearSurf;

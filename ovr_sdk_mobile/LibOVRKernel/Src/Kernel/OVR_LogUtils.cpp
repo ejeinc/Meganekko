@@ -191,7 +191,7 @@ template< int NumTimers, int NumFrames >
 bool LogGpuTime<NumTimers,NumFrames>::IsEnabled()
 {
 #if defined( OVR_OS_ANDROID )
-	return UseTimerQuery && EXT_disjoint_timer_query;
+	return UseTimerQuery && extensionsOpenGL.EXT_disjoint_timer_query;
 #else
 	return false;
 #endif
@@ -206,7 +206,7 @@ void LogGpuTime<NumTimers,NumFrames>::Begin( int index )
 	UseQueryCounter = ( AllowGpuTimerQueries == 2 );
 
 #if defined( OVR_OS_ANDROID )
-	if ( UseTimerQuery && EXT_disjoint_timer_query )
+	if ( UseTimerQuery && extensionsOpenGL.EXT_disjoint_timer_query )
 	{
 		assert( index >= 0 && index < NumTimers );
 		assert( LastIndex == -1 );
@@ -248,7 +248,7 @@ template< int NumTimers, int NumFrames >
 void LogGpuTime<NumTimers,NumFrames>::End( int index )
 {
 #if defined( OVR_OS_ANDROID )
-	if ( UseTimerQuery && EXT_disjoint_timer_query )
+	if ( UseTimerQuery && extensionsOpenGL.EXT_disjoint_timer_query )
 	{
 		assert( index == LastIndex );
 		LastIndex = -1;
@@ -274,7 +274,7 @@ template< int NumTimers, int NumFrames >
 void LogGpuTime<NumTimers,NumFrames>::PrintTime( int index, const char * label ) const
 {
 #if defined( OVR_OS_ANDROID )
-	if ( UseTimerQuery && EXT_disjoint_timer_query )
+	if ( UseTimerQuery && extensionsOpenGL.EXT_disjoint_timer_query )
 	{
 //		double averageTime = 0.0;
 //		for ( int i = 0; i < NumFrames; i++ )

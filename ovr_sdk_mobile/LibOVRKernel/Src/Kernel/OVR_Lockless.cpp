@@ -1,12 +1,26 @@
 /************************************************************************************
 
-PublicHeader:   OVR_Kernel.h
 Filename    :   OVR_Lockless.cpp
 Content     :   Test logic for lock-less classes
 Created     :   December 27, 2013
 Authors     :   Michael Antonov
 
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
+Copyright   :   Copyright 2014-2016 Oculus VR, LLC All Rights reserved.
+
+Licensed under the Oculus VR Rift SDK License Version 3.3 (the "License"); 
+you may not use the Oculus VR Rift SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
+otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-3.3 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 *************************************************************************************/
 
@@ -17,13 +31,12 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "OVR_Threads.h"
 #include "OVR_Log.h"
 
-
 namespace OVR { namespace LocklessTest {
 
 
 const int TestIterations = 10000000;
 
-// Use volatile dummys to force compiler to do spinning.
+// Use volatile dummies to force compiler to do spinning.
 volatile int Dummy1;
 int          Unused1[32];
 volatile int Dummy2;
@@ -92,7 +105,6 @@ class Consumer : public Thread
     {
         LogText("LocklessTest::Consumer::Run started.\n");
         
-
         while (!FirstItemWritten)
         {
             // spin until producer wrote first value...
@@ -205,8 +217,6 @@ void StartLocklessTest()
     {
         Thread::MSleep(500);
     } */
-
-    // TBD: Cleanup
 }
 
 

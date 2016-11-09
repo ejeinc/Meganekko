@@ -7,7 +7,22 @@ Content     :   String hash table used when optional case-insensitive
 Created     :   September 19, 2012
 Notes       : 
 
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
+Copyright   :   Copyright 2014-2016 Oculus VR, LLC All Rights reserved.
+
+Licensed under the Oculus VR Rift SDK License Version 3.3 (the "License"); 
+you may not use the Oculus VR Rift SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
+otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-3.3 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ************************************************************************************/
 
@@ -57,19 +72,23 @@ public:
 
     
     typedef typename BaseType::Iterator base_iterator;
-	typedef typename BaseType::ConstIterator const_base_iterator;
-	
+    // MERGE_MOBILE_SDK
+    typedef typename BaseType::ConstIterator const_base_iterator;
+    // MERGE_MOBILE_SDK
+
     base_iterator    FindCaseInsensitive(const String& key)
     {
         String::NoCaseKey ikey(key);
         return BaseType::FindAlt(ikey);
     }
 
+    // MERGE_MOBILE_SDK
     const_base_iterator    FindCaseInsensitive(const String& key) const
     {
         String::NoCaseKey ikey(key);
         return BaseType::FindAlt(ikey);
     }
+    // MERGE_MOBILE_SDK
 
     // Set just uses a find and assigns value if found. The key is not modified;
     // this behavior is identical to Flash string variable assignment.    

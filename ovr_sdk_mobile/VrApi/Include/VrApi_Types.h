@@ -122,13 +122,24 @@ typedef enum
 	VRAPI_DEVICE_TYPE_NOTE5,
 	VRAPI_DEVICE_TYPE_S6,
 	VRAPI_DEVICE_TYPE_S7,
+	VRAPI_DEVICE_TYPE_NOTE7,
 	VRAPI_MAX_DEVICE_TYPES
 } ovrDeviceType;
 
 typedef enum
 {
+	VRAPI_HEADSET_TYPE_R320,			// Note4 Innovator
+	VRAPI_HEADSET_TYPE_R321,			// S6 Innovator
+	VRAPI_HEADSET_TYPE_R322,			// Commerical 1
+	VRAPI_HEADSET_TYPE_R323,			// Commerical 2 (USB Type C)
+	VRAPI_MAX_HEADSET_TYPES
+} ovrHeadsetType;
+
+typedef enum
+{
 	VRAPI_DEVICE_REGION_UNSPECIFIED,
 	VRAPI_DEVICE_REGION_JAPAN,
+	VRAPI_DEVICE_REGION_CHINA,
 	VRAPI_MAX_DEVICE_REGIONS
 } ovrDeviceRegion;
 
@@ -179,11 +190,19 @@ typedef enum
 	VRAPI_SYS_PROP_DEVICE_REGION,
 	// Video decoder limit for the device.
 	VRAPI_SYS_PROP_VIDEO_DECODER_LIMIT,
+	VRAPI_SYS_PROP_HEADSET_TYPE,
+
+	// A single press and release of the back button in less than this time is considered
+	// a 'short press'.
+	VRAPI_SYS_PROP_BACK_BUTTON_SHORTPRESS_TIME,		// in seconds
+	// Pressing the back button twice within this time is considered a 'double tap'.
+	VRAPI_SYS_PROP_BACK_BUTTON_DOUBLETAP_TIME,		// in seconds
 
 	// Returns VRAPI_TRUE, if Multiview rendering support is available for this system,
 	// otherwise VRAPI_FALSE.
 	VRAPI_SYS_PROP_MULTIVIEW_AVAILABLE = 128,
 } ovrSystemProperty;
+
 
 typedef enum
 {
@@ -200,6 +219,9 @@ typedef enum
 	VRAPI_SYS_STATUS_SCREEN_TEARS_PER_SECOND,		// Number of screen tears per second (per eye).
 	VRAPI_SYS_STATUS_EARLY_FRAMES_PER_SECOND,		// Number of frames per second delivered a whole display refresh early.
 	VRAPI_SYS_STATUS_STALE_FRAMES_PER_SECOND,		// Number of frames per second delivered late.
+
+	VRAPI_SYS_STATUS_HEADPHONES_PLUGGED_IN,			// Returns VRAPI_TRUE if headphones are plugged into the device.
+	VRAPI_SYS_STATUS_RECENTER_COUNT,				// Returns the current recenter count. Defaults to 0.
 
 	VRAPI_SYS_STATUS_FRONT_BUFFER_PROTECTED	= 128,	// True if the front buffer is allocated in TrustZone memory.
 	VRAPI_SYS_STATUS_FRONT_BUFFER_565,				// True if the front buffer is 16-bit 5:6:5
@@ -425,16 +447,20 @@ typedef enum
 	VRAPI_FRAME_FLAG_FLUSH										= 2,
 	// This is the final frame. Do not accept any more frames after this.
 	VRAPI_FRAME_FLAG_FINAL										= 4,
-	// Display continuously changing graph of TimeWarp timing data. By default,
+	// DEPRECATED: Display continuously changing graph of TimeWarp timing data. By default,
 	// this will display the start and end times of the draw.
 	VRAPI_FRAME_FLAG_TIMEWARP_DEBUG_GRAPH_SHOW					= 8,
-	// Continue to display the timing data, but no new data is collected and displayed.
+	// DEPRECATED: Continue to display the timing data, but no new data is collected and displayed.
 	VRAPI_FRAME_FLAG_TIMEWARP_DEBUG_GRAPH_FREEZE				= 16,
-	// Change the TimeWarp graph to display the latency (seconds from eye buffer
+	// DEPRECATED: Change the TimeWarp graph to display the latency (seconds from eye buffer
 	// orientation time) instead of the draw times.
 	VRAPI_FRAME_FLAG_TIMEWARP_DEBUG_GRAPH_LATENCY_MODE			= 32,
 	// Don't show the volume layer whent set.
-	VRAPI_FRAME_FLAG_INHIBIT_VOLUME_LAYER						= 64
+	VRAPI_FRAME_FLAG_INHIBIT_VOLUME_LAYER						= 64,
+	// Show the layer complexity.
+	VRAPI_FRAME_FLAG_SHOW_LAYER_COMPLEXITY						= 128,
+	// Show the texel density
+	VRAPI_FRAME_FLAG_SHOW_TEXTURE_DENSITY						= 256
 } ovrFrameFlags;
 
 typedef enum
@@ -466,6 +492,8 @@ typedef enum
 	VRAPI_FRAME_LAYER_BLEND_ONE_MINUS_SRC_ALPHA
 } ovrFrameLayerBlend;
 
+// NOTE: The following ovrFrameLayerType types are deprecated and will
+// be removed in the future. Instead, use explicit indices.
 typedef enum
 {
 	VRAPI_FRAME_LAYER_TYPE_WORLD,
@@ -530,7 +558,7 @@ typedef struct
 	ovrFrameLayerTexture	Textures[VRAPI_FRAME_LAYER_EYE_MAX];
 
 	// Speed and scale of rotation when VRAPI_FRAME_LAYER_FLAG_SPIN is set in ovrFrameLayer::Flags
-	float					SpinSpeed; // Radians/Second
+	float					SpinSpeed;	// Radians/Second
 	float					SpinScale;
 
 	// Color scale for this layer (including alpha)

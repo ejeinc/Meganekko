@@ -5,7 +5,22 @@ Filename    :   OVR_ThreadCommandQueue.cpp
 Content     :   Command queue for operations executed on a thread
 Created     :   October 29, 2012
 
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
+Copyright   :   Copyright 2014-2016 Oculus VR, LLC All Rights reserved.
+
+Licensed under the Oculus VR Rift SDK License Version 3.3 (the "License"); 
+you may not use the Oculus VR Rift SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
+otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-3.3 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ************************************************************************************/
 
@@ -130,20 +145,21 @@ void CircularBuffer::ReadEnd(size_t size)
 
 ThreadCommand::PopBuffer::~PopBuffer()
 {
-	if (Size) {
-		Destruct<ThreadCommand>(toCommand());
-	}
+    if (Size) {
+        Destruct<ThreadCommand>(toCommand());
+    }
 }
 
 void ThreadCommand::PopBuffer::InitFromBuffer(void* data)
 {
     ThreadCommand* cmd = (ThreadCommand*)data;
-    OVR_ASSERT(cmd->Size <= MaxSize);
 
-	if (Size) {
-		Destruct<ThreadCommand>(toCommand());
-	}
+    if (Size) {
+        Destruct<ThreadCommand>(toCommand());
+    }
     Size = cmd->Size;
+    if (Size > MaxSize)
+        Size = MaxSize;
     memcpy(Buffer, (void*)cmd, Size);
 }
 
@@ -155,9 +171,9 @@ void ThreadCommand::PopBuffer::Execute()
     {
         command->Execute();
     }
-	if (NeedsWait()) {
-		GetEvent()->PulseEvent();
-	}
+    if (NeedsWait()) {
+        GetEvent()->PulseEvent();
+    }
 }
 
 //-------------------------------------------------------------------------------------
@@ -170,10 +186,10 @@ class ThreadCommandQueueImpl : public NewOverrideBase
 public:
 
     ThreadCommandQueueImpl(ThreadCommandQueue* queue) :
-		pQueue(queue),
-		ExitEnqueued(false),
-		ExitProcessed(false),
-		CommandBuffer(2048)
+        pQueue(queue),
+        ExitEnqueued(false),
+        ExitProcessed(false),
+        CommandBuffer(2048)
     {
     }
     ~ThreadCommandQueueImpl();
@@ -256,27 +272,31 @@ bool ThreadCommandQueueImpl::PushCommand(const ThreadCommand& command)
         { // Lock Scope
             Lock::Locker lock(&QueueLock);
 
-            if (queueAvailableEvent)
-            {
+            if (queueAvailableEvent) {
                 FreeNotifyEvent_NTS(queueAvailableEvent);
                 queueAvailableEvent = 0;
             }
 
             // Don't allow any commands after PushExitCommand() is called.
-            if (ExitEnqueued && !command.ExitFlag)
+            if (ExitEnqueued && !command.ExitFlag) {
                 return false;
+            }
 
-
-            bool   bufferWasEmpty = CommandBuffer.IsEmpty();
+            bool bufferWasEmpty = CommandBuffer.IsEmpty();
             uint8_t* buffer = CommandBuffer.Write(command.GetSize());
-            if  (buffer)
-            {
+
+            if (buffer) {
                 ThreadCommand* c = command.CopyConstruct(buffer);
-                if (c->NeedsWait())
+
+                if (c->NeedsWait()) {
                     completeEvent = c->pEvent = AllocNotifyEvent_NTS();
+                }
+
                 // Signal-waker consumer when we add data to buffer.
-                if (bufferWasEmpty)
+                if (bufferWasEmpty) {
                     pQueue->OnPushNonEmpty_Locked();
+                }
+
                 break;
             }
 
@@ -285,7 +305,6 @@ bool ThreadCommandQueueImpl::PushCommand(const ThreadCommand& command)
         } // Lock Scope
 
         queueAvailableEvent->Wait();
-
     } while(1);
 
     // Command was enqueued, wait if necessary.

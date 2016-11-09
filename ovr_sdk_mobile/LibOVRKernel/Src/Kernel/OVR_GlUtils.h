@@ -15,6 +15,20 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 // individually including them, so if we have to change what we include,
 // we can do it in one place.
 
+struct ovrOpenGLExtensions
+{
+	bool OES_vertex_array_object;
+	bool QCOM_tiled_rendering;
+	bool EXT_discard_framebuffer;
+	bool EXT_texture_filter_anisotropic;
+	bool EXT_disjoint_timer_query;
+	bool EXT_sRGB_texture_decode;
+	bool EXT_texture_border_clamp;
+	bool OVR_multiview2;
+};
+
+extern ovrOpenGLExtensions extensionsOpenGL;
+
 #if defined( ANDROID )	// FIXME: Use OVR_Types defines when used consistently
 
 #define OVR_HAS_OPENGL_LOADER
@@ -67,13 +81,6 @@ typedef void (GL_APIENTRY* PFNGLFRAMEBUFFERTEXTUREMULTIVIEWOVRPROC) (GLenum targ
 typedef void (GL_APIENTRY* PFNGLFRAMEBUFFERTEXTUREMULTISAMPLEMULTIVIEWOVRPROC)(GLenum target, GLenum attachment, GLuint texture, GLint level, GLsizei samples, GLint baseViewIndex, GLsizei numViews);
 #endif
 
-extern bool OES_vertex_array_object;
-extern bool QCOM_tiled_rendering;
-extern bool EXT_texture_filter_anisotropic;
-extern bool	EXT_disjoint_timer_query;
-extern bool HasEXT_sRGB_texture_decode;
-extern bool HasEXT_Multiview;
-
 // extensions
 
 // IMG_multisampled_render_to_texture
@@ -106,21 +113,21 @@ extern PFNGLSTARTTILINGQCOMPROC			glStartTilingQCOM_;
 extern PFNGLENDTILINGQCOMPROC			glEndTilingQCOM_;
 
 // QCOM_binning_control
-#define GL_BINNING_CONTROL_HINT_QCOM           0x8FB0
+#define GL_BINNING_CONTROL_HINT_QCOM			0x8FB0
 
-#define GL_CPU_OPTIMIZED_QCOM                  0x8FB1
-#define GL_GPU_OPTIMIZED_QCOM                  0x8FB2
-#define GL_RENDER_DIRECT_TO_FRAMEBUFFER_QCOM   0x8FB3
-#define GL_DONT_CARE                           0x1100
+#define GL_CPU_OPTIMIZED_QCOM					0x8FB1
+#define GL_GPU_OPTIMIZED_QCOM					0x8FB2
+#define GL_RENDER_DIRECT_TO_FRAMEBUFFER_QCOM	0x8FB3
+#define GL_DONT_CARE							0x1100
 
 // EXT_disjoint_timer_query
-#define GL_QUERY_COUNTER_BITS_EXT         0x8864
-#define GL_CURRENT_QUERY_EXT              0x8865
-#define GL_QUERY_RESULT_EXT               0x8866
-#define GL_QUERY_RESULT_AVAILABLE_EXT     0x8867
-#define GL_TIME_ELAPSED_EXT               0x88BF
-#define GL_TIMESTAMP_EXT                  0x8E28
-#define GL_GPU_DISJOINT_EXT               0x8FBB
+#define GL_QUERY_COUNTER_BITS_EXT				0x8864
+#define GL_CURRENT_QUERY_EXT					0x8865
+#define GL_QUERY_RESULT_EXT						0x8866
+#define GL_QUERY_RESULT_AVAILABLE_EXT			0x8867
+#define GL_TIME_ELAPSED_EXT						0x88BF
+#define GL_TIMESTAMP_EXT						0x8E28
+#define GL_GPU_DISJOINT_EXT						0x8FBB
 typedef void (GL_APIENTRYP PFNGLGENQUERIESEXTPROC) (GLsizei n, GLuint *ids);
 typedef void (GL_APIENTRYP PFNGLDELETEQUERIESEXTPROC) (GLsizei n, const GLuint *ids);
 typedef GLboolean (GL_APIENTRYP PFNGLISQUERYEXTPROC) (GLuint id);
@@ -148,20 +155,22 @@ extern PFNGLGETQUERYOBJECTUI64VEXTPROC		glGetQueryObjectui64vEXT_;
 extern PFNGLGETINTEGER64VPROC				glGetInteger64v_;
 
 // EGL_KHR_gl_colorspace
-static const int EGL_GL_COLORSPACE_KHR			= 0x309D;
-static const int EGL_GL_COLORSPACE_SRGB_KHR		= 0x3089;
-static const int EGL_GL_COLORSPACE_LINEAR_KHR	= 0x308A;
+#if !defined( EGL_KHR_gl_colorspace )
+#define EGL_GL_COLORSPACE_KHR				0x309D
+#define EGL_GL_COLORSPACE_SRGB_KHR			0x3089
+#define EGL_GL_COLORSPACE_LINEAR_KHR		0x308A
+#endif
 
 // EXT_sRGB_write_control
-#if !defined(GL_EXT_sRGB_write_control)
-static const int GL_FRAMEBUFFER_SRGB_EXT		= 0x8DB9;
+#if !defined( GL_EXT_sRGB_write_control )
+#define GL_FRAMEBUFFER_SRGB_EXT				0x8DB9
 #endif
 
 // EXT_sRGB_decode
-#if !defined(GL_EXT_texture_sRGB_decode)
-static const int GL_TEXTURE_SRGB_DECODE_EXT		= 0x8A48;
-static const int GL_DECODE_EXT             		= 0x8A49;
-static const int GL_SKIP_DECODE_EXT        		= 0x8A4A;
+#if !defined( GL_EXT_texture_sRGB_decode )
+#define GL_TEXTURE_SRGB_DECODE_EXT			0x8A48
+#define GL_DECODE_EXT             			0x8A49
+#define GL_SKIP_DECODE_EXT        			0x8A4A
 #endif
 
 // To link against the ES2 library for UE4, we need to make our own versions of these
@@ -178,16 +187,21 @@ extern PFNGLMAPBUFFERRANGE_					glMapBufferRange_;
 extern PFNGLUNMAPBUFFEROESPROC_				glUnmapBuffer_;
 
 // GPU Trust Zone support
-#ifndef EGL_PROTECTED_CONTENT_EXT
-static const int EGL_PROTECTED_CONTENT_EXT = 0x32c0;
+#if !defined( EGL_PROTECTED_CONTENT_EXT )
+#define EGL_PROTECTED_CONTENT_EXT			0x32c0
 #endif
 
-#ifndef EGL_QCOM_PROTECTED_CONTENT
-static const int EGL_QCOM_PROTECTED_CONTENT = 0x32E0;
+#if !defined( EGL_QCOM_PROTECTED_CONTENT )
+#define EGL_QCOM_PROTECTED_CONTENT			0x32E0
+#endif
+
+#if !defined( GL_TEXTURE_BORDER_COLOR )
+#define GL_TEXTURE_BORDER_COLOR				0x1004
 #endif
 
 #elif defined( WIN32 ) || defined( WIN64 ) || defined( _WIN32 ) || defined( _WIN64 )
 
+#define NOMINMAX	// stop Windows.h from redefining min and max and breaking std::min / std::max
 #include <windows.h>
 #include <GL/gl.h>
 #define GL_EXT_color_subtable
@@ -210,12 +224,13 @@ typedef void (APIENTRY* PFNGLFRAMEBUFFERTEXTUREMULTISAMPLEMULTIVIEWOVRPROC)(GLen
 // Used to aide porting process
 typedef void *EGLDisplay;
 typedef void *EGLSurface;
+typedef void *EGLContext;
 struct ANativeWindow;
 typedef struct ANativeWindow ANativeWindow;
 #define GL_TEXTURE_EXTERNAL_OES GL_TEXTURE_2D
 #define EGL_NO_SURFACE (EGLSurface)0
-
-extern bool HasEXT_Multiview;
+#define EGL_NO_DISPLAY (EGLDisplay)0
+#define EGL_NO_CONTEXT (EGLContext)0
 
 extern PFNGLBINDFRAMEBUFFERPROC				glBindFramebuffer;
 extern PFNGLGENFRAMEBUFFERSPROC				glGenFramebuffers;

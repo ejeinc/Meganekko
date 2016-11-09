@@ -19,12 +19,12 @@ OVR_SDK_MOBILE := ../ovr_sdk_mobile
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
+include $(OVR_SDK_MOBILE)/cflags.mk
 
 LOCAL_MODULE := meganekko
 
 # jni/** all .cpp
 FILE_LIST := $(wildcard $(LOCAL_PATH)/*.cpp)
-FILE_LIST += $(wildcard $(LOCAL_PATH)/**/*.cpp)
 LOCAL_SRC_FILES += $(FILE_LIST:$(LOCAL_PATH)/%=%)
 
 # Include directories
@@ -32,15 +32,11 @@ LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrAppFramework/Include
 LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/LibOVRKernel/Src
 LOCAL_C_INCLUDES += $(OVR_SDK_MOBILE)/VrApi/Include
 
-LOCAL_C_INCLUDES += $(LOCAL_PATH)
-
 LOCAL_SHARED_LIBRARIES := vrapi
 LOCAL_STATIC_LIBRARIES := vrappframework 
 
-LOCAL_CPPFLAGS := -std=c++11
-
 include $(BUILD_SHARED_LIBRARY)
 
+$(call import-module,LibOVRKernel/Projects/AndroidPrebuilt/jni)
 $(call import-module,VrApi/Projects/AndroidPrebuilt/jni)
 $(call import-module,VrAppFramework/Projects/AndroidPrebuilt/jni)
-$(call import-module,VrAppSupport/SystemUtils/Projects/AndroidPrebuilt/jni)

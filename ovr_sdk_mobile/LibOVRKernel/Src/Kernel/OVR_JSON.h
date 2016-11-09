@@ -7,7 +7,22 @@ Created     :   April 9, 2013
 Author      :   Brant Lewis
 Notes       :
 
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
+Copyright   :   Copyright 2014-2016 Oculus VR, LLC All Rights reserved.
+
+Licensed under the Oculus VR Rift SDK License Version 3.3 (the "License"); 
+you may not use the Oculus VR Rift SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
+otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-3.3 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ************************************************************************************/
 
@@ -72,7 +87,7 @@ public:
     static JSON*    Load(const char* path, const char** perror = 0);
 
     // Saves a JSON object to a file.
-    bool            Save(const char* path);
+    bool            Save(const char* path) const;
 
     // Child item access functions
     void            AddItem(const char *string, JSON* item);
@@ -98,10 +113,10 @@ public:
 	const JSON*     GetItemByName(const char* name) const;
 
     // Returns next item in a list of children; 0 if no more items exist.
-    JSON*           GetNextItem(JSON* item)			{ return Children.IsNull(item->pNext) ? 0 : item->pNext; }
-	const JSON*     GetNextItem(JSON* item) const	{ return Children.IsNull(item->pNext) ? 0 : item->pNext; }
-    JSON*           GetPrevItem(JSON* item)			{ return Children.IsNull(item->pPrev) ? 0 : item->pPrev; }
-	const JSON*     GetPrevItem(JSON* item) const	{ return Children.IsNull(item->pPrev) ? 0 : item->pPrev; }
+    JSON*           GetNextItem(JSON* item)				{ return Children.IsNull(item->pNext) ? 0 : item->pNext; }
+	const JSON*     GetNextItem(const JSON* item) const	{ return Children.IsNull(item->pNext) ? 0 : item->pNext; }
+    JSON*           GetPrevItem(JSON* item)				{ return Children.IsNull(item->pPrev) ? 0 : item->pPrev; }
+	const JSON*     GetPrevItem(const JSON* item) const	{ return Children.IsNull(item->pPrev) ? 0 : item->pPrev; }
 
 	// Value access with range checking where possible.
 	// Using the JsonReader class is recommended instead of using these.
@@ -121,12 +136,12 @@ public:
     void            AddArrayString(const char* s)   { AddArrayElement(CreateString(s)); }
 
     // Accessed array elements; currently inefficient.
-    int             GetArraySize();
-    double          GetArrayNumber(int index);
-    const char*     GetArrayString(int index);
+    int             GetArraySize() const;
+    double          GetArrayNumber(int index) const;
+    const char*     GetArrayString(int index) const;
 
     // Return text value of JSON. Use OVR_FREE when done with return value
-    char*           PrintValue(int depth, bool fmt);
+    char*           PrintValue(int depth, bool fmt) const;
 
 protected:
     JSON(JSONItemType itemType = JSON_Object);
@@ -140,8 +155,8 @@ protected:
     const char*     parseObject(const char* value, const char** perror);
     const char*     parseString(const char* str, const char** perror);
 
-    char*           PrintObject(int depth, bool fmt);
-    char*           PrintArray(int depth, bool fmt);
+    char*           PrintObject(int depth, bool fmt) const;
+    char*           PrintArray(int depth, bool fmt) const;
 
 	friend class JsonReader;
 };

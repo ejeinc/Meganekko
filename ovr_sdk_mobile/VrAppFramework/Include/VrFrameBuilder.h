@@ -12,7 +12,7 @@ Copyright   :   Copyright 2015 Oculus VR, LLC. All Rights reserved.
 #ifndef OVR_VrFrameBuilder_h
 #define OVR_VrFrameBuilder_h
 
-#include "Input.h"
+#include "OVR_Input.h"
 #include "KeyState.h"
 
 namespace OVR {
@@ -54,19 +54,19 @@ class VrFrameBuilder
 public:
 						VrFrameBuilder();
 
+	void				Init( ovrJava * java );
+
 	void				UpdateNetworkState( JNIEnv * jni, jclass activityClass, jobject activityObject );
 
 	void				AdvanceVrFrame( const ovrInputEvents & inputEvents, ovrMobile * ovr,
 										const ovrJava & java,
 										const ovrHeadModelParms & headModelParms,
-										const long long enteredVrModeFrameNumber,
-										SystemActivitiesAppEventList_t * appEvents );
+										const long long enteredVrModeFrameNumber );
 	const ovrFrameInput &		Get() const { return vrFrame; }
 
 private:
 	ovrFrameInput vrFrame;
 	KeyState	BackKeyState;
-	KeyState	MenuKeyState;	// tracks the state of the menu button on the Gear VR controller
 
 	double		lastTouchpadTime;
 	double		touchpadTimer;

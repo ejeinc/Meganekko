@@ -16,15 +16,9 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include <assert.h>
 #include <stdlib.h>
 
-#if defined( ANDROID )
+ovrOpenGLExtensions extensionsOpenGL;
 
-bool EXT_discard_framebuffer;
-bool OES_vertex_array_object;
-bool QCOM_tiled_rendering;
-bool EXT_disjoint_timer_query;
-bool EXT_texture_filter_anisotropic = false;
-bool HasEXT_sRGB_texture_decode = false;
-bool HasEXT_Multiview = false;
+#if defined( ANDROID )
 
 PFNGLDISCARDFRAMEBUFFEREXTPROC glDiscardFramebufferEXT_;
 
@@ -72,8 +66,6 @@ GLvoid*        (*glMapBufferRange_) (GLenum target, GLintptr offset, GLsizeiptr 
 GLboolean      (*glUnmapBuffer_) (GLenum target);
 
 #elif defined( WIN32 ) || defined( WIN64 ) || defined( _WIN32 ) || defined( _WIN64 )
-
-bool HasEXT_Multiview = false;
 
 PFNGLBINDFRAMEBUFFERPROC			glBindFramebuffer;
 PFNGLGENFRAMEBUFFERSPROC			glGenFramebuffers;
@@ -260,7 +252,7 @@ void GL_InitExtensions()
 
 	if ( GL_ExtensionStringPresent( "GL_EXT_discard_framebuffer", extensions ) )
 	{
-		EXT_discard_framebuffer = true;
+		extensionsOpenGL.EXT_discard_framebuffer = true;
 		glDiscardFramebufferEXT_ = (PFNGLDISCARDFRAMEBUFFEREXTPROC)GetExtensionProc( "glDiscardFramebufferEXT" );
 	}
 
@@ -286,7 +278,7 @@ void GL_InitExtensions()
 
 	if ( GL_ExtensionStringPresent( "GL_OES_vertex_array_object", extensions ) )
 	{
-		OES_vertex_array_object = true;
+		extensionsOpenGL.OES_vertex_array_object = true;
 		glBindVertexArrayOES_ = (PFNGLBINDVERTEXARRAYOESPROC)eglGetProcAddress("glBindVertexArrayOES");
 		glDeleteVertexArraysOES_ = (PFNGLDELETEVERTEXARRAYSOESPROC)eglGetProcAddress("glDeleteVertexArraysOES");
 		glGenVertexArraysOES_ = (PFNGLGENVERTEXARRAYSOESPROC)eglGetProcAddress("glGenVertexArraysOES");
@@ -295,7 +287,7 @@ void GL_InitExtensions()
 
 	if ( GL_ExtensionStringPresent( "GL_QCOM_tiled_rendering", extensions ) )
 	{
-		QCOM_tiled_rendering = true;
+		extensionsOpenGL.QCOM_tiled_rendering = true;
 		glStartTilingQCOM_ = (PFNGLSTARTTILINGQCOMPROC)eglGetProcAddress("glStartTilingQCOM");
 		glEndTilingQCOM_ = (PFNGLENDTILINGQCOMPROC)eglGetProcAddress("glEndTilingQCOM");
 	}
@@ -303,7 +295,7 @@ void GL_InitExtensions()
 	// Enabling this seems to cause strange problems in Unity
 	if ( GL_ExtensionStringPresent( "GL_EXT_disjoint_timer_query", extensions ) )
 	{
-		EXT_disjoint_timer_query = true;
+		extensionsOpenGL.EXT_disjoint_timer_query = true;
 		glGenQueriesEXT_ = (PFNGLGENQUERIESEXTPROC)eglGetProcAddress("glGenQueriesEXT");
 		glDeleteQueriesEXT_ = (PFNGLDELETEQUERIESEXTPROC)eglGetProcAddress("glDeleteQueriesEXT");
 		glIsQueryEXT_ = (PFNGLISQUERYEXTPROC)eglGetProcAddress("glIsQueryEXT");
@@ -320,18 +312,23 @@ void GL_InitExtensions()
 
 	if ( GL_ExtensionStringPresent( "GL_EXT_texture_sRGB_decode", extensions ) )
 	{
-		HasEXT_sRGB_texture_decode = true;
+		extensionsOpenGL.EXT_sRGB_texture_decode = true;
+	}
+
+	if ( GL_ExtensionStringPresent( "GL_EXT_texture_border_clamp", extensions ) || GL_ExtensionStringPresent( "GL_OES_texture_border_clamp", extensions ) )
+	{
+		extensionsOpenGL.EXT_texture_border_clamp = true;
 	}
 
 	if ( GL_ExtensionStringPresent( "GL_EXT_texture_filter_anisotropic", extensions ) )
 	{
-		EXT_texture_filter_anisotropic = true;
+		extensionsOpenGL.EXT_texture_filter_anisotropic = true;
 	}
 
 	if ( GL_ExtensionStringPresent( "GL_OVR_multiview2", extensions ) &&
 		 GL_ExtensionStringPresent( "GL_OVR_multiview_multisampled_render_to_texture", extensions ) )
 	{
-		HasEXT_Multiview = true;
+		extensionsOpenGL.OVR_multiview2 = true;
 	}
 
 	GLint MaxTextureSize = 0;
@@ -357,8 +354,9 @@ void GL_InitExtensions()
 
 	if ( GL_ExtensionStringPresent( "GL_OVR_multiview2", extensions ) )
 	{
-		HasEXT_Multiview = true;
+		extensionsOpenGL.OVR_multiview2 = true;
 	}
+	extensionsOpenGL.EXT_texture_border_clamp = true;
 
 	glBindFramebuffer			= (PFNGLBINDFRAMEBUFFERPROC)			GetExtensionProc( "glBindFramebuffer" );
 	glGenFramebuffers			= (PFNGLGENFRAMEBUFFERSPROC)			GetExtensionProc( "glGenFramebuffers" );
@@ -559,7 +557,7 @@ void GL_InvalidateFramebuffer( const invalidateTarget_t isFBO, const bool colorB
 
 	const GLenum fboAttachments[3] = { GL_COLOR_ATTACHMENT0, GL_DEPTH_ATTACHMENT, GL_STENCIL_ATTACHMENT };
 	const GLenum attachments[3] = { GL_COLOR_EXT, GL_DEPTH_EXT, GL_STENCIL_EXT };
-	glInvalidateFramebuffer_(GL_FRAMEBUFFER, count, (isFBO == INV_FBO ? fboAttachments : attachments) + offset);
+	glInvalidateFramebuffer_( GL_FRAMEBUFFER, count, ( isFBO == INV_FBO ? fboAttachments : attachments ) + offset);
 #endif
 }
 

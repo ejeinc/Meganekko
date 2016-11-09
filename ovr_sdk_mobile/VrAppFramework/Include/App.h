@@ -23,6 +23,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "Kernel/OVR_LogUtils.h"
 #include "VrApi_Types.h"
 #include "VrApi_Helpers.h"
+#include "VrApi_SystemUtils.h"
 #include "VrApi_Ext.h"
 #include "GlProgram.h"
 #include "GlTexture.h"
@@ -30,9 +31,8 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "SurfaceRender.h"
 #include "SurfaceTexture.h"
 #include "EyeBuffers.h"
-#include "EyePostRender.h"
 #include "VrCommon.h"
-#include "Input.h"
+#include "OVR_Input.h"
 #include "TalkToJava.h"
 #include "Console.h"
 
@@ -41,8 +41,6 @@ namespace OVR
 
 //==============================================================
 // forward declarations
-class BitmapFont;
-class BitmapFontSurface;
 class OvrDebugLines;
 class App;
 class OvrStoragePaths;
@@ -225,7 +223,6 @@ public:
 	{
 		FATAL_ERROR_OUT_OF_MEMORY,
 		FATAL_ERROR_OUT_OF_STORAGE,
-		FATAL_ERROR_OSIG,
 		FATAL_ERROR_MISC,
 		FATAL_ERROR_MAX
 	};
@@ -242,7 +239,8 @@ public:
 	// allocated and hooked up to the VrAppInterface.
 	virtual VrAppInterface *	GetAppInterface() = 0;
 
-	// Reorient was triggered - inform all menus etc.
+	// Reorients while optionally pushing a black frame. Additionally, recenters
+	// the LastViewMatrix yaw.
 	virtual void				RecenterYaw( const bool showBlack ) = 0;
 	// Enables reorient before sensor data is read.
 	// Allows apps to reorient without having invalid orientation information for that frame.
@@ -252,20 +250,24 @@ public:
 	// Send an intent to another activity.
 	virtual void				SendIntent( const char * actionName, const char * toPackageName,
 											const char * toClassName, const char * command, const char * uri ) = 0;
+	// Launch another package.
+	// The destination package will be queried for its launch intent. If action is not NULL, then
+	// the intent's action will be set to the string pointed to by action.
+	virtual void				SendLaunchIntent( const char * toPackageName, const char * command, const char * uri,
+												  const char * action ) = 0;
 
-	// Switch to SystemActivities, return to Home or end activity.
-	virtual void				StartSystemActivity( const char * command ) = 0;
-	virtual void				StartSystemActivity( const char * command, const char * jsonExtra ) = 0;
+	// End Activity.
 	virtual void				FinishActivity( const ovrAppFinishType type ) = 0;
-	virtual void				FatalError( const ovrAppFatalError error, const char * fileName, const char * fmt, ... ) = 0;
+
+	// Switch to SystemActivities, display Fatal Errors.
+	virtual void				ShowSystemUI( const ovrSystemUIType type ) = 0;
+	virtual void				FatalError( const ovrAppFatalError error, const char * fileName, const unsigned int lineNumber,
+											const char * messageFormat, ... ) = 0;
 	virtual void				ShowDependencyError() = 0;
 
 	//-----------------------------------------------------------------
 	// interfaces
 	//-----------------------------------------------------------------
-
-	virtual BitmapFont &        	GetDebugFont() = 0;
-	virtual BitmapFontSurface & 	GetDebugFontSurface() = 0;
 	virtual OvrDebugLines &     	GetDebugLines() = 0;
 	virtual const OvrStoragePaths &	GetStoragePaths() = 0;
 
@@ -304,6 +306,7 @@ public:
 	
 	virtual Matrix4f const &			GetLastViewMatrix() const = 0;
 	virtual void						SetLastViewMatrix( Matrix4f const & m ) = 0;
+	virtual void						RecenterLastViewMatrix() = 0;
 
 	// FIXME: remove
 	virtual ovrMobile *					GetOvrMobile() = 0;
@@ -338,12 +341,6 @@ public:
 	//-----------------------------------------------------------------
 	// debugging
 	//-----------------------------------------------------------------
-
-	virtual void						SetShowFPS( bool const show ) = 0;
-	virtual bool						GetShowFPS() const = 0;
-
-	virtual	void						ShowInfoText( float const duration, const char * fmt, ... ) = 0;
-	virtual	void						ShowInfoText( float const duration, Vector3f const & offset, Vector4f const & color, const char * fmt, ... ) = 0;
 
 	virtual void						RegisterConsoleFunction( char const * name, consoleFn_t function ) = 0;
 };

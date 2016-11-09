@@ -31,13 +31,16 @@ void Java_org_meganekkovr_ovrjni_OVRApp_recenterYaw(JNIEnv *jni, jclass clazz,
   app->RecenterYaw(showBlack);
 }
 
-void Java_org_meganekkovr_ovrjni_OVRApp_startSystemActivity(JNIEnv *jni,
-                                                            jclass clazz,
-                                                            jlong appPtr,
-                                                            jstring command) {
+// Display a specific System UI.
+void Java_org_meganekkovr_ovrjni_OVRApp_showSystemUI(JNIEnv *jni, jclass clazz,
+                                                     jlong appPtr, jint type) {
+
+  // Java to native
   App *app = reinterpret_cast<App *>(appPtr);
-  JavaUTFChars str(jni, command);
-  app->StartSystemActivity(str.ToStr());
+  ovrSystemUIType nativeType = (ovrSystemUIType)type;
+
+  const ovrJava *java = app->GetJava();
+  vrapi_ShowSystemUI(java, nativeType);
 }
 
 jint Java_org_meganekkovr_ovrjni_OVRApp_getCpuLevel(JNIEnv *jni, jclass clazz,
@@ -79,29 +82,6 @@ void Java_org_meganekkovr_ovrjni_OVRApp_setMinimumVsyncs(JNIEnv *jni,
                                                          jint minimumVsyncs) {
   App *app = reinterpret_cast<App *>(appPtr);
   app->SetMinimumVsyncs(minimumVsyncs);
-}
-
-void Java_org_meganekkovr_ovrjni_OVRApp_setShowFPS(JNIEnv *jni, jclass clazz,
-                                                   jlong appPtr,
-                                                   jboolean show) {
-  App *app = reinterpret_cast<App *>(appPtr);
-  app->SetShowFPS(show);
-}
-
-jboolean Java_org_meganekkovr_ovrjni_OVRApp_getShowFPS(JNIEnv *jni,
-                                                       jclass clazz,
-                                                       jlong appPtr) {
-  App *app = reinterpret_cast<App *>(appPtr);
-  return app->GetShowFPS();
-}
-
-void Java_org_meganekkovr_ovrjni_OVRApp_showInfoText(JNIEnv *jni, jclass clazz,
-                                                     jlong appPtr,
-                                                     jfloat duration,
-                                                     jstring text) {
-  App *app = reinterpret_cast<App *>(appPtr);
-  JavaUTFChars str(jni, text);
-  app->ShowInfoText(duration, str.ToStr());
 }
 
 } // extern "C"

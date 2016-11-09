@@ -197,28 +197,6 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
         OVRApp.getInstance().setGpuLevel(gpuLevel);
     }
 
-    /**
-     * Will be removed in future update.
-     *
-     * @param show show
-     * @deprecated Use {@link OVRApp#setShowFPS(boolean)}.
-     */
-    public void setShowFPS(boolean show) {
-        OVRApp.getInstance().setShowFPS(show);
-    }
-
-    /**
-     * Will be removed in future update.
-     *
-     * @param duration Showing duration
-     * @param fmt      Format
-     * @param args     Arguments
-     * @deprecated Use {@link OVRApp#showInfoText(float, String)}.
-     */
-    public void showInfoText(float duration, String fmt, Object... args) {
-        OVRApp.getInstance().showInfoText(duration, String.format(fmt, args));
-    }
-
     public MeganekkoApp getApp() {
         return app;
     }

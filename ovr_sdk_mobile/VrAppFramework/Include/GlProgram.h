@@ -117,7 +117,6 @@ struct GlProgram
 		, uColor( -1 )
 		, uFadeDirection( -1 )
 		, uTexm( -1 )
-		, uTexm2( -1 )
 		, uColorTableOffset( -1 )
 		, uClipUVs( -1 )
 		, uJoints( -1 )
@@ -186,7 +185,6 @@ struct GlProgram
 	int		uColor;				// uniform UniformColor
 	int		uFadeDirection;		// uniform FadeDirection
 	int		uTexm;				// uniform Texm
-	int		uTexm2;				// uniform Texm2
 	int		uColorTableOffset;	// uniform offset to apply to color table index
 	int		uClipUVs;			// uniform min / max UVs for fragment clipping
 	int		uJoints;			// uniform Joints ubo block index
@@ -205,7 +203,7 @@ struct ovrGraphicsCommand
 	bool UseDeprecatedInterface;
 	ovrGraphicsCommand()
 	: UseDeprecatedInterface( false )
-	, numTextures( 0 )
+	, numUniformTextures( 0 )
 	{
 		for ( int i = 0; i < ovrUniform::MAX_UNIFORMS; ++i )
 		{
@@ -217,16 +215,15 @@ struct ovrGraphicsCommand
 	GLint		uniformSlots[ovrUniform::MAX_UNIFORMS];
 	GLfloat		uniformValues[ovrUniform::MAX_UNIFORMS][4];
 
-	// Currently assumes GL_TEXTURE_2D for all; will need to be
-	// extended for GL_TEXTURE_CUBE and GL_TEXTURE_EXTERNAL_OES.
+	// Currently assumes GL_TEXTURE_2D for all.
 	//
 	// There should never be any 0 textures in the active elements.
 	//
 	// This should be a range checked container.
-	int			numTextures;
-	GlTexture	textures[ovrUniform::MAX_UNIFORMS];
+	int			numUniformTextures;
+	GlTexture	uniformTextures[ovrUniform::MAX_UNIFORMS];
 	// There should only be one joint uniform buffer for the deprecated path.
-	GlBuffer	joints;
+	GlBuffer	uniformJoints;
 	// ----DEPRECATED_DRAWEYEVIEW
 };
 

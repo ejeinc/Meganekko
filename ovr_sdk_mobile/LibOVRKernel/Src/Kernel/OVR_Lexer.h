@@ -46,7 +46,8 @@ public:
 		LEX_RESULT_ERROR,			// ran out of buffer space
 		LEX_RESULT_EOF,				// tried to read past the end of the buffer
 		LEX_RESULT_UNKNOWN_ESCAPE,	// unrecognized escape code
-		LEX_RESULT_UNEXPECTED_TOKEN	// did get the expected token
+		LEX_RESULT_UNEXPECTED_TOKEN,// did get the expected token
+		LEX_RESULT_VALUE_OUT_OF_RANGE,// numeric value was out of range for the given data size
 	};
 
 	// length of source must be specified
@@ -64,7 +65,9 @@ public:
 	ovrResult	ExpectPunctuation( char const * punc, char * token, size_t const maxTokenSize );
 
 	ovrResult	ParseInt( int & value, int const defaultVal );
+	ovrResult	ParseUnsignedInt( unsigned int & value, unsigned int const defaultVal );
 	ovrResult	ParseLongLong( long long & value, long long const defaultVal );
+	ovrResult	ParseUnsignedLongLong( unsigned long long & value, unsigned long long const defaultVal );
 	ovrResult	ParseFloat( float & value, float const defaultVal );
 	ovrResult	ParseDouble( double & value, double const defaultVal );
 	ovrResult	ParsePointer( unsigned char * & ptr, unsigned char * defaultVal );

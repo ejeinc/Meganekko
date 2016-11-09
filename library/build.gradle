@@ -7,16 +7,6 @@ def ovrSdkMobile = "$rootDir/ovr_sdk_mobile"
 
 dependencies {
     /*
-     * Oculus Mobile SDK integration
-     */
-    compile files("$ovrSdkMobile/VrApi/Libs/Android/VrApi.jar")
-    compile files("$ovrSdkMobile/VrAppFramework/Libs/Android/VrAppFramework.jar")
-    compile files("$ovrSdkMobile/VrAppSupport/SystemUtils/Libs/Android/SystemUtils.jar")
-    compile files("$ovrSdkMobile/VrAppSupport/VrGUI/Libs/Android/VrGUI.jar")
-    compile files("$ovrSdkMobile/VrAppSupport/VrLocale/Libs/Android/VrLocale.jar")
-    compile files("$ovrSdkMobile/VrAppSupport/VrSound/Libs/Android/VrSound.jar")
-
-    /*
      * Dependencies
      */
     compile 'com.android.support:support-v4:25.0.0'
@@ -35,12 +25,15 @@ android {
 
     sourceSets {
         main {
+            java.srcDirs = [
+                    'src/main/java',
+                    "$ovrSdkMobile/VrAppFramework/java"
+            ]
             jniLibs.srcDir 'src/main/libs'
             jni.srcDirs = [] //disable automatic ndk-build call
             res.srcDirs = [
                     'src/main/res',
-                    "$ovrSdkMobile/VrAppFramework/res",
-                    "$ovrSdkMobile/VrAppSupport/VrGUI/res"
+                    "$ovrSdkMobile/VrAppFramework/res"
             ]
         }
     }

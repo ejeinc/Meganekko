@@ -95,8 +95,7 @@ class LogCpuTime
 {
 public:
 
-	LogCpuTime( const char * fileName, const char * fmt, ... ) :
-		FileName( fileName )
+	LogCpuTime( const char * fmt, ... )
 	{
 		va_list ap;
 		va_start( ap, fmt );
@@ -115,7 +114,6 @@ public:
 	}
 
 private:
-	const char *	FileName;
 	char			Label[1024];
 	double			StartTimeNanoSec;
 
@@ -133,7 +131,7 @@ private:
 	}
 };
 
-#define LOGCPUTIME( ... ) const LogCpuTime logCpuTimeObject( __FILE__, __VA_ARGS__ )
+#define LOGCPUTIME( ... ) const LogCpuTime logCpuTimeObject( __VA_ARGS__ )
 
 // Call LogGpuTime::Begin() and LogGpuTime::End() to log the GPU rendering time between begin and end.
 // Note that begin-end blocks cannot overlap.

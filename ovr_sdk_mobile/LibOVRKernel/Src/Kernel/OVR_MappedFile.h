@@ -16,6 +16,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "OVR_Types.h"
 
 #ifdef OVR_OS_WIN32
+#define NOMINMAX	// stop Windows.h from redefining min and max and breaking std::min / std::max
 #include <windows.h>
 #endif
 

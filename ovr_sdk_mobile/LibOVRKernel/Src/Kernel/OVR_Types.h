@@ -1,12 +1,26 @@
 /************************************************************************************
 
-PublicHeader:   OVR_Kernel.h
 Filename    :   OVR_Types.h
 Content     :   Standard library defines and simple types
 Created     :   September 19, 2012
 Notes       : 
 
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
+Copyright   :   Copyright 2014-2016 Oculus VR, LLC All Rights reserved.
+
+Licensed under the Oculus VR Rift SDK License Version 3.3 (the "License"); 
+you may not use the Oculus VR Rift SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
+otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-3.3 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ************************************************************************************/
 
@@ -22,7 +36,6 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #     error "Oculus does not support VS2010 without SP1 installed: It will crash in Release mode"
 #  endif
 #endif
-
 
 //-----------------------------------------------------------------------------------
 // ****** Operating system identification
@@ -56,6 +69,8 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #if defined(ANDROID)
 #  define OVR_OS_ANDROID
 #endif
+
+
 
 
 //-----------------------------------------------------------------------------------
@@ -183,6 +198,7 @@ namespace OVR {
 
 typedef char            Char;
 
+
 // Pointer-sized integer
 typedef size_t          UPInt;
 typedef ptrdiff_t       SPInt;
@@ -237,6 +253,7 @@ typedef uint64_t        UInt64;
 
 } // namespace OVR
 
+// MERGE_MOBILE_SDK
 #if defined( OVR_OS_ANDROID )
 #include <jni.h>
 #elif defined( __cplusplus )
@@ -260,6 +277,8 @@ typedef long long jlong;
 typedef int jint;
 typedef unsigned char jboolean;
 #endif
+// MERGE_MOBILE_SDK
+
 
 //-----------------------------------------------------------------------------------
 // ***** Macro Definitions
@@ -340,6 +359,29 @@ typedef unsigned char jboolean;
     #define OVR_CDECL
 
 #endif // defined(OVR_OS_WIN32)
+
+// MERGE_MOBILE_SDK -- NOTE: This is defined in OVR_CAPI.h.
+//-----------------------------------------------------------------------------------
+// ***** OVR_CC_HAS_FEATURE
+//
+// This is a portable way to use compile-time feature identification available
+// with some compilers in a clean way. Direct usage of __has_feature in preprocessing
+// statements of non-supporting compilers results in a preprocessing error.
+//
+// Example usage:
+//     #if OVR_CC_HAS_FEATURE(is_pod)
+//         if(__is_pod(T)) // If the type is plain data then we can safely memcpy it.
+//             memcpy(&destObject, &srcObject, sizeof(object));
+//     #endif
+//
+#if !defined(OVR_CC_HAS_FEATURE)
+    #if defined(__clang__) // http://clang.llvm.org/docs/LanguageExtensions.html#id2
+        #define OVR_CC_HAS_FEATURE(x) __has_feature(x)
+    #else
+        #define OVR_CC_HAS_FEATURE(x) 0
+    #endif
+#endif
+// MERGE_MOBILE_SDK
 
 
 // ------------------------------------------------------------------------
@@ -442,6 +484,39 @@ typedef unsigned char jboolean;
 #define OVR_VERIFY_ARRAY_SIZE( array_, num_elements_ )	\
 static_assert( sizeof( array_ ) / sizeof( array_[0] ) == num_elements_, "Array " #array_ " must have " #num_elements_ " elements!" )
 
+
+//-----------------------------------------------------------------------------------
+// ***** OVR_DEPRECATED / OVR_DEPRECATED_MSG
+// 
+// Portably annotates a function or struct as deprecated.
+// Note that clang supports __deprecated_enum_msg, which may be useful to support.
+//
+// Example usage:
+//    OVR_DEPRECATED void Test();       // Use on the function declaration, as opposed to definition.
+//
+//    struct OVR_DEPRECATED Test{ ... };
+//
+//    OVR_DEPRECATED_MSG("Test is deprecated")
+//    void Test();
+
+#if !defined(OVR_DEPRECATED)
+    #if defined(OVR_CC_MSVC) && (OVR_CC_VERSION > 1400) // VS2005+
+        #define OVR_DEPRECATED          __declspec(deprecated)
+        #define OVR_DEPRECATED_MSG(msg) __declspec(deprecated(msg))
+    #elif defined(OVR_CC_CLANG) && OVR_CC_HAS_FEATURE(attribute_deprecated_with_message)
+        #define OVR_DEPRECATED          __declspec(deprecated)
+        #define OVR_DEPRECATED_MSG(msg) __attribute__((deprecated(msg)))
+    #elif defined(OVR_CC_GNU) && (OVR_CC_VERSION >= 405)
+        #define OVR_DEPRECATED          __declspec(deprecated)
+        #define OVR_DEPRECATED_MSG(msg) __attribute__((deprecated(msg)))
+    #elif !defined(OVR_CC_MSVC)
+        #define OVR_DEPRECATED          __attribute__((deprecated))
+        #define OVR_DEPRECATED_MSG(msg) __attribute__((deprecated))
+    #else
+        #define OVR_DEPRECATED
+        #define OVR_DEPRECATED_MSG(msg)
+    #endif
+#endif
 
 //-----------------------------------------------------------------------------------
 // ***** OVR_UNUSED - Unused Argument handling

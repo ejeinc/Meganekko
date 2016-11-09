@@ -163,11 +163,11 @@ void GearVRActivity::HandleInput(const VrInput &input) {
 
     // If nothing consumed the key and it's a short-press of the back key, then
     // exit the application to OculusHome.
-    if (keyCode == OVR_KEY_BACK && eventType == KEY_EVENT_SHORT_PRESS) {
-      app->StartSystemActivity(PUI_CONFIRM_QUIT);
-    } else if (keyCode == OVR_KEY_BACK && eventType == KEY_EVENT_LONG_PRESS) {
-      app->StartSystemActivity(PUI_GLOBAL_MENU);
-    }
+    // if (keyCode == OVR_KEY_BACK && eventType == KEY_EVENT_SHORT_PRESS) {
+    //   app->StartSystemActivity(PUI_CONFIRM_QUIT);
+    // } else if (keyCode == OVR_KEY_BACK && eventType == KEY_EVENT_LONG_PRESS) {
+    //   app->StartSystemActivity(PUI_GLOBAL_MENU);
+    // }
   }
 }
 

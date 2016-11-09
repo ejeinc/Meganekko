@@ -20,6 +20,7 @@ of patent rights can be found in the PATENTS file in the same directory.
 #include "Kernel/OVR_LogUtils.h"
 #include "Kernel/OVR_MemBuffer.h"
 #include <cstdlib> // for strto* functions
+#include <errno.h>
 
 namespace OVR {
 
@@ -393,7 +394,86 @@ ovrLexer::ovrResult ovrLexer::ParseInt( int & value, int const defaultVal )
 		value = defaultVal;
 		return r;
 	}
-	value = strtol( token, nullptr, 10 );
+
+	errno = 0;
+	char * endptr = nullptr;
+	value = strtol( token, &endptr, 10 );
+
+	// Did we overflow?
+	if ( errno == ERANGE )
+	{
+		value = defaultVal;
+		return LEX_RESULT_VALUE_OUT_OF_RANGE;
+	}
+
+	// Did we fail to parse any characters at all?
+	if ( endptr == token )
+	{
+		value = defaultVal;
+		return LEX_RESULT_EOF;
+	}
+
+	// Did we hit a non-digit character before the end of the string?
+	if ( *endptr != '\0' )
+	{
+		value = defaultVal;
+		return LEX_RESULT_UNEXPECTED_TOKEN;
+	}
+
+	// any other unexpected error
+	if ( errno != 0 )
+	{
+		value = defaultVal;
+		return LEX_RESULT_UNEXPECTED_TOKEN;
+	}
+
+	return LEX_RESULT_OK;
+}
+
+//==============================
+// ovrLexer::ParseUnsignedInt
+ovrLexer::ovrResult ovrLexer::ParseUnsignedInt( unsigned int & value, unsigned int const defaultVal )
+{
+	char token[128];
+	ovrResult r = NextToken( token, sizeof( token ) );
+	if ( r != LEX_RESULT_OK )
+	{
+		value = defaultVal;
+		return r;
+	}
+
+	errno = 0;
+	char * endptr = nullptr;
+	value = strtoul( token, &endptr, 10 );
+
+	// Did we overflow?
+	if ( errno == ERANGE )
+	{
+		value = defaultVal;
+		return LEX_RESULT_VALUE_OUT_OF_RANGE;
+	}
+
+	// Did we fail to parse any characters at all?
+	if ( endptr == token )
+	{
+		value = defaultVal;
+		return LEX_RESULT_EOF;
+	}
+
+	// Did we hit a non-digit character before the end of the string?
+	if ( *endptr != '\0' )
+	{
+		value = defaultVal;
+		return LEX_RESULT_UNEXPECTED_TOKEN;
+	}
+
+	// any other unexpected error
+	if ( errno != 0 )
+	{
+		value = defaultVal;
+		return LEX_RESULT_UNEXPECTED_TOKEN;
+	}
+
 	return LEX_RESULT_OK;
 }
 
@@ -408,7 +488,86 @@ ovrLexer::ovrResult	ovrLexer::ParseLongLong( long long & value, long long const 
 		value = defaultVal;
 		return r;
 	}
-	value = strtoll( token, nullptr, 10 );
+
+	errno = 0;
+	char * endptr = nullptr;
+	value = strtoll( token, &endptr, 10 );
+
+	// Did we overflow?
+	if ( errno == ERANGE )
+	{
+		value = defaultVal;
+		return LEX_RESULT_VALUE_OUT_OF_RANGE;
+	}
+
+	// Did we fail to parse any characters at all?
+	if ( endptr == token )
+	{
+		value = defaultVal;
+		return LEX_RESULT_EOF;
+	}
+
+	// Did we hit a non-digit character before the end of the string?
+	if ( *endptr != '\0' )
+	{
+		value = defaultVal;
+		return LEX_RESULT_UNEXPECTED_TOKEN;
+	}
+
+	// any other unexpected error
+	if ( errno != 0 )
+	{
+		value = defaultVal;
+		return LEX_RESULT_UNEXPECTED_TOKEN;
+	}
+
+	return LEX_RESULT_OK;
+}
+
+//==============================
+// ovrLexer::ParseUnsignedLongLong
+ovrLexer::ovrResult	ovrLexer::ParseUnsignedLongLong( unsigned long long & value, unsigned long long const defaultVal )
+{
+	char token[128];
+	ovrResult r = NextToken( token, sizeof( token ) );
+	if ( r != LEX_RESULT_OK )
+	{
+		value = defaultVal;
+		return r;
+	}
+
+	errno = 0;
+	char * endptr = nullptr;
+	value = strtoull( token, &endptr, 10 );
+
+	// Did we overflow?
+	if ( errno == ERANGE )
+	{
+		value = defaultVal;
+		return LEX_RESULT_VALUE_OUT_OF_RANGE;
+	}
+
+	// Did we fail to parse any characters at all?
+	if ( endptr == token )
+	{
+		value = defaultVal;
+		return LEX_RESULT_EOF;
+	}
+
+	// Did we hit a non-digit character before the end of the string?
+	if ( *endptr != '\0' )
+	{
+		value = defaultVal;
+		return LEX_RESULT_UNEXPECTED_TOKEN;
+	}
+
+	// any other unexpected error
+	if ( errno != 0 )
+	{
+		value = defaultVal;
+		return LEX_RESULT_UNEXPECTED_TOKEN;
+	}
+
 	return LEX_RESULT_OK;
 }
 
@@ -423,7 +582,39 @@ ovrLexer::ovrResult ovrLexer::ParseFloat( float & value, float const defaultVal 
 		value = defaultVal;
 		return r;
 	}
-	value = static_cast<float>( strtof( token, nullptr ) );
+
+	errno = 0;
+	char * endptr = nullptr;
+	value = strtof( token, &endptr );
+
+	// Did we overflow?
+	if ( errno == ERANGE )
+	{
+		value = defaultVal;
+		return LEX_RESULT_VALUE_OUT_OF_RANGE;
+	}
+
+	// Did we fail to parse any characters at all?
+	if ( endptr == token )
+	{
+		value = defaultVal;
+		return LEX_RESULT_EOF;
+	}
+
+	// Did we hit a non-digit character before the end of the string?
+	if ( *endptr != '\0' )
+	{
+		value = defaultVal;
+		return LEX_RESULT_UNEXPECTED_TOKEN;
+	}
+
+	// any other unexpected error
+	if ( errno != 0 )
+	{
+		value = defaultVal;
+		return LEX_RESULT_UNEXPECTED_TOKEN;
+	}
+
 	return LEX_RESULT_OK;
 }
 
@@ -438,7 +629,39 @@ ovrLexer::ovrResult ovrLexer::ParseDouble( double & value, double const defaultV
 		value = defaultVal;
 		return r;
 	}
-	value = static_cast<float>( strtod( token, nullptr ) );
+
+	errno = 0;
+	char * endptr = nullptr;
+	value = strtod( token, &endptr );
+
+	// Did we overflow?
+	if ( errno == ERANGE )
+	{
+		value = defaultVal;
+		return LEX_RESULT_VALUE_OUT_OF_RANGE;
+	}
+
+	// Did we fail to parse any characters at all?
+	if ( endptr == token )
+	{
+		value = defaultVal;
+		return LEX_RESULT_EOF;
+	}
+
+	// Did we hit a non-digit character before the end of the string?
+	if ( *endptr != '\0' )
+	{
+		value = defaultVal;
+		return LEX_RESULT_UNEXPECTED_TOKEN;
+	}
+
+	// any other unexpected error
+	if ( errno != 0 )
+	{
+		value = defaultVal;
+		return LEX_RESULT_UNEXPECTED_TOKEN;
+	}
+
 	return LEX_RESULT_OK;
 }
 
@@ -453,7 +676,13 @@ ovrLexer::ovrResult ovrLexer::ParsePointer( unsigned char * & ptr, unsigned char
 		ptr = defaultVal;
 		return r;
 	}
-	sscanf( token, "%p", &ptr );
+	const int result = sscanf( token, "%p", &ptr );
+	if ( result != 1 )
+	{
+		ptr = defaultVal;
+		return LEX_RESULT_UNEXPECTED_TOKEN;
+	}
+
 	return LEX_RESULT_OK;
 }
 

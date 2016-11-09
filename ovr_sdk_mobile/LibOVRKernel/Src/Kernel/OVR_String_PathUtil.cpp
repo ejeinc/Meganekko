@@ -5,7 +5,22 @@ Content     :   String filename/url helper function
 Created     :   September 19, 2012
 Notes       : 
 
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
+Copyright   :   Copyright 2014-2016 Oculus VR, LLC All Rights reserved.
+
+Licensed under the Oculus VR Rift SDK License Version 3.3 (the "License"); 
+you may not use the Oculus VR Rift SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
+otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-3.3 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ************************************************************************************/
 
@@ -43,11 +58,10 @@ void ScanFilePath(const char* url, const char** pfilename, const char** pext)
 
     if (pfilename)
     {
-        // It was a naked filename
-        if (urlStart && (*urlStart != '.') && *urlStart)
-            *pfilename = urlStart;
-        else
+        if (filename)
             *pfilename = filename;
+        else
+            *pfilename = urlStart;
     }
 
     if (pext)
@@ -56,6 +70,7 @@ void ScanFilePath(const char* url, const char** pfilename, const char** pext)
     }
 }
 
+// MERGE_MOBILE_SDK
 // Scans file path finding filename start and extension start, fills in their address.
 void ScanFilePath2(const char* url, const char** pfilename, const char** pext)
 {
@@ -89,6 +104,7 @@ void ScanFilePath2(const char* url, const char** pfilename, const char** pext)
         *pext = lastDot;
     }
 }
+// MERGE_MOBILE_SDK
 
 // Scans till the end of protocol. Returns first character past protocol,
 // 0 if not found.

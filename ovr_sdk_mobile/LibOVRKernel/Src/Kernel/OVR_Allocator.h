@@ -1,12 +1,26 @@
 /************************************************************************************
 
-PublicHeader:   OVR_Kernel.h
 Filename    :   OVR_Allocator.h
 Content     :   Installable memory allocator
 Created     :   September 19, 2012
 Notes       : 
 
-Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
+Copyright   :   Copyright 2014-2016 Oculus VR, LLC All Rights reserved.
+
+Licensed under the Oculus VR Rift SDK License Version 3.3 (the "License"); 
+you may not use the Oculus VR Rift SDK except in compliance with the License, 
+which is provided at the time of installation or download, or which 
+otherwise accompanies this software in either electronic or hard copy form.
+
+You may obtain a copy of the License at
+
+http://www.oculusvr.com/licenses/LICENSE-3.3 
+
+Unless required by applicable law or agreed to in writing, the Oculus VR SDK 
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ************************************************************************************/
 
@@ -14,8 +28,6 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #define OVR_Allocator_h
 
 #include "OVR_Types.h"
-
-//-----------------------------------------------------------------------------------
 
 // ***** Disable template-unfriendly MS VC++ warnings
 #if defined(OVR_CC_MSVC)
@@ -51,7 +63,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 //------------------------------------------------------------------------
 // ***** Macros to redefine class new/delete operators
-
+//
 // Types specifically declared to allow disambiguation of address in
 // class member operator new.
 
@@ -70,9 +82,10 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
     void    operator delete     (void* ptr, void* ptr2) { OVR_UNUSED2(ptr, ptr2); }
 
 
+// Used by OVR_MEMORY_REDEFINE_NEW
 #define OVR_MEMORY_CHECK_DELETE_NONE(class_name, p)
 
-// Redefined all delete/new operators in a class without custom memory initialization
+// Redefine all delete/new operators in a class without custom memory initialization.
 #define OVR_MEMORY_REDEFINE_NEW(class_name) \
     OVR_MEMORY_REDEFINE_NEW_IMPL(class_name, OVR_MEMORY_CHECK_DELETE_NONE)
 
@@ -149,6 +162,8 @@ OVR_FORCE_INLINE void DestructArray(T *pobj, size_t count)
 }
 
 
+
+
 //-----------------------------------------------------------------------------------
 // ***** Allocator
 
@@ -162,6 +177,9 @@ OVR_FORCE_INLINE void DestructArray(T *pobj, size_t count)
 // Although arbitrary alignment requests are possible, requested alignment will
 // typically be small, such as 16 bytes or less.
 
+//-----------------------------------------------------------------------------------
+// ***** Allocator
+//
 class Allocator
 {
     friend class System;
@@ -224,6 +242,9 @@ private:
 };
 
 
+
+
+
 //------------------------------------------------------------------------
 // ***** DefaultAllocator
 
@@ -243,9 +264,10 @@ public:
 };
 
 
+
 //------------------------------------------------------------------------
 // ***** Memory Allocation Macros
-
+//
 // These macros should be used for global allocation. In the future, these
 // macros will allows allocation to be extended with debug file/line information
 // if necessary.
@@ -264,14 +286,17 @@ public:
 #endif
 
 
-//------------------------------------------------------------------------
 
+
+
+//------------------------------------------------------------------------
+// ***** NewOverrideBase
+//
 // Base class that overrides the new and delete operators.
 // Deriving from this class, even as a multiple base, incurs no space overhead.
 class NewOverrideBase
 {
 public:
-
     // Redefine all new & delete operators.
     OVR_MEMORY_REDEFINE_NEW(NewOverrideBase)
 };
@@ -280,9 +305,14 @@ public:
 } // OVR
 
 
+//------------------------------------------------------------------------
+// ***** OVR_DEFINE_NEW
+//
 // Redefine operator 'new' if necessary.
+// This allows us to remap all usage of new to something different.
+//
 #if defined(OVR_DEFINE_NEW)
-#define new OVR_DEFINE_NEW
+    #define new OVR_DEFINE_NEW
 #endif
 
 

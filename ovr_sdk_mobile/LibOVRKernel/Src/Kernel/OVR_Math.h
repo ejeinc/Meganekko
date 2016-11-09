@@ -768,15 +768,6 @@ public:
 
     // Projects this vector onto a plane defined by a normal vector
     Vector3 ProjectToPlane(const Vector3& normal) const { return *this - this->ProjectTo(normal); }
-
-    // MERGE_MOBILE_SDK
-    void Set( const float x, const float y, const float z )
-    {
-        this->x = x;
-        this->y = y;
-        this->z = z;
-    }
-    // MERGE_MOBILE_SDK
 };
 
 // MERGE_MOBILE_SDK
@@ -1096,9 +1087,9 @@ public:
         const Vector3<T> extents = inBounds.b[1] - center;
         const Vector3<T> newCenter = pose.Translation + rotation * center;
         const Vector3<T> newExtents(
-			fabs( extents[0] * rotation.M[0][0] ) + fabs( extents[1] * rotation.M[0][1] ) + fabs( extents[2] * rotation.M[0][2] ),
-			fabs( extents[0] * rotation.M[1][0] ) + fabs( extents[1] * rotation.M[1][1] ) + fabs( extents[2] * rotation.M[1][2] ),
-			fabs( extents[0] * rotation.M[2][0] ) + fabs( extents[1] * rotation.M[2][1] ) + fabs( extents[2] * rotation.M[2][2] ) );
+			static_cast<T>( fabs( extents[0] * rotation.M[0][0] ) + fabs( extents[1] * rotation.M[0][1] ) + fabs( extents[2] * rotation.M[0][2] ) ),
+			static_cast<T>( fabs( extents[0] * rotation.M[1][0] ) + fabs( extents[1] * rotation.M[1][1] ) + fabs( extents[2] * rotation.M[1][2] ) ),
+			static_cast<T>( fabs( extents[0] * rotation.M[2][0] ) + fabs( extents[1] * rotation.M[2][1] ) + fabs( extents[2] * rotation.M[2][2] ) ) );
         return Bounds3<T>( newCenter - newExtents, newCenter + newExtents );
     }
 
@@ -1108,9 +1099,9 @@ public:
         const Vector3<T> extents = inBounds.b[1] - center;
         const Vector3<T> newCenter = matrix.Transform( center );
         const Vector3<T> newExtents(
-			fabs( extents[0] * matrix.M[0][0] ) + fabs( extents[1] * matrix.M[0][1] ) + fabs( extents[2] * matrix.M[0][2] ),
-			fabs( extents[0] * matrix.M[1][0] ) + fabs( extents[1] * matrix.M[1][1] ) + fabs( extents[2] * matrix.M[1][2] ),
-			fabs( extents[0] * matrix.M[2][0] ) + fabs( extents[1] * matrix.M[2][1] ) + fabs( extents[2] * matrix.M[2][2] ) );
+			static_cast<T>( fabs( extents[0] * matrix.M[0][0] ) + fabs( extents[1] * matrix.M[0][1] ) + fabs( extents[2] * matrix.M[0][2] ) ),
+			static_cast<T>( fabs( extents[0] * matrix.M[1][0] ) + fabs( extents[1] * matrix.M[1][1] ) + fabs( extents[2] * matrix.M[1][2] ) ),
+			static_cast<T>( fabs( extents[0] * matrix.M[2][0] ) + fabs( extents[1] * matrix.M[2][1] ) + fabs( extents[2] * matrix.M[2][2] ) ) );
         return Bounds3<T>( newCenter - newExtents, newCenter + newExtents );
     }
 
@@ -1439,7 +1430,7 @@ public:
         // cases arise.
         if (trace > T(0)) 
         {
-            T s = sqrt(trace + T(1)) * T(2); // s=4*qw
+            T s = (T)sqrt(trace + T(1)) * T(2); // s=4*qw
             w = T(0.25) * s;
             x = (m.M[2][1] - m.M[1][2]) / s;
             y = (m.M[0][2] - m.M[2][0]) / s;
@@ -1447,7 +1438,7 @@ public:
         } 
         else if ((m.M[0][0] > m.M[1][1])&&(m.M[0][0] > m.M[2][2])) 
         {
-            T s = sqrt(T(1) + m.M[0][0] - m.M[1][1] - m.M[2][2]) * T(2);
+            T s = (T)sqrt(T(1) + m.M[0][0] - m.M[1][1] - m.M[2][2]) * T(2);
             w = (m.M[2][1] - m.M[1][2]) / s;
             x = T(0.25) * s;
             y = (m.M[0][1] + m.M[1][0]) / s;
@@ -1455,7 +1446,7 @@ public:
         } 
         else if (m.M[1][1] > m.M[2][2]) 
         {
-            T s = sqrt(T(1) + m.M[1][1] - m.M[0][0] - m.M[2][2]) * T(2); // S=4*qy
+            T s = (T)sqrt(T(1) + m.M[1][1] - m.M[0][0] - m.M[2][2]) * T(2); // S=4*qy
             w = (m.M[0][2] - m.M[2][0]) / s;
             x = (m.M[0][1] + m.M[1][0]) / s;
             y = T(0.25) * s;
@@ -1463,7 +1454,7 @@ public:
         } 
         else 
         {
-            T s = sqrt(T(1) + m.M[2][2] - m.M[0][0] - m.M[1][1]) * T(2); // S=4*qz
+            T s = (T)sqrt(T(1) + m.M[2][2] - m.M[0][0] - m.M[1][1]) * T(2); // S=4*qz
             w = (m.M[1][0] - m.M[0][1]) / s;
             x = (m.M[0][2] + m.M[2][0]) / s;
             y = (m.M[1][2] + m.M[2][1]) / s;
@@ -2703,8 +2694,8 @@ public:
     //       negative axis direction.
     static Matrix4 RotationX(T angle)
     {
-        T sina = sin(angle);
-        T cosa = cos(angle);
+        T sina = (T)sin(angle);
+        T cosa = (T)cos(angle);
         return Matrix4(1,  0,     0, 
                        0,  cosa,  -sina,
                        0,  sina,  cosa);
@@ -2735,8 +2726,8 @@ public:
     //       negative axis direction.
     static Matrix4 RotationZ(T angle)
     {
-        T sina = sin(angle);
-        T cosa = cos(angle);
+        T sina = (T)sin(angle);
+        T cosa = (T)cos(angle);
         return Matrix4(cosa,  -sina,  0, 
                        sina,  cosa,   0,
                        0,     0,      1);
@@ -3625,7 +3616,7 @@ public:
 
     static inline int Index(unsigned int i, unsigned int j)
     {
-        return (i <= j) ? (3*i - i*(i+1)/2 + j) : (3*j - j*(j+1)/2 + i);
+        return static_cast<int>( (i <= j) ? (3*i - i*(i+1)/2 + j) : (3*j - j*(j+1)/2 + i) );
     }
 
     inline T operator()(int i, int j) const { return v[Index(i,j)]; }
