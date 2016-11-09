@@ -43,12 +43,6 @@ public class OVRApp {
 
     private static native void setMinimumVsyncs(long appPtr, int mininumVsyncs);
 
-    private static native void setShowFPS(long appPtr, boolean show);
-
-    private static native boolean getShowFPS(long appPtr);
-
-    private static native void showInfoText(long appPtr, float duration, String text);
-
     public void recenterYaw(boolean showBlack) {
         recenterYaw(appPtr, showBlack);
     }
@@ -79,17 +73,5 @@ public class OVRApp {
 
     public void setMinimumVsyncs(int mininumVsyncs) {
         setMinimumVsyncs(appPtr, mininumVsyncs);
-    }
-
-    public boolean getShowFPS() {
-        return getShowFPS(appPtr);
-    }
-
-    public void setShowFPS(boolean show) {
-        setShowFPS(appPtr, show);
-    }
-
-    public void showInfoText(float duration, String text) {
-        showInfoText(appPtr, duration, text);
     }
 }
