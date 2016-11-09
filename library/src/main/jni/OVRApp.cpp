@@ -31,13 +31,16 @@ void Java_org_meganekkovr_ovrjni_OVRApp_recenterYaw(JNIEnv *jni, jclass clazz,
   app->RecenterYaw(showBlack);
 }
 
-void Java_org_meganekkovr_ovrjni_OVRApp_startSystemActivity(JNIEnv *jni,
-                                                            jclass clazz,
-                                                            jlong appPtr,
-                                                            jstring command) {
-  // App *app = reinterpret_cast<App *>(appPtr);
-  // JavaUTFChars str(jni, command);
-  // app->StartSystemActivity(str.ToStr());
+// Display a specific System UI.
+void Java_org_meganekkovr_ovrjni_OVRApp_showSystemUI(JNIEnv *jni, jclass clazz,
+                                                     jlong appPtr, jint type) {
+
+  // Java to native
+  App *app = reinterpret_cast<App *>(appPtr);
+  ovrSystemUIType nativeType = (ovrSystemUIType)type;
+
+  const ovrJava *java = app->GetJava();
+  vrapi_ShowSystemUI(java, nativeType);
 }
 
 jint Java_org_meganekkovr_ovrjni_OVRApp_getCpuLevel(JNIEnv *jni, jclass clazz,
