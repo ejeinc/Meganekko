@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.oculus.vrappframework.VrActivity;
 
-import org.joml.Quaternionf;
 import org.meganekkovr.ovrjni.OVRApp;
 import org.meganekkovr.util.ObjectFactory;
 
@@ -15,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 
 public class GearVRActivity extends VrActivity implements MeganekkoContext {
 
-    private static final float[] tmpValues = new float[4];
     private static final String TAG = "GearVRActivity";
 
     /** Load jni .so on initialization */
@@ -24,7 +22,6 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
         System.loadLibrary("meganekko");
     }
 
-    private final Quaternionf centerViewRotation = new Quaternionf();
     private MeganekkoApp app;
     private FrameInput frame;
 
