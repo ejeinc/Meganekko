@@ -317,6 +317,16 @@ public class Entity {
     }
 
     /**
+     * Remove this from scene graph.
+     *
+     * @return {@code true} if Successfully removed. Otherwise {@code false}.
+     * @since 3.0.17
+     */
+    public boolean remove() {
+        return parent != null && parent.remove(this);
+    }
+
+    /**
      * Get children of Entity. Returned {@link List} can not be modified.
      *
      * @return Children of Entity.

@@ -55,4 +55,14 @@ public abstract class Component {
     public boolean isAttached() {
         return entity != null;
     }
+
+    /**
+     * Remove this from {@link Entity}.
+     *
+     * @return {@code true} if Successfully removed. Otherwise {@code false}.
+     * @since 3.0.17
+     */
+    public boolean remove() {
+        return entity != null && entity.remove(this);
+    }
 }
