@@ -163,6 +163,16 @@ public class Entity {
      */
     public void update(FrameInput frame) {
 
+        // Notify to components
+        for (Component component : components.values()) {
+            component.update(frame);
+        }
+
+        // Notify to children
+        for (Entity child : children) {
+            child.update(frame);
+        }
+
         // Update local model matrix if necessary.
         if (localMatrixUpdateRequired) {
             updateLocalMatrix();
@@ -184,16 +194,6 @@ public class Entity {
         if (updateOpacityRequired) {
             updateOpacity();
             updateOpacityRequired = false;
-        }
-
-        // Notify to components
-        for (Component component : components.values()) {
-            component.update(frame);
-        }
-
-        // Notify to children
-        for (Entity child : children) {
-            child.update(frame);
         }
     }
 
