@@ -136,13 +136,4 @@ That's all! Build, Connect Galaxy device to PC, install APK, and launch app. You
 
 ## Build from source
 
-### Build native library
-
-    cd library
-    ndk-build NDK_PROJECT_PATH=WORKSPACE/library/src/main
-
-Replace `WORKSPACE` with actual project root path.
-
-### Launch sample project
-
 Open Android Studio with this repository. Select samplev3 from module list and click Run button.
