@@ -40,7 +40,7 @@ class GeometryHandler implements XmlAttributeParser.XmlAttributeHandler {
                 break;
                 case "dome": {
                     float lat = map.containsKey("lat") ? Float.parseFloat(map.get("lat")) : 0;
-                    geometryComponent.buildDome(lat);
+                    geometryComponent.buildDome((float) Math.toRadians(lat));
                 }
                 break;
                 case "spherePatch": {
