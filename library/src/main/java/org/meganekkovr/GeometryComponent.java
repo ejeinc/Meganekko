@@ -21,6 +21,10 @@ public class GeometryComponent extends Component {
 
     private static native void buildGlobe(long nativePtr);
 
+    private static native void buildDome(long nativePtr, float latRads);
+
+    private static native void buildSpherePatch(long nativePtr, float fov);
+
     /**
      * Build plane geometry from {@link View}.
      *
@@ -82,6 +86,27 @@ public class GeometryComponent extends Component {
      */
     public void buildGlobe() {
         buildGlobe(nativePointer.get());
+
+        if (isAttached()) {
+            setEntityGeometry(getEntity().getNativePointer(), nativePointer.get());
+        }
+    }
+
+    public void buildDome(float latRads) {
+        buildDome(nativePointer.get(), latRads);
+
+        if (isAttached()) {
+            setEntityGeometry(getEntity().getNativePointer(), nativePointer.get());
+        }
+    }
+
+    /**
+     * Make a square patch on a sphere that can rotate with the viewer so it always covers the screen.
+     *
+     * @param fov
+     */
+    public void buildSpherePatch(float fov) {
+        buildSpherePatch(nativePointer.get(), fov);
 
         if (isAttached()) {
             setEntityGeometry(getEntity().getNativePointer(), nativePointer.get());

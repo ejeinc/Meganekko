@@ -38,6 +38,16 @@ class GeometryHandler implements XmlAttributeParser.XmlAttributeHandler {
                     geometryComponent.buildGlobe();
                 }
                 break;
+                case "dome": {
+                    float lat = map.containsKey("lat") ? Float.parseFloat(map.get("lat")) : 0;
+                    geometryComponent.buildDome(lat);
+                }
+                break;
+                case "spherePatch": {
+                    float fov = map.containsKey("fov") ? Float.parseFloat(map.get("fov")) : 0;
+                    geometryComponent.buildSpherePatch(fov);
+                }
+                break;
             }
         }
 

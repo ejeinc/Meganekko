@@ -48,6 +48,24 @@ void Java_org_meganekkovr_GeometryComponent_buildGlobe(JNIEnv *jni,
   geo->SetGeometry(BuildGlobe());
 }
 
+void Java_org_meganekkovr_GeometryComponent_buildDome(JNIEnv *jni,
+                                                      jclass clazz,
+                                                      jlong nativePtr,
+                                                      jfloat latRads) {
+  mgn::GeometryComponent *geo =
+      reinterpret_cast<mgn::GeometryComponent *>(nativePtr);
+  geo->SetGeometry(BuildDome(latRads));
+}
+
+void Java_org_meganekkovr_GeometryComponent_buildSpherePatch(JNIEnv *jni,
+                                                             jclass clazz,
+                                                             jlong nativePtr,
+                                                             jfloat fov) {
+  mgn::GeometryComponent *geo =
+      reinterpret_cast<mgn::GeometryComponent *>(nativePtr);
+  geo->SetGeometry(BuildSpherePatch(fov));
+}
+
 void Java_org_meganekkovr_GeometryComponent_build(
     JNIEnv *env, jclass clazz, jlong nativePtr, jfloatArray jPositions,
     jfloatArray jColors, jfloatArray jUVs, jintArray jTriangles) {
