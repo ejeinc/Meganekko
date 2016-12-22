@@ -9,13 +9,13 @@ dependencies {
     /*
      * Dependencies
      */
-    compile 'com.android.support:support-v4:25.0.0'
+    compile 'com.android.support:support-v4:25.1.0'
     compile 'org.joml:joml:1.8.2'
 }
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '25.0.2'
 
     buildTypes {
         debug {
