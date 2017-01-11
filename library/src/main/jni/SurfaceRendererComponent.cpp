@@ -20,12 +20,24 @@
 namespace mgn {
 
 SurfaceRendererComponent::SurfaceRendererComponent(JNIEnv *jni)
-    : surfaceTexture(jni), surface(jni, surfaceTexture.GetJavaObject()),
-      opacity(1.0f), useChromaKey(false), chromaKeyThreshold(0.1f),
-      chromaKeyColor(0.0f) {
+    : surfaceTexture(nullptr), surface(nullptr), opacity(1.0f),
+      useChromaKey(false), chromaKeyThreshold(0.1f), chromaKeyColor(0.0f) {
 
-  texture =
-      GlTexture(surfaceTexture.GetTextureId(), GL_TEXTURE_EXTERNAL_OES, 0, 0);
+  // Create texture
+  GLuint texId;
+  glGenTextures(1, &texId);
+  glBindTexture(GL_TEXTURE_EXTERNAL_OES, texId);
+  glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glBindTexture(GL_TEXTURE_EXTERNAL_OES, 0);
+
+  // Create Java objects
+  surfaceTexture = new JavaSurfaceTexture(jni, texId);
+  surface = new JavaSurface(jni, surfaceTexture->GetJavaObject());
+
+  texture = GlTexture(texId, GL_TEXTURE_EXTERNAL_OES, 0, 0);
 
   programMatrices[0] = Matrix4f::Identity();
   programMatrices[1] = Matrix4f::Identity();
@@ -33,14 +45,17 @@ SurfaceRendererComponent::SurfaceRendererComponent(JNIEnv *jni)
 
 SurfaceRendererComponent::~SurfaceRendererComponent() {
   LOG("Delete SurfaceRendererComponent");
+
+  delete surfaceTexture;
+  delete surface;
 }
 
 jobject SurfaceRendererComponent::GetSurfaceTexture() {
-  return surfaceTexture.GetJavaObject();
+  return surfaceTexture->GetJavaObject();
 }
 
 jobject SurfaceRendererComponent::GetSurface() {
-  return surface.GetJavaObject();
+  return surface->GetJavaObject();
 }
 
 GlTexture &SurfaceRendererComponent::GetTexture() { return texture; }

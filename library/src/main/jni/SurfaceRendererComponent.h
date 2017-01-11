@@ -18,7 +18,7 @@
 
 #include "Entity.h"
 #include "HybridObject.h"
-#include "SurfaceTexture.h"
+#include "JavaSurfaceTexture.h"
 #include "JavaSurface.h"
 
 using namespace OVR;
@@ -50,10 +50,10 @@ public:
 
   void SetUseChromaKey(bool useChromaKey);
   bool &GetUseChromaKey();
-  
+
   void SetChromaKeyThreshold(float chromaKeyThreshold);
   float &GetChromaKeyThreshold();
-  
+
   void SetChromaKeyBlend(float chromaKeyBlend);
   float &GetChromaKeyBlend();
 
@@ -64,8 +64,8 @@ public:
   StereoMode GetStereoMode();
   Matrix4f programMatrices[2]; // 0: For left eye, 1: For right eye
 private:
-  SurfaceTexture surfaceTexture;
-  JavaSurface surface;
+  JavaSurfaceTexture *surfaceTexture;
+  JavaSurface *surface;
   GlTexture texture;
   float opacity;
   StereoMode stereoMode;
