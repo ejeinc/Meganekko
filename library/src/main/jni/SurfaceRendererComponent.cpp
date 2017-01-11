@@ -20,39 +20,9 @@
 namespace mgn {
 
 SurfaceRendererComponent::SurfaceRendererComponent(JNIEnv *jni)
-    : jni(jni), surfaceTexture(jni), opacity(1.0f),
-     useChromaKey(false), chromaKeyThreshold(0.1f), chromaKeyColor(0.0f) {
-
-  // Reference: SurfaceTexture.h
-  // Get Surface class
-  static const char *className = "android/view/Surface";
-  const jclass surfaceClass = jni->FindClass(className);
-  if (surfaceClass == nullptr) {
-    FAIL("FindClass( %s ) failed", className);
-  }
-
-  // Get constructor
-  const jmethodID constructor = jni->GetMethodID(
-      surfaceClass, "<init>", "(Landroid/graphics/SurfaceTexture;)V");
-  if (constructor == nullptr) {
-    FAIL("GetMethodID( <init> ) failed");
-  }
-
-  // Create instance
-  jobject obj =
-      jni->NewObject(surfaceClass, constructor, surfaceTexture.GetJavaObject());
-  if (obj == nullptr) {
-    FAIL("NewObject() failed");
-  }
-
-  // Store to field
-  surface = jni->NewGlobalRef(obj);
-  if (surface == nullptr) {
-    FAIL("NewGlobalRef() failed");
-  }
-
-  // Now that we have a globalRef, we can free the localRef
-  jni->DeleteLocalRef(obj);
+    : surfaceTexture(jni), surface(jni, surfaceTexture.GetJavaObject()),
+      opacity(1.0f), useChromaKey(false), chromaKeyThreshold(0.1f),
+      chromaKeyColor(0.0f) {
 
   texture =
       GlTexture(surfaceTexture.GetTextureId(), GL_TEXTURE_EXTERNAL_OES, 0, 0);
@@ -63,35 +33,15 @@ SurfaceRendererComponent::SurfaceRendererComponent(JNIEnv *jni)
 
 SurfaceRendererComponent::~SurfaceRendererComponent() {
   LOG("Delete SurfaceRendererComponent");
-
-  if (surface) {
-
-    // Call Surface.release()
-    static const char *className = "android/view/Surface";
-    const jclass surfaceClass = jni->FindClass(className);
-    if (surfaceClass == nullptr) {
-      FAIL("FindClass( %s ) failed", className);
-    }
-
-    const jmethodID releaseMethodID =
-        jni->GetMethodID(surfaceClass, "release", "()V");
-    if (releaseMethodID == nullptr) {
-      FAIL("GetMethodID( release ) failed");
-    }
-
-    jni->CallVoidMethod(surface, releaseMethodID);
-
-    // Delete reference for garbage collection
-    jni->DeleteGlobalRef(surface);
-    surface = nullptr;
-  }
 }
 
 jobject SurfaceRendererComponent::GetSurfaceTexture() {
   return surfaceTexture.GetJavaObject();
 }
 
-jobject SurfaceRendererComponent::GetSurface() { return surface; }
+jobject SurfaceRendererComponent::GetSurface() {
+  return surface.GetJavaObject();
+}
 
 GlTexture &SurfaceRendererComponent::GetTexture() { return texture; }
 void SurfaceRendererComponent::SetOpacity(float opacity) {

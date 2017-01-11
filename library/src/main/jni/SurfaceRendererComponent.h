@@ -19,6 +19,7 @@
 #include "Entity.h"
 #include "HybridObject.h"
 #include "SurfaceTexture.h"
+#include "JavaSurface.h"
 
 using namespace OVR;
 
@@ -63,9 +64,8 @@ public:
   StereoMode GetStereoMode();
   Matrix4f programMatrices[2]; // 0: For left eye, 1: For right eye
 private:
-  JNIEnv *jni;
   SurfaceTexture surfaceTexture;
-  jobject surface;
+  JavaSurface surface;
   GlTexture texture;
   float opacity;
   StereoMode stereoMode;
