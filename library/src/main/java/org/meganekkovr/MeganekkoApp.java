@@ -51,17 +51,6 @@ public class MeganekkoApp {
         }
     }
 
-    /**
-     * Called from {@link GearVRActivity}.
-     *
-     * @param surfacesPointer &res.Surfaces
-     */
-    void collectSurfaceDefs(long surfacesPointer) {
-        if (scene != null) {
-            scene.collectSurfaceDefs(surfacesPointer);
-        }
-    }
-
     public Scene getScene() {
         return scene;
     }

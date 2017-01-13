@@ -45,8 +45,6 @@ public class Entity {
         nativePointer = NativePointer.getInstance(newInstance());
     }
 
-    private static native void addSurfaceDef(long nativePtr, long surfacesPointer);
-
     private static native void setWorldModelMatrix(long nativePtr, float[] matrix);
 
     /**
@@ -351,23 +349,6 @@ public class Entity {
      */
     public long getNativePointer() {
         return nativePointer.get();
-    }
-
-    /**
-     * For internal use only.
-     *
-     * @param surfacesPointer {@code &res.Surfaces}
-     */
-    void collectSurfaceDefs(long surfacesPointer) {
-
-        // Not visible
-        if (!visible) return;
-
-        addSurfaceDef(nativePointer.get(), surfacesPointer);
-
-        for (Entity child : children) {
-            child.collectSurfaceDefs(surfacesPointer);
-        }
     }
 
     private void invalidateWorldModelMatrix() {
