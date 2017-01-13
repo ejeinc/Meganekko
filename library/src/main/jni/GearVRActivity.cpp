@@ -228,4 +228,24 @@ void Java_org_meganekkovr_GearVRActivity_getClearColor(JNIEnv *jni,
   Vector4f color = activity->GetClearColor();
   mgn::FillElementsUnSafe(jni, clearColor, color);
 }
+
+void Java_org_meganekkovr_GearVRActivity_addSurfaceDef(JNIEnv *jni,
+                                                       jclass clazz,
+                                                       jlong entityPtr,
+                                                       jlong surfacesPtr) {
+
+  mgn::Entity *entity = reinterpret_cast<mgn::Entity *>(entityPtr);
+  Array<ovrDrawSurface> *surfaces =
+      reinterpret_cast<Array<ovrDrawSurface> *>(surfacesPtr);
+  ovrSurfaceDef *surfaceDef = entity->GetSurfaceDef();
+
+  // Only draw if surfaceDef is valid
+  if (surfaceDef && surfaceDef->graphicsCommand.UniformData[0].Data &&
+      surfaceDef->graphicsCommand.UniformData[1].Data &&
+      surfaceDef->graphicsCommand.UniformData[2].Data) {
+    surfaces->PushBack(
+        ovrDrawSurface(entity->GetWorldModelMatrix(), surfaceDef));
+  }
+}
+
 } // extern "C"

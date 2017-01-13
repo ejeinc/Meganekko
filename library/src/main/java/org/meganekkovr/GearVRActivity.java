@@ -136,8 +136,28 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
      * @param surfacesPointer {@code &ovrFrameResult.Surfaces} value.
      */
     protected void collectSurfaceDefs(long surfacesPointer) {
-        app.collectSurfaceDefs(surfacesPointer);
+        Scene scene = app.getScene();
+        collectSurfaceDefs(scene, surfacesPointer);
     }
+
+    /**
+     * Prepare for rendering.
+     *
+     * @param surfacesPointer {@code &res.Surfaces}
+     */
+    private static void collectSurfaceDefs(Entity entity, long surfacesPointer) {
+
+        // Not visible
+        if (!entity.isVisible()) return;
+
+        addSurfaceDef(entity.getNativePointer(), surfacesPointer);
+
+        for (Entity child : entity.getChildren()) {
+            collectSurfaceDefs(child, surfacesPointer);
+        }
+    }
+
+    private static native void addSurfaceDef(long entityNativePtr, long surfacesPointer);
 
     /**
      * Called from native thread. Override this method to respond to key events.

@@ -54,24 +54,6 @@ jlong Java_org_meganekkovr_Entity_newInstance(JNIEnv *jni, jobject thiz) {
   return reinterpret_cast<jlong>(new mgn::Entity());
 }
 
-void Java_org_meganekkovr_Entity_addSurfaceDef(JNIEnv *jni, jclass clazz,
-                                               jlong entityPtr,
-                                               jlong surfacesPtr) {
-
-  mgn::Entity *entity = reinterpret_cast<mgn::Entity *>(entityPtr);
-  Array<ovrDrawSurface> *surfaces =
-      reinterpret_cast<Array<ovrDrawSurface> *>(surfacesPtr);
-  ovrSurfaceDef *surfaceDef = entity->GetSurfaceDef();
-
-  // Only draw if surfaceDef is valid
-  if (surfaceDef && surfaceDef->graphicsCommand.UniformData[0].Data &&
-      surfaceDef->graphicsCommand.UniformData[1].Data &&
-      surfaceDef->graphicsCommand.UniformData[2].Data) {
-    surfaces->PushBack(
-        ovrDrawSurface(entity->GetWorldModelMatrix(), surfaceDef));
-  }
-}
-
 void Java_org_meganekkovr_Entity_setWorldModelMatrix(JNIEnv *jni, jclass clazz,
                                                      jlong entityPtr,
                                                      jfloatArray matrix) {
