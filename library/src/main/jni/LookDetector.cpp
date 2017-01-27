@@ -62,11 +62,9 @@ IntersectRayBoundsResult IntersectRayBounds(const Matrix4f &centerViewMatrix,
 
 extern "C" {
 
-jboolean Java_org_meganekkovr_LookDetector_isLookingAt(JNIEnv *jni,
-                                                       jclass clazz,
-                                                       jlong appPtr,
-                                                       jlong entityPtr,
-                                                       jlong geoCompPtr) {
+jboolean Java_org_meganekkovr_LookDetector_isLookingAt(
+    JNIEnv *jni, jclass clazz, jlong appPtr, jlong entityPtr, jlong geoCompPtr,
+    jfloatArray firstPoint, jfloatArray secondPoint, jboolean axisInWorld) {
   App *app = reinterpret_cast<App *>(appPtr);
   Matrix4f viewM = app->GetLastViewMatrix();
 
@@ -78,7 +76,24 @@ jboolean Java_org_meganekkovr_LookDetector_isLookingAt(JNIEnv *jni,
   GlGeometry geo = geoComp->GetGeometry();
 
   mgn::IntersectRayBoundsResult result =
-      mgn::IntersectRayBounds(viewM, modelM, geo, false);
+      mgn::IntersectRayBounds(viewM, modelM, geo, axisInWorld);
+
+  if (firstPoint != nullptr) {
+    jfloat *body = jni->GetFloatArrayElements(firstPoint, 0);
+    body[0] = result.first.x;
+    body[1] = result.first.y;
+    body[2] = result.first.z;
+    jni->ReleaseFloatArrayElements(firstPoint, body, 0);
+  }
+
+  if (secondPoint != nullptr) {
+    jfloat *body = jni->GetFloatArrayElements(secondPoint, 0);
+    body[0] = result.second.x;
+    body[1] = result.second.y;
+    body[2] = result.second.z;
+    jni->ReleaseFloatArrayElements(secondPoint, body, 0);
+  }
+
   return result.intersected;
 }
 } // extern "C"
