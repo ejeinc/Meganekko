@@ -71,6 +71,8 @@ class DefautPrimitive implements XmlPrimitiveFactory.XmlPrimitiveHandler {
         if (src != null) {
 
             String srcVal = src.getNodeValue();
+
+            // src="@layout/xxx"
             Pattern pattern = Pattern.compile("@layout/(.+)");
             Matcher matcher = pattern.matcher(srcVal);
             if (matcher.find()) {
@@ -80,6 +82,17 @@ class DefautPrimitive implements XmlPrimitiveFactory.XmlPrimitiveHandler {
                     View view = LayoutInflater.from(context).inflate(id, null);
                     return Entity.from(view);
                 }
+            }
+
+            // src="com.my.ViewClassName"
+            try {
+                Class<?> clazz = Class.forName(srcVal);
+                if (View.class.isAssignableFrom(clazz)) {
+                    View view = (View) ObjectFactory.newInstance(clazz, context);
+                    return Entity.from(view);
+                }
+            } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+                e.printStackTrace();
             }
         }
 
