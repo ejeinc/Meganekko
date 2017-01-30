@@ -7,6 +7,7 @@ import com.twobigears.TBAudioEngine.TBSpatDecoder;
 
 import org.joml.Quaternionf;
 import org.meganekkovr.FrameInput;
+import org.meganekkovr.HeadTransform;
 import org.meganekkovr.MeganekkoApp;
 
 public class App extends MeganekkoApp {
@@ -43,7 +44,7 @@ public class App extends MeganekkoApp {
     public void update(FrameInput frame) {
 
         // Update the listener orientation
-        Quaternionf q = getCenterViewRotation().invert();
+        Quaternionf q = HeadTransform.getInstance().getQuaternion().invert();
         TBAudioEngine.setListenerOrientation(new TBQuat(q.x, q.y, q.z, q.w));
 
         super.update(frame);
