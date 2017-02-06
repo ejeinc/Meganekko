@@ -549,8 +549,7 @@ public class Entity {
     }
 
     private float parentOpacity() {
-        Entity parent = getParent();
-        return parent != null ? parent.getOpacity() : 1.0f;
+        return parent != null ? parent.getOpacity() * parent.parentOpacity() : 1.0f;
     }
 
     /**
