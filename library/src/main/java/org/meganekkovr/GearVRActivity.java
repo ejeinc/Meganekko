@@ -40,11 +40,10 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
         super.onCreate(savedInstanceState);
 
         // Create app
-        String appClassName = getApplicationInfo().metaData.getString("org.meganekkovr.App", "org.meganekkovr.MeganekkoApp");
-        try {
-            app = (MeganekkoApp) ObjectFactory.newInstance(appClassName, this);
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
+        app = createApp();
+
+        if (app == null) {
+            Log.e(TAG, "You have to declare <meta-data name=\"org.meganekkovr.App\" value\"YOUR_APP_CLASS_NAME\"/> or implement custom createApp() method.");
             finish();
             return;
         }
@@ -61,6 +60,25 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
         OVRApp.init(appPtr);
         LookDetector.init(appPtr);
         HeadTransform.init(appPtr);
+    }
+
+    /**
+     * Create your {@link MeganekkoApp}'s instance.
+     * App class can be specified with {@code <meta-data>} in AndroidManifest.xml. This is preferred way.
+     * Or you can override this method to instantiate your app manually.
+     *
+     * @return
+     */
+    protected MeganekkoApp createApp() {
+
+        String appClassName = getApplicationInfo().metaData.getString("org.meganekkovr.App", "org.meganekkovr.MeganekkoApp");
+
+        try {
+            return (MeganekkoApp) ObjectFactory.newInstance(appClassName, this);
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
