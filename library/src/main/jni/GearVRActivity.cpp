@@ -240,12 +240,7 @@ void Java_org_meganekkovr_GearVRActivity_addSurfaceDef(JNIEnv *jni,
   ovrSurfaceDef *surfaceDef = entity->GetSurfaceDef();
 
   // Only draw if surfaceDef is valid
-  if (surfaceDef && surfaceDef->graphicsCommand.UniformData[0].Data &&
-      surfaceDef->graphicsCommand.UniformData[1].Data &&
-      surfaceDef->graphicsCommand.UniformData[2].Data) {
-    surfaces->PushBack(
-        ovrDrawSurface(entity->GetWorldModelMatrix(), surfaceDef));
-  }
+  surfaces->PushBack(ovrDrawSurface(entity->GetWorldModelMatrix(), surfaceDef));
 }
 
 } // extern "C"

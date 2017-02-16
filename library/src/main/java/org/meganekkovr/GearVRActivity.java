@@ -168,8 +168,12 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
         // Not visible
         if (!entity.isVisible()) return;
 
-        addSurfaceDef(entity.getNativePointer(), surfacesPointer);
+        // Check Entity has geometry and surface
+        if (entity.isRenderable()) {
+            addSurfaceDef(entity.getNativePointer(), surfacesPointer);
+        }
 
+        // Recursive for all children
         for (Entity child : entity.getChildren()) {
             collectSurfaceDefs(child, surfacesPointer);
         }

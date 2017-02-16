@@ -40,6 +40,7 @@ public class Entity {
     private float opacity = 1.0f;
     private boolean updateOpacityRequired;
     private boolean visible = true;
+    private boolean renderable; // true if this has Geometry and Surface.
 
     public Entity() {
         nativePointer = NativePointer.getInstance(newInstance());
@@ -243,6 +244,11 @@ public class Entity {
             component.setEntity(this);
             component.onAttach(this);
             components.put(componentClass, component);
+
+            if (component.getClass().equals(GeometryComponent.class) || component.getClass().equals(SurfaceRendererComponent.class)) {
+                this.renderable = hasComponent(GeometryComponent.class) && hasComponent(SurfaceRendererComponent.class);
+            }
+
             return true;
         }
         return false;
@@ -271,6 +277,11 @@ public class Entity {
             component.onDetach(this);
             component.setEntity(null);
             components.remove(clazz);
+
+            if (clazz.equals(SurfaceRendererComponent.class) || clazz.equals(GeometryComponent.class)) {
+                this.renderable = hasComponent(GeometryComponent.class) && hasComponent(SurfaceRendererComponent.class);
+            }
+
             return true;
         }
         return false;
@@ -624,5 +635,9 @@ public class Entity {
         if (parent == null) return true;
 
         return parent.isShown();
+    }
+
+    public boolean isRenderable() {
+        return renderable;
     }
 }
