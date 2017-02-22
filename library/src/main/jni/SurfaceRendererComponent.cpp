@@ -65,10 +65,10 @@ void SurfaceRendererComponent::SetOpacity(float opacity) {
 float &SurfaceRendererComponent::GetOpacity() { return opacity; }
 
 void SurfaceRendererComponent::SetUseChromaKey(bool useChromaKey) {
-  this->useChromaKey = useChromaKey;
+  this->useChromaKey = useChromaKey ? 1 : 0;
 }
 
-bool &SurfaceRendererComponent::GetUseChromaKey() {
+int &SurfaceRendererComponent::GetUseChromaKey() {
    return useChromaKey;
 }
 
@@ -252,7 +252,7 @@ jboolean Java_org_meganekkovr_SurfaceRendererComponent_getUseChromaKey(
 
   mgn::SurfaceRendererComponent *sur =
       reinterpret_cast<mgn::SurfaceRendererComponent *>(nativePtr);
-  return sur->GetUseChromaKey();
+  return sur->GetUseChromaKey() == 1;
 }
 
 void Java_org_meganekkovr_SurfaceRendererComponent_setChromaKeyThreshold(

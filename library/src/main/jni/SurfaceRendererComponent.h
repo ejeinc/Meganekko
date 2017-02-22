@@ -49,7 +49,7 @@ public:
   float &GetOpacity();
 
   void SetUseChromaKey(bool useChromaKey);
-  bool &GetUseChromaKey();
+  int &GetUseChromaKey();
 
   void SetChromaKeyThreshold(float chromaKeyThreshold);
   float &GetChromaKeyThreshold();
@@ -69,7 +69,7 @@ private:
   GlTexture texture;
   float opacity;
   StereoMode stereoMode;
-  bool useChromaKey;
+  int useChromaKey;
   float chromaKeyThreshold;
   float chromaKeyBlend;
   Vector3f chromaKeyColor;
