@@ -20,6 +20,7 @@
 #include "HybridObject.h"
 #include "JavaSurfaceTexture.h"
 #include "JavaSurface.h"
+#include "Kernel/OVR_Math.h"
 
 using namespace OVR;
 

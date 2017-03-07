@@ -39,8 +39,8 @@ SurfaceRendererComponent::SurfaceRendererComponent(JNIEnv *jni)
 
   texture = GlTexture(texId, GL_TEXTURE_EXTERNAL_OES, 0, 0);
 
-  programMatrices[0] = Matrix4f::Identity();
-  programMatrices[1] = Matrix4f::Identity();
+  programMatrices[0] = Matrix4f();
+  programMatrices[1] = Matrix4f();
 }
 
 SurfaceRendererComponent::~SurfaceRendererComponent() {
@@ -101,8 +101,8 @@ void SurfaceRendererComponent::SetStereoMode(StereoMode stereoMode) {
 
   switch (stereoMode) {
   case NORMAL:
-    programMatrices[0] = Matrix4f::Identity();
-    programMatrices[1] = Matrix4f::Identity();
+    programMatrices[0] = Matrix4f();
+    programMatrices[1] = Matrix4f();
     break;
   case TOP_BOTTOM:
     programMatrices[0] = texM_topHalf;

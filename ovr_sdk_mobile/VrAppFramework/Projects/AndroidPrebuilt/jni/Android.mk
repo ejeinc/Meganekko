@@ -14,7 +14,6 @@ LOCAL_SRC_FILES := ../../../Libs/Android/$(TARGET_ARCH_ABI)/libvrappframework.a
 LOCAL_EXPORT_C_INCLUDES := \
   $(LOCAL_PATH)/../../../../LibOVRKernel/Src \
   $(LOCAL_PATH)/../../../../VrApi/Include \
-  $(LOCAL_PATH)/../../../../VrAppSupport/SystemUtils/Include \
   $(LOCAL_PATH)/../../../Include
 
 # GL platform interface
@@ -30,7 +29,7 @@ LOCAL_EXPORT_LDLIBS += -lz
 # audio
 LOCAL_EXPORT_LDLIBS += -lOpenSLES
 
-LOCAL_STATIC_LIBRARIES += systemutils libovrkernel minizip stb openglloader
+LOCAL_STATIC_LIBRARIES += libovrkernel minizip stb openglloader
 
 ifneq (,$(wildcard $(LOCAL_PATH)/$(LOCAL_SRC_FILES)))
 include $(PREBUILT_STATIC_LIBRARY)
