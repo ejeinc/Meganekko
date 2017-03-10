@@ -155,6 +155,8 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
      */
     protected void collectSurfaceDefs(long surfacesPointer) {
         Scene scene = app.getScene();
+        if (scene == null) return;
+
         collectSurfaceDefs(scene, surfacesPointer);
     }
 
