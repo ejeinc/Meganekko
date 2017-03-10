@@ -29,7 +29,7 @@ public class XmlParser {
     private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
     private final Context context;
 
-    public XmlParser(Context context) {
+    public XmlParser(@NonNull Context context) {
         this.context = context;
     }
 
@@ -84,7 +84,8 @@ public class XmlParser {
         return document;
     }
 
-    public Entity parseAsset(String assetName) throws XmlParserException {
+    @Nullable
+    public Entity parseAsset(@NonNull String assetName) throws XmlParserException {
         try (InputStream stream = context.getAssets().open(assetName)) {
             return parse(stream);
         } catch (IOException e) {
@@ -92,7 +93,8 @@ public class XmlParser {
         }
     }
 
-    public Entity parseFile(File file) throws XmlParserException {
+    @Nullable
+    public Entity parseFile(@NonNull File file) throws XmlParserException {
         try {
             Document document = documentBuilderFactory.newDocumentBuilder().parse(file);
             return parse(document.getDocumentElement());
@@ -101,7 +103,8 @@ public class XmlParser {
         }
     }
 
-    public Entity parseUri(String uri) throws XmlParserException {
+    @Nullable
+    public Entity parseUri(@NonNull String uri) throws XmlParserException {
         try {
             Document document = documentBuilderFactory.newDocumentBuilder().parse(uri);
             return parse(document.getDocumentElement());
@@ -110,7 +113,8 @@ public class XmlParser {
         }
     }
 
-    public Entity parse(InputStream is) throws XmlParserException {
+    @Nullable
+    public Entity parse(@NonNull InputStream is) throws XmlParserException {
         try {
             Document document = documentBuilderFactory.newDocumentBuilder().parse(is);
             return parse(document.getDocumentElement());
@@ -119,6 +123,7 @@ public class XmlParser {
         }
     }
 
+    @Nullable
     public Entity parseXmlResource(@XmlRes int xmlRes) throws XmlParserException {
         try {
             Document document = createDocumentFrom(context.getResources().getXml(xmlRes));

@@ -1,6 +1,7 @@
 package org.meganekkovr;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 /**
  * Abstraction interface for Activity.
@@ -12,6 +13,7 @@ interface MeganekkoContext {
      *
      * @return Context
      */
+    @NonNull
     Context getContext();
 
     /**
@@ -19,5 +21,5 @@ interface MeganekkoContext {
      *
      * @param command Some code to be run in UI thread.
      */
-    void runOnUiThread(Runnable command);
+    void runOnUiThread(@NonNull Runnable command);
 }

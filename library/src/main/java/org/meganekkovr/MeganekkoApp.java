@@ -39,7 +39,7 @@ public class MeganekkoApp {
      *
      * @param frame Frame information
      */
-    public void update(FrameInput frame) {
+    public void update(@NonNull FrameInput frame) {
 
         // runOnGlThread handling
         while (!commands.isEmpty()) {
@@ -51,11 +51,12 @@ public class MeganekkoApp {
         }
     }
 
+    @Nullable
     public Scene getScene() {
         return scene;
     }
 
-    public void setScene(Scene scene) {
+    public void setScene(@Nullable Scene scene) {
         assertGlThread();
 
         Scene currentScene = this.scene;
@@ -76,7 +77,7 @@ public class MeganekkoApp {
      *
      * @param context
      */
-    void setMeganekkoContext(MeganekkoContext context) {
+    void setMeganekkoContext(@NonNull MeganekkoContext context) {
         this.context = context;
     }
 
@@ -94,11 +95,11 @@ public class MeganekkoApp {
      *
      * @param command Command
      */
-    public void runOnGlThread(Runnable command) {
+    public void runOnGlThread(@NonNull Runnable command) {
         commands.add(command);
     }
 
-    public void runOnUiThread(Runnable command) {
+    public void runOnUiThread(@NonNull Runnable command) {
         context.runOnUiThread(command);
     }
 
@@ -139,7 +140,7 @@ public class MeganekkoApp {
      * @return {@code true} if user is looking at. Otherwise {@code false}.
      * @deprecated Use {@link LookDetector#isLookingAt(Entity)}.
      */
-    public boolean isLookingAt(Entity entity) {
+    public boolean isLookingAt(@NonNull Entity entity) {
         return LookDetector.getInstance().isLookingAt(entity);
     }
 
@@ -151,6 +152,7 @@ public class MeganekkoApp {
      * @return center view rotation
      * @deprecated Use {@link HeadTransform#getQuaternion()}.
      */
+    @NonNull
     public Quaternionf getCenterViewRotation() {
         return HeadTransform.getInstance().getQuaternion();
     }
@@ -160,6 +162,7 @@ public class MeganekkoApp {
      *
      * @return XmlParser
      */
+    @NonNull
     public synchronized XmlParser getXmlParser() {
         if (xmlParser == null) {
             xmlParser = createXmlParser(getContext());
@@ -173,11 +176,13 @@ public class MeganekkoApp {
      * @param context context
      * @return new instance of XmlParser.
      */
-    protected XmlParser createXmlParser(Context context) {
+    @NonNull
+    protected XmlParser createXmlParser(@NonNull Context context) {
         return new XmlParser(context);
     }
 
-    public Scene setSceneFromXmlAsset(String assetName) {
+    @NonNull
+    public Scene setSceneFromXmlAsset(@NonNull String assetName) {
         try {
             Entity entity = getXmlParser().parseAsset(assetName);
             if (entity instanceof Scene) {
@@ -192,7 +197,8 @@ public class MeganekkoApp {
         }
     }
 
-    public Scene setSceneFromXml(String uri) {
+    @NonNull
+    public Scene setSceneFromXml(@NonNull String uri) {
         try {
             Entity entity = getXmlParser().parseUri(uri);
             if (entity instanceof Scene) {
@@ -207,6 +213,7 @@ public class MeganekkoApp {
         }
     }
 
+    @NonNull
     public Scene setSceneFromXml(int xmlRes) {
         try {
             Entity entity = getXmlParser().parseXmlResource(xmlRes);
@@ -222,7 +229,8 @@ public class MeganekkoApp {
         }
     }
 
-    public Scene setSceneFromXml(File file) {
+    @NonNull
+    public Scene setSceneFromXml(@NonNull File file) {
         try {
             Entity entity = getXmlParser().parseFile(file);
             if (entity instanceof Scene) {

@@ -5,6 +5,8 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -29,12 +31,13 @@ public class EntityAnimator {
     private Quaternionf lastRotation;
     private float lastOpacity;
 
-    public EntityAnimator(Entity target) {
+    public EntityAnimator(@NonNull Entity target) {
         this.target = target;
         this.lastOpacity = target.getOpacity();
     }
 
-    public EntityAnimator moveTo(Vector3f position) {
+    @NonNull
+    public EntityAnimator moveTo(@NonNull Vector3f position) {
         Vector3f fromPos = lastPos != null ? lastPos : target.getPosition();
         ValueAnimator animator = ValueAnimator.ofObject(new VectorEvaluator(), new Vector3f(fromPos), new Vector3f(position));
         animator.addUpdateListener(new PositionUpdateListener(target));
@@ -43,14 +46,16 @@ public class EntityAnimator {
         return this;
     }
 
-    public EntityAnimator moveBy(Vector3f translation) {
+    @NonNull
+    public EntityAnimator moveBy(@NonNull Vector3f translation) {
         Vector3f fromPos = lastPos != null ? lastPos : target.getPosition();
         Vector3f toPosition = new Vector3f();
         fromPos.add(translation, toPosition);
         return moveTo(toPosition);
     }
 
-    public EntityAnimator scaleTo(Vector3f scale) {
+    @NonNull
+    public EntityAnimator scaleTo(@NonNull Vector3f scale) {
         Vector3f fromScale = lastScale != null ? lastScale : target.getScale();
         ValueAnimator animator = ValueAnimator.ofObject(new VectorEvaluator(), new Vector3f(fromScale), new Vector3f(scale));
         animator.addUpdateListener(new ScaleUpdateListener(target));
@@ -59,14 +64,16 @@ public class EntityAnimator {
         return this;
     }
 
-    public EntityAnimator scaleBy(Vector3f scale) {
+    @NonNull
+    public EntityAnimator scaleBy(@NonNull Vector3f scale) {
         Vector3f fromScale = lastScale != null ? lastScale : target.getScale();
         Vector3f toScale = new Vector3f();
         fromScale.mul(scale, toScale);
         return scaleTo(toScale);
     }
 
-    public EntityAnimator rotateTo(Quaternionf rotation) {
+    @NonNull
+    public EntityAnimator rotateTo(@NonNull Quaternionf rotation) {
         Quaternionf fromRotation = lastRotation != null ? lastRotation : target.getRotation();
         ValueAnimator animator = ValueAnimator.ofObject(new QuaternionEvaluator(), new Quaternionf(fromRotation), new Quaternionf(rotation));
         animator.addUpdateListener(new RotationUpdateListener(target));
@@ -75,19 +82,22 @@ public class EntityAnimator {
         return this;
     }
 
+    @NonNull
     public EntityAnimator rotateTo(float x, float y, float z) {
         Quaternionf q = new Quaternionf();
         q.rotate(x, y, z);
         return rotateTo(q);
     }
 
-    public EntityAnimator rotateBy(Quaternionf rotate) {
+    @NonNull
+    public EntityAnimator rotateBy(@NonNull Quaternionf rotate) {
         Quaternionf fromRotation = lastRotation != null ? lastRotation : target.getRotation();
         Quaternionf toRotation = new Quaternionf();
         fromRotation.mul(rotate, toRotation);
         return rotateTo(toRotation);
     }
 
+    @NonNull
     public EntityAnimator rotateBy(float x, float y, float z) {
         Quaternionf q = new Quaternionf();
         q.rotate(x, y, z);
@@ -100,6 +110,7 @@ public class EntityAnimator {
      * @param opacity The value to be animated to.
      * @return This object, allowing calls to methods in this class to be chained.
      */
+    @NonNull
     public EntityAnimator opacity(float opacity) {
         ObjectAnimator animator = ObjectAnimator.ofFloat(target, "opacity", lastOpacity, opacity);
         animators.add(animator);
@@ -113,7 +124,8 @@ public class EntityAnimator {
      * @param callback Action which will be called after animation.
      * @return This object, allowing calls to methods in this class to be chained.
      */
-    public EntityAnimator onEnd(Runnable callback) {
+    @NonNull
+    public EntityAnimator onEnd(@Nullable Runnable callback) {
         this.callback = callback;
         return this;
     }
@@ -126,7 +138,8 @@ public class EntityAnimator {
      * @param interpolator The TimeInterpolator to be used for ensuing property animations. A value of null will result in linear interpolation.
      * @return This object, allowing calls to methods in this class to be chained.
      */
-    public EntityAnimator interpolator(TimeInterpolator interpolator) {
+    @NonNull
+    public EntityAnimator interpolator(@Nullable TimeInterpolator interpolator) {
         this.interpolator = interpolator;
         return this;
     }
@@ -139,6 +152,7 @@ public class EntityAnimator {
      * @param duration The length of ensuing property animations, in milliseconds. The value cannot be negative.
      * @return This object, allowing calls to methods in this class to be chained.
      */
+    @NonNull
     public EntityAnimator duration(long duration) {
         this.duration = duration;
         return this;
@@ -148,6 +162,7 @@ public class EntityAnimator {
      * @param sequential true to sequential animation.
      * @return This object, allowing calls to methods in this class to be chained.
      */
+    @NonNull
     public EntityAnimator sequential(boolean sequential) {
         this.sequential = sequential;
         return this;
@@ -159,6 +174,7 @@ public class EntityAnimator {
      * @param delay The delay of ensuing property animations, in milliseconds. The value cannot be negative.
      * @return This object, allowing calls to methods in this class to be chained.
      */
+    @NonNull
     public EntityAnimator delay(long delay) {
         this.delay = delay;
         return this;
@@ -213,6 +229,7 @@ public class EntityAnimator {
      *
      * @return Animator
      */
+    @NonNull
     public Animator getAnimator() {
         if (animator == null) {
             setupAnimator();

@@ -1,6 +1,7 @@
 package org.meganekkovr.xml;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import org.meganekkovr.Entity;
 
@@ -9,13 +10,14 @@ import org.meganekkovr.Entity;
  */
 class ScaleHandler implements XmlAttributeParser.XmlAttributeHandler {
 
+    @NonNull
     @Override
     public String attributeName() {
         return "scale";
     }
 
     @Override
-    public void parse(Entity entity, String rawValue, Context context) {
+    public void parse(@NonNull Entity entity, @NonNull String rawValue, @NonNull Context context) {
 
         String[] strs = rawValue.split("\\s+", 3);
         if (strs.length == 1) {

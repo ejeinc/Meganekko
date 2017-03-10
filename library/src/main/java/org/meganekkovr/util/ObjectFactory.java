@@ -1,6 +1,7 @@
 package org.meganekkovr.util;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -8,11 +9,11 @@ import java.lang.reflect.Method;
 
 public class ObjectFactory {
 
-    public static Object newInstance(String className, Context context) throws IllegalAccessException, InstantiationException, InvocationTargetException, ClassNotFoundException {
+    public static Object newInstance(@NonNull String className, @NonNull Context context) throws IllegalAccessException, InstantiationException, InvocationTargetException, ClassNotFoundException {
         return newInstance(Class.forName(className), context);
     }
 
-    public static Object newInstance(Class<?> clazz, Context context) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+    public static Object newInstance(@NonNull Class<?> clazz, @NonNull Context context) throws IllegalAccessException, InstantiationException, InvocationTargetException {
 
         for (Method method : clazz.getDeclaredMethods()) {
 

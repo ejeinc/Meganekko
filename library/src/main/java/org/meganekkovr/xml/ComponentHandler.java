@@ -1,6 +1,7 @@
 package org.meganekkovr.xml;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.meganekkovr.Component;
@@ -15,13 +16,14 @@ import java.lang.reflect.InvocationTargetException;
 class ComponentHandler implements XmlAttributeParser.XmlAttributeHandler {
     private static final String TAG = "ComponentHandler";
 
+    @NonNull
     @Override
     public String attributeName() {
         return "component";
     }
 
     @Override
-    public void parse(Entity entity, String rawValue, Context context) {
+    public void parse(@NonNull Entity entity, @NonNull String rawValue, @NonNull Context context) {
 
         String[] classNames = rawValue.split("\\s+");
 

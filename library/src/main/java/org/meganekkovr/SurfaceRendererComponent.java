@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.PorterDuff;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,7 @@ public class SurfaceRendererComponent extends Component {
     private boolean continuousUpdate;
     private float opacity = 1.0f;
     private StereoMode stereoMode = StereoMode.NORMAL;
+
     public SurfaceRendererComponent() {
         nativePointer = NativePointer.getInstance(newInstance());
     }
@@ -52,7 +55,8 @@ public class SurfaceRendererComponent extends Component {
 
     private static native void setChromaKeyColor(long nativePtr, float r, float g, float b);
 
-    public static SurfaceRendererComponent from(View view) {
+    @NonNull
+    public static SurfaceRendererComponent from(@NonNull View view) {
 
         view.measure(0, 0);
         final int width = view.getMeasuredWidth();
@@ -65,7 +69,8 @@ public class SurfaceRendererComponent extends Component {
         return component;
     }
 
-    public static SurfaceRendererComponent from(Drawable drawable) {
+    @NonNull
+    public static SurfaceRendererComponent from(@NonNull Drawable drawable) {
 
         drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
 
@@ -78,19 +83,19 @@ public class SurfaceRendererComponent extends Component {
     protected native long newInstance();
 
     @Override
-    public void onAttach(Entity entity) {
+    public void onAttach(@NonNull Entity entity) {
         super.onAttach(entity);
         setEntityTexture(entity.getNativePointer(), nativePointer.get());
     }
 
     @Override
-    public void onDetach(Entity entity) {
+    public void onDetach(@NonNull Entity entity) {
         super.onDetach(entity);
         removeEntityTexture(entity.getNativePointer(), nativePointer.get());
     }
 
     @Override
-    public void update(FrameInput frame) {
+    public void update(@NonNull FrameInput frame) {
 
         if (canvasRenderer != null) {
             if (canvasRenderer.isDirty()) {
@@ -117,19 +122,22 @@ public class SurfaceRendererComponent extends Component {
         super.update(frame);
     }
 
+    @NonNull
     public SurfaceTexture getSurfaceTexture() {
         return getSurfaceTexture(nativePointer.get());
     }
 
+    @NonNull
     public Surface getSurface() {
         return getSurface(nativePointer.get());
     }
 
+    @Nullable
     public CanvasRenderer getCanvasRenderer() {
         return canvasRenderer;
     }
 
-    public void setCanvasRenderer(CanvasRenderer canvasRenderer) {
+    public void setCanvasRenderer(@Nullable CanvasRenderer canvasRenderer) {
         this.canvasRenderer = canvasRenderer;
 
         if (canvasRenderer != null) {
@@ -236,7 +244,7 @@ public class SurfaceRendererComponent extends Component {
          * @return {@code true} to end drawing. No more called in next update. If redrawing is required, call {@link #invalidate()}.
          * {@code false} to continues draw. This behavior can be modified overriding {@link #isDirty()}.
          */
-        protected abstract boolean render(Canvas canvas);
+        protected abstract boolean render(@NonNull Canvas canvas);
 
         public void invalidate() {
             dirty = true;
@@ -246,13 +254,13 @@ public class SurfaceRendererComponent extends Component {
     public static class DrawableRenderer extends CanvasRenderer {
         private final Drawable drawable;
 
-        public DrawableRenderer(Drawable drawable) {
+        public DrawableRenderer(@NonNull Drawable drawable) {
             super(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
             this.drawable = drawable;
         }
 
         @Override
-        protected boolean render(Canvas canvas) {
+        protected boolean render(@NonNull Canvas canvas) {
             drawable.draw(canvas);
             return true;
         }
@@ -261,12 +269,13 @@ public class SurfaceRendererComponent extends Component {
     public static class ViewRenderer extends CanvasRenderer {
         private final View view;
 
-        protected ViewRenderer(View view, int width, int height) {
+        protected ViewRenderer(@NonNull View view, int width, int height) {
             super(width, height);
             this.view = view;
         }
 
-        public static ViewRenderer from(View view) {
+        @NonNull
+        public static ViewRenderer from(@NonNull View view) {
             view.measure(0, 0);
             final int width = view.getMeasuredWidth();
             final int height = view.getMeasuredHeight();
@@ -280,7 +289,7 @@ public class SurfaceRendererComponent extends Component {
          * @param view Checked View.
          * @return Returns true if at least one View is dirty in hierarchy.
          */
-        private static boolean isDirty(View view) {
+        private static boolean isDirty(@NonNull View view) {
 
             if (view.isDirty()) return true;
 
@@ -302,12 +311,13 @@ public class SurfaceRendererComponent extends Component {
         }
 
         @Override
-        protected boolean render(Canvas canvas) {
+        protected boolean render(@NonNull Canvas canvas) {
             canvas.drawColor(0, PorterDuff.Mode.CLEAR);
             view.draw(canvas);
             return true;
         }
 
+        @NonNull
         public View getView() {
             return view;
         }

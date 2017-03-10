@@ -1,5 +1,7 @@
 package org.meganekkovr;
 
+import android.support.annotation.NonNull;
+
 /**
  * This notifies whether user is looking at {@link Entity} or not.
  */
@@ -8,12 +10,13 @@ public class LookDetectorComponent extends Component {
     private final LookDetector lookDetector = LookDetector.getInstance();
     private final LookListener lookListener;
     private boolean looking;
+
     public LookDetectorComponent(LookListener lookListener) {
         this.lookListener = lookListener;
     }
 
     @Override
-    public void update(FrameInput frame) {
+    public void update(@NonNull FrameInput frame) {
 
         Entity entity = getEntity();
         boolean isLookingNow = lookDetector.isLookingAt(entity);
@@ -47,7 +50,7 @@ public class LookDetectorComponent extends Component {
          * @param entity Entity
          * @param frame  Frame information
          */
-        void onLookStart(Entity entity, FrameInput frame);
+        void onLookStart(@NonNull Entity entity, @NonNull FrameInput frame);
 
         /**
          * Called when user stops looking at target {@link Entity}.
@@ -55,7 +58,7 @@ public class LookDetectorComponent extends Component {
          * @param entity Entity
          * @param frame  Frame information
          */
-        void onLookEnd(Entity entity, FrameInput frame);
+        void onLookEnd(@NonNull Entity entity, @NonNull FrameInput frame);
 
         /**
          * Called when user is looking at target {@link Entity} in every frame update.
@@ -63,6 +66,6 @@ public class LookDetectorComponent extends Component {
          * @param entity Entity
          * @param frame  Frame information
          */
-        void onLooking(Entity entity, FrameInput frame);
+        void onLooking(@NonNull Entity entity, @NonNull FrameInput frame);
     }
 }

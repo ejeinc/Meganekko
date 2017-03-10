@@ -1,5 +1,7 @@
 package org.meganekkovr;
 
+import android.support.annotation.NonNull;
+
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,6 +24,7 @@ public class NativePointer {
         sInstances.add(new NativeReference(this));
     }
 
+    @NonNull
     public static NativePointer getInstance(long ptr) {
 
         // Find existing instance for ptr

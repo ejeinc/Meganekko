@@ -2,6 +2,7 @@ package org.meganekkovr;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.view.View;
 
 /**
@@ -31,7 +32,8 @@ public class GeometryComponent extends Component {
      * @param view View
      * @return new instance
      */
-    public static GeometryComponent from(View view) {
+    @NonNull
+    public static GeometryComponent from(@NonNull View view) {
 
         view.measure(0, 0);
         final int width = view.getMeasuredWidth();
@@ -50,7 +52,8 @@ public class GeometryComponent extends Component {
      * @param drawable Drawable
      * @return new instance
      */
-    public static GeometryComponent from(Drawable drawable) {
+    @NonNull
+    public static GeometryComponent from(@NonNull Drawable drawable) {
 
         GeometryComponent geometryComponent = new GeometryComponent();
         geometryComponent.buildQuad(drawable.getIntrinsicWidth() * 0.01f, drawable.getIntrinsicHeight() * 0.01f);
@@ -64,7 +67,8 @@ public class GeometryComponent extends Component {
      * @param bitmap Bitmap
      * @return new instance
      */
-    public static GeometryComponent from(Bitmap bitmap) {
+    @NonNull
+    public static GeometryComponent from(@NonNull Bitmap bitmap) {
 
         GeometryComponent geometryComponent = new GeometryComponent();
         geometryComponent.buildQuad(bitmap.getWidth() * 0.01f, bitmap.getHeight() * 0.01f);
@@ -75,7 +79,7 @@ public class GeometryComponent extends Component {
     protected native long newInstance();
 
     @Override
-    public void onAttach(Entity entity) {
+    public void onAttach(@NonNull Entity entity) {
         super.onAttach(entity);
         setEntityGeometry(entity.getNativePointer(), nativePointer.get());
     }
@@ -113,7 +117,7 @@ public class GeometryComponent extends Component {
         }
     }
 
-    public void build(float[] positions, float[] colors, float[] uvs, int[] triangles) {
+    public void build(@NonNull float[] positions, @NonNull float[] colors, @NonNull float[] uvs, @NonNull int[] triangles) {
 
         if (positions.length % 3 != 0) {
             throw new IllegalArgumentException("positions element count must be multiple of 3.");

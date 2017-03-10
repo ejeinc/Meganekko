@@ -1,5 +1,7 @@
 package org.meganekkovr;
 
+import android.support.annotation.NonNull;
+
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -70,6 +72,7 @@ public class HeadTransform {
      *
      * @return The quaternion representing the head rotation.
      */
+    @NonNull
     public Quaternionf getQuaternion() {
 
         // Update at first time
@@ -102,6 +105,7 @@ public class HeadTransform {
      *
      * @return The forward vector.
      */
+    @NonNull
     public Vector3f getForwardVector() {
 
         // Update at first time
@@ -133,6 +137,7 @@ public class HeadTransform {
      *
      * @return The upwards direction of the head.
      */
+    @NonNull
     public Vector3f getUpVector() {
 
         // Update at first time
@@ -164,6 +169,7 @@ public class HeadTransform {
      *
      * @return The rightwards direction of the head.
      */
+    @NonNull
     public Vector3f getRightVector() {
 
         // Update at first time

@@ -39,6 +39,7 @@ public class XmlAttributeParser {
     private XmlAttributeParser() {
     }
 
+    @NonNull
     public static synchronized XmlAttributeParser getInstance() {
         if (instance == null) {
             instance = new XmlAttributeParser();
@@ -93,7 +94,7 @@ public class XmlAttributeParser {
      * @param str string
      * @return {@code true} if str represents raw resource.
      */
-    public static boolean isRawResource(String str) {
+    public static boolean isRawResource(@NonNull String str) {
         return str.startsWith("@raw/");
     }
 
@@ -101,7 +102,7 @@ public class XmlAttributeParser {
      * @param str string
      * @return {@code true} if str represents layout resource.
      */
-    public static boolean isLayoutResource(String str) {
+    public static boolean isLayoutResource(@NonNull String str) {
         return str.startsWith("@layout/");
     }
 
@@ -109,7 +110,7 @@ public class XmlAttributeParser {
      * @param str string
      * @return {@code true} if str represents drawable resource.
      */
-    public static boolean isDrawableResource(String str) {
+    public static boolean isDrawableResource(@NonNull String str) {
         return str.startsWith("@drawable/") || str.startsWith("@color/") || str.startsWith("@mipmap/");
     }
 
@@ -117,7 +118,7 @@ public class XmlAttributeParser {
      * @param str string
      * @return {@code true} if str represents id resource.
      */
-    public static boolean isIdResource(String str) {
+    public static boolean isIdResource(@NonNull String str) {
         return str.matches("^@\\+?id/.+$");
     }
 
@@ -126,7 +127,7 @@ public class XmlAttributeParser {
      * @param context Android context
      * @return Resurce ID or {@code 0} if str don't represent resource.
      */
-    public static int toResourceId(String str, Context context) {
+    public static int toResourceId(@NonNull String str, @NonNull Context context) {
 
         Pattern pattern = Pattern.compile("@\\+?(.+)/(.+)");
         Matcher matcher = pattern.matcher(str);
@@ -140,7 +141,7 @@ public class XmlAttributeParser {
         return 0;
     }
 
-    void parse(Entity entity, Node node, Context context) {
+    void parse(@NonNull Entity entity, @NonNull Node node, @NonNull Context context) {
 
         NamedNodeMap attrs = node.getAttributes();
         for (int i = 0, len = attrs.getLength(); i < len; ++i) {
@@ -172,6 +173,7 @@ public class XmlAttributeParser {
         /**
          * @return Attribute name.
          */
+        @NonNull
         String attributeName();
 
         /**
@@ -181,6 +183,6 @@ public class XmlAttributeParser {
          * @param rawValue Attribute value
          * @param context  Context
          */
-        void parse(Entity entity, String rawValue, Context context);
+        void parse(@NonNull Entity entity, @NonNull String rawValue, @NonNull Context context);
     }
 }

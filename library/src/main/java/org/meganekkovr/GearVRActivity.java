@@ -3,6 +3,7 @@ package org.meganekkovr;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.oculus.vrappframework.VrActivity;
@@ -165,7 +166,7 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
      *
      * @param surfacesPointer {@code &res.Surfaces}
      */
-    private static void collectSurfaceDefs(Entity entity, long surfacesPointer) {
+    private static void collectSurfaceDefs(@NonNull Entity entity, long surfacesPointer) {
 
         // Not visible
         if (!entity.isVisible()) return;

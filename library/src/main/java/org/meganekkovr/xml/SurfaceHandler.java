@@ -1,6 +1,7 @@
 package org.meganekkovr.xml;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 
@@ -16,13 +17,14 @@ import java.util.Map;
  */
 class SurfaceHandler implements XmlAttributeParser.XmlAttributeHandler {
 
+    @NonNull
     @Override
     public String attributeName() {
         return "surface";
     }
 
     @Override
-    public void parse(Entity entity, String rawValue, Context context) {
+    public void parse(@NonNull Entity entity, @NonNull String rawValue, @NonNull Context context) {
 
         SurfaceRendererComponent surfaceRendererComponent = null;
 

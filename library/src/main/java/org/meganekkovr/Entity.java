@@ -1,6 +1,7 @@
 package org.meganekkovr;
 
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
 import android.view.View;
@@ -54,7 +55,8 @@ public class Entity {
      * @param view View for surface.
      * @return new Entity
      */
-    public static Entity from(View view) {
+    @NonNull
+    public static Entity from(@NonNull View view) {
 
         final Entity entity = new Entity();
         entity.add(SurfaceRendererComponent.from(view));
@@ -69,7 +71,8 @@ public class Entity {
      * @param drawable Drawable for surface.
      * @return new Entity
      */
-    public static Entity from(Drawable drawable) {
+    @NonNull
+    public static Entity from(@NonNull Drawable drawable) {
 
         final Entity entity = new Entity();
         entity.add(SurfaceRendererComponent.from(drawable));
@@ -100,7 +103,7 @@ public class Entity {
      *
      * @param app
      */
-    void setApp(MeganekkoApp app) {
+    void setApp(@NonNull MeganekkoApp app) {
         this.app = app;
 
         // Propagate to children
@@ -122,7 +125,7 @@ public class Entity {
      *
      * @param id ID
      */
-    public void setId(String id) {
+    public void setId(@NonNull String id) {
         setId(id.hashCode());
     }
 
@@ -151,7 +154,7 @@ public class Entity {
      * @param id ID
      * @return Found Entity or {@code null} if it has no matched Entity with id.
      */
-    public Entity findById(String id) {
+    public Entity findById(@NonNull String id) {
         return findById(id.hashCode());
     }
 
@@ -160,7 +163,7 @@ public class Entity {
      *
      * @param frame Frame information
      */
-    public void update(FrameInput frame) {
+    public void update(@NonNull FrameInput frame) {
 
         // Notify to components
         for (Component component : components.values()) {
@@ -228,6 +231,7 @@ public class Entity {
      *
      * @return World model matrix.
      */
+    @NonNull
     public Matrix4f getWorldModelMatrix() {
         return worldModelMatrix;
     }
@@ -238,7 +242,7 @@ public class Entity {
      * @param component Component
      * @return {@code true} if Successfully added. Otherwise {@code false}.
      */
-    public boolean add(Component component) {
+    public boolean add(@NonNull Component component) {
         final Class<? extends Component> componentClass = component.getClass();
         if (!components.containsKey(componentClass)) {
             component.setEntity(this);
@@ -260,7 +264,7 @@ public class Entity {
      * @param component Component.
      * @return {@code true} if Successfully removed. Otherwise {@code false}.
      */
-    public boolean remove(Component component) {
+    public boolean remove(@NonNull Component component) {
         return remove(component.getClass());
     }
 
@@ -271,7 +275,7 @@ public class Entity {
      * @param <T>   Type
      * @return {@code true} if Successfully removed. Otherwise {@code false}.
      */
-    public <T extends Component> boolean remove(Class<T> clazz) {
+    public <T extends Component> boolean remove(@NonNull Class<T> clazz) {
         if (components.containsKey(clazz)) {
             Component component = components.get(clazz);
             component.onDetach(this);
@@ -288,11 +292,11 @@ public class Entity {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Component> T getComponent(Class<T> clazz) {
+    public <T extends Component> T getComponent(@NonNull Class<T> clazz) {
         return (T) components.get(clazz);
     }
 
-    public boolean hasComponent(Class<? extends Component> clazz) {
+    public boolean hasComponent(@NonNull Class<? extends Component> clazz) {
         return components.containsKey(clazz);
     }
 
@@ -302,7 +306,7 @@ public class Entity {
      * @param child Child entity.
      * @return {@code true} if Successfully added. Otherwise {@code false}.
      */
-    public boolean add(Entity child) {
+    public boolean add(@NonNull Entity child) {
         final boolean added = children.add(child);
         if (added) {
             child.parent = this;
@@ -317,7 +321,7 @@ public class Entity {
      * @param child Child entity.
      * @return {@code true} if Successfully removed. Otherwise {@code false}.
      */
-    public boolean remove(Entity child) {
+    public boolean remove(@NonNull Entity child) {
         final boolean removed = children.remove(child);
         if (removed) {
             child.parent = null;
@@ -340,6 +344,7 @@ public class Entity {
      *
      * @return Children of Entity.
      */
+    @NonNull
     public List<Entity> getChildren() {
         return Collections.unmodifiableList(children);
     }
@@ -349,6 +354,7 @@ public class Entity {
      *
      * @return Parent entity.
      */
+    @Nullable
     public Entity getParent() {
         return parent;
     }
@@ -419,6 +425,7 @@ public class Entity {
      *
      * @return position
      */
+    @NonNull
     public Vector3f getPosition() {
         return position;
     }
@@ -428,7 +435,7 @@ public class Entity {
      *
      * @param position position
      */
-    public void setPosition(Vector3f position) {
+    public void setPosition(@NonNull Vector3f position) {
         this.position.set(position);
         localMatrixUpdateRequired = true;
     }
@@ -480,6 +487,7 @@ public class Entity {
      *
      * @return scale
      */
+    @NonNull
     public Vector3f getScale() {
         return scale;
     }
@@ -489,7 +497,7 @@ public class Entity {
      *
      * @param scale scale
      */
-    public void setScale(Vector3f scale) {
+    public void setScale(@NonNull Vector3f scale) {
         this.scale.set(scale);
         localMatrixUpdateRequired = true;
     }
@@ -499,6 +507,7 @@ public class Entity {
      *
      * @return rotation
      */
+    @NonNull
     public Quaternionf getRotation() {
         return rotation;
     }
@@ -508,7 +517,7 @@ public class Entity {
      *
      * @param rotation rotation
      */
-    public void setRotation(Quaternionf rotation) {
+    public void setRotation(@NonNull Quaternionf rotation) {
         this.rotation.set(rotation);
         localMatrixUpdateRequired = true;
     }
@@ -520,6 +529,7 @@ public class Entity {
      *
      * @return View
      */
+    @Nullable
     public View view() {
         SurfaceRendererComponent surfaceRendererComponent = getComponent(SurfaceRendererComponent.class);
         if (surfaceRendererComponent == null) {
@@ -543,6 +553,7 @@ public class Entity {
      *
      * @return new EntityAnimator
      */
+    @NonNull
     public EntityAnimator animate() {
         return new EntityAnimator(this);
     }

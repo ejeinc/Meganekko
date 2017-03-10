@@ -1,5 +1,8 @@
 package org.meganekkovr;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import org.joml.Vector3f;
 
 public class LookDetector {
@@ -24,11 +27,11 @@ public class LookDetector {
 
     private static native boolean isLookingAt(long appPtr, long entityPtr, long geometryComponentPtr, float[] first, float[] second, boolean axisInWorld);
 
-    public boolean isLookingAt(Entity entity) {
+    public boolean isLookingAt(@NonNull Entity entity) {
         return isLookingAt(entity, null, null, false);
     }
 
-    public boolean isLookingAt(Entity entity, float[] firstIntersect, float[] secondIntersect, boolean axisInWorld) {
+    public boolean isLookingAt(@NonNull Entity entity, @Nullable float[] firstIntersect, @Nullable float[] secondIntersect, boolean axisInWorld) {
 
         if (!entity.isShown() || !entity.hasComponent(GeometryComponent.class)) {
             return false;
@@ -38,11 +41,13 @@ public class LookDetector {
         return isLookingAt(appPtr, entity.getNativePointer(), geometry.getNativePointer(), firstIntersect, secondIntersect, axisInWorld);
     }
 
-    public Vector3f getLookingPoint(Entity entity) {
+    @Nullable
+    public Vector3f getLookingPoint(@NonNull Entity entity) {
         return getLookingPoint(entity, false);
     }
 
-    public Vector3f getLookingPoint(Entity entity, boolean axisInWorkd) {
+    @Nullable
+    public Vector3f getLookingPoint(@NonNull Entity entity, boolean axisInWorkd) {
         float[] first = new float[3];
         boolean looking = isLookingAt(entity, first, null, axisInWorkd);
         if (looking) {

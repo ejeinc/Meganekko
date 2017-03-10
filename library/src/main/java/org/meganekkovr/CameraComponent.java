@@ -1,5 +1,7 @@
 package org.meganekkovr;
 
+import android.support.annotation.NonNull;
+
 import org.joml.Quaternionf;
 
 /**
@@ -9,7 +11,7 @@ import org.joml.Quaternionf;
 public class CameraComponent extends Component {
 
     @Override
-    public void update(FrameInput frame) {
+    public void update(@NonNull FrameInput frame) {
 
         // Update entity rotation to match to head tracking.
         Entity entity = getEntity();

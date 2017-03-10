@@ -1,5 +1,8 @@
 package org.meganekkovr;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 /**
  * Component is a basic class in Meganekko. It attaches some actions or behaviors to {@link Entity}.
  */
@@ -12,7 +15,7 @@ public abstract class Component {
      *
      * @param entity Entity
      */
-    public void onAttach(Entity entity) {
+    public void onAttach(@NonNull Entity entity) {
     }
 
     /**
@@ -20,7 +23,7 @@ public abstract class Component {
      *
      * @param entity Detached Entity
      */
-    public void onDetach(Entity entity) {
+    public void onDetach(@NonNull Entity entity) {
     }
 
     /**
@@ -28,7 +31,7 @@ public abstract class Component {
      *
      * @param frame Frame information.
      */
-    public void update(FrameInput frame) {
+    public void update(@NonNull FrameInput frame) {
     }
 
     /**
@@ -45,7 +48,7 @@ public abstract class Component {
      *
      * @param entity Attached Entity
      */
-    void setEntity(Entity entity) {
+    void setEntity(@Nullable Entity entity) {
         this.entity = entity;
     }
 

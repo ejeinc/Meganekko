@@ -27,6 +27,7 @@ public class XmlPrimitiveFactory {
     private XmlPrimitiveFactory() {
     }
 
+    @NonNull
     public static synchronized XmlPrimitiveFactory getInstance() {
         if (instance == null) {
             instance = new XmlPrimitiveFactory();
@@ -34,7 +35,8 @@ public class XmlPrimitiveFactory {
         return instance;
     }
 
-    Entity parse(Node node, Context context) {
+    @Nullable
+    Entity parse(@NonNull Node node, @NonNull Context context) {
 
         for (XmlPrimitiveHandler handler : handlers) {
             Entity entity = handler.createEntity(node, context);
