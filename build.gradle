@@ -17,7 +17,6 @@ allprojects {
             // Add paths to prebuilt libs to all our subprojects.
             dir "$ovrSdkMobile/VrApi/Libs/Android"
             dir "$ovrSdkMobile/VrAppFramework/Libs/Android"
-            dir "$ovrSdkMobile/VrAppSupport/SystemUtils/Libs/Android"
         }
 
         jcenter()
