@@ -25,7 +25,7 @@ namespace mgn {
 class GearVRActivity : public VrAppInterface {
 public:
   GearVRActivity();
-  ~GearVRActivity();
+  virtual ~GearVRActivity();
 
   virtual void Configure(ovrSettings &settings);
   virtual void EnteredVrMode(const ovrIntentType intentType,
