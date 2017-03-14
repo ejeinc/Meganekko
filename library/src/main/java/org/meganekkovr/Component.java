@@ -64,8 +64,26 @@ public abstract class Component {
      *
      * @return {@code true} if Successfully removed. Otherwise {@code false}.
      * @since 3.0.17
+     * @deprecated Use {@link Entity#remove(Component)} or {@link #removeSelf()}.
      */
     public boolean remove() {
         return entity != null && entity.remove(this);
+    }
+
+    /**
+     * Remove this from {@link Entity}.
+     * Use this if you want to remove myself from {@link #update(FrameInput)}.
+     *
+     * @since 3.0.23
+     */
+    protected void removeSelf() {
+        if (entity != null) {
+            entity.getApp().runOnGlThread(new Runnable() {
+                @Override
+                public void run() {
+                    entity.remove(Component.this);
+                }
+            });
+        }
     }
 }
