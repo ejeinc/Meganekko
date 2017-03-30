@@ -188,6 +188,8 @@ public:
 
     // *** Standard Alignment Alloc/Free
 
+    virtual ~Allocator() { }
+
     // Allocate memory of specified size with default alignment.
     // Alloc of size==0 will allocate a tiny block & return a valid pointer;
     // this makes it suitable for new operator.

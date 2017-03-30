@@ -56,7 +56,7 @@ struct fontParms_t {
 	bool					Billboard;		// true to always face the camera
 	bool					TrackRoll;		// when billboarding, track with camera roll
 	float   				AlphaCenter;	// below this distance, alpha is 0, above this alpha is 1
-	float					ColorCenter;	// blow this distance, color is 0, above this color is 1
+	float					ColorCenter;	// below this distance, color is 0, above this color is 1
 };
 
 //==============================================================
@@ -90,7 +90,7 @@ public:
 	// Get the last part of the string that will fit in the provided width. Returns an offset if the entire string doesn't fit. The offset can be used to help
 	// with right justification. It is the width of the part of the last character that would have fit.
 	virtual float			GetLastFitChars( String & inOutText, const float widthMeters, const float fontScale = 1.0f ) const = 0;
-	virtual float			GetFirstFitChars( String & inOutText, const float widthMeters, const float fontScale = 1.0f ) const = 0;
+	virtual float			GetFirstFitChars( String & inOutText, const float widthMeters, const int numLines, const float fontScale = 1.0f ) const = 0;
 
 	// Returns a drawable surface with a newly allocated GlGeometry for the text,
 	// allowing it to be sorted or transformed with more control than the global

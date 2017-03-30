@@ -22,7 +22,6 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "Kernel/OVR_JSON.h"
 
 #include "VrApi.h"
-#include "SystemActivities.h"
 
 namespace OVR
 {
@@ -83,14 +82,6 @@ void AppLocal::SetActivity( JNIEnv * jni, jobject activity )
 {
 	OVR_UNUSED( jni );
 	OVR_UNUSED( activity );
-}
-
-void AppLocal::CreateWindowSurface()
-{
-}
-
-void AppLocal::DestroyWindowSurface()
-{
 }
 
 void AppLocal::HandleVrModeChanges()

@@ -25,8 +25,6 @@ limitations under the License.
 
 **************************************************************************/
 
-#define  GFILE_CXX
-
 #include "OVR_Types.h"
 #include "OVR_Log.h"
 

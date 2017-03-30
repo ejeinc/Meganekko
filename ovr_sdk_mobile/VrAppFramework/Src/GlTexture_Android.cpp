@@ -27,6 +27,20 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #define GL_COMPRESSED_RGBA_ASTC_10x10_KHR 0x93BB
 #define GL_COMPRESSED_RGBA_ASTC_12x10_KHR 0x93BC
 #define GL_COMPRESSED_RGBA_ASTC_12x12_KHR 0x93BD
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR 0x93D0
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR 0x93D1
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR 0x93D2
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR 0x93D3
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR 0x93D4
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR 0x93D5
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR 0x93D6
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR 0x93D7
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR 0x93D8
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR 0x93D9
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR 0x93DA
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR 0x93DB
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR 0x93DC
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR 0x93DD
 
 namespace OVR {
 
@@ -156,9 +170,28 @@ bool TextureFormatToGlFormat( const eTextureFormat format, const bool useSrgbFor
 		case Texture_ASTC_10x10:
 		case Texture_ASTC_12x10:
 		case Texture_ASTC_12x12:
+		case Texture_ASTC_SRGB_4x4:
+		case Texture_ASTC_SRGB_5x4:
+		case Texture_ASTC_SRGB_5x5:
+		case Texture_ASTC_SRGB_6x5:
+		case Texture_ASTC_SRGB_6x6:
+		case Texture_ASTC_SRGB_8x5:
+		case Texture_ASTC_SRGB_8x6:
+		case Texture_ASTC_SRGB_8x8:
+		case Texture_ASTC_SRGB_10x5:
+		case Texture_ASTC_SRGB_10x6:
+		case Texture_ASTC_SRGB_10x8:
+		case Texture_ASTC_SRGB_10x10:
+		case Texture_ASTC_SRGB_12x10:
+		case Texture_ASTC_SRGB_12x12:
 		{
 			glFormat = GL_RGBA;
 			glInternalFormat = GetASTCInternalFormat( format );
+			if ( useSrgbFormat && glInternalFormat >= GL_COMPRESSED_RGBA_ASTC_4x4_KHR
+				&& glInternalFormat <= GL_COMPRESSED_RGBA_ASTC_12x12_KHR )
+			{
+				glInternalFormat += (GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR - GL_COMPRESSED_RGBA_ASTC_4x4_KHR);
+			}
 			return true;
 		}
 		case Texture_ATC_RGB:
@@ -191,7 +224,7 @@ bool GlFormatToTextureFormat( eTextureFormat & format, const GLenum glFormat, co
 		format = Texture_RGB;
 		return true;
 	}
-	if ( glFormat == GL_RGBA && ( glInternalFormat == GL_RGBA || glInternalFormat == GL_SRGB8_ALPHA8 ) )
+	if ( glFormat == GL_RGBA && ( glInternalFormat == GL_RGBA || glInternalFormat == GL_RGBA8 || glInternalFormat == GL_SRGB8_ALPHA8 ) )
 	{
 		format = Texture_RGBA;
 		return true;
@@ -235,77 +268,17 @@ bool GlFormatToTextureFormat( eTextureFormat & format, const GLenum glFormat, co
 	{
 		format = Texture_ATC_RGBA;
 		return true;
-    }
+	}
 	if ( glFormat == 0 || glFormat == GL_RGBA )
 	{
-		if ( glInternalFormat == GL_COMPRESSED_RGBA_ASTC_4x4_KHR )
+		if ( glInternalFormat >= GL_COMPRESSED_RGBA_ASTC_4x4_KHR && glInternalFormat <= GL_COMPRESSED_RGBA_ASTC_12x12_KHR )
 		{
-			format = Texture_ASTC_4x4;
+			format = (eTextureFormat)( Texture_ASTC_4x4 + ( ( glInternalFormat - GL_COMPRESSED_RGBA_ASTC_4x4_KHR ) << 8 ) );
 			return true;
 		}
-		if ( glInternalFormat == GL_COMPRESSED_RGBA_ASTC_5x4_KHR )
+		if ( glInternalFormat >= GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR && glInternalFormat <= GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR )
 		{
-			format = Texture_ASTC_5x4;
-			return true;
-		}
-		if ( glInternalFormat == GL_COMPRESSED_RGBA_ASTC_5x5_KHR )
-		{
-			format = Texture_ASTC_5x5;
-			return true;
-		}
-		if ( glInternalFormat == GL_COMPRESSED_RGBA_ASTC_6x5_KHR )
-		{
-			format = Texture_ASTC_6x5;
-			return true;
-		}
-		if ( glInternalFormat == GL_COMPRESSED_RGBA_ASTC_6x6_KHR )
-		{
-			format = Texture_ASTC_6x6;
-			return true;
-		}
-		if ( glInternalFormat == GL_COMPRESSED_RGBA_ASTC_8x5_KHR )
-		{
-			format = Texture_ASTC_8x5;
-			return true;
-		}
-		if ( glInternalFormat == GL_COMPRESSED_RGBA_ASTC_8x6_KHR )
-		{
-			format = Texture_ASTC_8x6;
-			return true;
-		}
-		if ( glInternalFormat == GL_COMPRESSED_RGBA_ASTC_8x8_KHR )
-		{
-			format = Texture_ASTC_8x8;
-			return true;
-		}
-		if ( glInternalFormat == GL_COMPRESSED_RGBA_ASTC_10x5_KHR )
-		{
-			format = Texture_ASTC_10x5;
-			return true;
-		}
-		if ( glInternalFormat == GL_COMPRESSED_RGBA_ASTC_10x6_KHR )
-		{
-			format = Texture_ASTC_10x6;
-			return true;
-		}
-		if ( glInternalFormat == GL_COMPRESSED_RGBA_ASTC_10x8_KHR )
-		{
-			format = Texture_ASTC_10x8;
-			return true;
-		}
-		if ( glInternalFormat == GL_COMPRESSED_RGBA_ASTC_10x10_KHR )
-		{
-			format = Texture_ASTC_10x10;
-			return true;
-		}
-		if ( glInternalFormat == GL_COMPRESSED_RGBA_ASTC_12x10_KHR )
-		{
-			format = Texture_ASTC_12x10;
-			return true;
-		}
-		if ( glInternalFormat == GL_COMPRESSED_RGBA_ASTC_12x12_KHR)
-		{
-			format = Texture_ASTC_12x12;
+			format = (eTextureFormat)( Texture_ASTC_SRGB_4x4 + ( ( glInternalFormat - GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR ) << 8 ) );
 			return true;
 		}
 	}

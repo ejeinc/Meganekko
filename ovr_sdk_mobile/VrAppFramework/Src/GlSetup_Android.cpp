@@ -174,7 +174,7 @@ static EGLConfig ChooseColorConfig( const EGLDisplay display, const int redBits,
 			}
 			if ( configAttribs[j] == EGL_NONE )
 			{
-				LOG( "Got an ES %i renderable config: %i", esVersion, (int)configs[i] );
+				LOG( "Got an ES %i renderable config: %p", esVersion, configs[i] );
 				return configs[i];
 			}
 		}
@@ -263,8 +263,8 @@ glSetup_t GL_Setup( const EGLContext shareContext,
 			}
 			EGLConfig configCheck = EglConfigForConfigID( egl.display, configIDReadback );
 
-			LOG( "Created context with config %i, query returned ID %i = config %i",
-					(int)egl.config, configIDReadback, (int)configCheck );
+			LOG( "Created context with config %p, query returned ID %i = config %p",
+					egl.config, configIDReadback, configCheck );
 			break;
 		}
 	}

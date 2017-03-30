@@ -76,6 +76,8 @@ public:
 	virtual const ovrHeadModelParms &	GetHeadModelParms() const;
 	virtual void						SetHeadModelParms( const ovrHeadModelParms & parms );
 
+	virtual const ovrPerformanceParms & GetPerformanceParms() const;
+
 	virtual int							GetCpuLevel() const;
 	virtual void						SetCpuLevel( const int cpuLevel );
 
@@ -92,10 +94,12 @@ public:
 	virtual void						SetLastViewMatrix( Matrix4f const & m );
 	virtual void						RecenterLastViewMatrix();
 
+	// ----DEPRECATED
+	// This function will be removed in a future update.
 	virtual ovrMobile *					GetOvrMobile();
+	// ----DEPRECATED
 	virtual ovrFileSys &				GetFileSys();
 	virtual	ovrTextureManager *			GetTextureManager();
-	virtual ovrSurfaceRender &			GetSurfaceRender();
 
 	//-----------------------------------------------------------------
 	// Localization
@@ -247,8 +251,6 @@ private:
 	
 	// TalkToJavaInterface
 	virtual void		TtjCommand( JNIEnv & jni, const char * commandString );
-
-	void				LatencyTests();
 
 	void				BuildVrFrame();
 

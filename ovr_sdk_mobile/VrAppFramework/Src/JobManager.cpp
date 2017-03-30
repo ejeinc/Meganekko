@@ -128,6 +128,7 @@ public:
 		: JobManager( jobManager )
 		, MyThread( nullptr )
 		, Jni( nullptr )
+		, Attached( false )
 	{
 		OVR_strcpy( ThreadName, sizeof( ThreadName ), threadName );
 	}
@@ -147,12 +148,14 @@ public:
 	ovrJobManagerImpl *	GetJobManager() { return JobManager; }
 	JNIEnv *			GetJni() { return Jni; }
 	char const *		GetThreadName() const { return ThreadName; }
+	bool				IsAttached() const { return Attached; }
 
 private:
 	ovrJobManagerImpl *	JobManager;	// manager that owns us
 	Thread *			MyThread;	// our thread context
 	JNIEnv *			Jni;		// Java environment for this thread
 	char				ThreadName[16];
+	bool				Attached;
 
 private:
 	void	AttachToCurrentThread();
@@ -256,7 +259,7 @@ threadReturn_t ovrJobThread::Fn( Thread * thread, void * data )
 		}
 		else
 		{
-			jm->GetNewJobSignal()->Wait( INT_MAX );
+			jm->GetNewJobSignal()->Wait( -1 );
 		}
 	}
 
@@ -323,12 +326,14 @@ void ovrJobThread::Shutdown()
 void ovrJobThread::AttachToCurrentThread()
 {
 	ovr_AttachCurrentThread( JobManager->GetJvm(), &Jni, nullptr );
+	Attached = true;
 }
 
 void ovrJobThread::DetachFromCurrentThread()
 {
 	ovr_DetachCurrentThread( JobManager->GetJvm() );
 	Jni = nullptr;
+	Attached = false;
 }
 
 //==============================================================================================
@@ -392,7 +397,7 @@ void ovrJobManagerImpl::Shutdown()
 		int threadIndex = 0;
 		for ( ; ; )
 		{
-			if ( Threads[threadIndex]->GetJni() == nullptr )
+			if ( !Threads[threadIndex]->IsAttached() )
 			{
 				LOG( "Exited thread '%s'", Threads[threadIndex]->GetThreadName() );
 				ovrJobThread::Destroy( Threads[threadIndex] );

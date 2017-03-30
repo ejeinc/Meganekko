@@ -9,10 +9,13 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 *************************************************************************************/
 
+// Make sure we get PRIu64
+#define __STDC_FORMAT_MACROS 1
+
 #include "GlTexture.h"
 
 #include "Kernel/OVR_SysFile.h"
-#include "Kernel/OVR_GlUtils.h"
+#include "OVR_GlUtils.h"
 #include "Kernel/OVR_LogUtils.h"
 
 #include "VrApi.h"
@@ -39,6 +42,20 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #define GL_COMPRESSED_RGBA_ASTC_10x10_KHR 0x93BB
 #define GL_COMPRESSED_RGBA_ASTC_12x10_KHR 0x93BC
 #define GL_COMPRESSED_RGBA_ASTC_12x12_KHR 0x93BD
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR 0x93D0
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR 0x93D1
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR 0x93D2
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR 0x93D3
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR 0x93D4
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR 0x93D5
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR 0x93D6
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR 0x93D7
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR 0x93D8
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR 0x93D9
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR 0x93DA
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR 0x93DB
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR 0x93DC
+#define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR 0x93DD
 #endif
 
 namespace OVR {
@@ -85,6 +102,20 @@ static bool IsCompressedFormat( const eTextureFormat format )
 		case Texture_ASTC_10x10:
 		case Texture_ASTC_12x10:
 		case Texture_ASTC_12x12:
+		case Texture_ASTC_SRGB_4x4:
+		case Texture_ASTC_SRGB_5x4:
+		case Texture_ASTC_SRGB_5x5:
+		case Texture_ASTC_SRGB_6x5:
+		case Texture_ASTC_SRGB_6x6:
+		case Texture_ASTC_SRGB_8x5:
+		case Texture_ASTC_SRGB_8x6:
+		case Texture_ASTC_SRGB_8x8:
+		case Texture_ASTC_SRGB_10x5:
+		case Texture_ASTC_SRGB_10x6:
+		case Texture_ASTC_SRGB_10x8:
+		case Texture_ASTC_SRGB_10x10:
+		case Texture_ASTC_SRGB_12x10:
+		case Texture_ASTC_SRGB_12x12:
 			return true;
 		default:
 			OVR_ASSERT( false );
@@ -120,7 +151,21 @@ GLenum GetASTCInternalFormat( eTextureFormat const format )
 		GL_COMPRESSED_RGBA_ASTC_10x8_KHR,
 		GL_COMPRESSED_RGBA_ASTC_10x10_KHR,
 		GL_COMPRESSED_RGBA_ASTC_12x10_KHR,
-		GL_COMPRESSED_RGBA_ASTC_12x12_KHR
+		GL_COMPRESSED_RGBA_ASTC_12x12_KHR,
+		GL_COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR,
+		GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR,
+		GL_COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR,
+		GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR,
+		GL_COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR,
+		GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR,
+		GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR,
+		GL_COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR,
+		GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR,
+		GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR,
+		GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR,
+		GL_COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR,
+		GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR,
+		GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR
 	};
 	return internalFormats[index];
 }
@@ -138,6 +183,20 @@ static int GetASTCTextureSize( const eTextureFormat format, const int w, const i
 	int const NUM_ASTC_FORMATS = ( Texture_ASTC_End - Texture_ASTC_Start ) >> 8;
 	blockDims_t const blockDims[NUM_ASTC_FORMATS] = 
 	{
+		{ 4, 4, 1 },
+		{ 5, 4, 1 },
+		{ 5, 5, 1 },
+		{ 6, 5, 1 },
+		{ 6, 6, 1 },
+		{ 8, 5, 1 },
+		{ 8, 6, 1 },
+		{ 8, 8, 1 },
+		{ 10, 5, 1 },
+		{ 10, 6, 1 },
+		{ 10, 8, 1 },
+		{ 10, 10, 1 },
+		{ 12, 10, 1 },
+		{ 12, 12, 1 },
 		{ 4, 4, 1 },
 		{ 5, 4, 1 },
 		{ 5, 5, 1 },
@@ -223,6 +282,20 @@ static int32_t GetOvrTextureSize( const eTextureFormat format, const int w, cons
 		case Texture_ASTC_10x10:
 		case Texture_ASTC_12x10:
 		case Texture_ASTC_12x12:
+		case Texture_ASTC_SRGB_4x4:
+		case Texture_ASTC_SRGB_5x4:
+		case Texture_ASTC_SRGB_5x5:
+		case Texture_ASTC_SRGB_6x5:
+		case Texture_ASTC_SRGB_6x6:
+		case Texture_ASTC_SRGB_8x5:
+		case Texture_ASTC_SRGB_8x6:
+		case Texture_ASTC_SRGB_8x8:
+		case Texture_ASTC_SRGB_10x5:
+		case Texture_ASTC_SRGB_10x6:
+		case Texture_ASTC_SRGB_10x8:
+		case Texture_ASTC_SRGB_10x10:
+		case Texture_ASTC_SRGB_12x10:
+		case Texture_ASTC_SRGB_12x12:
 		{
 			return GetASTCTextureSize( format, w, h, 1 );
 		}
@@ -296,7 +369,7 @@ static GlTexture CreateGlTexture( const char * fileName, const eTextureFormat fo
 
 		if ( mipSize <= 0 || mipSize > endOfBuffer - level )
 		{
-			LOG( "%s: Mip level %d exceeds buffer size (%d > %d)", fileName, i, mipSize, endOfBuffer - level );
+			LOG( "%s: Mip level %d exceeds buffer size (%d > %td)", fileName, i, mipSize, ptrdiff_t( endOfBuffer - level ) );
 			glBindTexture( GL_TEXTURE_2D, 0 );
 			return GlTexture( texId, GL_TEXTURE_2D, width, height );
 		}
@@ -357,6 +430,8 @@ static GlTexture CreateGlCubeTexture( const char * fileName, const eTextureForma
 {
 	OVR_ASSERT( width == height );
 
+	GL_CheckErrors("Pre Cube Texture load");
+
 	if ( mipcount <= 0 )
 	{
 		LOG( "%s: Invalid mip count %d", fileName, mipcount );
@@ -374,6 +449,7 @@ static GlTexture CreateGlCubeTexture( const char * fileName, const eTextureForma
 	GLenum glInternalFormat;
 	if ( !TextureFormatToGlFormat( format, useSrgbFormat, glFormat, glInternalFormat ) )
 	{
+		LOG( "%s: TextureFormatToGlFormat 0x%x %s failed", fileName, (int)format, useSrgbFormat ? "true" : "false");
 		return GlTexture( 0, 0, 0 );
 	}
 
@@ -394,7 +470,7 @@ static GlTexture CreateGlCubeTexture( const char * fileName, const eTextureForma
 			level += 4;
 			if ( level > endOfBuffer )
 			{
-				LOG( "%s: Image data exceeds buffer size", fileName );
+				LOG( "%s: Image data exceeds buffer size: %p > %p", fileName, level, endOfBuffer );
 				glBindTexture( GL_TEXTURE_CUBE_MAP, 0 );
 				return GlTexture( texId, GL_TEXTURE_CUBE_MAP, width, height );
 			}
@@ -404,7 +480,7 @@ static GlTexture CreateGlCubeTexture( const char * fileName, const eTextureForma
 		{
 			if ( mipSize <= 0 || mipSize > endOfBuffer - level )
 			{
-				LOG( "%s: Mip level %d exceeds buffer size (%d > %d)", fileName, i, mipSize, endOfBuffer - level );
+				LOG( "%s: Mip level %d exceeds buffer size (%u > %td)", fileName, i, mipSize, ptrdiff_t( endOfBuffer - level ) );
 				glBindTexture( GL_TEXTURE_CUBE_MAP, 0 );
 				return GlTexture( texId, GL_TEXTURE_CUBE_MAP, width, height );
 			}
@@ -443,7 +519,7 @@ static GlTexture CreateGlCubeTexture( const char * fileName, const eTextureForma
 	}
 	glTexParameteri( GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
-	GL_CheckErrors( "Texture load" );
+	GL_CheckErrors( "Cube Texture load" );
 
 	glBindTexture( GL_TEXTURE_CUBE_MAP, 0 );
 
@@ -454,6 +530,12 @@ GlTexture LoadRGBATextureFromMemory( const uint8_t * texture, const int width, c
 {
 	const size_t dataSize = GetOvrTextureSize( Texture_RGBA, width, height );
 	return CreateGlTexture( "memory-RGBA", Texture_RGBA, width, height, texture, dataSize, 1, useSrgbFormat, false );
+}
+
+GlTexture LoadRGBACubeTextureFromMemory( const uint8_t * texture, const int dim, const bool useSrgbFormat )
+{
+	const size_t dataSize = GetOvrTextureSize( Texture_RGBA, dim, dim ) * 6;
+	return CreateGlCubeTexture( "memory-CubeRGBA", Texture_RGBA, dim, dim, texture, dataSize, 1, useSrgbFormat, false );
 }
 
 GlTexture LoadRGBTextureFromMemory( const uint8_t * texture, const int width, const int height, const bool useSrgbFormat )
@@ -468,6 +550,10 @@ GlTexture LoadRTextureFromMemory( const uint8_t * texture, const int width, cons
 	return CreateGlTexture( "memory-R", Texture_R, width, height, texture, dataSize, 1, false, false );
 }
 
+
+// .astc files are created by the reference Mali compression tool.
+// As of 9/17/2016, it appears to automatically flip y, which is a good
+// reason to avoid it.
 struct astcHeader
 {
 	unsigned char		magic[4];
@@ -577,7 +663,8 @@ GlTexture LoadASTCTextureFromMemory( uint8_t const * buffer, const size_t buffer
 		LOG( "Unhandled ASTC block size: %i x %i", header->blockDim_x, header->blockDim_y );
 		return GlTexture();
 	}
-	return CreateGlTexture( "memory-ASTC", format, w, h, buffer, bufferSize, 1, false, false );
+	return CreateGlTexture("memory-ASTC", format, w, h, buffer + sizeof(struct astcHeader), 
+		bufferSize - sizeof(struct astcHeader), 1, false, false);
 }
 /*
 
@@ -703,7 +790,7 @@ GlTexture LoadTexturePVR( const char * fileName, const unsigned char * buffer, c
 		case 23:					format = Texture_ETC2_RGBA;	break;
 		case 578721384203708274llu:	format = Texture_RGBA;		break;
 		default:
-			LOG( "%s: Unknown PVR texture format %llu, size %ix%i", fileName, header.PixelFormat, width, height );
+			LOG( "%s: Unknown PVR texture format %" PRIu64 ", size %ix%i", fileName, header.PixelFormat, width, height );
 			return GlTexture( 0, 0, 0 );
 	}
 
@@ -768,7 +855,7 @@ unsigned char * LoadPVRBuffer( const char * fileName, int & width, int & height 
 	{
  		case 578721384203708274llu:	format = Texture_RGBA;		break;
 		default:
-			LOG( "Unknown PVR texture format %llu, size %ix%i", header.PixelFormat, width, height );
+			LOG( "Unknown PVR texture format %" PRIu64 ", size %ix%i", header.PixelFormat, width, height );
 			buffer.FreeData();
 			return NULL;
 	}
@@ -953,7 +1040,7 @@ GlTexture LoadTextureKTX( const char * fileName, const unsigned char * buffer, c
 	return GlTexture( 0, 0, 0 );
 }
 
-const unsigned char * LoadImageToRGBABuffer( const char * fileName, const unsigned char * inBuffer, const size_t inBufferLen,
+unsigned char * LoadImageToRGBABuffer( const char * fileName, const unsigned char * inBuffer, const size_t inBufferLen,
 		int & width, int & height )
 {
 	const String ext = String( fileName ).GetExtension().ToLower();
@@ -1200,26 +1287,6 @@ void BuildTextureMipmaps( GlTexture texId )
 	glBindTexture( texId.target, texId.texture );
 	glGenerateMipmap( texId.target );
 	glBindTexture( texId.target, 0 );
-}
-
-ovrTextureSwapChain * CreateTextureSwapChain( ovrTextureType type, ovrTextureFormat format, int width, int height, int levels, bool buffered )
-{
-	return vrapi_CreateTextureSwapChain( type, format, width, height, levels, buffered );
-}
-
-void DestroyTextureSwapChain( ovrTextureSwapChain * chain )
-{
-	vrapi_DestroyTextureSwapChain( chain );
-}
-
-int GetTextureSwapChainLength( ovrTextureSwapChain * chain )
-{
-	return vrapi_GetTextureSwapChainLength( chain );
-}
-
-unsigned int GetTextureSwapChainHandle( ovrTextureSwapChain * chain, int index )
-{
-	return vrapi_GetTextureSwapChainHandle( chain, index );
 }
 
 }	// namespace OVR

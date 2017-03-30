@@ -19,12 +19,12 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #define OVR_App_h
 
 #include "Kernel/OVR_Types.h"
-#include "Kernel/OVR_GlUtils.h"
 #include "Kernel/OVR_LogUtils.h"
 #include "VrApi_Types.h"
 #include "VrApi_Helpers.h"
 #include "VrApi_SystemUtils.h"
 #include "VrApi_Ext.h"
+#include "OVR_GlUtils.h"
 #include "GlProgram.h"
 #include "GlTexture.h"
 #include "GlGeometry.h"
@@ -65,22 +65,6 @@ enum ovrRenderMode
 	RENDERMODE_STEREO					= 0x1100,	// Render both eyes views.
 	RENDERMODE_MONO						= 0x1200,	// Render a single eye view and use the same image for both Timewarp eyes.
 	RENDERMODE_MULTIVIEW				= 0x1400,	// Render both eye views simultaneously.
-
-	// ----DEPRECATED_DRAWEYEVIEW - remove once DrawEyeView path is removed.
-	// These Render Modes assume the application is rendering via the
-	// deprecated DrawEyeView path. Multiview rendering is not supported
-	// in this path.
-	RENDERMODE_TYPE_DRAWEYEVIEW_MASK	= 0x2000,	// DO NOT USE: Mask-only
-	RENDERMODE_DRAWEYEVIEW_STEREO		= 0x2100,	// Render both eye views.
-	RENDERMODE_DRAWEYEVIEW_MONO			= 0x2200,	// Render a single eye view and use the same image for both Timewarp eyes.
-
-	// These render modes alternate between rendering using the surface
-	// list generation in Frame() path and the deprecated DrawEyeView
-	// path to help aide in conversion from DrawEyeView to Frame Surfaces.
-	RENDERMODE_TYPE_DEBUG_MASK			= 0x4000,	// DO NOT USE: Mask-only
-	RENDERMODE_DEBUG_ALTERNATE_STEREO	= 0x4100,	// Render both eye views.
-	RENDERMODE_DEBUG_ALTERNATE_MONO		= 0x4200,	// Render a single eye view and use the same image for both Timewarp eyes.
-	// ----DEPRECATED_DRAWEYEVIEW - remove once DrawEyeView path is removed.
 };
 
 #if defined( OVR_OS_WIN32 )
@@ -103,7 +87,7 @@ struct ovrSettings
 	ovrPerformanceParms	PerformanceParms;
 	ovrEyeBufferParms	EyeBufferParms;
 	ovrHeadModelParms	HeadModelParms;
-	ovrRenderMode		RenderMode;					// Default is RENDERMODE_DRAWEYEVIEW_STEREO.
+	ovrRenderMode		RenderMode;					// Default is RENDERMODE_STEREO.
 #if defined( OVR_OS_WIN32 )
 	ovrWindowCreationParms	WindowParms;
 #endif
@@ -205,13 +189,6 @@ public:
 	// appended to the FrameResult Surfaces list while a Frame render
 	// operation is in flight.
 	virtual ovrFrameResult Frame( const ovrFrameInput & vrFrame );
-
-	// ----DEPRECATED_DRAWEYEVIEW
-	// This function is DEPRECATED. Please do not write any new code which
-	// relies on DrawEyeView being called. Instead set up the application
-	// Frame call to return a set of draw surfaces via ovrFrameResult.
-	virtual Matrix4f DrawEyeView( const int eye, const float fovDegreesX, const float fovDegreesY, ovrFrameParms & frameParms );
-	// ----DEPRECATED_DRAWEYEVIEW
 };
 
 //==============================================================
@@ -291,6 +268,8 @@ public:
 	virtual const ovrHeadModelParms &	GetHeadModelParms() const = 0;
 	virtual void						SetHeadModelParms( const ovrHeadModelParms & parms ) = 0;
 
+	virtual const ovrPerformanceParms & GetPerformanceParms() const = 0;
+
 	virtual int							GetCpuLevel() const = 0;
 	virtual void						SetCpuLevel( const int cpuLevel ) = 0;
 
@@ -308,19 +287,15 @@ public:
 	virtual void						SetLastViewMatrix( Matrix4f const & m ) = 0;
 	virtual void						RecenterLastViewMatrix() = 0;
 
-	// FIXME: remove
+	// ----DEPRECATED
+	// This function will be removed in a future update.
 	virtual ovrMobile *					GetOvrMobile() = 0;
+	// ----DEPRECATED
 	
 	virtual ovrFileSys &				GetFileSys() = 0;
 
 	// it's possible that this could return NULL if it's called before InitGLObjects()
 	virtual	ovrTextureManager *			GetTextureManager() = 0;
-	// ----DEPRECATED_DRAWEYEVIEW
-	// This function is provided as a temporary means to transition
-	// an app to return surfaces from Frame. Please do not write any
-	// new code which relies on this interface call.
-	virtual ovrSurfaceRender &			GetSurfaceRender() = 0;
-	// ----DEPRECATED_DRAWEYEVIEW
 
 	//-----------------------------------------------------------------
 	// Localization

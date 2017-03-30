@@ -60,12 +60,6 @@ public:
 	void	Create( const VertexAttribs & attribs, const Array< TriangleIndex > & indices );
 	void	Update( const VertexAttribs & attribs, const bool updateBounds = true );
 
-	// ----DEPRECATED_DRAWEYEVIEW
-	// This function is DEPRECATED. Please do not write any new code which
-	// relies on its use.
-	void	Draw() const;
-	// ----DEPRECATED_DRAWEYEVIEW
-
 	// Free the buffers and VAO, assuming that they are strictly for this geometry.
 	// We could save some overhead by packing an entire model into a single buffer, but
 	// it would add more coupling to the structures.

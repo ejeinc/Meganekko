@@ -22,17 +22,15 @@ char const * KeyEventNames[KEY_EVENT_MAX] =
 	"KEY_EVENT_NONE",
 	"KEY_EVENT_SHORT_PRESS",
 	"KEY_EVENT_DOUBLE_TAP",
-	"KEY_EVENT_LONG_PRESS",
 	"KEY_EVENT_DOWN",
 	"KEY_EVENT_UP",
 };
 
 //==========================
 // KeyState::KeyState
-KeyState::KeyState( float const doubleTapTime, float const longPressTime ) :
+KeyState::KeyState( float const doubleTapTime ) :
 	NumEvents( 0 ),
 	DoubleTapTime( doubleTapTime ),
-	LongPressTime( longPressTime ),
 	Down( false )
 {
 	Reset();
@@ -124,13 +122,12 @@ KeyEventType KeyState::Update( double const time )
 	//LOG_WITH_TAG( "KeyState", "Update: NumEvents %i", NumEvents );
 	if ( NumEvents > 0 )
 	{
-		// is long-press time expired? This will always trigger a long press, even if the button
-		// is let up on the same frame that we exceed the long press timer.
-		if ( NumEvents != 2 && time - EventTimes[0] >= LongPressTime )
+		// if we exceed the max time for key events we care about, reset.
+		if ( NumEvents != 2 && time - EventTimes[0] >= 0.75f )
 		{
 			Reset();
-			LOG_WITH_TAG( "KeyState", "(%.4f) Update() - KEY_EVENT_LONG_PRESS, %i", vrapi_GetTimeInSeconds(), NumEvents );
-			return KEY_EVENT_LONG_PRESS;
+			LOG_WITH_TAG( "KeyState", "(%.4f) Update() - discarding events (%i) after %.2f seconds.", vrapi_GetTimeInSeconds(), NumEvents, time - EventTimes[0] );
+			return KEY_EVENT_NONE;
 		}
 		if ( NumEvents == 2 )
 		{

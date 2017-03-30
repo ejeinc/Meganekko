@@ -11,9 +11,8 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 #include "GlBuffer.h"
 
-#include "Kernel/OVR_GlUtils.h"
+#include "OVR_GlUtils.h"
 #include "Kernel/OVR_LogUtils.h"
-
 
 namespace OVR {
 
@@ -55,7 +54,7 @@ void GlBuffer::Update( const size_t updateDataSize, const void * data ) const
 
 	if ( updateDataSize > size )
 	{
-		FAIL( "GlBuffer::Update: size overflow %i specified, %i allocated\n", updateDataSize, size );
+		FAIL( "GlBuffer::Update: size overflow %zu specified, %zu allocated\n", updateDataSize, size );
 	}
 
 	glBindBuffer( target, buffer );

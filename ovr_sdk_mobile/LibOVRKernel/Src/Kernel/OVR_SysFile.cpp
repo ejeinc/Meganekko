@@ -25,8 +25,6 @@ limitations under the License.
 
 **************************************************************************/
 
-#define  GFILE_CXX
-
 // Standard C library (Captain Obvious guarantees!)
 #include <stdio.h>
 

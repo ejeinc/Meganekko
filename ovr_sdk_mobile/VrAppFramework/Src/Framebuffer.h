@@ -11,7 +11,7 @@ Copyright   :   Copyright 2015 Oculus VR, LLC. All Rights reserved.
 #ifndef OVR_Framebuffer_h
 #define OVR_Framebuffer_h
 
-#include "Kernel/OVR_GlUtils.h"		// GLuint
+#include "OVR_GlUtils.h"	// GLuint
 #include "VrApi_Types.h"
 
 namespace OVR

@@ -369,8 +369,6 @@ struct VrDeviceStatus
 		DeviceIsDocked( false ),
 		HeadsetIsMounted( false ),
 		WifiIsConnected( false ),
-		AirplaneModeIsEnabled( false ),
-		BluetoothIsEnabled( false ),
 		PowerLevelStateThrottled( false ),
 		PowerLevelStateMinimum( false ) 
 	{
@@ -380,8 +378,6 @@ struct VrDeviceStatus
 	bool				DeviceIsDocked;								// true if device is docked in headset
 	bool				HeadsetIsMounted;							// true if headset is mounted
 	bool				WifiIsConnected;							// true if there is an active WiFi connection
-	bool				AirplaneModeIsEnabled;						// true if airplane-mode is enabled
-	bool				BluetoothIsEnabled;							// true if bluetooth is enabled
 	bool				PowerLevelStateThrottled;					// true if in power save mode, 30 FPS etc.
 	bool				PowerLevelStateMinimum;						// true if not able to continue, must undock / shut off
 };
@@ -418,7 +414,8 @@ public:
 	// Head tracking.
 	// The time warp will transform from the tracking head pose to whatever
 	// the current pose is when displaying the latest eye buffers.
-	ovrTracking		Tracking;
+	ovrTracking		BaseTracking;	// head pose without head model applied
+	ovrTracking		Tracking;		// head pose with head model applied
 
 	// Various different joypad button combinations are mapped to
 	// standard positions.

@@ -27,7 +27,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "Kernel/OVR_UTF8Util.h"
 #include "Kernel/OVR_String.h"
 #include "Kernel/OVR_JSON.h"
-#include "Kernel/OVR_GlUtils.h"
+#include "OVR_GlUtils.h"
 #include "Kernel/OVR_LogUtils.h"
 
 #include "GlProgram.h"
@@ -43,7 +43,6 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 namespace OVR {
 static char const * FontSingleTextureVertexShaderSrc =
-	"uniform lowp vec4 UniformColor;\n"
 	"attribute vec4 Position;\n"
 	"attribute vec2 TexCoord;\n"
 	"attribute vec4 VertexColor;\n"
@@ -55,12 +54,9 @@ static char const * FontSingleTextureVertexShaderSrc =
 	"{\n"
 	"    gl_Position = TransformVertex( Position );\n"
 	"    oTexCoord = TexCoord;\n"
-	"    oColor = UniformColor * VertexColor;\n"
+	"    oColor = VertexColor;\n"
 	"    oFontParms = FontParms;\n"
 	"}\n";
-
-static const char * SDKFontFragmentDirectives =
-	"#extension GL_OES_standard_derivatives : enable\n";
 
 // Use derivatives to make the faded color and alpha boundaries a
 // consistent thickness regardless of font scale.
@@ -73,7 +69,7 @@ static char const * SDFFontFragmentShaderSrc =
 	"{\n"
 	"    mediump float distance = texture2D( Texture0, oTexCoord ).r;\n"
 	"    mediump float ds = oFontParms.z * 255.0;\n"
-	"	 mediump float dd = fwidth( oTexCoord.x ) * oFontParms.w * 16.0 * ds;\n"
+	"	 mediump float dd = fwidth( oTexCoord.x ) * oFontParms.w * 10.0 * ds;\n"
 	"    mediump float ALPHA_MIN = oFontParms.x - dd;\n"
 	"    mediump float ALPHA_MAX = oFontParms.x + dd;\n"
 	"    mediump float COLOR_MIN = oFontParms.y - dd;\n"
@@ -149,6 +145,7 @@ public:
 	}
 
 	bool						Load( ovrFileSys & fileSys, char const * uri );
+	bool						Save( char const * filename );
 
 	FontGlyphType const &		GlyphForCharCode( uint32_t const charCode ) const;
 	ovrFontWeight				GetFontWeight( int const index ) const;
@@ -185,15 +182,15 @@ class BitmapFontLocal : public BitmapFont
 {
 public:
 	BitmapFontLocal() :
-		Texture( 0 ),
+		FontTexture(),
 		ImageWidth( 0 ),
-		ImageHeight( 0 ) {
+		ImageHeight( 0 )
+	{
 	}
-	~BitmapFontLocal() {
-		if ( Texture != 0 ) {
-			glDeleteTextures( 1, &Texture );
-		}
-		Texture = 0;
+	~BitmapFontLocal()
+	{
+		FreeTexture( FontTexture );
+		GlProgram::Free( FontProgram );
 	}
 
 	virtual bool   			Load( ovrFileSys & fileSys, const char * uri );
@@ -210,10 +207,12 @@ public:
 									float & ascent, float & descent, float & fontHeight,
 									float * lineWidths, int const maxLines, int & numLines ) const;
 
+	virtual void			TruncateText( String & inOutText, int const maxLines ) const;
 
 	bool					WordWrapText( String & inOutText, const float widthMeters, const float fontScale = 1.0f ) const;
 	bool					WordWrapText( String & inOutText, const float widthMeters, OVR::Array< OVR::String > wholeStrsList, const float fontScale = 1.0f ) const;
 	float					GetLastFitChars( String & inOutText, const float widthMeters, const float fontScale = 1.0f ) const;
+	float					GetFirstFitChars( String & inOutText, const float widthMeters, const int numLines, const float fontScale = 1.0f ) const;
 
 	// Returns a newly allocated GlGeometry for the text, allowing it to be sorted
 	// or transformed with more control than the global BitmapFontSurface.
@@ -233,11 +232,11 @@ public:
 	const GlProgram &		GetFontProgram() const { return FontProgram; }
 	int     				GetImageWidth() const { return ImageWidth; }
 	int     				GetImageHeight() const { return ImageHeight; }
-	GLuint  				GetTexture() const { return Texture; }
+	const GlTexture &  		GetFontTexture() const { return FontTexture; }
 
 private:
 	FontInfoType			FontInfo;
-	GLuint      			Texture;
+	GlTexture      			FontTexture;
 	int         			ImageWidth;
 	int         			ImageHeight;
 
@@ -374,16 +373,20 @@ static bool CheckForFormatEscape( char const **buffer, uint32_t & color, uint32_
 {
 	OVR_ASSERT( buffer != nullptr && *buffer != nullptr );
 	char const * ptr = *buffer;
-	if ( ptr[0] != '~' || ptr[1] != '~' )
+	if ( ptr[0] == '\0' || ptr[1] == '\0' || ptr[2] == '\0' )
+	{
+		return false;
+	}
+	else if ( ptr[0] != '~' || ptr[1] != '~' )
 	{
 		return false;
 	}
 	// if the character after ~~ is a hex digit, this is a color
-	if ( IsHexDigit( ptr[2] ) )
+	else if ( IsHexDigit( ptr[2] ) )
 	{
 		return CheckForColorEscape( buffer, color );
 	}
-	if ( ptr[2] == 'w' || ptr[2] == 'W' )
+	else if ( ptr[2] == 'w' || ptr[2] == 'W' )
 	{
 		// a single-digit weight command should follow
 		if ( !DigitToHex( ptr[3], weight ) )
@@ -391,8 +394,9 @@ static bool CheckForFormatEscape( char const **buffer, uint32_t & color, uint32_
 			return false;
 		}
 		*buffer += 4;
+		return true;
 	}
-	return true;
+	return false;	// if we got here we don't have a valid character after ~~ so return false.
 }
 
 
@@ -704,6 +708,7 @@ VertexBlockType DrawTextToVertexBlock( BitmapFont const & font, fontParms_t cons
 	{
 			(uint8_t)( OVR::Alg::Clamp( fontParms.AlphaCenter + fontInfo.CenterOffset + weightOffset, 0.0f, 1.0f ) * 255 ),
 			(uint8_t)( OVR::Alg::Clamp( fontParms.ColorCenter + fontInfo.CenterOffset + weightOffset, 0.0f, 1.0f ) * 255 ),
+			//(uint8_t)( 0 ),
 			(uint8_t)( OVR::Alg::Clamp( distanceScale, 1.0f, 255.0f ) ),
 			(uint8_t)( OVR::Alg::Clamp( edgeWidth / 16.0f, 0.0f, 1.0f ) * 255.0f )
 	};
@@ -849,7 +854,7 @@ ovrSurfaceDef BitmapFontLocal::TextSurface( const char * text,
 
 	vb.Free();
 
-	// for now we set up both the graphics command and material def
+	// for now we set up both the gpu state, program, and uniformdata.
 
 	// Special blend mode to also work over underlay layers
 	s.graphicsCommand.GpuState.blendEnable = ovrGpuState::BLEND_ENABLE_SEPARATE;
@@ -860,16 +865,7 @@ ovrSurfaceDef BitmapFontLocal::TextSurface( const char * text,
 	s.graphicsCommand.GpuState.depthMaskEnable = false;
 
 	s.graphicsCommand.Program = FontProgram;
-
-	s.graphicsCommand.uniformSlots[0] = FontProgram.uColor;
-	for ( int i = 0 ; i < 4 ; i++ )
-	{
-		s.graphicsCommand.uniformValues[0][i] = 1.0f;
-	}
-
-	s.graphicsCommand.numTextures = 1;
-	s.graphicsCommand.textures[0].target = GL_TEXTURE_2D;
-	s.graphicsCommand.textures[0].texture = Texture;
+	s.graphicsCommand.UniformData[0].Data = (void *)&FontTexture;
 
 	s.surfaceName = text;
 	return s;
@@ -910,11 +906,13 @@ public:
 
 	virtual bool		IsInitialized() const { return Initialized; }
 
+	virtual void		SetCullEnabled( const bool enabled );
+
 private:
 	// This limitation may not exist anymore now that ModelMatrix is no longer a member.
 	BitmapFontSurfaceLocal &	operator = ( BitmapFontSurfaceLocal const & rhs );
 
-	mutable ovrSurfaceDef	SurfaceDef;
+	mutable ovrSurfaceDef	FontSurfaceDef;
 
 	fontVertex_t *  Vertices;	// vertices that are written to the VBO
 	int             MaxVertices;
@@ -939,7 +937,15 @@ bool FontInfoType::Load( ovrFileSys & fileSys, char const * uri )
 	{
 		return false;
 	}
-	return LoadFromBuffer( buffer, buffer.GetSize() );
+	bool result = LoadFromBuffer( buffer, buffer.GetSize() );
+	// enable the block below to rewrite the font
+/*
+	if ( result )
+	{
+		Save( "c:/temp/" );
+	}
+*/
+	return result;
 }
 
 //==============================
@@ -1136,33 +1142,161 @@ bool FontInfoType::LoadFromBuffer( void const * buffer, size_t const bufferSize 
 	return true;
 }
 
+class ovrGlyphSort
+{
+public:
+	void SortGlyphIndicesByCharacterCode( Array< FontGlyphType > const & glyphs, Array< int > & glyphIndices )
+	{
+		Glyphs = &glyphs;
+		qsort( glyphIndices.GetDataPtr(), glyphIndices.GetSize(), sizeof( int ), CompareByCharacterCode );
+		Glyphs = nullptr;
+	}
+
+private:
+	static	int CompareByCharacterCode( const void * a, const void * b )
+	{
+		int const aIndex = *(int*)a;
+		int const bIndex = *(int*)b;
+		FontGlyphType const & glyphA = (*Glyphs)[aIndex];
+		FontGlyphType const & glyphB = (*Glyphs)[bIndex];
+		if ( glyphA.CharCode < glyphB.CharCode )
+		{
+			return -1;
+		}
+		else if ( glyphA.CharCode > glyphB.CharCode )
+		{
+			return 1;
+		}
+		return 0;
+	}
+
+	static Array< FontGlyphType > const *	Glyphs;
+};
+
+Array< FontGlyphType > const *	ovrGlyphSort::Glyphs = nullptr;
+
+bool FontInfoType::Save( char const * path )
+{
+	JSON * joFont = JSON::CreateObject();
+	joFont->AddStringItem( "FontName", FontName.ToCStr() );
+	joFont->AddStringItem( "CommandLine", CommandLine.ToCStr() );
+	joFont->AddNumberItem( "Version", FNT_FILE_VERSION );
+	joFont->AddStringItem( "ImageFileName", ImageFileName.ToCStr() );
+	joFont->AddNumberItem( "NaturalWidth", NaturalWidth );
+	joFont->AddNumberItem( "NaturalHeight", NaturalHeight );
+	joFont->AddNumberItem( "HorizontalPad", HorizontalPad );
+	joFont->AddNumberItem( "VerticalPad", VerticalPad );
+	joFont->AddNumberItem( "FontHeight", FontHeight );
+	joFont->AddNumberItem( "CenterOffset", CenterOffset );
+	joFont->AddNumberItem( "TweakScale", TweakScale );
+	joFont->AddNumberItem( "EdgeWidth", EdgeWidth );
+	joFont->AddNumberItem( "NumGlyphs", Glyphs.GetSizeI() );
+
+	Array< int > glyphIndices;
+	glyphIndices.Resize( Glyphs.GetSizeI() );
+	for ( int i = 0; i < Glyphs.GetSizeI(); ++i )
+	{
+		glyphIndices[i] = i;
+	}
+
+	ovrGlyphSort sort;
+	sort.SortGlyphIndicesByCharacterCode( Glyphs, glyphIndices );
+
+	JSON * joGlyphsArray = JSON::CreateArray();
+	joFont->AddItem( "Glyphs", joGlyphsArray );
+	// add all glyphs
+	for ( int i = 0; i < glyphIndices.GetSizeI(); ++i )
+	{
+		int const index = glyphIndices[i];
+		FontGlyphType const & g = Glyphs[index];
+
+		JSON * joGlyph = JSON::CreateObject();
+		joGlyph->AddNumberItem( "CharCode", g.CharCode );
+		joGlyph->AddNumberItem( "X", g.X );	// now in natural units because the JSON writer loses precision
+		joGlyph->AddNumberItem( "Y", g.Y );		// now in natural units because the JSON writer loses precision
+		joGlyph->AddNumberItem( "Width", g.Width );
+		joGlyph->AddNumberItem( "Height", g.Height );
+		joGlyph->AddNumberItem( "AdvanceX", g.AdvanceX );
+		joGlyph->AddNumberItem( "AdvanceY", g.AdvanceY );
+		joGlyph->AddNumberItem( "BearingX", g.BearingX );
+		joGlyph->AddNumberItem( "BearingY", g.BearingY );
+		joGlyphsArray->AddArrayElement( joGlyph );
+	}
+
+	char filePath[1024];
+	ovrPathUtils::AppendUriPath( path, FontName.ToCStr(), filePath, sizeof( filePath ) );
+	LOG( "Writing font file '%s'\n...", filePath );
+	joFont->Save( filePath );
+
+	joFont->Release();
+	return true;
+}
+
 //==============================
 // FontInfoType::GlyphForCharCode
 FontGlyphType const & FontInfoType::GlyphForCharCode( uint32_t const charCode ) const
 {
-	const int glyphIndex = charCode >= CharCodeMap.GetSize() ? -1 : CharCodeMap[charCode];
+	auto lookupGlyph = [this] ( uint32_t const ch )
+	{
+		return ch >= CharCodeMap.GetSize() ? -1 : CharCodeMap[ch];
+	};
 
+	int glyphIndex = lookupGlyph( charCode );//charCode >= CharCodeMap.GetSize() ? -1 : CharCodeMap[charCode];
 	if ( glyphIndex < 0 || glyphIndex >= Glyphs.GetSizeI() )
 	{
 #if defined( OVR_BUILD_DEBUG )		
-		WARN( "FontInfoType::GlyphForCharCode FAILED TO FIND GLYPH FOR CHARACTER! charCode %u => %i [mapsize=%i] [glyphsize=%i]",
+		WARN( "FontInfoType::GlyphForCharCode FAILED TO FIND GLYPH FOR CHARACTER! charCode %u => %i [mapsize=%zu] [glyphsize=%i]",
 			charCode, glyphIndex, CharCodeMap.GetSize(), Glyphs.GetSizeI() );
 #endif
 
-		if ( charCode == '*' )
+		switch( charCode )
 		{
-			static FontGlyphType emptyGlyph;
-			return emptyGlyph;
-		}
+			case '*':
+			{
+				static FontGlyphType emptyGlyph;
+				return emptyGlyph;
+			}
+			// Some fonts don't include special punctuation marks but translators are apt to use absolutely 
+			// every obscure character there is.
+			// Alternatively this could be done when the text is loaded from the string resource, but at that point
+			// we do not necessarily know if the font contains the special characters.
+			case 0x201C:	// left double quote
+			case 0x201D:	// right double quote
+			{
+				return GlyphForCharCode( '\"' );
+			}
+			case 0x2013:	// English Dash
+			case 0x2014:	// Em Dash
+			{
+				return GlyphForCharCode( '-' );
+			}
+			default:
+			{	
+				// if we have a glyph for "replacement character" U+FFFD, use that, otherwise use "black diamond" U+25C6.
+				// If that doesn't exists, use "halfwidth black square" U+FFED, and if that doesn't exist, use the asterisk.
+				glyphIndex = lookupGlyph( 0xFFFD );
+				if ( glyphIndex < 0 || glyphIndex >= Glyphs.GetSizeI() )
+				{
+					glyphIndex = lookupGlyph( 0x25C6 );
+					if ( glyphIndex < 0 || glyphIndex >= Glyphs.GetSizeI() )
+					{
+						glyphIndex = lookupGlyph( 0xFFED );
+						if ( glyphIndex < 0 || glyphIndex >= Glyphs.GetSizeI() )
+						{
 #if 0 // enable to make unknown characters obvious
-		static const char unknownGlyphs[] = { '!', '@', '#', '$', '%', '^', '&', '*', '(', ')' };
-		static int curGlyph = 0;
-		curGlyph++;
-		curGlyph = curGlyph % sizeof( unknownGlyphs );
-		return GlyphForCharCode( unknownGlyphs[curGlyph] );
+							static const char unknownGlyphs[] = { '!', '@', '#', '$', '%', '^', '&', '*', '(', ')' };
+							static int curGlyph = 0;
+							curGlyph++;
+							curGlyph = curGlyph % sizeof( unknownGlyphs );
+							return GlyphForCharCode( unknownGlyphs[curGlyph] );
 #else
-		return GlyphForCharCode( '*' );
+							return GlyphForCharCode( '*' );
 #endif
+						}
+					}
+				}
+			}
+		}
 	}
 
 	OVR_ASSERT( glyphIndex >= 0 && glyphIndex < Glyphs.GetSizeI() );
@@ -1231,7 +1365,12 @@ bool BitmapFontLocal::Load( ovrFileSys & fileSys, char const * uri )
 	// create the shaders for font rendering if not already created
 	if ( FontProgram.VertexShader == 0 || FontProgram.FragmentShader == 0 )
 	{
-		FontProgram = BuildProgram( NULL, FontSingleTextureVertexShaderSrc, SDKFontFragmentDirectives, SDFFontFragmentShaderSrc );
+		static ovrProgramParm fontUniformParms[] =
+		{
+			{ "Texture0",		ovrProgramParmType::TEXTURE_SAMPLED },
+		};
+		FontProgram = GlProgram::Build( FontSingleTextureVertexShaderSrc, SDFFontFragmentShaderSrc,
+						fontUniformParms, sizeof( fontUniformParms ) / sizeof( ovrProgramParm ) );
 	}
 
 	return true;
@@ -1258,29 +1397,25 @@ bool BitmapFontLocal::LoadImage( ovrFileSys & fileSys, char const * uri )
 // BitmapFontLocal::LoadImageFromBuffer
 bool BitmapFontLocal::LoadImageFromBuffer( char const * imageName, unsigned char const * buffer, size_t bufferSize, bool const isASTC )
 {
-	if ( Texture != 0 )
-	{
-		glDeleteTextures( 1, &Texture );
-		Texture = 0;
-	}
+	DeleteTexture( FontTexture );
 
 	if ( isASTC )
 	{
-		Texture = LoadASTCTextureFromMemory( buffer, bufferSize, 1 );
+		FontTexture = LoadASTCTextureFromMemory( buffer, bufferSize, 1 );
 	}
 	else
 	{
-		Texture = LoadTextureFromBuffer( imageName, MemBuffer( (void *)buffer, static_cast<int>( bufferSize ) ),
+		FontTexture = LoadTextureFromBuffer( imageName, MemBuffer( (void *)buffer, static_cast<int>( bufferSize ) ),
     			TextureFlags_t( TEXTUREFLAG_NO_DEFAULT ), ImageWidth, ImageHeight );
 	}
-	if ( Texture == 0 )
+	if ( FontTexture.IsValid() == false )
 	{
 		WARN( "BitmapFontLocal::Load: failed to load '%s'", imageName );
 		return false;
 	}
 
 	glActiveTexture( GL_TEXTURE0 );
-	glBindTexture( GL_TEXTURE_2D, Texture );
+	glBindTexture( GL_TEXTURE_2D, FontTexture.texture );
 
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
@@ -1348,8 +1483,7 @@ bool BitmapFontLocal::WordWrapText( String & inOutText, const float widthMeters,
 		return false;
 	};
 
-	int lengthInChars = 0;
-	int lengthInBytes = 0;
+	size_t lengthInBytes = 0;
 	char const * cur = source;
 	for ( ; ; )
 	{
@@ -1363,12 +1497,10 @@ bool BitmapFontLocal::WordWrapText( String & inOutText, const float widthMeters,
 		}
 
 		lengthInBytes += static_cast< int >( numBytes );
-		lengthInChars++;
 		
 		if ( IsPostLineBreakChar( charCode ) )
 		{
 			++lengthInBytes;	// add one byte for '\n'
-			++lengthInChars;	// add one extra char
 		}
 	}
 
@@ -1380,7 +1512,6 @@ bool BitmapFontLocal::WordWrapText( String & inOutText, const float widthMeters,
 	cur = source;	// reset
 	intptr_t lastLineBreakOfs = -1;
 	intptr_t lastPostLineBreakOfs = -1;
-	intptr_t currentLineStartOfs = 0;
 
 	float const xScale = FontInfo.ScaleFactorX * fontScale;
 	double lineWidthAtLastBreak = 0.0;
@@ -1402,6 +1533,9 @@ bool BitmapFontLocal::WordWrapText( String & inOutText, const float widthMeters,
 			cur += numFormatChars;
 			destOffset += numFormatChars;
 		}
+
+		double lastLineWidth = lineWidth;
+		intptr_t lastDestOffset = destOffset;
 
 		char const * pre = cur;
 		uint32_t charCode = UTF8Util::DecodeNextChar( &cur );
@@ -1452,12 +1586,6 @@ bool BitmapFontLocal::WordWrapText( String & inOutText, const float widthMeters,
 		FontGlyphType const & g = GlyphForCharCode( charCode );
 		lineWidth += g.AdvanceX * xScale;
 
-		if ( IsPostLineBreakChar( charCode ) )
-		{
-			lastPostLineBreakOfs = destOffset + charCodeSize;
-			lineWidthAtLastBreak = lineWidth;	// line width *after* the break char
-		}
-
 		if ( lineWidth >= widthMeters )
 		{
 			if ( charCode == ' ' )
@@ -1472,38 +1600,13 @@ bool BitmapFontLocal::WordWrapText( String & inOutText, const float widthMeters,
 					// we're unable to wrap based on punctuation or whitespace, so we must break at some
 					// arbitrary character. This is fine for Chinese, but not for western languages. It's 
 					// also relatively rare for western languages since they use spaces between each word.
-					if ( !isCJK )
+					/*if ( !isCJK )
 					{
 						return false;
-					}
-					// scan backwards until we've reached the beginning of the string or the start of the
-					// current line.
-					intptr_t ofs = destOffset; 
-					int numChars = 0;
-					do 
-					{
-						uint32_t prev;
-						UTF8Util::DecodePrevChar( dest, ofs, prev );
-						numChars++;
-					} while( ofs > currentLineStartOfs && ofs >= 0 );
-
-					if ( numChars <= 0 )
-					{
-						return false;			
-					}
-
-					// now scan back 1/2 way and choose that for the break point
-					numChars >>= 1;
-					char const * breakPtr = dest + ofs;
-					lineWidthAtLastBreak = 0.0;
-					for ( int c = 0; c < numChars; ++c )
-					{
-						uint32_t code = UTF8Util::DecodeNextChar( &breakPtr );
-						FontGlyphType const & g = GlyphForCharCode( code );
-						lineWidthAtLastBreak += g.AdvanceX * xScale;
-					}
-
-					lastPostLineBreakOfs = breakPtr - dest;
+					}*/
+					// just break at the last character that didn't exceed the line width
+					lastPostLineBreakOfs = lastDestOffset;
+					lineWidthAtLastBreak = lastLineWidth;
 				}
 
 				intptr_t bestBreakOfs = lastLineBreakOfs > lastPostLineBreakOfs ? lastLineBreakOfs : lastPostLineBreakOfs;
@@ -1546,13 +1649,33 @@ bool BitmapFontLocal::WordWrapText( String & inOutText, const float widthMeters,
 
 			lastLineBreakOfs = -1;
 			lastPostLineBreakOfs = -1;
-			currentLineStartOfs = destOffset;
+			
 			// subtract the width after the last whitespace so that we don't lose any accumulated width.
 			lineWidth -= lineWidthAtLastBreak;
 		}
 
+		if ( IsPostLineBreakChar( charCode ) )
+		{
+			lastPostLineBreakOfs = destOffset + charCodeSize;
+			lineWidthAtLastBreak = lineWidth;	// line width *after* the break char
+		}
+
 		// output the current character to the destination buffer
 		UTF8Util::EncodeChar( dest, &destOffset, charCode );
+
+		// in CJK cases we cannot be absolutely certain of the number of breaks until we've scanned everything
+		// and computed the width (because we may break at any character). In that case, we may need to expand
+		// the buffer.
+		if ( destOffset + 6 > static_cast< intptr_t >( lengthInBytes ) )	// 6 bytes is max UTF-8 encoding size
+		{
+			size_t newLen = ( lengthInBytes * 3 ) / 2;
+			char * newDest = new char[newLen + 1];
+			memcpy( newDest, dest, destOffset );
+			newDest[newLen] = '\0';
+			delete [] dest;
+			dest = newDest;
+			lengthInBytes = newLen;
+		}
 	}
 
 	dest[destOffset] = '\0';
@@ -1560,6 +1683,44 @@ bool BitmapFontLocal::WordWrapText( String & inOutText, const float widthMeters,
 	delete [] dest;
 
 	return true;
+}
+
+float BitmapFontLocal::GetFirstFitChars( String & inOutText, const float widthMeters, const int numLines, const float fontScale ) const
+{
+	if ( inOutText.IsEmpty() )
+	{
+		return 0;
+	}
+
+	float const xScale = FontInfo.ScaleFactorX * fontScale;
+	float lineWidth = 0.0f;
+	int remainingLines = numLines;
+
+	for ( int32_t pos = 0; pos < inOutText.GetLengthI(); ++pos )
+	{
+		uint32_t charCode = inOutText.GetCharAt( pos );
+		if ( charCode == '\n' )
+		{
+			remainingLines--;
+			if ( remainingLines == 0 )
+			{
+				inOutText = inOutText.Substring( 0, pos );
+				return widthMeters - lineWidth;
+			}			
+		}
+		else if ( charCode != '\0' )
+		{
+			FontGlyphType const & glyph = GlyphForCharCode( charCode );
+			lineWidth += glyph.AdvanceX * xScale;
+			if ( lineWidth > widthMeters )
+			{
+				inOutText = inOutText.Substring( 0, pos - 1 ); // -1 to not include current char that didn't fit.
+				return widthMeters - ( lineWidth - glyph.AdvanceX * xScale );
+			}
+		}
+	}
+	// Entire text fits, leave inOutText unchanged
+	return 0;
 }
 
 float BitmapFontLocal::GetLastFitChars( String & inOutText, const float widthMeters, const float fontScale ) const
@@ -1652,7 +1813,7 @@ void BitmapFontLocal::CalcTextMetrics( char const * text, size_t & len, float & 
 		if ( charCode == '\n' || charCode == '\0' )
 		{
 			// keep track of the widest line, which will be the width of the entire text block
-			if ( lineWidths[numLines] > width )
+			if ( numLines < maxLines && lineWidths[numLines] > width )
 			{
 				width = lineWidths[numLines];
 			}
@@ -1661,14 +1822,15 @@ void BitmapFontLocal::CalcTextMetrics( char const * text, size_t & len, float & 
 			lastDescent = ( charsOnLine > 0 ) ? maxLineDescent : lastDescent;
 			charsOnLine = 0;
 
-			if ( numLines < maxLines - 1 )
+			numLines++;
+			if ( numLines < maxLines )
 			{
-				// if we're not out of array space, advance and zero the width
-				numLines++;
+				// if we're not out of array space, advance and zero the width				
 				lineWidths[numLines] = 0.0f;
 				maxLineAscent = 0.0f;
 				maxLineDescent = 0.0f;
 			}
+
 			if ( charCode == '\0' )
 			{
 				break;
@@ -1679,7 +1841,11 @@ void BitmapFontLocal::CalcTextMetrics( char const * text, size_t & len, float & 
 		charsOnLine++;
 
 		FontGlyphType const & g = GlyphForCharCode( charCode );
-		lineWidths[numLines] += g.AdvanceX * FontInfo.ScaleFactorX;
+
+		if ( numLines < maxLines )
+		{			
+			lineWidths[numLines] += g.AdvanceX * FontInfo.ScaleFactorX;
+		}
 
 		if ( numLines == 0 )
 		{
@@ -1705,10 +1871,57 @@ void BitmapFontLocal::CalcTextMetrics( char const * text, size_t & len, float & 
 	firstAscent *= FontInfo.ScaleFactorY;
 	lastDescent *= FontInfo.ScaleFactorY;
 	height = firstAscent;
-	height += ( numLines - 1 ) * FontInfo.FontHeight * FontInfo.ScaleFactorY;
+
+	if ( numLines < maxLines )
+	{
+		height += ( numLines - 1 ) * FontInfo.FontHeight * FontInfo.ScaleFactorY;
+	}
+	else
+	{
+		height += ( maxLines - 1 ) * FontInfo.FontHeight * FontInfo.ScaleFactorY;
+	}
+
 	height += lastDescent;
 
-	OVR_ASSERT( numLines <= maxLines );
+	//OVR_ASSERT( numLines <= maxLines );
+}
+
+//==============================
+// BitmapFontLocal::TruncateText
+void BitmapFontLocal::TruncateText( String & inOutText, int const maxLines ) const
+{
+	char const * p = inOutText.ToCStr();
+
+	if ( p == nullptr || p[0] == '\0' )
+	{
+		return;
+	}
+	
+	uint32_t color;
+	uint32_t weight;
+
+	int lineCount = 0;
+	size_t len = 0;
+	for ( ;; len++ )
+	{
+		while ( CheckForFormatEscape( &p, color, weight ) );
+		uint32_t charCode = UTF8Util::DecodeNextChar( &p );
+		if ( charCode == '\n' )
+		{
+			lineCount++;
+			if ( lineCount == maxLines - 1 )
+			{
+				inOutText = inOutText.Substring( 0, len + 1 );
+				inOutText += "...";
+				break;
+			}
+		}
+
+		if ( charCode == '\0' )
+		{
+			break;
+		}
+	}
 }
 
 //==================================================================================================
@@ -1731,7 +1944,7 @@ BitmapFontSurfaceLocal::BitmapFontSurfaceLocal() :
 // BitmapFontSurfaceLocal::~BitmapFontSurfaceLocal
 BitmapFontSurfaceLocal::~BitmapFontSurfaceLocal()
 {
-	SurfaceDef.geo.Free();
+	FontSurfaceDef.geo.Free();
 	delete [] Vertices;
 	Vertices = NULL;
 }
@@ -1741,7 +1954,7 @@ BitmapFontSurfaceLocal::~BitmapFontSurfaceLocal()
 // Initializes the surface VBO
 void BitmapFontSurfaceLocal::Init( const int maxVertices )
 {
-	OVR_ASSERT( SurfaceDef.geo.vertexBuffer == 0 && SurfaceDef.geo.indexBuffer == 0 && SurfaceDef.geo.vertexArrayObject == 0 );
+	OVR_ASSERT( FontSurfaceDef.geo.vertexBuffer == 0 && FontSurfaceDef.geo.indexBuffer == 0 && FontSurfaceDef.geo.vertexArrayObject == 0 );
 	OVR_ASSERT( Vertices == NULL );
 	if ( Vertices != NULL )
 	{
@@ -1759,37 +1972,29 @@ void BitmapFontSurfaceLocal::Init( const int maxVertices )
 	CurIndex = 0;
 
 	Bounds3f localBounds( Bounds3f::Init );
-	SurfaceDef.geo = FontGeometry( MaxVertices / 4, localBounds );
-	SurfaceDef.geo.indexCount = 0; // if there's anything to render this will be modified
+	FontSurfaceDef.geo = FontGeometry( MaxVertices / 4, localBounds );
+	FontSurfaceDef.geo.indexCount = 0; // if there's anything to render this will be modified
 
-	SurfaceDef.surfaceName = "font";
+	FontSurfaceDef.surfaceName = "font";
 
-	//SurfaceDef.graphicsCommand.GpuState.blendMode = GL_FUNC_ADD;
-	SurfaceDef.graphicsCommand.GpuState.blendSrc = GL_SRC_ALPHA;
-	SurfaceDef.graphicsCommand.GpuState.blendDst = GL_ONE_MINUS_SRC_ALPHA;
+	//FontSurfaceDef.graphicsCommand.GpuState.blendMode = GL_FUNC_ADD;
+	FontSurfaceDef.graphicsCommand.GpuState.blendSrc = GL_SRC_ALPHA;
+	FontSurfaceDef.graphicsCommand.GpuState.blendDst = GL_ONE_MINUS_SRC_ALPHA;
 
 #if 0
-	SurfaceDef.graphicsCommand.GpuState.blendSrcAlpha = GL_ONE;
-	SurfaceDef.graphicsCommand.GpuState.blendDstAlpha = GL_ONE_MINUS_SRC_ALPHA;
-	SurfaceDef.graphicsCommand.GpuState.blendEnable = ovrGpuState::BLEND_ENABLE_SEPARATE;
+	FontSurfaceDef.graphicsCommand.GpuState.blendSrcAlpha = GL_ONE;
+	FontSurfaceDef.graphicsCommand.GpuState.blendDstAlpha = GL_ONE_MINUS_SRC_ALPHA;
+	FontSurfaceDef.graphicsCommand.GpuState.blendEnable = ovrGpuState::BLEND_ENABLE_SEPARATE;
 #else
-	SurfaceDef.graphicsCommand.GpuState.blendEnable = ovrGpuState::BLEND_ENABLE;
+	FontSurfaceDef.graphicsCommand.GpuState.blendEnable = ovrGpuState::BLEND_ENABLE;
 #endif
 
-	SurfaceDef.graphicsCommand.GpuState.frontFace = GL_CCW;
+	FontSurfaceDef.graphicsCommand.GpuState.frontFace = GL_CCW;
 
-	SurfaceDef.graphicsCommand.GpuState.depthEnable = true;
-	SurfaceDef.graphicsCommand.GpuState.depthMaskEnable = false;
-	SurfaceDef.graphicsCommand.GpuState.polygonOffsetEnable = false;
-	SurfaceDef.graphicsCommand.GpuState.cullEnable = true;
-
-	SurfaceDef.graphicsCommand.numTextures = 1;
-
-	// FIXME: looks like textColor is unnecessary now
-	SurfaceDef.graphicsCommand.uniformValues[0][0] = 1.0f;
-	SurfaceDef.graphicsCommand.uniformValues[0][1] = 1.0f;
-	SurfaceDef.graphicsCommand.uniformValues[0][2] = 1.0f;
-	SurfaceDef.graphicsCommand.uniformValues[0][3] = 1.0f;
+	FontSurfaceDef.graphicsCommand.GpuState.depthEnable = true;
+	FontSurfaceDef.graphicsCommand.GpuState.depthMaskEnable = false;
+	FontSurfaceDef.graphicsCommand.GpuState.polygonOffsetEnable = false;
+	FontSurfaceDef.graphicsCommand.GpuState.cullEnable = true;
 
 	Initialized = true;
 
@@ -1879,14 +2084,13 @@ int VertexBlockSortFn( void const * a, void const * b )
 // based on the center view matrix's view direction.
 void BitmapFontSurfaceLocal::Finish( Matrix4f const & viewMatrix )
 {
-	ASSERT_WITH_TAG( this != NULL, "BitmapFont" );
-
 	//SPAM( "BitmapFontSurfaceLocal::Finish" );
 
-	SurfaceDef.geo.localBounds.Clear();
+	FontSurfaceDef.geo.localBounds.Clear();
 
 	Matrix4f invViewMatrix = viewMatrix.Inverted(); // if the view is never scaled or sheared we could use Transposed() here instead
 	Vector3f viewPos = invViewMatrix.GetTranslation();
+	Vector3f viewUp = GetViewMatrixUp( viewMatrix );
 
 	// sort vertex blocks indices based on distance to pivot
 	int const MAX_VERTEX_BLOCKS = 256;
@@ -1929,7 +2133,7 @@ void BitmapFontSurfaceLocal::Finish( Matrix4f const & viewMatrix )
 					continue;
 				}
                 textNormal *= 1.0f / len;
-                transform = Matrix4f::CreateFromBasisVectors( textNormal, Vector3f( 0.0f, 1.0f, 0.0f ) );
+                transform = Matrix4f::CreateFromBasisVectors( textNormal, viewUp * -1.0f );
 			}
 			transform.SetTranslation( vb.Pivot );
 		}
@@ -1950,7 +2154,7 @@ void BitmapFontSurfaceLocal::Finish( Matrix4f const & viewMatrix )
 			*(UInt32*)(&Vertices[CurVertex].fontParms[0]) = *(UInt32*)(&v.fontParms[0]);
 			CurVertex++;
 
-			SurfaceDef.geo.localBounds.AddPoint( position );
+			FontSurfaceDef.geo.localBounds.AddPoint( position );
 		}
 		CurIndex += ( vb.NumVerts / 2 ) * 3;
 		// free this vertex block
@@ -1960,38 +2164,35 @@ void BitmapFontSurfaceLocal::Finish( Matrix4f const & viewMatrix )
 	// needed on the next frame.
 	VertexBlocks.Clear();
 
-	glBindVertexArray( SurfaceDef.geo.vertexArrayObject );
-	glBindBuffer( GL_ARRAY_BUFFER, SurfaceDef.geo.vertexBuffer );
+	glBindVertexArray( FontSurfaceDef.geo.vertexArrayObject );
+	glBindBuffer( GL_ARRAY_BUFFER, FontSurfaceDef.geo.vertexBuffer );
 	glBufferSubData( GL_ARRAY_BUFFER, 0, CurVertex * sizeof( fontVertex_t ), (void *)Vertices );
 	glBindVertexArray( 0 );
-	SurfaceDef.geo.indexCount = CurIndex;
+	FontSurfaceDef.geo.indexCount = CurIndex;
 }
 
 //==============================
 // BitmapFontSurfaceLocal::AppendSurfaceList
 void BitmapFontSurfaceLocal::AppendSurfaceList( BitmapFont const & font, Array< ovrDrawSurface > & surfaceList ) const
 {
-	if ( SurfaceDef.geo.indexCount == 0 )
+	if ( FontSurfaceDef.geo.indexCount == 0 )
 	{
 		return;
 	}
 
 	ovrDrawSurface drawSurf;
 
-	SurfaceDef.graphicsCommand.Program = AsLocal( font ).GetFontProgram();
+	FontSurfaceDef.graphicsCommand.Program = AsLocal( font ).GetFontProgram();
+	FontSurfaceDef.graphicsCommand.UniformData[0].Data = (void *)&AsLocal( font ).GetFontTexture();
 
-	SurfaceDef.graphicsCommand.textures[0].texture = AsLocal( font ).GetTexture();
-	SurfaceDef.graphicsCommand.textures[0].target = GL_TEXTURE_2D;
-
-	SurfaceDef.graphicsCommand.uniformSlots[0] = AsLocal( font ).GetFontProgram().uColor;
-	for ( int i = 0 ; i < 4 ; i++ )
-	{
-		SurfaceDef.graphicsCommand.uniformValues[0][i] = 1.0f;
-	}
-
-	drawSurf.surface = &SurfaceDef;
+	drawSurf.surface = &FontSurfaceDef;
 
 	surfaceList.PushBack( drawSurf );
+}
+
+void BitmapFontSurfaceLocal::SetCullEnabled( const bool enabled )
+{
+	FontSurfaceDef.graphicsCommand.GpuState.cullEnable = enabled;
 }
 
 //==============================

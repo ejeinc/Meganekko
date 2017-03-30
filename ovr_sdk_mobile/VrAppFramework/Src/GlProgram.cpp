@@ -15,7 +15,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "Kernel/OVR_GlUtils.h"
+#include "OVR_GlUtils.h"
 #include "Kernel/OVR_LogUtils.h"
 #include "Kernel/OVR_String.h"
 #include "Kernel/OVR_String_Utils.h"
@@ -59,10 +59,12 @@ uniform SceneMatrices
 } sm;
 // Use a function macro for TransformVertex to workaround an issue on exynos8890+Android-M driver:
 // gl_ViewID_OVR outside of the vertex main block causes VIEW_ID to be 0 for every view.
+// NOTE: Driver fix has landed with Android-N.
 //highp vec4 TransformVertex( highp vec4 oPos )
 //{
 //	highp vec4 hPos = sm.ProjectionMatrix[VIEW_ID] * ( sm.ViewMatrix[VIEW_ID] * ( ModelMatrix * oPos ) );
 //	return hPos;
+//}
 #define TransformVertex(localPos) (sm.ProjectionMatrix[VIEW_ID] * ( sm.ViewMatrix[VIEW_ID] * ( ModelMatrix * localPos )))
 #else
 // Still support v100 for image_external as v300 support is lacking in Mali-T760/Android-L drivers.
@@ -118,7 +120,7 @@ R"=====(
 #endif
 ;
 
-// ----DEPRECATED_DRAWEYEVIEW
+// ----DEPRECATED_GLPROGRAM
 
 GlProgram BuildProgram( const char * vertexDirectives, const char * vertexSrc, const char * fragmentDirectives, const char * fragmentSrc, const int programVersion )
 {
@@ -134,7 +136,7 @@ void DeleteProgram( GlProgram & prog )
 {
 	GlProgram::Free( prog );
 }
-// ----DEPRECATED_DRAWEYEVIEW
+// ----DEPRECATED_GLPROGRAM
 
 static const char * FindShaderVersionEnd( const char * src )
 {
@@ -434,24 +436,24 @@ GlProgram GlProgram::Build( const char * vertexDirectives, const char * vertexSr
 		// ----IMAGE_EXTERNAL_WORKAROUND
 	}
 
-	// ----DEPRECATED_DRAWEYEVIEW
+	// ----DEPRECATED_GLPROGRAM
 	// old materialDef members - these will go away soon
 	p.uMvp				= glGetUniformLocation( p.Program, "Mvpm" );
 	p.uModel			= glGetUniformLocation( p.Program, "Modelm" );
 	p.uColor			= glGetUniformLocation( p.Program, "UniformColor" );
 	p.uFadeDirection	= glGetUniformLocation( p.Program, "UniformFadeDirection" );
 	p.uTexm				= glGetUniformLocation( p.Program, "Texm" );
-	p.uTexm2			= glGetUniformLocation( p.Program, "Texm2" );
 	p.uColorTableOffset = glGetUniformLocation( p.Program, "ColorTableOffset" );
 	p.uClipUVs			= glGetUniformLocation( p.Program, "ClipUVs" );
 	p.uJoints			= glGetUniformBlockIndex( p.Program, "JointMatrices" );
+	p.uUVOffset			= glGetUniformLocation( p.Program, "UniformUVOffset" );
 	if ( p.uJoints != -1 )
 	{
 		p.uJointsBinding = p.numUniformBufferBindings++;
 		glUniformBlockBinding( p.Program, p.uJoints, p.uJointsBinding );
 	}
 	// ^^ old materialDef members - these should go away eventually - ideally soon
-	// ----DEPRECATED_DRAWEYEVIEW
+	// ----DEPRECATED_GLPROGRAM
 
 	glUseProgram( p.Program );
 

@@ -11,8 +11,8 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #ifndef OVR_EyeBuffers_h
 #define OVR_EyeBuffers_h
 
-#include "Kernel/OVR_GlUtils.h"		// GLuint
-#include "Kernel/OVR_LogUtils.h"
+#include "OVR_GlUtils.h"		// GLuint
+#include "OVR_LogTimer.h"		// LogGpuTime
 #include "VrApi_Types.h"
 
 namespace OVR

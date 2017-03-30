@@ -63,14 +63,12 @@ extern "C" {
 
 #define LOCAL_PREF_VRAPI_GPU_TIMINGS					"dev_gpuTimings"				// "0" = off, "1" = glBeginQuery/glEndQuery, "2" = glQueryCounter
 
-#define LOCAL_PREF_APP_DEBUG_OPTIONS					"dev_debugOptions"				// "0" or "1"
-
-#define LOCAL_PREF_VRAPI_SIMULATE_UNDOCK				"dev_simulateUndock"			// time to wait before simulating an undock event, < 0 means don't simulate
-
+// DEPRECATED!!! DO NOTE USE.
 // Query the in-memory preferences for a (case insensitive) key / value pair.
 // If the returned string is not defaultKeyValue, it will remain valid until the next ovr_UpdateLocalPreferences().
 OVR_VRAPI_EXPORT const char * ovr_GetLocalPreferenceValueForKey( const char * keyName, const char * defaultKeyValue );
 
+// DEPRECATED!!! DO NOTE USE.
 // Updates the in-memory data and synchronously writes it to storage.
 OVR_VRAPI_EXPORT void ovr_SetLocalPreferenceValueForKey( const char * keyName, const char * keyValue );
 

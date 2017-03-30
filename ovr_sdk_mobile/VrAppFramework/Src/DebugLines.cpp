@@ -13,7 +13,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 #include <stdlib.h>
 
-#include "Kernel/OVR_GlUtils.h"
+#include "OVR_GlUtils.h"
 #include "Kernel/OVR_LogUtils.h"
 
 #include "GlGeometry.h"
@@ -83,12 +83,18 @@ public:
 
 	virtual void		AddBounds( Posef const & pose, Bounds3f const & bounds, Vector4f const & color );
 
-private:
-	DebugLines_t						DepthTested;
-	DebugLines_t						NonDepthTested;
 
-	bool							Initialized;
-	GlProgram						LineProgram;
+	virtual void		    AddAxes( const Vector3f & origin, const Matrix4f & axes, const float size, 
+						    		const Vector4f & color, const long long endFrame, 
+						    		const bool depthTest );
+
+
+private:
+	DebugLines_t		DepthTested;
+	DebugLines_t		NonDepthTested;
+
+	bool				Initialized;
+	GlProgram			LineProgram;
 
 	void		RemoveExpired( const long long frameNum, DebugLines_t & lines );
 };
@@ -120,7 +126,7 @@ void OvrDebugLinesLocal::Init()
 	// this is only freed by the OS when the program exits
 	if ( LineProgram.VertexShader == 0 || LineProgram.FragmentShader == 0 )
 	{
-		LineProgram = BuildProgram( DebugLineVertexSrc, DebugLineFragmentSrc );
+		LineProgram = GlProgram::Build( DebugLineVertexSrc, DebugLineFragmentSrc, NULL, 0 );
 	}
 
 	// the indices will never change once we've set them up, we just won't necessarily
@@ -160,6 +166,7 @@ void OvrDebugLinesLocal::Shutdown()
 	}
 	DepthTested.Surf.geo.Free();
 	NonDepthTested.Surf.geo.Free();
+	GlProgram::Free( LineProgram );
 	Initialized = false;
 }
 
@@ -227,6 +234,22 @@ void OvrDebugLinesLocal::AddPoint(	const Vector3f & pos, const float size,
 	AddLine( pos - fwd, pos + fwd, Vector4f( 0.0f, 0.0f, 1.0f, 1.0f ), Vector4f( 0.0f, 0.0f, 1.0f, 1.0f ), endFrame, depthTest );
 	AddLine( pos - right, pos + right, Vector4f( 1.0f, 0.0f, 0.0f, 1.0f ), Vector4f( 1.0f, 0.0f, 0.0f, 1.0f ), endFrame, depthTest );
 	AddLine( pos - up, pos + up, Vector4f( 0.0f, 1.0f, 0.0f, 1.0f ), Vector4f( 0.0f, 1.0f, 0.0f, 1.0f ), endFrame, depthTest );
+}
+
+//==============================
+// OvrDebugLinesLocal::AddAxes
+void OvrDebugLinesLocal::AddAxes( const Vector3f & origin, const Matrix4f & axes, const float size, 
+						    		const Vector4f & color, const long long endFrame, 
+						    		const bool depthTest )
+{
+	const float half_size = size * 0.5f;
+	Vector3f const fwd		= Vector3f( axes.M[2][0], axes.M[2][1], axes.M[2][2] ) * half_size;
+	Vector3f const right	= Vector3f( axes.M[0][0], axes.M[0][1], axes.M[0][2] ) * half_size;
+	Vector3f const up		= Vector3f( axes.M[1][0], axes.M[1][1], axes.M[1][2] ) * half_size;
+
+	AddLine( origin - fwd,	 origin + fwd,   Vector4f( 0.0f, 0.0f, 1.0f, 1.0f ), Vector4f( 0.0f, 0.0f, 1.0f, 1.0f ), endFrame, depthTest );
+	AddLine( origin - right, origin + right, Vector4f( 1.0f, 0.0f, 0.0f, 1.0f ), Vector4f( 1.0f, 0.0f, 0.0f, 1.0f ), endFrame, depthTest );
+	AddLine( origin - up,    origin + up,    Vector4f( 0.0f, 1.0f, 0.0f, 1.0f ), Vector4f( 0.0f, 1.0f, 0.0f, 1.0f ), endFrame, depthTest );
 }
 
 //==============================

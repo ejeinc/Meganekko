@@ -484,7 +484,7 @@ static inline ovrFrameParms vrapi_DefaultFrameParms( const ovrJava * java, const
 	parms.Type = VRAPI_STRUCTURE_TYPE_FRAME_PARMS;
 	for ( int layer = 0; layer < VRAPI_FRAME_LAYER_TYPE_MAX; layer++ )
 	{
-		parms.Layers[layer].ColorScale = 1.0f; // color scale
+		parms.Layers[layer].ColorScale = 1.0f;
 		for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )
 		{
 			parms.Layers[layer].Textures[eye].TexCoordsFromTanAngles = texCoordsFromTanAngles;
@@ -571,6 +571,7 @@ static inline ovrFrameParms vrapi_DefaultFrameParms( const ovrJava * java, const
 
 	return parms;
 }
+
 
 //-----------------------------------------------------------------
 // Head Model

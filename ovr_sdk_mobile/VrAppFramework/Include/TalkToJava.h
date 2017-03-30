@@ -42,6 +42,7 @@ public:
 	// generated, such as java strings.
 	//
 	// Java exceptions will be checked and cleared after each invocation.
+	virtual ~TalkToJavaInterface() { }
 	virtual void	TtjCommand( JNIEnv & jni, const char * commandString ) = 0;
 };
 

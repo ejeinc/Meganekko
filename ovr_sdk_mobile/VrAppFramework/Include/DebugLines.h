@@ -46,6 +46,10 @@ public:
 	virtual void		    AddPoint( const Vector3f & pos, const float size, 
 						    		const long long endFrame, const bool depthTest ) = 0;
 
+	virtual void		    AddAxes( const Vector3f & origin, const Matrix4f & axes, const float size, 
+						    		const Vector4f & color, const long long endFrame, 
+						    		const bool depthTest ) = 0;
+
 	virtual void		    AddBounds( Posef const & pose, Bounds3f const & bounds, Vector4f const & color ) = 0;
 };
 

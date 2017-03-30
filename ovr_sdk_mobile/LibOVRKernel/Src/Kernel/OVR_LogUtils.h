@@ -12,13 +12,15 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #if !defined( OVRLib_Log_h )
 #define OVRLib_Log_h
 
-#include "Kernel/OVR_Types.h"
-#include "Kernel/OVR_Std.h"
+#include "OVR_Types.h"
+#include "OVR_Std.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>     /* va_list, va_start, va_arg, va_end */
 #include <time.h>
 #include <stdint.h>
+
+void FilePathToTag( const char * filePath, char * strippedTag, size_t const strippedTagSize );
 
 #if defined( OVR_OS_WIN32 )		// allow this file to be included in PC projects
 
@@ -44,10 +46,14 @@ void LogWithFileTag( const int prio, const char * fileTag, const char * fmt, ...
 #include <jni.h>
 
 // Log with an explicit tag
-void LogWithTag( const int prio, const char * tag, const char * fmt, ... );
+void LogWithTag( const int prio, const char * tag, const char * fmt, ... )
+	__attribute__((__format__(printf, 3, 4)))
+	__attribute__((__nonnull__(3)));
 
 // Strips the directory and extension from fileTag to give a concise log tag
-void LogWithFileTag( const int prio, const char * fileTag, const char * fmt, ... );
+void LogWithFileTag( const int prio, const char * fileTag, const char * fmt, ... )
+	__attribute__((__format__(printf, 3, 4)))
+	__attribute__((__nonnull__(3)));
 
 // Our standard logging (and far too much of our debugging) involves writing
 // to the system log for viewing with logcat.  Previously we defined separate
@@ -88,82 +94,6 @@ void LogWithFileTag( const int prio, const char * fileTag, const char * fmt, ...
 #else
 #error "unknown platform"
 #endif	
-
-// Declaring a variable with this class will report the time elapsed when it
-// goes out of scope.
-class LogCpuTime
-{
-public:
-
-	LogCpuTime( const char * fmt, ... )
-	{
-		va_list ap;
-		va_start( ap, fmt );
-#if defined( OVR_MSVC_SAFESTRING )
-		vsnprintf_s( Label, sizeof( Label ), _TRUNCATE, fmt, ap );
-#else
-		vsnprintf( Label, sizeof( Label ), fmt, ap );
-#endif
-		va_end( ap );
-		StartTimeNanoSec = GetNanoSeconds();
-	}
-	~LogCpuTime()
-	{
-		const double endTimeNanoSec = GetNanoSeconds();
-		LOG( "%s took %6.4f seconds", Label, ( endTimeNanoSec - StartTimeNanoSec ) * 1e-9 );
-	}
-
-private:
-	char			Label[1024];
-	double			StartTimeNanoSec;
-
-	static double GetNanoSeconds()
-	{
-#if defined( OVR_OS_ANDROID )
-		struct timespec now;
-		clock_gettime( CLOCK_MONOTONIC, &now );
-		return (double)now.tv_sec * 1e9 + now.tv_nsec;
-#else
-		// TODO: Review OVR::Timer::GetSeconds() implementation
-		//OVR_ASSERT( 0 );
-		return 0.0;
-#endif
-	}
-};
-
-#define LOGCPUTIME( ... ) const LogCpuTime logCpuTimeObject( __VA_ARGS__ )
-
-// Call LogGpuTime::Begin() and LogGpuTime::End() to log the GPU rendering time between begin and end.
-// Note that begin-end blocks cannot overlap.
-// This seems to cause some stability problems, so don't do it automatically.
-template< int NumTimers, int NumFrames = 10 >
-class LogGpuTime
-{
-public:
-					LogGpuTime();
-					~LogGpuTime();
-
-	bool			IsEnabled();
-	void			Begin( int index );
-	void			End( int index );
-	void			PrintTime( int index, const char * label ) const;
-	double			GetTime( int index ) const;
-	double			GetTotalTime() const;
-
-private:
-	bool			UseTimerQuery;
-	bool			UseQueryCounter;
-	uint32_t		TimerQuery[NumTimers];
-	int64_t			BeginTimestamp[NumTimers];
-	int32_t			DisjointOccurred[NumTimers];
-	int32_t			TimeResultIndex[NumTimers];
-	double			TimeResultMilliseconds[NumTimers][NumFrames];
-	int				LastIndex;
-};
-
-// Allow GPU Timer Queries - NOTE: GPU Timer queries
-// can cause instability on current Adreno driver.
-void SetAllowGpuTimerQueries( int enable );
 
 // For CPU performance testing ONLY!
 void SetThreadAffinityMask( int tid, int mask );

@@ -166,7 +166,7 @@ bool ovr_ReadFileFromOtherApplicationPackage( void * zipFile, const char * nameI
 				length = s.st_size;
 				if ( length != (int)info.uncompressed_size )
 				{
-					LOG( "Cached file for %s has length %i != %i", nameInZip,
+					LOG( "Cached file for %s has length %i != %lu", nameInZip,
 							length, info.uncompressed_size );
 					// Fall through to normal load.
 				}

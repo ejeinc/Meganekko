@@ -13,9 +13,9 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 #include <stdlib.h>
 
-#include "Kernel/OVR_GlUtils.h"
 #include "Kernel/OVR_LogUtils.h"
 
+#include "OVR_GlUtils.h"
 #include "GlTexture.h"
 
 #if !defined( OVR_OS_ANDROID )
@@ -46,7 +46,7 @@ SurfaceTexture::SurfaceTexture( JNIEnv * jni_ ) :
 
 #if defined( OVR_OS_ANDROID )
 	static const char * className = "android/graphics/SurfaceTexture";
-	const jclass surfaceTextureClass = jni->FindClass(className);
+	const jclass surfaceTextureClass = jni->FindClass( className );
 	if ( surfaceTextureClass == 0 )
 	{
 		FAIL( "FindClass( %s ) failed", className );

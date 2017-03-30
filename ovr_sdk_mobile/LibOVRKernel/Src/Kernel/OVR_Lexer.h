@@ -56,8 +56,13 @@ public:
 	// expects a 0-terminated string as input and length is determined as lenght of a string.
 	ovrLexer( const char * source );
 	ovrLexer( const char * source, char const * punctuation );
+	ovrLexer( const ovrLexer & other );
+	ovrLexer( ovrLexer && other );
 
 	~ovrLexer();
+
+	ovrLexer & operator=( const ovrLexer & other );
+	ovrLexer & operator=( ovrLexer && other );
 
 	ovrResult	NextToken( char * token, size_t const maxTokenSize );
 	ovrResult	PeekToken( char * token, size_t const maxTokenSize );

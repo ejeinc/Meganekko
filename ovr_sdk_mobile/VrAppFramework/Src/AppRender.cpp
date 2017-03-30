@@ -10,14 +10,13 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 *************************************************************************************/
 #include <math.h>
 
-#include "Kernel/OVR_GlUtils.h"
+#include "OVR_GlUtils.h"
 #include "VrApi.h"
 #include "VrApi_Helpers.h"
 
 #include "App.h"
 #include "AppLocal.h"
 #include "VrCommon.h"
-#include "BitmapFont.h"
 #include "DebugLines.h"
 #include "DebugConsole.h"
 
@@ -28,7 +27,7 @@ namespace OVR
 {
 static int ClipPolygonToPlane( Vector4f * dstPoints, const Vector4f * srcPoints, int srcPointCount, int planeAxis, float planeDist, float planeDir )
 {
-    int sides[16];
+	int sides[16] = { 0 };
 
 	for ( int p0 = 0; p0 < srcPointCount; p0++ )
 	{
@@ -175,175 +174,124 @@ void AppLocal::DrawEyeViews( ovrFrameResult & res )
 	// Flush out and report any errors
 	GL_CheckErrors( "FrameStart" );
 
-	EyeBuffers->BeginFrame();
-	DebugConsole::BeginFrame();
+	OVR_ASSERT( res.FrameParms != NULL );
 
-	// Increase the fov by about 10 degrees if we are not holding 60 fps so
-	// there is less black pull-in at the edges.
-	//
-	// Doing this dynamically based just on time causes visible flickering at the
-	// periphery when the fov is increased, so only do it if minimumVsyncs is set.
-	const float fovIncrease = ( ( VrSettings.MinimumVsyncs > 1 ) || TheVrFrame.Get().DeviceStatus.PowerLevelStateThrottled ) ? 10.0f : 0.0f;
-	const float fovDegreesX = SuggestedEyeFovDegreesX + fovIncrease;
-	const float fovDegreesY = SuggestedEyeFovDegreesY + fovIncrease;
-
-	// Setup the default frame parms first so they can be modified in DrawEyeView().
-	const ovrFrameTextureSwapChains eyes = EyeBuffers->GetCurrentFrameTextureSwapChains();
-	const ovrMatrix4f texCoordsFromTanAngles = ovrMatrix4f_TanAngleMatrixFromProjection( (ovrMatrix4f*)( &res.FrameMatrices.EyeProjection[ 0 ] ) );
-
-	// ----TODO_DRAWEYEVIEW - remove once DrawEyeView path is removed as apps should be supplying the
-	// FrameParms in FrameResult.
-	ovrFrameParms fallbackFrameParms;
-	if ( res.FrameParms == NULL )
+	// FrameParm modifications.
 	{
-		fallbackFrameParms = vrapi_DefaultFrameParms( GetJava(), VRAPI_FRAME_INIT_DEFAULT, vrapi_GetTimeInSeconds(), NULL );
-		res.FrameParms = (ovrFrameParmsExtBase *) & fallbackFrameParms;
-	}
-	// ----TODO_DRAWEYEVIEW
+		ovrFrameParms & frameParms = *vrapi_GetFrameParms( res.FrameParms );
 
-	ovrFrameParms & frameParms = *vrapi_GetFrameParms( res.FrameParms );
-
-	const bool renderMonoMode = ( VrSettings.RenderMode & RENDERMODE_TYPE_MONO_MASK ) != 0;
-
-	// ----TODO_DRAWEYEVIEW - remove once DrawEyeView path is removed.
-	static int frameCount = 0;
-	frameCount++;
-	const bool useFrameResultSurfaces = ( ( VrSettings.RenderMode & RENDERMODE_TYPE_FRAME_SURFACES_MASK ) != 0 ) ||
-									  ( ( ( VrSettings.RenderMode & RENDERMODE_TYPE_DEBUG_MASK ) != 0 ) && ( ( frameCount & 0x8 ) > 0 ) );
-
-	if ( !useFrameResultSurfaces )
-	{
-		frameParms = vrapi_DefaultFrameParms( GetJava(), VRAPI_FRAME_INIT_DEFAULT, vrapi_GetTimeInSeconds(), NULL );
-		for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )
+		// If TexRectLayer specified, compute a texRect which covers the render surface list for the layer.
+		if ( res.TexRectLayer >= 0 && res.TexRectLayer < VRAPI_FRAME_LAYER_TYPE_MAX )
 		{
-			frameParms.Layers[VRAPI_FRAME_LAYER_TYPE_WORLD].Textures[eye].ColorTextureSwapChain = eyes.ColorTextureSwapChain[renderMonoMode ? 0 : eye];
-			frameParms.Layers[VRAPI_FRAME_LAYER_TYPE_WORLD].Textures[eye].DepthTextureSwapChain = eyes.DepthTextureSwapChain[renderMonoMode ? 0 : eye];
-			frameParms.Layers[VRAPI_FRAME_LAYER_TYPE_WORLD].Textures[eye].TextureSwapChainIndex = eyes.TextureSwapChainIndex;
-			for ( int layer = 0; layer < VRAPI_FRAME_LAYER_TYPE_MAX; layer++ )
+			const Bounds3f surfaceBounds = BoundsForSurfaceList( res.Surfaces );
+			ovrFrameLayer & layer = frameParms.Layers[res.TexRectLayer];
+			for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )
 			{
-				frameParms.Layers[layer].Textures[eye].TexCoordsFromTanAngles = texCoordsFromTanAngles;
-				frameParms.Layers[layer].Textures[eye].HeadPose = TheVrFrame.Get().Tracking.HeadPose;
+				layer.Textures[eye].TextureRect = TextureRectForBounds( surfaceBounds, res.FrameMatrices.EyeProjection[eye] * res.FrameMatrices.EyeView[eye] );
 			}
 		}
 	}
-	// ----TODO_DRAWEYEVIEW - remove once DrawEyeView path is removed.
-
-	// If TexRectLayer specified, compute a texRect which covers the render surface list for the layer.
-	if ( useFrameResultSurfaces && res.TexRectLayer >= 0 && res.TexRectLayer < VRAPI_FRAME_LAYER_TYPE_MAX )
-	{
-		const Bounds3f surfaceBounds = BoundsForSurfaceList( res.Surfaces );
-		ovrFrameLayer & layer = frameParms.Layers[res.TexRectLayer];
-		for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )
-		{
-			layer.Textures[eye].TextureRect = TextureRectForBounds( surfaceBounds, res.FrameMatrices.EyeProjection[eye] * res.FrameMatrices.EyeView[eye] );
-		}
-	}
-
-	// ----TODO_DRAWEYEVIEW
-	// Once all apps are using the frame result surfaces, all of this #if should be removed and
-	// debug lines and debug font surfaces should be added to the frame result Surfaces array
-	// from VrThreadFunction. We cannot add them to that list now because it will trigger use
-	// of the frame result surface for apps that are not yet submitting surfaces in the frame results.
-	// This at least allows the frame result surfaces path to only call RenderSurfaceList once
-	// per eye instead of 3 times per eye.
-	Array< ovrDrawSurface > frameworkSurfaces;
-	if ( useFrameResultSurfaces )
-	{
-		GetDebugLines().AppendSurfaceList( res.Surfaces );
-		GetDebugFontSurface().AppendSurfaceList( GetDebugFont(), res.Surfaces );
-	}
-	else
-	{
-		GetDebugLines().AppendSurfaceList( frameworkSurfaces );
-		GetDebugFontSurface().AppendSurfaceList( GetDebugFont(), frameworkSurfaces );
-	}
-	// ----TODO_DRAWEYEVIEW
-
-	frameParms.FrameIndex = TheVrFrame.Get().FrameNumber;
-	frameParms.MinimumVsyncs = VrSettings.MinimumVsyncs;
-	frameParms.PerformanceParms = VrSettings.PerformanceParms;
 
 	// DisplayMonoMode uses a single eye rendering for speed improvement
 	// and / or high refresh rate double-scan hardware modes.
+	const bool renderMonoMode = ( VrSettings.RenderMode & RENDERMODE_TYPE_MONO_MASK ) != 0;
 	const int numPasses = ( renderMonoMode || UseMultiview ) ? 1 : 2;
 
 	// Render each eye.
 	OVR_PERF_TIMER( AppLocal_DrawEyeViews_RenderEyes );
+
+	EyeBuffers->BeginFrame();
+
 	for ( int eye = 0; eye < numPasses; eye++ )
 	{
 		EyeBuffers->BeginRenderingEye( eye );
 
 		// Call back to the app for drawing.
-		if ( useFrameResultSurfaces )
+		if ( res.ClearDepthBuffer && res.ClearColorBuffer )
 		{
-			if ( res.ClearDepthBuffer && res.ClearColorBuffer )
+			glClearColor( res.ClearColor.x, res.ClearColor.y, res.ClearColor.z, res.ClearColor.w );
+			glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+		}
+		else if ( res.ClearColorBuffer )
+		{
+			//--- MV_INVALIDATE_WORKAROUND
+			// On the Exynos 8890 with multiview enabled, we get rendering corruption in view 0
+			// when issuing an invalidate or clear at the start of the frame. As a workaround,
+			// we render a quad with the clear color. This likely introduces extra timing into
+			// the system which happens to fix the issue for our use case.
+			if ( UseMultiview )
+			{
+				ScreenClearColor = res.ClearColor;
+				res.Surfaces.InsertAt( 0, ovrDrawSurface( &ScreenClearSurf ) );
+			}
+			//--- MV_INVALIDATE_WORKAROUND
+			else
 			{
 				glClearColor( res.ClearColor.x, res.ClearColor.y, res.ClearColor.z, res.ClearColor.w );
-				glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+				glClear( GL_COLOR_BUFFER_BIT );
 			}
-			else if ( res.ClearColorBuffer )
-			{
-				//--- MV_INVALIDATE_WORKAROUND
-				// On the Exynos 8890 with multiview enabled, we get rendering corruption in view 0
-				// when issuing an invalidate or clear. As a workaround, we render a quad with the
-				// clear color.
-				if ( UseMultiview )
-				{
-					ScreenClearColor = res.ClearColor;
-					res.Surfaces.InsertAt( 0, ovrDrawSurface( &ScreenClearSurf ) );
-				}
-				//--- MV_INVALIDATE_WORKAROUND
-				else
-				{
-					glClearColor( res.ClearColor.x, res.ClearColor.y, res.ClearColor.z, res.ClearColor.w );
-					glClear( GL_COLOR_BUFFER_BIT );
-				}
-			}
-			else if ( res.ClearDepthBuffer )
-			{
-				glClear( GL_DEPTH_BUFFER_BIT );
-			}
-
-			// Render the surfaces returned by Frame.
-			SurfaceRender.RenderSurfaceList( res.Surfaces, res.FrameMatrices.EyeView[ 0 ], res.FrameMatrices.EyeProjection[ 0 ], eye );
 		}
-		else
+		else if ( res.ClearDepthBuffer )
 		{
-			appInterface->DrawEyeView( eye, fovDegreesX, fovDegreesY, frameParms );
-			SurfaceRender.RenderSurfaceList( frameworkSurfaces, res.FrameMatrices.EyeView[ eye ], res.FrameMatrices.EyeProjection[ eye ] );
+			glClear( GL_DEPTH_BUFFER_BIT );
 		}
+
+		// Render the surfaces returned by Frame.
+		SurfaceRender.RenderSurfaceList( res.Surfaces, res.FrameMatrices.EyeView[ 0 ], res.FrameMatrices.EyeProjection[ 0 ], eye );
 
 		glDisable( GL_DEPTH_TEST );
 		glDisable( GL_CULL_FACE );
 
-		// Optionally draw thick calibration lines into the texture,
-		// which will be overlayed by the thinner origin cross when
-		// distorted to the window.
-		if ( drawCalibrationLines )
-		{
-			EyeDecorations.DrawEyeCalibrationLines( fovDegreesX, eye );
-		}
-
 		// Draw a thin vignette at the edges of the view so clamping will give black
 		// This will not be reflected correctly in overlay planes.
+		if ( extensionsOpenGL.EXT_texture_border_clamp == false )
 		{
 			OVR_PERF_TIMER( AppLocal_DrawEyeViews_FillEdge );
-			EyeDecorations.FillEdge( VrSettings.EyeBufferParms.resolutionWidth, VrSettings.EyeBufferParms.resolutionHeight );
+			{
+				// We need destination alpha to be solid 1 at the edges to prevent overlay
+				// plane rendering from bleeding past the rendered view border, but we do
+				// not want to fade to that, which would cause overlays to fade out differently
+				// than scene geometry.
+
+				// We could skip this for the cube map overlays when used for panoramic photo viewing
+				// with no foreground geometry to get a little more fov effect, but if there
+				// is a swipe view or anything else being rendered, the border needs to
+				// be respected.
+
+				// Note that this single pixel border won't be sufficient if mipmaps are made for
+				// the eye buffers.
+
+				// Probably should do this with GL_LINES instead of scissor changing.
+				const int fbWidth = VrSettings.EyeBufferParms.resolutionWidth;
+				const int fbHeight = VrSettings.EyeBufferParms.resolutionHeight;
+				glClearColor( 0.0f, 0.0f, 0.0f, 1.0f );
+				glEnable( GL_SCISSOR_TEST );
+
+				glScissor( 0, 0, fbWidth, 1 );
+				glClear( GL_COLOR_BUFFER_BIT );
+
+				glScissor( 0, fbHeight-1, fbWidth, 1 );
+				glClear( GL_COLOR_BUFFER_BIT );
+
+				glScissor( 0, 0, 1, fbHeight );
+				glClear( GL_COLOR_BUFFER_BIT );
+
+				glScissor( fbWidth-1, 0, 1, fbHeight );
+				glClear( GL_COLOR_BUFFER_BIT );
+
+				glScissor( 0, 0, fbWidth, fbHeight );
+				glDisable( GL_SCISSOR_TEST );
+			}
 		}
 
 		{
 			OVR_PERF_TIMER( AppLocal_DrawEyeViews_EndRenderingEye );
 			EyeBuffers->EndRenderingEye( eye );
 		}
-
-		// Update debug console, trivial cost if console isn't up. Will overwite everything on the screen if it is up
-		// But let the above rendering take place anyway so we can see any logs it may generate.
-		DebugConsole::DrawEyeView( eye, fovDegreesX, fovDegreesY, frameParms, SurfaceRender );
 	}
 
 	OVR_PERF_TIMER_STOP( AppLocal_DrawEyeViews_RenderEyes );
 
-	DebugConsole::EndFrame();
 	EyeBuffers->EndFrame();
 
 	OVR_PERF_TIMER_STOP( AppLocal_DrawEyeViews );

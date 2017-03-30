@@ -14,8 +14,8 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "Kernel/OVR_Math.h"
 #include "Kernel/OVR_Array.h"
 #include "Kernel/OVR_String.h"
-#include "Kernel/OVR_GlUtils.h"
 
+#include "OVR_GlUtils.h"
 #include "GlTexture.h"
 #include "GlGeometry.h"
 #include "GpuState.h"
@@ -109,11 +109,10 @@ public:
 
 	// Draws a list of surfaces in order.
 	// Any sorting or culling should be performed before calling.
-	// If "eye" == -1, assume old DrawEyeView mode of operation.
 	ovrDrawCounters			RenderSurfaceList( const Array<ovrDrawSurface> & surfaceList,
 											   const Matrix4f & viewMatrix,
 											   const Matrix4f & projectionMatrix,
-											   const int eye = -1 );
+											   const int eye );
 private:
 	// Returns the index of the updated SceneMatrices UBO.
 	int						UpdateSceneMatrices( const Matrix4f * viewMatrix,

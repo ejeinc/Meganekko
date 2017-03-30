@@ -15,12 +15,13 @@ of patent rights can be found in the PATENTS file in the same directory.
 
 #include "OVR_Lexer.h"
 
-#include "Kernel/OVR_Std.h"
-#include "Kernel/OVR_UTF8Util.h"
-#include "Kernel/OVR_LogUtils.h"
-#include "Kernel/OVR_MemBuffer.h"
+#include "OVR_Std.h"
+#include "OVR_UTF8Util.h"
+#include "OVR_LogUtils.h"
+#include "OVR_MemBuffer.h"
 #include <cstdlib> // for strto* functions
 #include <errno.h>
+#include <utility>
 
 namespace OVR {
 
@@ -68,12 +69,80 @@ ovrLexer::ovrLexer( MemBufferT< uint8_t > const & source, char const * punctuati
 }
 
 //==============================
+// ovrLexer::ovrLexer
+ovrLexer::ovrLexer( const ovrLexer & other )
+{
+	operator=( other );
+}
+
+//==============================
+// ovrLexer::ovrLexer
+ovrLexer::ovrLexer( ovrLexer && other )
+{
+	operator=( std::move(other) );
+}
+
+//==============================
 // ovrLexer::~ovrLexer
 ovrLexer::~ovrLexer()
 {
 	OVR_ASSERT( Error == LEX_RESULT_OK || Error == LEX_RESULT_EOF );
 	delete Punctuation;
 	Punctuation = NULL;
+}
+
+//==============================
+// ovrLexer::operator=
+ovrLexer & ovrLexer::operator=( const ovrLexer & other )
+{
+	//self assignment
+	if ( this == &other )
+	{
+		return *this;
+	}
+	
+	Source = other.Source;
+	SourceLength = other.SourceLength;
+	p = other.p;
+	Error = other.Error;
+	
+	size_t len = other.Punctuation == NULL ? 0 : OVR_strlen( other.Punctuation );
+	if ( len == 0 )
+	{
+		Punctuation = new char[16];
+		Punctuation[0] = '\0';
+	}
+	else
+	{
+		Punctuation = new char[len + 1];
+		OVR_strcpy( Punctuation, len + 1, other.Punctuation );
+	}
+
+	return *this;
+}
+
+//==============================
+// ovrLexer::operator=
+ovrLexer & ovrLexer::operator=( ovrLexer && other )
+{
+	//self assignment
+	if ( this == &other )
+	{
+		return *this;
+	}
+
+	Source = other.Source;
+	SourceLength = other.SourceLength;
+	p = other.p;
+	Error = other.Error;
+	Punctuation = other.Punctuation;
+
+	other.Source = nullptr;
+	other.SourceLength = 0;
+	other.p = nullptr;
+	other.Punctuation = nullptr;
+
+	return *this;
 }
 
 //==============================
@@ -256,6 +325,8 @@ ovrLexer::ovrResult ovrLexer::NextToken( char * token, size_t const maxTokenSize
 		OVR_ASSERT( token != NULL && maxTokenSize > 0 );
 		return LEX_RESULT_ERROR;
 	}
+
+	token[0] = '\0';
 
 	size_t const BUFF_SIZE = 8192;
 	char buffer[BUFF_SIZE];
@@ -602,7 +673,7 @@ ovrLexer::ovrResult ovrLexer::ParseFloat( float & value, float const defaultVal 
 	}
 
 	// Did we hit a non-digit character before the end of the string?
-	if ( *endptr != '\0' )
+	if ( *endptr != '\0' && *endptr != 'f' )
 	{
 		value = defaultVal;
 		return LEX_RESULT_UNEXPECTED_TOKEN;

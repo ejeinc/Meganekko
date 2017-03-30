@@ -67,12 +67,12 @@ public class ConsoleReceiver extends BroadcastReceiver {
  	@Override
 	public void onReceive(Context context, final Intent intent) {
 		Log.d( TAG, "!@#!@ConsoleReceiver action:" + intent );
-		if (intent.getAction().equals( CONSOLE_INTENT ))
+		if ( intent.getAction().equals( CONSOLE_INTENT ) )
 		{
 			// Unity apps will not have a VrActivity, so they can only use console functions that are ok
 			// with a NULL appPtr.
 			String cmdValue = intent.getStringExtra( CONSOLE_STRING_EXTRA );
-			if ( cmdValue != null && cmdValue != "" )
+			if ( cmdValue != null && !cmdValue.equals( "" ) )
 			{
 				if ( activity instanceof VrActivity )
 				{		

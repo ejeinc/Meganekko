@@ -14,10 +14,8 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "Kernel/OVR_Alg.h"
 #include "Kernel/OVR_Math.h"
 #include "Kernel/OVR_Array.h"
-#include "Kernel/OVR_GlUtils.h"
+#include "OVR_GlUtils.h"
 #include "Kernel/OVR_LogUtils.h"
-
-#include "GlProgram.h"
 
 /*
  * These are all built inside VertexArrayObjects, so no GL state other
@@ -26,6 +24,8 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
  */
 namespace OVR
 {
+
+unsigned GlGeometry::IndexType = ( sizeof( TriangleIndex ) == 2 ) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
 
 template< typename _attrib_type_ >
 void PackVertexAttribute( Array< uint8_t > & packed, const Array< _attrib_type_ > & attrib,
@@ -123,12 +123,6 @@ void GlGeometry::Update( const VertexAttribs & attribs, const bool updateBounds 
 			localBounds.AddPoint( attribs.position[i] );
 		}
 	}
-}
-
-void GlGeometry::Draw() const
-{
-	glBindVertexArray( vertexArrayObject );
-	glDrawElements( primitiveType, indexCount, ( sizeof( TriangleIndex ) == 2 ) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, NULL );
 }
 
 void GlGeometry::Free()
@@ -578,73 +572,6 @@ GlGeometry BuildSpherePatch( const float fov )
 		}
 	}
 
-	return GlGeometry( attribs, indices );
-}
-
-GlGeometry BuildCalibrationLines( const int extraLines, const bool fullGrid )
-{
-	// lines per axis
-	const int lineCount = 1 + extraLines * 2;
-	const int vertexCount = lineCount * 2 * 2;
-
-	VertexAttribs attribs;
-	attribs.position.Resize( vertexCount );
-	attribs.uv0.Resize( vertexCount );
-	attribs.color.Resize( vertexCount );
-
-	for ( int y = 0; y < lineCount; y++ )
-	{
-		const float yf = ( lineCount == 1 ) ? 0.5f : (float) y / (float) ( lineCount - 1 );
-		for ( int x = 0; x <= 1; x++ )
-		{
-			// along x
-			const int v1 = 2 * ( y * 2 + x ) + 0;
-			attribs.position[v1].x = -1.0f + x * 2.0f;
-			attribs.position[v1].y = -1.0f + yf * 2.0f;
-			attribs.position[v1].z = -1.001f;	// keep the -1 and 1 just off the projection edges
-			attribs.uv0[v1].x = static_cast<float>( x );
-			attribs.uv0[v1].y = 1.0f - yf;
-			for ( int i = 0; i < 4; i++ )
-			{
-				attribs.color[v1][i] = 1.0f;
-			}
-
-			// swap y and x to go along y
-			const int v2 = 2 * ( y * 2 + x ) + 1;
-			attribs.position[v2].y = -1.0f + x * 2.0f;
-			attribs.position[v2].x = -1.0f + yf * 2.0f;
-			attribs.position[v2].z = -1.001f;	// keep the -1 and 1 just off the projection edges
-			attribs.uv0[v2].x = static_cast<float>( x );
-			attribs.uv0[v2].y = 1.0f - yf;
-			for ( int i = 0; i < 4; i++ )
-			{
-				attribs.color[v2][i] = 1.0f;
-			}
-
-			if ( !fullGrid && y != extraLines )
-			{	// make a short hash instead of a full line
-				attribs.position[v1].x *= 0.02f;
-				attribs.position[v2].y *= 0.02f;
-			}
-		}
-	}
-
-	Array< TriangleIndex > indices;
-	indices.Resize( lineCount * 4 );
-
-	int index = 0;
-	for ( TriangleIndex x = 0; x < lineCount; x++ )
-	{
-		const TriangleIndex start = x * 4;
-
-		indices[index + 0] = start;
-		indices[index + 1] = start + 2;
-
-		indices[index + 2] = start + 1;
-		indices[index + 3] = start + 3;
-
-		index += 4;
-	}
 	return GlGeometry( attribs, indices );
 }
 

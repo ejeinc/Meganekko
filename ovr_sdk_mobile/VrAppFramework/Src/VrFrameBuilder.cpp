@@ -16,8 +16,7 @@ Copyright   :   Copyright 2015 Oculus VR, LLC. All Rights reserved.
 #include "VrApi.h"
 #include "VrApi_Helpers.h"
 #include "Kernel/OVR_String.h"
-#include "Input.h"
-#include "SystemActivities.h"		// for BACK_BUTTON handling
+#include "OVR_Input.h"
 
 #if defined ( OVR_OS_ANDROID )
 #include <android/input.h>
@@ -71,11 +70,8 @@ static struct
 	{ OVR_KEY_MAX, 0 }
 };
 
-static ovrHeadSetPluggedState HeadPhonesPluggedState = OVR_HEADSET_PLUGGED_UNKNOWN;
-
 VrFrameBuilder::VrFrameBuilder() :
-	BackKeyState( BUTTON_DOUBLE_TAP_TIME_IN_SECONDS, BACK_BUTTON_LONG_PRESS_TIME_IN_SECONDS ),
-	MenuKeyState( BUTTON_DOUBLE_TAP_TIME_IN_SECONDS, MENU_BUTTON_LONG_PRESS_TIME_IN_SECONDS ),	// this is only 0.49 because on S7 Android M the SFinder causes a key up at 0.50 seconds
+	BackKeyState( 0.25f ),	// NOTE: This is the default value. System specified value will be set on init.
 	lastTouchpadTime( 0.0 ),
 	touchpadTimer( 0.0 ),
 	lastTouchDown( false ),
@@ -83,26 +79,27 @@ VrFrameBuilder::VrFrameBuilder() :
 {
 }
 
+void VrFrameBuilder::Init( ovrJava * java )
+{
+	OVR_ASSERT( java != NULL );
+
+	const float BackButtonDoubleTapTimeInSec = vrapi_GetSystemPropertyFloat( java, VRAPI_SYS_PROP_BACK_BUTTON_DOUBLETAP_TIME );
+
+	BackKeyState.SetDoubleTapTime( BackButtonDoubleTapTimeInSec );
+}
+
 void VrFrameBuilder::UpdateNetworkState( JNIEnv * jni, jclass activityClass, jobject activityObject )
 {
 #if defined( OVR_OS_ANDROID )
 	const jmethodID isWififConnectedMethodId = ovr_GetStaticMethodID( jni, activityClass, "isWifiConnected", "(Landroid/app/Activity;)Z" );
-	const jmethodID isAirplaneModeEnabledMethodId = ovr_GetStaticMethodID( jni, activityClass, "isAirplaneModeEnabled", "(Landroid/app/Activity;)Z" );
-	const jmethodID isBluetoothEnabledMethodId = ovr_GetStaticMethodID( jni, activityClass, "getBluetoothEnabled", "(Landroid/app/Activity;)Z" );
 
 	// NOTE: make sure android.permission.ACCESS_NETWORK_STATE is set in the manifest for isWifiConnected().
 	vrFrame.DeviceStatus.WifiIsConnected		= jni->CallStaticBooleanMethod( activityClass, isWififConnectedMethodId, activityObject );
-	vrFrame.DeviceStatus.AirplaneModeIsEnabled	= jni->CallStaticBooleanMethod( activityClass, isAirplaneModeEnabledMethodId, activityObject );
-	vrFrame.DeviceStatus.BluetoothIsEnabled		= jni->CallStaticBooleanMethod( activityClass, isBluetoothEnabledMethodId, activityObject );
 #elif defined ( OVR_OS_WIN32 )
 	DWORD dwState = 0;
 	vrFrame.DeviceStatus.WifiIsConnected		= InternetGetConnectedState( &dwState, 0 ) ? true : false;
-	vrFrame.DeviceStatus.AirplaneModeIsEnabled	= false;
-	vrFrame.DeviceStatus.BluetoothIsEnabled		= BluetoothIsConnectable( NULL ) ? true : false;
 #else
 	vrFrame.DeviceStatus.WifiIsConnected		= false;
-	vrFrame.DeviceStatus.AirplaneModeIsEnabled	= false;
-	vrFrame.DeviceStatus.BluetoothIsEnabled		= false;
 #endif
 }
 
@@ -115,7 +112,6 @@ void VrFrameBuilder::InterpretTouchpad( VrInput & input, const double currentTim
 	// 4) Down -> Up w/out Motion -> Down -> Up = Double Tap
 	static const double timer_finger_down = 0.3;
 	static const double timer_finger_up = 0.3;
-	static const double timer_long_press = BACK_BUTTON_LONG_PRESS_TIME_IN_SECONDS;
 
 	static const float min_swipe_distance = 100.0f;
 
@@ -207,7 +203,7 @@ void VrFrameBuilder::InterpretTouchpad( VrInput & input, const double currentTim
 				touchpadTimer = 0.0;
 			}
 		}
-		else if ( touchpadTimer > timer_long_press )
+		else if ( touchpadTimer > 0.75f ) // TODO: BUTTON_TOUCH_LONGPRESS actually used?
 		{
 			input.buttonPressed |= BUTTON_TOUCH_LONGPRESS;
 			input.buttonReleased |= BUTTON_TOUCH_LONGPRESS;
@@ -267,8 +263,7 @@ void VrFrameBuilder::AddKeyEventToFrame( ovrKeyCode const keyCode, KeyEventType 
 void VrFrameBuilder::AdvanceVrFrame( const ovrInputEvents & inputEvents, ovrMobile * ovr,
 									const ovrJava & java,
 									const ovrHeadModelParms & headModelParms,
-									const long long enteredVrModeFrameNumber,
-									SystemActivitiesAppEventList_t * appEvents )
+									const long long enteredVrModeFrameNumber )
 {
 	const VrInput lastVrInput = vrFrame.Input;
 
@@ -278,7 +273,6 @@ void VrFrameBuilder::AdvanceVrFrame( const ovrInputEvents & inputEvents, ovrMobi
 	{
 		// clear any state that may be left over from the pause.
 		BackKeyState.Reset();
-		MenuKeyState.Reset();
 	}
 
 	// Copy JoySticks and TouchPosition.
@@ -316,17 +310,9 @@ void VrFrameBuilder::AdvanceVrFrame( const ovrInputEvents & inputEvents, ovrMobi
 			BackKeyState.HandleEvent( currentTime, inputEvents.KeyEvents[i].Down, inputEvents.KeyEvents[i].RepeatCount );
 			continue;
 		}
-		else if ( inputEvents.KeyEvents[i].KeyCode == OVR_KEY_MENU )
-		{
-			MenuKeyState.HandleEvent( currentTime, inputEvents.KeyEvents[i].Down, inputEvents.KeyEvents[i].RepeatCount );
-			continue;
-		}
 	}
 	const KeyEventType backKeyEventType = BackKeyState.Update( currentTime );
 	AddKeyEventToFrame( OVR_KEY_ESCAPE, backKeyEventType, 0 );
-
-	const KeyEventType menuKeyEventType = MenuKeyState.Update( currentTime );
-	AddKeyEventToFrame( OVR_KEY_MENU, menuKeyEventType, 0 );
 
 	// Copy the key events.
 	for ( int i = 0; i < inputEvents.NumKeyEvents && vrFrame.Input.NumKeyEvents < MAX_KEY_EVENTS_PER_FRAME; i++ )
@@ -421,31 +407,20 @@ void VrFrameBuilder::AdvanceVrFrame( const ovrInputEvents & inputEvents, ovrMobi
 		predictedDisplayTime = vrFrame.PredictedDisplayTimeInSeconds + 0.001;
 	}
 
-	const ovrTracking baseTracking = vrapi_GetPredictedTracking( ovr, predictedDisplayTime );
+	vrFrame.BaseTracking = vrapi_GetPredictedTracking( ovr, predictedDisplayTime );
 
 	vrFrame.DeltaSeconds = Alg::Clamp( (float)( predictedDisplayTime - vrFrame.PredictedDisplayTimeInSeconds ), 0.0f, 0.1f );
 	vrFrame.PredictedDisplayTimeInSeconds = predictedDisplayTime;
-	vrFrame.Tracking = vrapi_ApplyHeadModel( &headModelParms, &baseTracking );
+	vrFrame.Tracking = vrapi_ApplyHeadModel( &headModelParms, &vrFrame.BaseTracking );
 
 	// Update device status.
-	vrFrame.DeviceStatus.HeadPhonesPluggedState		= HeadPhonesPluggedState;
+	vrFrame.DeviceStatus.HeadPhonesPluggedState		= vrapi_GetSystemStatusInt( &java, VRAPI_SYS_STATUS_HEADPHONES_PLUGGED_IN ) != VRAPI_FALSE ?
+														 OVR::OVR_HEADSET_PLUGGED : OVR::OVR_HEADSET_UNPLUGGED;
 	vrFrame.DeviceStatus.DeviceIsDocked				= ( vrapi_GetSystemStatusInt( &java, VRAPI_SYS_STATUS_DOCKED ) != VRAPI_FALSE );
 	vrFrame.DeviceStatus.HeadsetIsMounted			= ( vrapi_GetSystemStatusInt( &java, VRAPI_SYS_STATUS_MOUNTED ) != VRAPI_FALSE );
 	vrFrame.DeviceStatus.PowerLevelStateThrottled	= ( vrapi_GetSystemStatusInt( &java, VRAPI_SYS_STATUS_THROTTLED ) != VRAPI_FALSE );
 	vrFrame.DeviceStatus.PowerLevelStateMinimum		= ( vrapi_GetSystemStatusInt( &java, VRAPI_SYS_STATUS_THROTTLED2 ) != VRAPI_FALSE );
-
-	vrFrame.AppEvents = appEvents;
 }
 
 }	// namespace OVR
 
-#if defined( OVR_OS_ANDROID )
-extern "C"
-{
-JNIEXPORT void Java_com_oculus_vrappframework_HeadsetReceiver_stateChanged( JNIEnv * jni, jclass clazz, jint state )
-{
-	LOG( "nativeHeadsetEvent(%i)", state );
-	OVR::HeadPhonesPluggedState = ( state == 1 ) ? OVR::OVR_HEADSET_PLUGGED : OVR::OVR_HEADSET_UNPLUGGED;
-}
-}	// extern "C"
-#endif

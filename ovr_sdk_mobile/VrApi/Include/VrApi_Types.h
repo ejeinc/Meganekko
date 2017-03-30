@@ -27,7 +27,7 @@ typedef class _jobject * jobject;
 #else
 typedef const struct JNINativeInterface * JNIEnv;
 typedef const struct JNIInvokeInterface * JavaVM;
-void * jobject;
+typedef void * jobject;
 #endif
 
 typedef struct
@@ -46,6 +46,32 @@ OVR_VRAPI_ASSERT_TYPE_SIZE_64_BIT( ovrJava, 24 );
 
 typedef signed int ovrResult;
 
+// ovrResult isn't actually an enum type and the the success / failure types are not
+// defined anywhere for GearVR VrApi. This needs to be remedied. For now, I'm defining
+// these here and will try to address this larger issue in a follow-on changeset.
+// errors are < 0, successes are >= 0
+// Except where noted, these match error codes from PC CAPI.
+typedef enum ovrSuccessResult_
+{
+	ovrSuccess						= 0,
+} ovrSuccessResult;
+
+typedef enum ovrErrorResult_
+{
+	 ovrError_MemoryAllocationFailure   = -1000,
+	ovrError_NotInitialized				= -1004,
+	ovrError_InvalidParameter			= -1005,
+	ovrError_DeviceUnavailable			= -1010,	// device is not connected, or not connected as input device
+	ovrError_InvalidOperation			= -1015,
+	
+	// enums not in CAPI
+	ovrError_UnsupportedDeviceType		= -1050,	// specified device type isn't supported on GearVR
+	ovrError_NoDevice					= -1051,	// specified device ID does not map to any current device
+	ovrError_NotImplemented				= -1052,	// executed an incomplete code path - this should not be possible in public releases.
+
+	ovrResult_EnumSize 					= 0x7fffffff
+} ovrErrorResult;
+
 typedef struct ovrVector2f_
 {
 	float x, y;
@@ -59,6 +85,13 @@ typedef struct ovrVector3f_
 } ovrVector3f;
 
 OVR_VRAPI_ASSERT_TYPE_SIZE( ovrVector3f, 12 );
+
+typedef struct ovrVector4f_
+{
+	float x, y, z, w;
+} ovrVector4f;
+
+OVR_VRAPI_ASSERT_TYPE_SIZE( ovrVector4f, 16 );
 
 // Quaternion.
 typedef struct ovrQuatf_
@@ -122,8 +155,10 @@ typedef enum
 	VRAPI_DEVICE_TYPE_NOTE5,
 	VRAPI_DEVICE_TYPE_S6,
 	VRAPI_DEVICE_TYPE_S7,
-	VRAPI_DEVICE_TYPE_NOTE7,
-	VRAPI_MAX_DEVICE_TYPES
+	VRAPI_DEVICE_TYPE_NOTE7,			// No longer supported.
+	VRAPI_DEVICE_TYPE_RESERVED,
+	VRAPI_MAX_DEVICE_TYPES,
+
 } ovrDeviceType;
 
 typedef enum
@@ -221,7 +256,7 @@ typedef enum
 	VRAPI_SYS_STATUS_STALE_FRAMES_PER_SECOND,		// Number of frames per second delivered late.
 
 	VRAPI_SYS_STATUS_HEADPHONES_PLUGGED_IN,			// Returns VRAPI_TRUE if headphones are plugged into the device.
-	VRAPI_SYS_STATUS_RECENTER_COUNT,				// Returns the current recenter count. Defaults to 0.
+	VRAPI_SYS_STATUS_RECENTER_COUNT,				// Returns the current HMD recenter count. Defaults to 0.
 
 	VRAPI_SYS_STATUS_FRONT_BUFFER_PROTECTED	= 128,	// True if the front buffer is allocated in TrustZone memory.
 	VRAPI_SYS_STATUS_FRONT_BUFFER_565,				// True if the front buffer is 16-bit 5:6:5
@@ -393,7 +428,7 @@ typedef enum
 	VRAPI_TEXTURE_TYPE_2D_EXTERNAL,		// External 2D texture.
 	VRAPI_TEXTURE_TYPE_2D_ARRAY,		// Texture array.
 	VRAPI_TEXTURE_TYPE_CUBE,			// Cube maps.
-	VRAPI_TEXTURE_TYPE_MAX
+	VRAPI_TEXTURE_TYPE_MAX,
 } ovrTextureType;
 
 typedef enum
@@ -447,20 +482,19 @@ typedef enum
 	VRAPI_FRAME_FLAG_FLUSH										= 2,
 	// This is the final frame. Do not accept any more frames after this.
 	VRAPI_FRAME_FLAG_FINAL										= 4,
-	// DEPRECATED: Display continuously changing graph of TimeWarp timing data. By default,
-	// this will display the start and end times of the draw.
-	VRAPI_FRAME_FLAG_TIMEWARP_DEBUG_GRAPH_SHOW					= 8,
-	// DEPRECATED: Continue to display the timing data, but no new data is collected and displayed.
-	VRAPI_FRAME_FLAG_TIMEWARP_DEBUG_GRAPH_FREEZE				= 16,
-	// DEPRECATED: Change the TimeWarp graph to display the latency (seconds from eye buffer
-	// orientation time) instead of the draw times.
-	VRAPI_FRAME_FLAG_TIMEWARP_DEBUG_GRAPH_LATENCY_MODE			= 32,
+
+	// enum  8 used to be VRAPI_FRAME_FLAG_TIMEWARP_DEBUG_GRAPH_SHOW.
+
+	// enum 16 used to be VRAPI_FRAME_FLAG_TIMEWARP_DEBUG_GRAPH_FREEZE.
+
+	// enum 32 used to be VRAPI_FRAME_FLAG_TIMEWARP_DEBUG_GRAPH_LATENCY_MODE.
+
 	// Don't show the volume layer whent set.
 	VRAPI_FRAME_FLAG_INHIBIT_VOLUME_LAYER						= 64,
-	// Show the layer complexity.
-	VRAPI_FRAME_FLAG_SHOW_LAYER_COMPLEXITY						= 128,
-	// Show the texel density
-	VRAPI_FRAME_FLAG_SHOW_TEXTURE_DENSITY						= 256
+
+	// enum 128 used to be VRAPI_FRAME_FLAG_SHOW_LAYER_COMPLEXITY.
+
+	// enum 256 used to be VRAPI_FRAME_FLAG_SHOW_TEXTURE_DENSITY.
 } ovrFrameFlags;
 
 typedef enum
@@ -473,6 +507,8 @@ typedef enum
 	VRAPI_FRAME_LAYER_FLAG_FIXED_TO_VIEW							= 4,
 	// Spin the layer - for loading icons
 	VRAPI_FRAME_LAYER_FLAG_SPIN										= 8,
+	// Clip fragments outside the layer's TextureRect
+	VRAPI_FRAME_LAYER_FLAG_CLIP_TO_TEXTURE_RECT						= 16,
 } ovrFrameLayerFlags;
 
 typedef enum
@@ -492,15 +528,11 @@ typedef enum
 	VRAPI_FRAME_LAYER_BLEND_ONE_MINUS_SRC_ALPHA
 } ovrFrameLayerBlend;
 
-// NOTE: The following ovrFrameLayerType types are deprecated and will
-// be removed in the future. Instead, use explicit indices.
 typedef enum
 {
-	VRAPI_FRAME_LAYER_TYPE_WORLD,
-	VRAPI_FRAME_LAYER_TYPE_OVERLAY,
-	VRAPI_FRAME_LAYER_TYPE_CURSOR,
-	VRAPI_FRAME_LAYER_TYPE_USER,
-	VRAPI_FRAME_LAYER_TYPE_MAX
+	// enum 0-3 have been deprecated. Explicit indices
+	// for frame layers should be used instead.
+	VRAPI_FRAME_LAYER_TYPE_MAX = 4
 } ovrFrameLayerType;
 
 typedef enum
@@ -519,6 +551,7 @@ typedef struct
 	// up when time warp pushes the texture partially off screen.
 	ovrTextureSwapChain *	ColorTextureSwapChain;
 
+	// DEPRECATED: Please do not write any new code which relies on DepthTextureSwapChain.
 	// The depth texture is optional for positional time warp.
 	ovrTextureSwapChain *	DepthTextureSwapChain;
 
@@ -563,7 +596,7 @@ typedef struct
 
 	// Color scale for this layer (including alpha)
 	float					ColorScale;
-	
+
 	// padding for deprecated variable.
 	OVR_VRAPI_PADDING( 4 );
 
@@ -618,6 +651,7 @@ typedef struct
 	// Latency Mode.
 	ovrExtraLatencyMode		ExtraLatencyMode;
 
+	// DEPRECATED: Please do not write any code which relies on ExternalVelocity.
 	// Rotation from a joypad can be added on generated frames to reduce
 	// judder in FPS style experiences when the application framerate is
 	// lower than the V-sync rate.
@@ -627,6 +661,7 @@ typedef struct
 	// more than one V-sync.
 	ovrMatrix4f				ExternalVelocity;
 
+	// DEPRECATED: Please do not write any code which relies on SurfaceTextureObject.
 	// jobject that will be updated before each eye for minimal
 	// latency.
 	// IMPORTANT: This should be a JNI weak reference to the object.
@@ -644,6 +679,7 @@ typedef struct
 
 OVR_VRAPI_ASSERT_TYPE_SIZE_32_BIT( ovrFrameParms, 1856 );
 OVR_VRAPI_ASSERT_TYPE_SIZE_64_BIT( ovrFrameParms, 1936 );
+
 
 //-----------------------------------------------------------------
 // Head Model

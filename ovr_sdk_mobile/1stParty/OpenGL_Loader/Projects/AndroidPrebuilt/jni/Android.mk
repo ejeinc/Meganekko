@@ -15,6 +15,9 @@ LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/../../../Include
 
 LOCAL_STATIC_LIBRARIES := openglloader
 
+# GL platform interface
+LOCAL_EXPORT_LDLIBS += -lEGL
+
 # NOTE: This check is added to prevent the following error when running a "make clean" where
 # the prebuilt lib may have been deleted: "LOCAL_SRC_FILES points to a missing file"
 ifneq (,$(wildcard $(LOCAL_PATH)/$(LOCAL_SRC_FILES)))

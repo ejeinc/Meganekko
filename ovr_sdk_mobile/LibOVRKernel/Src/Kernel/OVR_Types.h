@@ -31,7 +31,7 @@ limitations under the License.
 
 
 // Unsupported compiler configurations
-#if _MSC_VER == 0x1600
+#if (defined (_MSC_VER) && (_MSC_VER == 0x1600))
 #  if _MSC_FULL_VER < 160040219
 #     error "Oculus does not support VS2010 without SP1 installed: It will crash in Release mode"
 #  endif
@@ -270,7 +270,7 @@ typedef OVR::UByte jboolean;
 typedef const struct JNINativeInterface * JNIEnv;
 typedef const struct JNIInvokeInterface * JavaVM;
 typedef const struct _jmethodID * jmethodID;
-void * jobject;
+typedef void * jobject;
 typedef jobject jclass;
 typedef jobject jstring;
 typedef long long jlong;

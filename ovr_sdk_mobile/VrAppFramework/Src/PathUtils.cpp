@@ -15,9 +15,9 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "Android/JniUtils.h"
 #include "VrCommon.h"
 #include "App.h"
-#include "SystemActivities.h"
 
-#include "VrApi.h"		// for vrapi_GetSystemPropertyString
+#include "VrApi.h"				// for vrapi_GetSystemPropertyString
+#include "VrApi_SystemUtils.h"	// for vrapi_ShowFatalError
 
 #if defined( OVR_OS_WIN32 )
 #include <direct.h>
@@ -78,7 +78,10 @@ static String GetDir( ovrStorageType storageType, ovrFolderType folderType, jcla
 		}
 		// it is a fatal error if Java doesn't return a valid string
 		java->Env->ExceptionClear();
-		SystemActivities_DisplayError( java, SYSTEM_ACTIVITIES_FATAL_ERROR_OUT_OF_STORAGE, __FILE__, "Failed to get storage for %s", methodName );
+		// FIXME: Should the app be handling this explicitly?
+		StringBuffer errorMessage;
+		errorMessage.AppendFormat( "Failed to get storage for %s", methodName );
+		vrapi_ShowFatalError( java, "failOutOfStorage", errorMessage.ToCStr(), __FILE__, __LINE__ );
 	}
 
 	return String();

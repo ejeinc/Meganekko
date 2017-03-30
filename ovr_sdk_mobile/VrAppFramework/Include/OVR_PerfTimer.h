@@ -13,6 +13,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #define OVR_PerfTimer_h
 
 #include "Kernel/OVR_LogUtils.h"
+#include "VrApi.h"			// vrapi_GetTimeInSeconds
 
 namespace OVR
 {

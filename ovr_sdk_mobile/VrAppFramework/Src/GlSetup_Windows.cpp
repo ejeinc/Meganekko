@@ -19,7 +19,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include <stdlib.h>
 
 #include "Kernel/OVR_LogUtils.h"
-#include "Input.h"
+#include "OVR_Input.h"
 #include "AppLocal.h"
 
 namespace OVR {

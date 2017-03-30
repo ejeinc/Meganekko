@@ -9,14 +9,13 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libovrkernel
 
-LOCAL_SRC_FILES := ../../../Libs/Android/$(TARGET_ARCH_ABI)/libovrkernel.a
+LOCAL_SRC_FILES := ../../../Libs/Android/$(TARGET_ARCH_ABI)/$(BUILDTYPE)/libovrkernel.a
 
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/../../../Include \
 					$(LOCAL_PATH)/../../../Src
 
-LOCAL_STATIC_LIBRARIES := openglloader
-
+# NOTE: This check is added to prevent the following error when running a "make clean" where
+# the prebuilt lib may have been deleted: "LOCAL_SRC_FILES points to a missing file"
 ifneq (,$(wildcard $(LOCAL_PATH)/$(LOCAL_SRC_FILES)))
   include $(PREBUILT_STATIC_LIBRARY)
 endif
-$(call import-module,1stParty/OpenGL_Loader/Projects/AndroidPrebuilt/jni)

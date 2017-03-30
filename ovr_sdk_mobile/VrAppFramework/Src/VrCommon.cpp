@@ -56,7 +56,13 @@ void SortStringArray( Array<String> & strings )
 // if pathToAppend is an empty string, this just adds a slash
 void AppendPath( String & startPath, const char * pathToAppend )
 {
-	uint32_t lastCh = startPath[startPath.GetLengthI() - 1];
+	int const len = startPath.GetLengthI();
+	if ( len == 0 )
+	{
+		startPath = pathToAppend;
+		return;
+	}
+	uint32_t lastCh = startPath[len - 1];
 	if ( lastCh != '/' && lastCh != '\\' )
 	{
 		// always append the linux path, assuming it will be corrected elsewhere if necessary for Windows

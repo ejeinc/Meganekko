@@ -118,7 +118,7 @@ ovrFrameResult GearVRActivity::Frame(const ovrFrameInput &frame) {
 
   frameParms = vrapi_DefaultFrameParms(java, VRAPI_FRAME_INIT_DEFAULT,
                                        vrapi_GetTimeInSeconds(), nullptr);
-  ovrFrameLayer &layer = frameParms.Layers[VRAPI_FRAME_LAYER_TYPE_WORLD];
+  ovrFrameLayer &layer = frameParms.Layers[0];
 
   for (int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++) {
     res.FrameMatrices.EyeView[eye] = vrapi_GetEyeViewMatrix(

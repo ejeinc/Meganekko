@@ -102,6 +102,16 @@ ovrFramebuffer::ovrFramebuffer( const ovrTextureFormat colorFormat, const ovrTex
 			const GLuint colorTexture = vrapi_GetTextureSwapChainHandle( ColorTextureSwapChain, i );
 			const GLuint depthTexture = ( depthFormat != VRAPI_TEXTURE_FORMAT_NONE ) ? DepthBuffers[MALI_SEPARATE_DEPTH_BUFFERS ? i : 0] : 0;
 
+			if ( extensionsOpenGL.EXT_texture_border_clamp )
+			{
+				glBindTexture( GL_TEXTURE_2D_ARRAY, colorTexture );
+				glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+				glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+				GLfloat borderColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+				glTexParameterfv( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BORDER_COLOR, borderColor );
+				glBindTexture( GL_TEXTURE_2D_ARRAY, 0 );
+			}
+
 			glGenFramebuffers( 1, &RenderFrameBuffers[i] );
 			glBindFramebuffer( GL_DRAW_FRAMEBUFFER, RenderFrameBuffers[i] );
 
@@ -276,6 +286,16 @@ ovrFramebuffer::ovrFramebuffer( const ovrTextureFormat colorFormat, const ovrTex
 		{
 			const GLuint colorTexture = vrapi_GetTextureSwapChainHandle( ColorTextureSwapChain, i );
 			const GLuint depthTexture = ( DepthTextureSwapChain != NULL ) ? vrapi_GetTextureSwapChainHandle( DepthTextureSwapChain, i ) : 0;
+
+			if ( extensionsOpenGL.EXT_texture_border_clamp )
+			{
+				glBindTexture( GL_TEXTURE_2D, colorTexture );
+				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+				GLfloat borderColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+				glTexParameterfv( GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor );
+				glBindTexture( GL_TEXTURE_2D, 0 );
+			}
 
 			if ( multisampleMode == MSAA_RENDER_TO_TEXTURE )
 			{

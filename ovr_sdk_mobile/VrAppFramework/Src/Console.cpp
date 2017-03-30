@@ -30,7 +30,7 @@ public:
 		{
 			if ( OVR_stricmp( ConsoleFunctions[i].GetName(), name ) == 0 )
 			{
-				LOG( "OvrConsole", "Console function '%s' is already registered!!", name );
+				LOG_WITH_TAG( "OvrConsole", "Console function '%s' is already registered!!", name );
 				OVR_ASSERT( false );	// why are you registering the same function twice??
 				return;
 			}
@@ -44,9 +44,9 @@ public:
 		ConsoleFunctions.ClearAndRelease();
 	}
 
-	void ExecuteConsoleFunction( long appPtr, char const * commandStr ) const
+	void ExecuteConsoleFunction( intptr_t appPtr, char const * commandStr ) const
 	{
-		LOG( "OvrConsole", "Received console command \"%s\"", commandStr );
+		LOG_WITH_TAG( "OvrConsole", "Received console command \"%s\"", commandStr );
 	
 		char cmdName[128];
 		char const * parms = "";
@@ -74,7 +74,7 @@ public:
 			}
 		}
 
-		LOG( "OvrConsole", "ERROR: unknown console command '%s'", cmdName );
+		LOG_WITH_TAG( "OvrConsole", "ERROR: unknown console command '%s'", cmdName );
 	}
 
 	void GetConsoleCmds( void( *callback )( const char * cmd ) )
@@ -161,11 +161,11 @@ void DebugPrint( void * appPtr, const char * cmd )
 	LOG_WITH_TAG( "OvrDebug", "%s", cmd ); 
 }
 
-void SendConsoleCmd(void * appPtr, const char * cmd)
+void SendConsoleCmd( void * appPtr, const char * cmd )
 {
-	if (OVR::Console != NULL)
+	if ( OVR::Console != NULL )
 	{
-		OVR::Console->ExecuteConsoleFunction( (long)appPtr, cmd );
+		OVR::Console->ExecuteConsoleFunction( (intptr_t)appPtr, cmd );
 	}
 }	
 

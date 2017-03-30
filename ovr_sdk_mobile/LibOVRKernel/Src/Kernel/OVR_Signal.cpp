@@ -58,7 +58,7 @@ static void Signal_Clear( Signal_t * signal );
 */
 
 #include "OVR_Signal.h"
-#include "Kernel/OVR_Types.h"
+#include "OVR_Types.h"
 
 // unfortunate these need to be in the header file right now
 #if defined( OVR_OS_WIN32 )
@@ -142,6 +142,14 @@ bool Signal_Wait( Signal_t * signal, const int timeOutMilliseconds )
 			struct timespec ts;
 			ts.tv_sec = tp.tv_sec + timeOutMilliseconds / 1000;
 			ts.tv_nsec = tp.tv_usec * 1000 + ( timeOutMilliseconds % 1000 ) * 1000000;
+
+			// NOTE: tv_nsec is only valid if >= 0 and < number of nanoseconds in a second.
+			if ( ts.tv_nsec > 999999999 )
+			{
+				ts.tv_sec++;
+				ts.tv_nsec -= 1000000000;
+			}
+
 			do
 			{
 				if ( pthread_cond_timedwait( &signal->cond, &signal->mutex, &ts ) == ETIMEDOUT )

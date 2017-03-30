@@ -359,7 +359,7 @@ public:
     struct NoCaseKey
     {   
         const String* pStr;
-        NoCaseKey(const String &str) : pStr(&str){};
+        NoCaseKey(const String &str) : pStr(&str){}
     };
 
     bool    operator == (const NoCaseKey& strKey) const

@@ -10,10 +10,10 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 *************************************************************************************/
 
 #include <math.h>
-#include <assert.h>
 
-#include "Kernel/OVR_Math.h"
-#include "Kernel/OVR_Alg.h"
+#include "OVR_Types.h"
+#include "OVR_Math.h"
+#include "OVR_Alg.h"
 
 namespace OVR
 {
@@ -52,7 +52,7 @@ bool Intersect_RayTriangle( const Vector3f & rayStart, const Vector3f & rayDir,
 							const Vector3f & v0, const Vector3f & v1, const Vector3f & v2,
 							float & t0, float & u, float & v )
 {
-	assert( rayDir.IsNormalized() );
+	OVR_ASSERT( rayDir.IsNormalized() );
 
 	const Vector3f edge1 = v1 - v0;
 	const Vector3f edge2 = v2 - v0;

@@ -187,6 +187,12 @@ static void FilterWeights( const float s, const int filter, float weights[ 4 ] )
 
 unsigned char * ScaleImageRGBANonLinear( const unsigned char * src, const int width, const int height, const int newWidth, const int newHeight, const ImageFilter filter )
 {
+	// if we're passed an invalid 
+	if ( src == NULL || width * height <= 0 )
+	{
+		return NULL;
+	}
+
 	int footprintMin = 0;
 	int footprintMax = 0;
 	int offsetX = 0;
@@ -279,6 +285,11 @@ unsigned char * ScaleImageRGBANonLinear( const unsigned char * src, const int wi
 
 unsigned char * ScaleImageRGBA( const unsigned char * src, const int width, const int height, const int newWidth, const int newHeight, const ImageFilter filter, const bool linear )
 {
+	if ( src == NULL || width * height <= 0 )
+	{
+		return NULL;
+	}
+
 	if ( !linear )
 	{
 		return ScaleImageRGBANonLinear( src, width, height, newWidth, newHeight, filter );

@@ -13,7 +13,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #define OVR_GPUSTATE_h
 
 #include "Kernel/OVR_Types.h"
-#include "Kernel/OVR_GlUtils.h"
+#include "OVR_GlUtils.h"
 
 #if !defined( GL_FILL )
 #define GL_FILL 0x00	// just a placeholder -- this define doesn't exist in GL ES

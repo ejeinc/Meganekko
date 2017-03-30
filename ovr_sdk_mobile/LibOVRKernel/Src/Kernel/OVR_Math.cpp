@@ -9,6 +9,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 *************************************************************************************/
 
+
 #include "OVR_Math.h"
 #include "OVR_Log.h"
 
@@ -52,6 +53,7 @@ const double Math<double>::DegreeToRadFactor	= Math<double>::TwoPi / 360.0;
 const double Math<double>::SmallestNonDenormal	= double( 2.2250738585072014e-308 );	// ( 1ULL << 52 )
 const double Math<double>::HugeNumber			= double( 1.3407807929942596e+154 );	// ( ( ( 1023ULL * 3 / 2 ) << 52 ) | ( ( 1 << 52 ) - 1 ) )
 
+#if 0	// now handled with implicit instantiation
 
 //-------------------------------------------------------------------------------------
 // ***** Constants
@@ -86,6 +88,8 @@ const Matrix4<double> Matrix4<double>::IdentityValue = Matrix4<double>(1.0, 0.0,
                                                                        0.0, 0.0, 1.0, 0.0,
                                                                        0.0, 0.0, 0.0, 1.0);
 
-
+#endif
 
 } // Namespace OVR
+
+

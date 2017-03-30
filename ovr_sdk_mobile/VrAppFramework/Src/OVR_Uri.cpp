@@ -20,8 +20,20 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 // If enabled, allow URI's that have a host but no path to be considered valid.
 // #define TOLERATE_HOST_ONLY
 
+#if defined( OVR_BUILD_DEBUG )
+	#define URI_LOG( _fmt_, ... )	LOG( _fmt_, __VA_ARGS__ )
+#else
+	#define URI_LOG( _fmt_, ... ) \
+	if ( !InUnitTest ) \
+	{	\
+		LOG( _fmt_, __VA_ARGS__ );	\
+	}
+#endif
+
 namespace OVR
 {
+
+bool ovrUri::InUnitTest = false;
 
 //==============================================================
 // UTF8Decoder
@@ -553,7 +565,7 @@ bool ovrUri::ParseUri( char const * uri,
 
 			if ( !EncodeCharToBuffer( ch, outQuery, outQuerySize, queryOffset ) )
 			{
-				LOG( "Uri '%s': query buffer overflow" );
+				LOG( "Uri '%s': query buffer overflow", uri );
 				return false;
 			}
 		}
@@ -578,7 +590,7 @@ bool ovrUri::ParseUri( char const * uri,
 
 			if ( !EncodeCharToBuffer( ch, outFragment, outFragmentSize, fragmentOffset ) )
 			{
-				LOG( "Uri '%s': fragment buffer overflow" );
+				LOG( "Uri '%s': fragment buffer overflow", uri );
 				return false;
 			}
 		}
@@ -673,6 +685,8 @@ static void Test( char const * testName, char const * uri, bool const isValid )
 
 void ovrUri::DoUnitTest()
 {
+	InUnitTest = true;	// don't show debug info in release
+
 	Test( "1", "file:///sdcard/oculus/360Photos/pic.jpg", true );
 	Test( "2", "http://puzz.s3.amazonaws.com/2008/07/galerija_equirectangular.jpg", true );
 	Test( "3", "apk:///assets/default.jpg", true );
@@ -693,6 +707,8 @@ void ovrUri::DoUnitTest()
 	Test( "http scheme only", "http:", false );
 	Test( "http scheme missing host", "http://", false );
 	Test( "http scheme with empty host and empty path", "http:///", false );
+
+	InUnitTest = false;
 }
 
 }	// namespace OVR

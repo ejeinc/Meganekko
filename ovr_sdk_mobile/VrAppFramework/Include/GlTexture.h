@@ -14,7 +14,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "Kernel/OVR_Types.h"
 #include "Kernel/OVR_BitFlags.h"
 #include "Kernel/OVR_MemBuffer.h"
-#include "Kernel/OVR_GlUtils.h"
+#include "OVR_GlUtils.h"
 
 #include "VrApi_Types.h"
 

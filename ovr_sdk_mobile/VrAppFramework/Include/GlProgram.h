@@ -121,6 +121,7 @@ struct GlProgram
 		, uClipUVs( -1 )
 		, uJoints( -1 )
 		, uJointsBinding( -1 )
+		, uUVOffset( -1 )
 	{
 	}
 
@@ -175,7 +176,7 @@ struct GlProgram
 	int							numTextureBindings;
 	int							numUniformBufferBindings;
 
-	// ----DEPRECATED_DRAWEYEVIEW
+	// ----DEPRECATED_GLPROGRAM
 	// deprecated interface - to be removed
 	bool UseDeprecatedInterface;
 
@@ -189,7 +190,8 @@ struct GlProgram
 	int		uClipUVs;			// uniform min / max UVs for fragment clipping
 	int		uJoints;			// uniform Joints ubo block index
 	int		uJointsBinding;		// uniform Joints ubo binding
-	// ----DEPRECATED_DRAWEYEVIEW
+	int		uUVOffset;			// uniform uv offset
+	// ----DEPRECATED_GLPROGRAM
 };
 
 struct ovrGraphicsCommand
@@ -198,7 +200,7 @@ struct ovrGraphicsCommand
 	ovrGpuState					GpuState;
 	ovrUniformData				UniformData[ovrUniform::MAX_UNIFORMS];	// data matching the types in Program.Uniforms[]
 
-	// ----DEPRECATED_DRAWEYEVIEW
+	// ----DEPRECATED_GLPROGRAM
 	// the old ovrMaterialDef interface... this will go away eventually!
 	bool UseDeprecatedInterface;
 	ovrGraphicsCommand()
@@ -224,10 +226,10 @@ struct ovrGraphicsCommand
 	GlTexture	uniformTextures[ovrUniform::MAX_UNIFORMS];
 	// There should only be one joint uniform buffer for the deprecated path.
 	GlBuffer	uniformJoints;
-	// ----DEPRECATED_DRAWEYEVIEW
+	// ----DEPRECATED_GLPROGRAM
 };
 
-// ----DEPRECATED_DRAWEYEVIEW
+// ----DEPRECATED_GLPROGRAM
 // Will abort() after logging an error if either compiles or the link status
 // fails, but not if uniforms are missing.
 GlProgram	BuildProgram( const char * vertexSrc, const char * fragmentSrc, const int programVersion = GlProgram::GLSL_PROGRAM_VERSION );
@@ -238,7 +240,7 @@ GlProgram	BuildProgram( const char * vertexDirectives, const char * vertexSrc,
 						  const int programVersion = GlProgram::GLSL_PROGRAM_VERSION );
 
 void		DeleteProgram( GlProgram & prog );
-// ----DEPRECATED_DRAWEYEVIEW
+// ----DEPRECATED_GLPROGRAM
 
 }	// namespace OVR
 

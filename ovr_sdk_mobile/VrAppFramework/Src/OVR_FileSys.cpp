@@ -21,11 +21,9 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 #if defined( OVR_OS_ANDROID )
 #	include "Android/JniUtils.h"
-#	include "SystemActivities.h"	// for PUI_PACKAGE_NAME
 #elif defined( OVR_OS_WIN32 )
 #	include <direct.h>
 #	include <io.h>
-#	include "SystemActivities.h"	// for PUI_PACKAGE_NAME
 #endif
 
 namespace OVR {
@@ -50,6 +48,8 @@ public:
 
 private:
 	Array< ovrUriScheme* >	Schemes;
+	JavaVM *				Jvm{ nullptr };
+	jobject					ActivityObject{ 0 };
 
 private:
 	int						FindSchemeIndexForName( char const * schemeName ) const;
@@ -80,14 +80,19 @@ static void AddRelativePathToHost( ovrUriScheme_File * scheme, char const * host
 }
 #endif
 
+// TODO_SYS_UTILS: Expose this via a sys_prop instead of hardcoding?
+#define PUI_PACKAGE_NAME			"com.oculus.systemactivities"
+
 //==============================
 // ovrFileSysLocal::ovrFileSysLocal
-ovrFileSysLocal::ovrFileSysLocal( ovrJava const & javaContext )
+ovrFileSysLocal::ovrFileSysLocal( ovrJava const & javaContext ) : Jvm( javaContext.Vm )
 {
 	// always do unit tests on startup to assure nothing has been broken
 	ovrUri::DoUnitTest();
 
 #if defined( OVR_OS_ANDROID )
+	ActivityObject = javaContext.Env->NewGlobalRef( javaContext.ActivityObject );
+
 	// add the apk scheme 
 	ovrUriScheme_Apk * scheme = new ovrUriScheme_Apk( "apk" );
 
@@ -284,6 +289,10 @@ ovrFileSysLocal::ovrFileSysLocal( ovrJava const & javaContext )
 // ovrFileSysLocal::ovrFileSysLocal
 ovrFileSysLocal::~ovrFileSysLocal()
 {
+#if defined( OVR_OS_ANDROID )
+	TempJniEnv env{ Jvm };
+	env->DeleteGlobalRef( ActivityObject );
+#endif
 }
 
 //==============================
@@ -308,6 +317,25 @@ ovrStream *	ovrFileSysLocal::OpenStream( char const * uri, ovrStreamMode const m
 			return NULL;
 		}
 	}
+
+#if defined( OVR_OS_ANDROID )
+	//If apk scheme, need to check if this is a package we haven't seen before, and add a host if so.
+	if( OVR_stricmp( scheme, "apk" ) == 0 )
+	{
+		if( !uriScheme->HostExists( host ) )
+		{
+			TempJniEnv env{ Jvm };
+			char packagePath[OVR_MAX_PATH_LEN];
+			packagePath[0] = '\0';
+			if ( ovr_GetInstalledPackagePath( env, ActivityObject, host, packagePath, sizeof( packagePath ) ) )
+			{
+				char packageUri[sizeof( packagePath ) + 7 ];
+				OVR_sprintf( packageUri, sizeof( packageUri ), "file://%s", packagePath );
+				uriScheme->OpenHost( host, packageUri );
+			}
+		}
+	}
+#endif
 
 	ovrStream * stream = uriScheme->AllocStream();
 	if ( stream == NULL )

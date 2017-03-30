@@ -177,8 +177,11 @@ public class VrActivity extends Activity {
 	
 	@Override protected void onDestroy() {
 		Log.d(TAG, this + " onDestroy()");
-        app.onDestroy();
-		app = null;
+		if ( app != null )
+		{
+			app.onDestroy();
+			app = null;
+		}
 		super.onDestroy();
 	}
 		
@@ -575,11 +578,6 @@ public class VrActivity extends Activity {
 		return outString;
 	}
 
-	public static boolean getBluetoothEnabled( final Activity act ) {
-		return Settings.Global.getInt( act.getContentResolver(), 
-				Settings.Global.BLUETOOTH_ON, 0 ) != 0;
-	}
-
 	public static boolean isWifiConnected( final Activity act ) {
 		try {
 			ConnectivityManager connManager = (ConnectivityManager) act.getSystemService( Context.CONNECTIVITY_SERVICE );
@@ -591,11 +589,6 @@ public class VrActivity extends Activity {
 		return false;
 	}
 
-	public static boolean isAirplaneModeEnabled( final Activity act ) {        
-		return Settings.Global.getInt( act.getContentResolver(), 
-				Settings.Global.AIRPLANE_MODE_ON, 0 ) != 0;
-	}
-	
 	public static boolean isHybridApp( final Activity act ) {
 		try {
 		    ApplicationInfo appInfo = act.getPackageManager().getApplicationInfo(act.getPackageName(), PackageManager.GET_META_DATA);

@@ -314,8 +314,8 @@ class Math<float>
 public:
      typedef double OtherFloatType;
 
-    static inline float Tolerance()         { return MATH_FLOAT_TOLERANCE; }; // a default number for value equality tolerance
-    static inline float SingularityRadius() { return MATH_FLOAT_SINGULARITYRADIUS; };    // for gimbal lock numerical problems    
+    static inline float Tolerance()         { return MATH_FLOAT_TOLERANCE; } // a default number for value equality tolerance
+    static inline float SingularityRadius() { return MATH_FLOAT_SINGULARITYRADIUS; }    // for gimbal lock numerical problems
 #if 1 // deprecated
     static const float Pi;
     static const float TwoPi;
@@ -340,8 +340,8 @@ class Math<double>
 public:
     typedef float OtherFloatType;
 
-    static inline double Tolerance()         { return MATH_DOUBLE_TOLERANCE; }; // a default number for value equality tolerance
-    static inline double SingularityRadius() { return MATH_DOUBLE_SINGULARITYRADIUS; };    // for gimbal lock numerical problems   
+    static inline double Tolerance()         { return MATH_DOUBLE_TOLERANCE; } // a default number for value equality tolerance
+    static inline double SingularityRadius() { return MATH_DOUBLE_SINGULARITYRADIUS; }    // for gimbal lock numerical problems
 #if 1 // deprecated
     static const double Pi;
     static const double TwoPi;
@@ -568,6 +568,10 @@ public:
     }
 };
 
+// Implicit instantiation
+template<typename T>
+const Vector2<T> Vector2<T>::ZERO;
+
 
 typedef Vector2<float>  Vector2f;
 typedef Vector2<double> Vector2d;
@@ -770,6 +774,10 @@ public:
     Vector3 ProjectToPlane(const Vector3& normal) const { return *this - this->ProjectTo(normal); }
 };
 
+// Implicit instantiation
+template<typename T>
+const Vector3<T> Vector3<T>::ZERO;
+
 // MERGE_MOBILE_SDK
 // allow multiplication in order scalar * vector (member operator handles vector * scalar)
 template<class T>
@@ -951,6 +959,11 @@ public:
     // Factor should be between 0.0 and 1.0, with 0 giving full value to this.
     Vector4 Lerp(const Vector4& b, T f) const    { return *this*(T(1) - f) + b*f; }
 };
+
+// Implicit instantiation
+template<typename T>
+const Vector4<T> Vector4<T>::ZERO;
+
 
 typedef Vector4<float>  Vector4f;
 typedef Vector4<double> Vector4d;
@@ -1220,8 +1233,20 @@ public:
     { return !operator == (vp); }
 };
 
-typedef Rect<int> Recti;
+typedef Rect<int>	Recti;
+typedef Rect<float> Rectf;
 
+template< typename T >
+T CosineOfHalfAngleFromCosineOfAngle( const T cosineOfAngle )
+{
+	return (T)( sqrt( ( (T)1.0 + cosineOfAngle ) * (T)0.5 ) );
+}
+
+template< typename T >
+T SineOfHalfAngleFromCosineOfAngle( const T cosineOfAngle )
+{
+	return (T)( sqrtf( ( (T)1.0 - cosineOfAngle ) * (T)0.5 ) );
+}
 
 //-------------------------------------------------------------------------------------//
 // ***** Quat
@@ -1303,6 +1328,29 @@ public:
         z = v[2];
     }
 
+	// constructs a quaternion from an axis and the cosine of half the rotation angle around that axis.
+	// Note that the dot product of two vectors is equal to the cosine of the angle between the vectors,
+	// and the magnitude of the cross product of two vectors is the cosine of the half angle between the vectors.
+	static Quat FromAxisAndCosineOfAngle( const Vector3< T > & axis, const T cosineOfAngle, const RotateDirection dir )
+	{
+		OVR_ASSERT( axis.LengthSq() > 1e-8f );
+		OVR_ASSERT( axis.IsNormalized() );
+
+		const T sineHalfAngle = SineOfHalfAngleFromCosineOfAngle( cosineOfAngle ) * (T)( -dir );
+ 		return Quat( axis.x * sineHalfAngle,
+ 					axis.y * sineHalfAngle,
+ 					axis.z * sineHalfAngle,
+ 					CosineOfHalfAngleFromCosineOfAngle( cosineOfAngle ) );
+	}
+
+	// from basis vectors
+	static Quat FromBasisVectors( const Vector3< T > & fwd, const Vector3< T > & right, const Vector3< T > & up )
+	{
+		const T dot = fwd.Dot( Vector3< T >( (T)0, (T)0, (T)-1 ) );
+		const RotateDirection dir = right.Dot( Vector3f( (T)0, (T)0, (T)-1 ) ) < 0.0f ? Rotate_CCW : Rotate_CW;
+		return FromAxisAndCosineOfAngle( Vector3f( (T)0, (T)1, (T)0 ), dot, dir );
+	}
+
     Quat operator-() { return Quat(-x, -y, -z, -w); }   // unary minus
 
     static Quat Identity() { return Quat(0, 0, 0, 1); }
@@ -1335,11 +1383,11 @@ public:
     {
         OVR_MATH_ASSERT(IsNormalized() || LengthSq() == 0);
         T s = T(0);
-        T sinHalfAngle = sqrt(x*x + y*y + z*z);
+        T sinHalfAngle = (T)sqrt(x*x + y*y + z*z);
         if (sinHalfAngle > T(0))
         {
             T cosHalfAngle = w;
-            T halfAngle = atan2(sinHalfAngle, cosHalfAngle);
+            T halfAngle = (T)atan2(sinHalfAngle, cosHalfAngle);
 
             // Ensure minimum rotation magnitude
             if (cosHalfAngle < 0)
@@ -1385,9 +1433,9 @@ public:
         T c = T(1);
         if (angleSquared > T(0))
         {
-            T angle = sqrt(angleSquared);
-            s = sin(angle * T(0.5)) / angle;    // normalize
-            c = cos(angle * T(0.5));
+            T angle = (T)sqrt(angleSquared);
+            s = (T)sin(angle * T(0.5)) / angle;    // normalize
+            c = (T)cos(angle * T(0.5));
         }
         return Quat(s*v.x, s*v.y, s*v.z, c);
     }
@@ -1473,7 +1521,7 @@ public:
         // cases arise.
         if (trace > T(0)) 
         {
-            T s = sqrt(trace + T(1)) * T(2); // s=4*qw
+            T s = T( sqrt(trace + T(1)) ) * T(2); // s=4*qw
             w = T(0.25) * s;
             x = (m.M[2][1] - m.M[1][2]) / s;
             y = (m.M[0][2] - m.M[2][0]) / s;
@@ -1481,7 +1529,7 @@ public:
         } 
         else if ((m.M[0][0] > m.M[1][1])&&(m.M[0][0] > m.M[2][2])) 
         {
-            T s = sqrt(T(1) + m.M[0][0] - m.M[1][1] - m.M[2][2]) * T(2);
+            T s = T( sqrt(T(1) + m.M[0][0] - m.M[1][1] - m.M[2][2]) ) * T(2);
             w = (m.M[2][1] - m.M[1][2]) / s;
             x = T(0.25) * s;
             y = (m.M[0][1] + m.M[1][0]) / s;
@@ -1489,7 +1537,7 @@ public:
         } 
         else if (m.M[1][1] > m.M[2][2]) 
         {
-            T s = sqrt(T(1) + m.M[1][1] - m.M[0][0] - m.M[2][2]) * T(2); // S=4*qy
+            T s = T( sqrt(T(1) + m.M[1][1] - m.M[0][0] - m.M[2][2]) ) * T(2); // S=4*qy
             w = (m.M[0][2] - m.M[2][0]) / s;
             x = (m.M[0][1] + m.M[1][0]) / s;
             y = T(0.25) * s;
@@ -1497,7 +1545,7 @@ public:
         } 
         else 
         {
-            T s = sqrt(T(1) + m.M[2][2] - m.M[0][0] - m.M[1][1]) * T(2); // S=4*qz
+            T s = T( sqrt(T(1) + m.M[2][2] - m.M[0][0] - m.M[1][1]) ) * T(2); // S=4*qz
             w = (m.M[1][0] - m.M[0][1]) / s;
             x = (m.M[0][2] + m.M[2][0]) / s;
             y = (m.M[1][2] + m.M[2][1]) / s;
@@ -2291,6 +2339,9 @@ public:
         return Vector3<T>(M[0][2], M[1][2], M[2][2]);
     }
 
+    T  operator()(int i, int j) const { return M[i][j]; }
+    T& operator()(int i, int j)       { return M[i][j]; }
+
     bool operator== (const Matrix4& b) const
     {
         bool isEqual = true;
@@ -2358,6 +2409,11 @@ public:
         return Multiply(this, Matrix4(*this), b);
     }
 
+    Vector4<T> operator* (const Vector4<T>& b) const
+    {
+        return Transform(b);
+    }
+
     Matrix4 operator* (T s) const
     {
         Matrix4 result(*this);
@@ -2372,7 +2428,6 @@ public:
                 M[i][j] *= s;
         return *this;
     }
-
 
     Matrix4 operator/ (T s) const
     {
@@ -2744,7 +2799,7 @@ public:
 	Matrix4 m(
 		t*x*x+c,   t*x*y-z*s, t*x*z+y*s,
 		t*x*y+z*s, t*y*y+c,   t*y*z-x*s,
-		y*x*z-y*s, t*y*z+x*s, t*z*z+c);
+		t*x*z-y*s, t*y*z+x*s, t*z*z+c);
 	return m;
     }
     // MERGE_MOBILE_SDK
@@ -2874,6 +2929,10 @@ public:
         return m;
     }
 };
+
+// Implicit instantiation
+template<typename T>
+const Matrix4<T> Matrix4<T>::IdentityValue;
 
 typedef Matrix4<float>  Matrix4f;
 typedef Matrix4<double> Matrix4d;

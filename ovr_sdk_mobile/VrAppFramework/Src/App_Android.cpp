@@ -21,8 +21,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "VrApi_LocalPrefs.h"
 
 #include <android/native_window_jni.h>	// for native window JNI
-#include "Input.h"
-#include "SystemActivities.h"
+#include "OVR_Input.h"
 
 // do not queue input events if less than this number of slots are available in the
 // message queue. This prevents input from overflowing the queue if the message
@@ -48,10 +47,8 @@ void Java_com_oculus_vrappframework_VrApp_nativeOnCreate( JNIEnv *jni, jclass cl
 	int32_t initResult = vrapi_Initialize( &initParms );
 	if ( initResult != VRAPI_INITIALIZE_SUCCESS )
 	{
-		char const * msg = initResult == VRAPI_INITIALIZE_PERMISSIONS_ERROR ? 
-										"Thread priority security exception. Make sure the APK is signed." :
-										"VrApi initialization error.";
-		SystemActivities_DisplayError( &java, SYSTEM_ACTIVITIES_FATAL_ERROR_OSIG, __FILE__, msg );
+		vrapi_Shutdown();
+		exit( 0 );
 	}
 }
 
@@ -290,108 +287,13 @@ void AppLocal::SetActivity( JNIEnv * jni, jobject activity )
 	}
 }
 
-void AppLocal::CreateWindowSurface()
-{
-	LOG( "AppLocal::CreateWindowSurface()" );
-
-	// Optionally force the window to a different resolution, which
-	// will be automatically scaled up by the HWComposer.
-	//
-	// Useful for checking operation, but note that the "frame" is always in full
-	// display resolution, while the source crop can be shrunk down:
-	// adb shell dumpsys SurfaceFlinger
-	//
-	// Strangely, setting the format here doesn't actually change the window bit depth.
-	// The window bit depth seems to be determined solely by the EGL config, presumably
-	// on eglMakeCurrent.
-	//
-	// That also means that it can't be changed by localparms between leave / enter vr mode,
-	// you need to quit all the way out to get the new value.
-	if ( VrSettings.Use16BitFramebuffer )
-	{
-		const int displayPixelsWide = vrapi_GetSystemPropertyInt( &Java, VRAPI_SYS_PROP_DISPLAY_PIXELS_WIDE );
-		const int displayPixelsHigh = vrapi_GetSystemPropertyInt( &Java, VRAPI_SYS_PROP_DISPLAY_PIXELS_HIGH );
-
-		LOG( "ANativeWindow_setBuffersGeometry( %i, %i, %s )",
-						displayPixelsWide, displayPixelsHigh,
-						VrSettings.Use16BitFramebuffer ? "5:6:5" : "8:8:8:8" );
-		ANativeWindow_setBuffersGeometry( nativeWindow, displayPixelsWide, displayPixelsHigh,
-			VrSettings.Use16BitFramebuffer ? WINDOW_FORMAT_RGB_565 : WINDOW_FORMAT_RGBA_8888 );
-	}
-
-	EGLint attribs[16];
-	int numAttribs = 0;
-
-	// Set the colorspace on the window
-	if ( VrSettings.UseSrgbFramebuffer )
-	{
-		attribs[numAttribs++] = EGL_GL_COLORSPACE_KHR;
-		attribs[numAttribs++] = EGL_GL_COLORSPACE_SRGB_KHR;
-	}
-	attribs[numAttribs++] = EGL_NONE;
-
-	// Android doesn't let the non-standard extensions show up in the
-	// extension string, so we need to try it blind.
-	windowSurface = eglCreateWindowSurface( glSetup.display, glSetup.config, nativeWindow, attribs );
-
-	if ( windowSurface == EGL_NO_SURFACE )
-	{
-		const EGLint attribs2[] =
-		{
-			EGL_NONE
-		};
-		windowSurface = eglCreateWindowSurface( glSetup.display, glSetup.config, nativeWindow, attribs2 );
-		if ( windowSurface == EGL_NO_SURFACE )
-		{
-			FAIL( "eglCreateWindowSurface failed: %s", GL_GetErrorString() );
-		}
-		FramebufferIsSrgb = false;
-	}
-	else
-	{
-		FramebufferIsSrgb = VrSettings.UseSrgbFramebuffer;
-	}
-	LOG( "nativeWindow %p gives surface %p", nativeWindow, windowSurface );
-
-	if ( eglMakeCurrent( glSetup.display, windowSurface, windowSurface, glSetup.context ) == EGL_FALSE )
-	{
-		FAIL( "eglMakeCurrent failed: %s", GL_GetErrorString() );
-	}
-}
-
-void AppLocal::DestroyWindowSurface()
-{
-	LOG( "AppLocal::DestroyWindowSurface()" );
-
-	if ( eglMakeCurrent( glSetup.display, glSetup.pbufferSurface, glSetup.pbufferSurface, glSetup.context ) == EGL_FALSE )
-	{
-		FAIL( "eglMakeCurrent failed: %s", GL_GetErrorString() );
-	}
-
-	if ( windowSurface != EGL_NO_SURFACE )
-	{
-		eglDestroySurface( glSetup.display, windowSurface );
-		windowSurface = EGL_NO_SURFACE;
-	}
-}
-
 void AppLocal::HandleVrModeChanges()
 {
-#if EXPLICIT_EGL_OBJECTS == 0
-	if ( nativeWindow != NULL && windowSurface == EGL_NO_SURFACE )
-	{
-		Configure();
-		CreateWindowSurface();
-	}
-#endif
-
 	if ( Resumed != false && nativeWindow != NULL )
 	{
 		if ( OvrMobile == NULL )
 		{
-#if EXPLICIT_EGL_OBJECTS == 1
 			Configure();
-#endif
 			EnterVrMode();
 		}
 	}
@@ -402,13 +304,6 @@ void AppLocal::HandleVrModeChanges()
 			LeaveVrMode();
 		}
 	}
-
-#if EXPLICIT_EGL_OBJECTS == 0
-	if ( nativeWindow == NULL && windowSurface != EGL_NO_SURFACE )
-	{
-		DestroyWindowSurface();
-	}
-#endif
 }
 
 // This callback happens from the java thread, after a string has been

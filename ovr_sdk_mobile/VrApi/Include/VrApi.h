@@ -638,6 +638,7 @@ OVR_VRAPI_EXPORT void vrapi_SetTextureSwapChainHandle( ovrTextureSwapChain * cha
 // the current context and check if rendering has completed.
 OVR_VRAPI_EXPORT void vrapi_SubmitFrame( ovrMobile * ovr, const ovrFrameParms * parms );
 
+
 #if defined( __cplusplus )
 }	// extern "C"
 #endif

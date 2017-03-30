@@ -589,7 +589,7 @@ bool ovrStream_File::Read_Internal( MemBufferT< uint8_t > & outBuffer, size_t co
 	outBytesRead = numRead * bytesToRead;
 	if ( numRead != 1 )
 	{
-		LOG( "Tried to read %i bytes from file '%s', but only read %i bytes.", bytesToRead, Uri.ToCStr(), outBytesRead );
+		LOG( "Tried to read %zu bytes from file '%s', but only read %zu bytes.", bytesToRead, Uri.ToCStr(), outBytesRead );
 		return false;
 	}
 	return true;
@@ -612,7 +612,7 @@ bool ovrStream_File::Write_Internal( void const * inBuffer, size_t const bytesTo
 	size_t recsWritten = fwrite( inBuffer, bytesToWrite, 1, F );
 	if ( recsWritten != 1 )
 	{
-		LOG( "Failed to write %i bytes to file '%s'", bytesToWrite, Uri.ToCStr() );
+		LOG( "Failed to write %zu bytes to file '%s'", bytesToWrite, Uri.ToCStr() );
 		return false;
 	}
 	return true;

@@ -30,8 +30,9 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 #include "VrApi.h"
 #include "VrApi_Helpers.h"
-#include "VrApi_LocalPrefs.h"
 #include "VrApi_Input.h"
+#include "VrApi_LocalPrefs.h"
+#include "VrApi_SystemUtils.h"
 
 
 #include "GlSetup.h"
@@ -39,16 +40,13 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "VrCommon.h"
 #include "AppLocal.h"
 #include "DebugLines.h"
-#include "BitmapFont.h"
 #include "PackageFiles.h"
 #include "Console.h"
 #include "OVR_Uri.h"
 #include "OVR_FileSys.h"
 #include "OVR_TextureManager.h"
-#include "Input.h"
+#include "OVR_Input.h"
 #include "DebugConsole.h"
-
-#include "SystemActivities.h"
 
 #include "embedded/dependency_error_de.h"
 #include "embedded/dependency_error_en.h"
@@ -159,16 +157,6 @@ ovrFrameResult VrAppInterface::Frame( const ovrFrameInput & vrFrame )
 	return ovrFrameResult();
 }
 
-Matrix4f VrAppInterface::DrawEyeView( const int eye, const float fovDegreesX, const float fovDegreesY, ovrFrameParms & frameParms ) 
-{ 
-	LOG( "VrAppInterface::DrawEyeView - default handler called" );
-	OVR_UNUSED( eye );
-	OVR_UNUSED( fovDegreesX );
-	OVR_UNUSED( fovDegreesY );
-	OVR_UNUSED( frameParms );
-	return Matrix4f(); 
-}
-
 //==============================
 // WaitForDebuggerToAttach
 //
@@ -188,14 +176,6 @@ void WaitForDebuggerToAttach()
 extern void DebugMenuBounds( void * appPtr, const char * cmd );
 extern void DebugMenuHierarchy( void * appPtr, const char * cmd );
 extern void DebugMenuPoses( void * appPtr, const char * cmd );
-
-void ShowFPS( void * appPtr, const char * cmd )
-{
-	int show = 0;
-	sscanf( cmd, "%i", &show );
-	OVR_ASSERT( appPtr != NULL );	// something changed / broke in the OvrConsole code if this is NULL
-	( ( App* )appPtr )->SetShowFPS( show != 0 );
-}
 
 App::~App()
 {
@@ -220,7 +200,6 @@ AppLocal::AppLocal( JNIEnv & jni_, jobject activityObject_, VrAppInterface & int
 	, appInterface( NULL )
 	, MessageQueue( 100 )
 	, nativeWindow( NULL )
-	, windowSurface( EGL_NO_SURFACE )
 	, FramebufferIsSrgb( false )
 	, FramebufferIsProtected( false )
 	, UseMultiview( false )
@@ -231,8 +210,7 @@ AppLocal::AppLocal( JNIEnv & jni_, jobject activityObject_, VrAppInterface & int
 	, IntentURI()
 	, IntentJSON()
 	, IntentFromPackage()
-	, packageName( "" )
-	, drawCalibrationLines( false )
+	, PackageName( "" )
 	, SuggestedEyeFovDegreesX( 90.0f )
 	, SuggestedEyeFovDegreesY( 90.0f )
 	, InputEvents()
@@ -240,15 +218,7 @@ AppLocal::AppLocal( JNIEnv & jni_, jobject activityObject_, VrAppInterface & int
 	, EnteredVrModeFrame( 0 )
 	, VrThread( &ThreadStarter, this, 256 * 1024 )
 	, ExitCode( 0 )
-	, ShowFPS( false )
-	, WasMounted( false )	
-	, enableDebugOptions( false )			
-	, InfoTextColor( 1.0f )
-	, InfoTextOffset( 0.0f )
-	, InfoTextEndFrame( -1 )
-	, recenterYawFrameStart( 0 )
-	, DebugFont( NULL )
-	, DebugFontSurface( NULL )
+	, RecenterYawFrameStart( 0 )
 	, DebugLines( NULL )
 	, StoragePaths( NULL )
 	, LoadingIconTextureChain( 0 )
@@ -295,7 +265,7 @@ AppLocal::AppLocal( JNIEnv & jni_, jobject activityObject_, VrAppInterface & int
 	VrSettings.UseProtectedFramebuffer = false;
 	VrSettings.Use16BitFramebuffer = false;
 	VrSettings.MinimumVsyncs = 1;
-	VrSettings.RenderMode = RENDERMODE_DRAWEYEVIEW_STEREO;
+	VrSettings.RenderMode = RENDERMODE_STEREO;
 
 	// Default ovrModeParms
 	VrSettings.ModeParms = vrapi_DefaultModeParms( &Java );
@@ -328,7 +298,7 @@ AppLocal::AppLocal( JNIEnv & jni_, jobject activityObject_, VrAppInterface & int
 	{
 		char temp[1024];
 		ovr_GetCurrentPackageName( &jni_, Java.ActivityObject, temp, sizeof( temp ) );
-		packageName = temp;
+		PackageName = temp;
 
 		ovr_GetPackageCodePath( &jni_, Java.ActivityObject, temp, sizeof( temp ) );
 
@@ -381,46 +351,72 @@ void * AppLocal::JoinVrThread()
 	return VrThread.GetExitCode();
 }
 
-void AppLocal::InitDebugFont()
-{
-	// Load the debug font and create the font surface for it
-	// We always load EFIGS as the default font, strictly for purposes of debugging. EFIGS keeps 
-	// growing, however, so it might make since to just have a separate English-only font for this.
-	DebugFont = BitmapFont::Create();
-
-    // Note: On Windows, "apk://font/" converts to a registered file path.
-	if ( !DebugFont->Load( GetFileSys(), "apk://font/res/raw/efigs.fnt" ) )	// load from language apk
-	{
-		if ( !DebugFont->Load( GetFileSys(), "apk:///res/raw/efigs.fnt" ) )	// load from application apk
-		{
-			WARN( "Failed to load debug font!" );
-		}
-	}
-
-	DebugFontSurface = BitmapFontSurface::Create();
-	DebugFontSurface->Init( 8192 );
-}
-
-void AppLocal::ShutdownDebugFont()
-{
-	BitmapFont::Free( DebugFont );
-	BitmapFontSurface::Free( DebugFontSurface );
-}
-
 ovrMessageQueue & AppLocal::GetMessageQueue()
 {
 	return MessageQueue;
 }
 
+// Sends an intent to another application built with VrAppFramework. Command and Uri will be parsed
+// and sent to that applications onNewIntent().
 void AppLocal::SendIntent( const char * actionName, const char * toPackageName,
 							const char * toClassName, const char * command, const char * uri )
 {
+	LOG( "AppLocal::SendIntent( '%s' '%s/%s' '%s' '%s' )", actionName, toPackageName, toClassName, 
+			( command != NULL ) ? command : "<NULL>",
+			( uri != NULL ) ? uri : "<NULL>" );
+
 	// Push black images to the screen to eliminate any frames of lost head tracking.
 	ovrFrameParms blackFrameParms = vrapi_DefaultFrameParms( &Java, VRAPI_FRAME_INIT_BLACK_FINAL, vrapi_GetTimeInSeconds(), NULL );
 	blackFrameParms.FrameIndex = TheVrFrame.Get().FrameNumber;
 	vrapi_SubmitFrame( OvrMobile, &blackFrameParms );
 
-	SystemActivities_SendIntent( &Java, actionName, toPackageName, toClassName, command, uri );
+#if defined( OVR_OS_ANDROID )
+	JavaString actionString( Java.Env, actionName );
+	JavaString packageString( Java.Env, toPackageName );
+	JavaString className( Java.Env, toClassName );
+	JavaString commandString( Java.Env, command == NULL ? "" : command );
+	JavaString uriString( Java.Env, uri == NULL ? "" : uri );
+
+	jmethodID sendIntentFromNativeId = ovr_GetStaticMethodID( Java.Env, VrActivityClass, 
+			"sendIntentFromNative", "(Landroid/app/Activity;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V" );
+	if ( sendIntentFromNativeId != NULL )
+	{
+		Java.Env->CallStaticVoidMethod( VrActivityClass, sendIntentFromNativeId, Java.ActivityObject, 
+				actionString.GetJString(), packageString.GetJString(), className.GetJString(), 
+				commandString.GetJString(), uriString.GetJString() );
+	}
+#endif
+}
+
+void AppLocal::SendLaunchIntent( const char * toPackageName, const char * command, const char * uri,
+								 const char * action )
+{
+	LOG( "AppLocal::SendLaunchIntent( '%s' '%s' '%s' '%s' )", toPackageName, 
+			( command != NULL ) ? command : "<NULL>",
+			( uri != NULL ) ? uri : "<NULL>",
+			( action != NULL ) ? action : "<NULL>" );
+
+	// Push black images to the screen to eliminate any frames of lost head tracking.
+	ovrFrameParms blackFrameParms = vrapi_DefaultFrameParms( &Java, VRAPI_FRAME_INIT_BLACK_FINAL, vrapi_GetTimeInSeconds(), NULL );
+	blackFrameParms.FrameIndex = TheVrFrame.Get().FrameNumber;
+	vrapi_SubmitFrame( OvrMobile, &blackFrameParms );
+
+	OVR_ASSERT( command != NULL );
+#if defined( OVR_OS_ANDROID )
+	JavaString packageString( Java.Env, toPackageName );
+	JavaString commandString( Java.Env, command == NULL ? "" : command );
+	JavaString uriString( Java.Env, uri == NULL ? "" : uri );
+	JavaString actionString( Java.Env, action == NULL ? "" : action );
+
+	jmethodID sendLaunchIntentId = ovr_GetStaticMethodID( Java.Env, VrActivityClass,
+			"sendLaunchIntent", "(Landroid/app/Activity;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V" );
+	if ( sendLaunchIntentId != NULL )
+	{
+		Java.Env->CallStaticVoidMethod( VrActivityClass, sendLaunchIntentId, Java.ActivityObject,
+				packageString.GetJString(), commandString.GetJString(), uriString.GetJString(),
+				actionString.GetJString() );
+	}
+#endif
 }
 
 struct embeddedImage_t
@@ -566,14 +562,9 @@ void AppLocal::ShowDependencyError()
 	ErrorMessageEndTime = vrapi_GetTimeInSeconds() + SHOW_ERROR_MSG_SECONDS;
 }
 
-void AppLocal::StartSystemActivity( const char * command )
+void AppLocal::ShowSystemUI( const ovrSystemUIType uiType )
 {
-	StartSystemActivity( command, nullptr );
-}
-
-void AppLocal::StartSystemActivity( const char * command, const char * jsonExtra )
-{
-	if ( SystemActivities_StartSystemActivity( &Java, command, jsonExtra ) )
+	if ( vrapi_ShowSystemUI( &Java, uiType ) )
 	{
 		// Push black images to the screen to eliminate any frames of lost head tracking.
 		ovrFrameParms blackFrameParms = vrapi_DefaultFrameParms( &Java, VRAPI_FRAME_INIT_BLACK_FINAL, vrapi_GetTimeInSeconds(), NULL );
@@ -590,7 +581,7 @@ void AppLocal::StartSystemActivity( const char * command, const char * jsonExtra
 	LOG( "*************************************************************************" );
 	LOG( "A fatal dependency error occured. Oculus SystemActivities failed to start.");
 	LOG( "*************************************************************************" );
-	SystemActivities_ReturnToHome( &Java );
+	vrapi_ReturnToHome( &Java );
 }
 
 void AppLocal::FinishActivity( const ovrAppFinishType type )
@@ -633,7 +624,8 @@ void AppLocal::FinishActivity( const ovrAppFinishType type )
 #endif
 }
 
-void AppLocal::FatalError( const ovrAppFatalError appError, const char * fileName, const char * messageFormat, ... )
+void AppLocal::FatalError( const ovrAppFatalError appError, const char * fileName, const unsigned int lineNumber,
+						   const char * messageFormat, ... )
 {
 	char errorMessage[2048];
 	va_list argPtr;
@@ -641,15 +633,17 @@ void AppLocal::FatalError( const ovrAppFatalError appError, const char * fileNam
 	OVR::OVR_vsprintf( errorMessage, sizeof( errorMessage ), messageFormat, argPtr );
 	va_end( argPtr );
 
-	// map the app fatal error to the SA fatal error
-	ovrSystemActivitiesFatalError appErrorToFatalErrorMap[FATAL_ERROR_MAX] = {
-		SYSTEM_ACTIVITIES_FATAL_ERROR_OUT_OF_MEMORY,
-		SYSTEM_ACTIVITIES_FATAL_ERROR_OUT_OF_STORAGE,
-		SYSTEM_ACTIVITIES_FATAL_ERROR_OSIG,
-		SYSTEM_ACTIVITIES_FATAL_ERROR_MISC
+	// map the app fatal error to the SA fatal error message
+	// NOTE: These error message strings are used to determine which error image is shown.
+	const char * appErrorToFatalTitle[FATAL_ERROR_MAX] = {
+		"failOutOfMemory",
+		"failOutOfStorage",
+		"failUnknown"
 	};
 	// open SA with a fatal error message
-	SystemActivities_DisplayError( &Java, appErrorToFatalErrorMap[appError], fileName, errorMessage );
+	vrapi_ShowFatalError( &Java, appErrorToFatalTitle[appError], errorMessage, fileName, lineNumber );
+	vrapi_Shutdown();
+	exit( 0 );
 }
 
 void AppLocal::ReadFileFromApplicationPackage( const char * nameInZip, int &length, void * & buffer )
@@ -691,7 +685,7 @@ void AppLocal::InitGlObjects()
 
 	// Determine if multiview rendering is requested (and available) before initializing
 	// our GL objects.
-	UseMultiview = ( VrSettings.RenderMode == RENDERMODE_MULTIVIEW ) && HasEXT_Multiview && GetSystemProperty( VRAPI_SYS_PROP_MULTIVIEW_AVAILABLE );
+	UseMultiview = ( VrSettings.RenderMode == RENDERMODE_MULTIVIEW ) && extensionsOpenGL.OVR_multiview2 && GetSystemProperty( VRAPI_SYS_PROP_MULTIVIEW_AVAILABLE );
 	LOG( "Use Multiview: %s", UseMultiview ? "true" : "false" );
 
 	GlProgram::SetUseMultiview( UseMultiview );
@@ -713,7 +707,6 @@ void AppLocal::InitGlObjects()
 	TextureManager = ovrTextureManager::Create();
 
 	SurfaceRender.Init();
-	EyeDecorations.Init();
 
 	EyeBuffers = new ovrEyeBuffers;
 
@@ -746,8 +739,6 @@ void AppLocal::InitGlObjects()
 		}
 	}
 
-	InitDebugFont();
-
 	DebugConsole::Init( appInterface );
 }
 
@@ -757,8 +748,6 @@ void AppLocal::ShutdownGlObjects()
 
 	DebugLines->Shutdown();
 	OvrDebugLines::Free( DebugLines );
-
-	ShutdownDebugFont();
 
 	delete EyeBuffers;
 	EyeBuffers = NULL;
@@ -779,89 +768,9 @@ void AppLocal::ShutdownGlObjects()
 	ScreenClearSurf.geo.Free();
 	//--- MV_INVALIDATE_WORKAROUND
 
-	EyeDecorations.Shutdown();
 	SurfaceRender.Shutdown();
 
 	GL_Shutdown( glSetup );
-}
-
-#if 0
-static void ToggleScreenColor()
-{
-	static int	color;
-
-	color ^= 1;
-
-	glEnable( GL_WRITEONLY_RENDERING_QCOM );
-	glClearColor( color, 1-color, 0, 1 );
-	glClear( GL_COLOR_BUFFER_BIT );
-
-	// The Adreno driver has an unfortunate optimization so it doesn't
-	// actually flush if all that was done was a clear.
-	GL_Finish();
-	glDisable( GL_WRITEONLY_RENDERING_QCOM );
-}
-#endif
-
-void AppLocal::LatencyTests()
-{
-#if 0
-	// Joypad latency test
-	// When this is enabled, each tap of a button will toggle the screen
-	// color, allowing the tap-to-photons latency to be measured.
-	if ( 0 )
-	{
-		if ( TheVrFrame.Get().Input.buttonPressed )
-		{
-			LOG( "Input.buttonPressed" );
-			static bool shut;
-			if ( !shut )
-			{
-				// shut down timewarp, then go back into frontbuffer mode
-				shut = true;
-				vrapi_LeaveVrMode( OvrMobile );
-				static DirectRender	dr;
-				dr.InitForCurrentSurface( Java.Env, true, 19 );
-			}
-			ToggleScreenColor();
-		}
-		MessageQueue.SleepUntilMessage();
-		continue;
-	}
-	// IMU latency test
-	if ( 0 )
-	{
-		static bool buttonDown;
-		const double predictedTime = vrapi_GetPredictedDisplayTime( OvrMobile, VrSettings.MinimumVsyncs, 2 );
-		const ovrTracking tracking = vrapi_GetPredictedTracking( OvrMobile, predictedTime );
-		const float acc = Vector3f( tracking.HeadPose.AngularVelocity ).Length();
-		//const float acc = fabs( Vector3f( tracking.HeadPose.LinearAcceleration ).Length() - 9.8f );
-
-		static int count;
-		if ( ++count % 10 == 0 )
-		{
-			LOG( "acc: %f", acc );
-		}
-		const bool buttonNow = ( acc > 0.1f );
-		if ( buttonNow != buttonDown )
-		{
-			LOG( "accel button" );
-			buttonDown = buttonNow;
-			static bool shut;
-			if ( !shut )
-			{
-				// shut down timewarp, then go back into frontbuffer mode
-				shut = true;
-				vrapi_LeaveVrMode( OvrMobile );
-				static DirectRender	dr;
-				dr.InitForCurrentSurface( Java.Env, true, 19 );
-			}
-			ToggleScreenColor();
-		}
-		usleep( 1000 );
-		continue;
-	}
-#endif
 }
 
 Vector3f ViewOrigin( const Matrix4f & view )
@@ -888,20 +797,14 @@ void AppLocal::EnterVrMode()
 {
 	LOG( "AppLocal::EnterVrMode()" );
 
-	// Check for local preference values that effect app framework behavior
-	const char * enableDebugOptionsStr = ovr_GetLocalPreferenceValueForKey( LOCAL_PREF_APP_DEBUG_OPTIONS, "0" );
-	enableDebugOptions = ( atoi( enableDebugOptionsStr ) > 0 );
-
 	// Initialize the eye buffers.
 	EyeBuffers->Initialize( VrSettings.EyeBufferParms, UseMultiview );
 
-#if EXPLICIT_EGL_OBJECTS == 1
 #if defined( OVR_OS_ANDROID )
 	VrSettings.ModeParms.Flags |= VRAPI_MODE_FLAG_NATIVE_WINDOW;
 	VrSettings.ModeParms.Display = (size_t)glSetup.display;
 	VrSettings.ModeParms.WindowSurface = (size_t)nativeWindow;
 	VrSettings.ModeParms.ShareContext = (size_t)glSetup.context;
-#endif
 #endif
 
 	EnteredVrModeFrame = TheVrFrame.Get().FrameNumber;
@@ -914,7 +817,7 @@ void AppLocal::EnterVrMode()
 	// afaik nothing else is being done to support these for PC.
 	FramebufferIsSrgb = VrSettings.UseSrgbFramebuffer;
 	FramebufferIsProtected = VrSettings.UseProtectedFramebuffer;
-#elif EXPLICIT_EGL_OBJECTS == 1
+#else
 	FramebufferIsSrgb = GetSystemStatus( VRAPI_SYS_STATUS_FRONT_BUFFER_SRGB ) != 0;
 	FramebufferIsProtected = GetSystemStatus( VRAPI_SYS_STATUS_FRONT_BUFFER_PROTECTED ) != 0;
 #endif
@@ -993,7 +896,7 @@ void AppLocal::Configure()
 	VrSettings.UseSrgbFramebuffer = false;
 	VrSettings.UseProtectedFramebuffer = false;
 	VrSettings.Use16BitFramebuffer = false;
-	VrSettings.RenderMode = RENDERMODE_DRAWEYEVIEW_STEREO;
+	VrSettings.RenderMode = RENDERMODE_STEREO;
 
 	VrSettings.EyeBufferParms.resolutionWidth = vrapi_GetSystemPropertyInt( &Java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_WIDTH );
 	VrSettings.EyeBufferParms.resolutionHeight = vrapi_GetSystemPropertyInt( &Java, VRAPI_SYS_PROP_SUGGESTED_EYE_TEXTURE_HEIGHT );
@@ -1013,7 +916,6 @@ void AppLocal::Configure()
 		VrSettings.Use16BitFramebuffer = true;
 	}
 
-#if EXPLICIT_EGL_OBJECTS == 1
 	// FIXME: have apps set these flags directly.
 
 	if ( VrSettings.UseProtectedFramebuffer )
@@ -1040,7 +942,6 @@ void AppLocal::Configure()
 	{
 		VrSettings.ModeParms.Flags &= ~VRAPI_MODE_FLAG_FRONT_BUFFER_SRGB;
 	}
-#endif
 
 	InitGlObjects();
 }
@@ -1051,7 +952,7 @@ void AppLocal::Configure()
  * Process commands sent over the message queue for the VR thread.
  *
  */
-void AppLocal::Command( const char *msg )
+void AppLocal::Command( const char * msg )
 {
 	// Always include the space in MatchesHead to prevent problems
 	// with commands that have matching prefixes.
@@ -1203,35 +1104,6 @@ void AppLocal::FrameworkInputProcessing( const VrInput & input )
 		{
 			continue;
 		}
-
-		// Handle debug key actions.
-		if ( enableDebugOptions )
-		{
-			if ( eventType == KEY_EVENT_DOWN && repeatCount == 0 )	// first down only
-			{
-				float const IPD_STEP = 0.001f;
-
-				if ( keyCode == OVR_KEY_F )
-				{
-					SetShowFPS( !GetShowFPS() );
-					continue;
-				}
-				else if ( keyCode == OVR_KEY_COMMA )
-				{
-					float const IPD_MIN_CM = 0.0f;
-					VrSettings.HeadModelParms.InterpupillaryDistance = Alg::Max( IPD_MIN_CM * 0.01f, VrSettings.HeadModelParms.InterpupillaryDistance - IPD_STEP );
-					ShowInfoText( 1.0f, "%.3f", VrSettings.HeadModelParms.InterpupillaryDistance );
-					continue;
-				}
-				else if ( keyCode == OVR_KEY_PERIOD )
-				{
-					float const IPD_MAX_CM = 8.0f;
-					VrSettings.HeadModelParms.InterpupillaryDistance = Alg::Min( IPD_MAX_CM * 0.01f, VrSettings.HeadModelParms.InterpupillaryDistance + IPD_STEP );
-					ShowInfoText( 1.0f, "%.3f", VrSettings.HeadModelParms.InterpupillaryDistance );
-					continue;
-				}
-			}
-		}
 	}
 
 	// Process button presses.
@@ -1294,29 +1166,16 @@ void * AppLocal::VrThreadFunction()
 		Ttj.Init( *Java.Vm, *this );
 #endif
 
+		TheVrFrame.Init( &Java );
+
 		InitInput();
 
 		SuggestedEyeFovDegreesX = vrapi_GetSystemPropertyFloat( &Java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_X );
 		SuggestedEyeFovDegreesY = vrapi_GetSystemPropertyFloat( &Java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_Y );
 
-		SystemActivities_Init( &Java );
-
-#if defined( OVR_OS_ANDROID )
-		// Register the headset receiver.
-		{
-			JavaClass javaHeadsetReceiverClass( Java.Env, ovr_GetLocalClassReference( Java.Env, Java.ActivityObject, "com/oculus/vrappframework/HeadsetReceiver" ) );
-			const jmethodID startReceiverMethodId = ovr_GetStaticMethodID( Java.Env, javaHeadsetReceiverClass.GetJClass(), "startReceiver", "(Landroid/app/Activity;)V" );
-			if ( startReceiverMethodId != NULL )
-			{
-				Java.Env->CallStaticVoidMethod( javaHeadsetReceiverClass.GetJClass(), startReceiverMethodId, Java.ActivityObject );
-			}
-		}
-#endif
-
 		// Init the adb 'console' and register console functions
 		InitConsole( Java );
 		RegisterConsoleFunction( "print", OVR::DebugPrint );
-		RegisterConsoleFunction( "showFPS", OVR::ShowFPS );
 	}
 
 	while( !( VrThreadSynced && ReadyToExit ) )
@@ -1335,11 +1194,6 @@ void * AppLocal::VrThreadFunction()
 			Command( msg );
 			free( (void *)msg );
 		}
-
-		// process any SA events - events that aren't always handled internally ( returnToLauncher )
-		// will be added to the event list
-		SystemActivitiesAppEventList_t appEvents;
-		SystemActivities_Update( OvrMobile, &Java, &appEvents );
 
 		// Wait for messages until we are in VR mode.
 		if ( OvrMobile == NULL )
@@ -1363,7 +1217,7 @@ void * AppLocal::VrThreadFunction()
 				vrapi_SubmitFrame( OvrMobile, &blackFrameParms );
 
 #if defined( OVR_OS_ANDROID )
-				SystemActivities_ReturnToHome( &Java );
+				vrapi_ReturnToHome( &Java );
 #else
 				// FIXME: What is the proper mechanism for returning to Home on PC?
 				FAIL( "AppLocal::VrThreadFunction - Error Condition, exiting" );
@@ -1382,21 +1236,6 @@ void * AppLocal::VrThreadFunction()
 			continue;
 		}
 
-		bool recenter = recenterYawFrameStart == ( TheVrFrame.Get().FrameNumber + 1 );
-		if ( !WasMounted && TheVrFrame.Get().DeviceStatus.HeadsetIsMounted )
-		{
-			recenter = true;	//  We just mounted so push a reorient event to be handled at the app level (if desired)
-		}
-		WasMounted = TheVrFrame.Get().DeviceStatus.HeadsetIsMounted;
-
-		if ( recenter )
-		{
-			// add a reorient message so we pass it down as an event that VrGUI (or the app) can get it and call ResetMenuOrientations()
-			char reorientMessage[1024];
-			SystemActivities_CreateSystemActivitiesCommand( "", SYSTEM_ACTIVITY_EVENT_REORIENT, "", "", reorientMessage, sizeof( reorientMessage ) );
-			SystemActivities_AppendAppEvent( &appEvents, reorientMessage );
-		}
-
 #if defined( OVR_OS_WIN32 )
 		// NOTE: Currently we're only disabling input when the app does not
 		// have focus. We need to review what pc lifecycle should look like.
@@ -1410,7 +1249,7 @@ void * AppLocal::VrThreadFunction()
 		{
 			OVR_PERF_TIMER( VrThreadFunction_Loop_AdvanceVrFrame );
 			// Update ovrFrameInput.
-			TheVrFrame.AdvanceVrFrame( InputEvents, OvrMobile, *GetJava(), VrSettings.HeadModelParms, EnteredVrModeFrame, &appEvents );
+			TheVrFrame.AdvanceVrFrame( InputEvents, OvrMobile, *GetJava(), VrSettings.HeadModelParms, EnteredVrModeFrame );
 			InputEvents.NumKeyEvents = 0;
 		}
 
@@ -1427,61 +1266,6 @@ void * AppLocal::VrThreadFunction()
 		if ( GL_ProcessEvents( ExitCode ) )
 		{
 			break;
-		}
-
-		LatencyTests();
-
-		if ( ShowFPS )
-		{
-			const int FPS_NUM_FRAMES_TO_AVERAGE = 30;
-			static double  LastFrameTime = vrapi_GetTimeInSeconds();
-			static double  AccumulatedFrameInterval = 0.0;
-			static int   NumAccumulatedFrames = 0;
-			static float LastFrameRate = 60.0f;
-
-			double currentFrameTime = vrapi_GetTimeInSeconds();
-			double frameInterval = currentFrameTime - LastFrameTime;
-			AccumulatedFrameInterval += frameInterval;
-			NumAccumulatedFrames++;
-			if ( NumAccumulatedFrames > FPS_NUM_FRAMES_TO_AVERAGE )
-			{
-				double interval = ( AccumulatedFrameInterval / NumAccumulatedFrames );  // averaged
-				AccumulatedFrameInterval = 0.0;
-				NumAccumulatedFrames = 0;
-				LastFrameRate = 1.0f / float( interval > 0.000001 ? interval : 0.00001 );
-			}    
-
-			Vector3f viewPos = GetViewMatrixPosition( lastViewMatrix );
-			Vector3f viewFwd = GetViewMatrixForward( lastViewMatrix );
-			Vector3f newPos = viewPos + viewFwd * 1.5f;
-			FPSPointTracker.Update( vrapi_GetTimeInSeconds(), newPos );
-
-			fontParms_t fp;
-			fp.AlignHoriz = HORIZONTAL_CENTER;
-			fp.Billboard = true;
-			fp.TrackRoll = false;
-			DebugFontSurface->DrawTextBillboarded3Df( *DebugFont, fp, FPSPointTracker.GetCurPosition(), 
-					0.8f, Vector4f( 1.0f, 0.0f, 0.0f, 1.0f ), "%.1f fps", LastFrameRate );
-			LastFrameTime = currentFrameTime;
-		}
-
-		// draw info text
-		if ( InfoTextEndFrame >= TheVrFrame.Get().FrameNumber )
-		{
-			Vector3f viewPos = GetViewMatrixPosition( lastViewMatrix );
-			Vector3f viewFwd = GetViewMatrixForward( lastViewMatrix );
-			Vector3f viewUp( 0.0f, 1.0f, 0.0f );
-			Vector3f viewLeft = viewUp.Cross( viewFwd );
-			Vector3f newPos = viewPos + viewFwd * InfoTextOffset.z + viewUp * InfoTextOffset.y + viewLeft * InfoTextOffset.x;
-			InfoTextPointTracker.Update( vrapi_GetTimeInSeconds(), newPos );
-
-			fontParms_t fp;
-			fp.AlignHoriz = HORIZONTAL_CENTER;
-			fp.AlignVert = VERTICAL_CENTER;
-			fp.Billboard = true;
-			fp.TrackRoll = false;
-			DebugFontSurface->DrawTextBillboarded3Df( *DebugFont, fp, InfoTextPointTracker.GetCurPosition(), 
-					1.0f, InfoTextColor, InfoText.ToCStr() );
 		}
 
 		// Main loop logic and draw/update code common to both eyes.
@@ -1507,18 +1291,18 @@ void * AppLocal::VrThreadFunction()
 		}
 
 		ovrFrameResult res = appInterface->Frame( input );
-		this->lastViewMatrix = res.FrameMatrices.CenterView;
+		this->LastViewMatrix = res.FrameMatrices.CenterView;
+
+		// Add any system-level debug surfaces to the FrameResult surface list.
+		{
+			GetDebugLines().AppendSurfaceList( res.Surfaces );
+		}
 
 		{
 			OVR_PERF_TIMER( VrThreadFunction_Loop_DebugConsole_Frame );
 			// Update debug console, trivial cost if console isn't up.
-			DebugConsole::Frame( TheVrFrame.Get() );
+			DebugConsole::Frame( input, res );
 		}
-
-		// Handle any events that weren't eaten by the app
-		SystemActivities_PostUpdate( OvrMobile, &Java, &appEvents );
-
-		GetDebugFontSurface().Finish( res.FrameMatrices.CenterView );
 
 		// stop the loop perf timer now or it will show the wait on Timewarp in vrapi_SubmitFrame
 		OVR_PERF_TIMER_STOP( VrThreadFunction_Loop );
@@ -1528,13 +1312,6 @@ void * AppLocal::VrThreadFunction()
 		// Draw the eye views.
 		DrawEyeViews( res );
 
-		// PC Only : if VRAPI_SYS_STATUS_SHOULD_QUIT is true, save the application state and shut down.
-		// The user will automatically return to Oculus Home.
-		if ( GetSystemStatus( VRAPI_SYS_STATUS_SHOULD_QUIT ) != 0 )
-		{
-			LOG( "VRAPI_SYS_STATUS_SHOULD_QUIT TRUE!" );
-			break;
-		}
 
 		//SPAM( "FRAME END" );
 	}
@@ -1559,21 +1336,9 @@ void * AppLocal::VrThreadFunction()
 
 		ShutdownConsole( Java );
 
-		SystemActivities_Shutdown( &Java );
+		ShutdownInput();
 
 		ovrFileSys::Destroy( FileSys );
-
-#if defined( OVR_OS_ANDROID )
-		// Unregister the Headset receiver
-		{
-			JavaClass javaHeadsetReceiverClass( Java.Env, ovr_GetLocalClassReference( Java.Env, Java.ActivityObject, "com/oculus/vrappframework/HeadsetReceiver" ) );
-			const jmethodID stopReceiverMethodId = ovr_GetStaticMethodID( Java.Env, javaHeadsetReceiverClass.GetJClass(), "stopReceiver", "(Landroid/content/Context;)V" );
-			if ( stopReceiverMethodId != NULL )
-			{
-				Java.Env->CallStaticVoidMethod( javaHeadsetReceiverClass.GetJClass(), stopReceiverMethodId, Java.ActivityObject );
-			}
-		}
-#endif
 
 		// Detach from the Java VM before exiting.
 		ovr_DetachCurrentThread( Java.Vm );
@@ -1591,16 +1356,6 @@ threadReturn_t AppLocal::ThreadStarter( Thread *, void * parm )
 {
 	threadReturn_t result = ((AppLocal *)parm)->VrThreadFunction();
 	return result;
-}
-
-BitmapFont & AppLocal::GetDebugFont() 
-{ 
-    return *DebugFont; 
-}
-
-BitmapFontSurface & AppLocal::GetDebugFontSurface() 
-{ 
-    return *DebugFontSurface; 
 }
 
 OvrDebugLines & AppLocal::GetDebugLines() 
@@ -1648,6 +1403,11 @@ void AppLocal::SetHeadModelParms( const ovrHeadModelParms & parms )
 	VrSettings.HeadModelParms = parms;
 }
 
+const ovrPerformanceParms & AppLocal::GetPerformanceParms() const
+{
+	return VrSettings.PerformanceParms;
+}
+
 int AppLocal::GetCpuLevel() const
 {
 	return VrSettings.PerformanceParms.CpuLevel;
@@ -1690,12 +1450,28 @@ bool AppLocal::GetFramebufferIsProtected() const
 
 Matrix4f const & AppLocal::GetLastViewMatrix() const
 {
-	return lastViewMatrix; 
+	return LastViewMatrix; 
 }
 
 void AppLocal::SetLastViewMatrix( Matrix4f const & m )
 {
-	lastViewMatrix = m; 
+	LastViewMatrix = m; 
+}
+
+void AppLocal::RecenterLastViewMatrix()
+{
+	// Change LastViewMatrix to mirror what is done to the tracking orientation by vrapi_RecenterPose.
+	// Get the current yaw rotation and cancel it out. This is necessary so that subsystems that
+	// rely on LastViewMatrix do not end up using the orientation from before the recenter if they
+	// are called before the beginning of the next frame.
+	float yaw;
+	float pitch;
+	float roll;
+	LastViewMatrix.ToEulerAngles< Axis_Y, Axis_X, Axis_Z, Rotate_CCW, Handed_R >( &yaw, &pitch, &roll );
+
+	// undo the yaw
+	Matrix4f unrotYawMatrix( Quatf( Axis_Y, -yaw ) );
+	LastViewMatrix = LastViewMatrix * unrotYawMatrix;
 }
 
 const ovrJava * AppLocal::GetJava() const
@@ -1708,55 +1484,9 @@ jclass & AppLocal::GetVrActivityClass()
 	return VrActivityClass;
 }
 
-void AppLocal::SetShowFPS( bool const show )
-{
-	bool wasShowing = ShowFPS;
-	ShowFPS = show;
-	if ( !wasShowing && ShowFPS )
-	{
-		FPSPointTracker.Reset();
-	}
-}
-
-bool AppLocal::GetShowFPS() const
-{
-	return ShowFPS;
-}
-
 VrAppInterface * AppLocal::GetAppInterface() 
 {
 	return appInterface;
-}
-
-void AppLocal::ShowInfoText( float const duration, const char * fmt, ... )
-{
-	char buffer[1024];
-	va_list args;
-	va_start( args, fmt );
-	vsnprintf( buffer, sizeof( buffer ), fmt, args );
-	va_end( args );
-	InfoText = buffer;
-	InfoTextColor = Vector4f( 1.0f );
-	InfoTextOffset = Vector3f( 0.0f, 0.0f, 1.5f );
-	InfoTextPointTracker.Reset();
-	InfoTextEndFrame = TheVrFrame.Get().FrameNumber + (long long)( duration * 60.0f ) + 1;
-}
-
-void AppLocal::ShowInfoText( float const duration, Vector3f const & offset, Vector4f const & color, const char * fmt, ... )
-{
-	char buffer[1024];
-	va_list args;
-	va_start( args, fmt );
-	vsnprintf( buffer, sizeof( buffer ), fmt, args );
-	va_end( args );
-	InfoText = buffer;
-	InfoTextColor = color;
-	if ( offset != InfoTextOffset || InfoTextEndFrame < TheVrFrame.Get().FrameNumber )
-	{
-		InfoTextPointTracker.Reset();
-	}
-	InfoTextOffset = offset;
-	InfoTextEndFrame = TheVrFrame.Get().FrameNumber + (long long)( duration * 60.0f ) + 1;
 }
 
 ovrMobile * AppLocal::GetOvrMobile()
@@ -1766,7 +1496,7 @@ ovrMobile * AppLocal::GetOvrMobile()
 
 const char * AppLocal::GetPackageName() const
 {
-	return packageName.ToCStr();
+	return PackageName.ToCStr();
 }
 
 bool AppLocal::GetInstalledPackagePath( char const * packageName, char * outPackagePath, size_t const outMaxSize ) const 
@@ -1805,29 +1535,18 @@ void AppLocal::RecenterYaw( const bool showBlack )
 	}
 	vrapi_RecenterPose( OvrMobile );
 
-	// Change lastViewMatrix to mirror what is done to the tracking orientation by vrapi_RecenterPose.
-	// Get the current yaw rotation and cancel it out. This is necessary so that subsystems that
-	// rely on lastViewMatrix do not end up using the orientation from before the recenter if they
-	// are called before the beginning of the next frame.
-	float yaw;
-	float pitch;
-	float roll;
-	lastViewMatrix.ToEulerAngles< Axis_Y, Axis_X, Axis_Z, Rotate_CCW, Handed_R >( &yaw, &pitch, &roll );
-
-	// undo the yaw
-	Matrix4f unrotYawMatrix( Quatf( Axis_Y, -yaw ) );
-	lastViewMatrix = lastViewMatrix * unrotYawMatrix;
+	RecenterLastViewMatrix();
 }
 
 void AppLocal::SetRecenterYawFrameStart( const long long frameNumber )
 {
 	//LOG( "SetRecenterYawFrameStart( %lld )", frameNumber );
-	recenterYawFrameStart = frameNumber;
+	RecenterYawFrameStart = frameNumber;
 }
 
 long long AppLocal::GetRecenterYawFrameStart() const
 {
-	return recenterYawFrameStart;
+	return RecenterYawFrameStart;
 }
 
 ovrFileSys & AppLocal::GetFileSys()
@@ -1838,11 +1557,6 @@ ovrFileSys & AppLocal::GetFileSys()
 ovrTextureManager * AppLocal::GetTextureManager()
 {
 	return TextureManager;
-}
-
-ovrSurfaceRender & AppLocal::GetSurfaceRender()
-{
-	return SurfaceRender;
 }
 
 void AppLocal::RegisterConsoleFunction( char const * name, consoleFn_t function )

@@ -22,11 +22,18 @@ Copyright   :   Copyright 2015 Oculus VR, Inc. All Rights reserved.
 #include "Kernel/OVR_String_Utils.h"
 #include "VrApi_LocalPrefs.h"
 
+#if defined( USE_LAYERIMAGE )
+#include "LayerImage.h"
+#endif
+
+#ifdef OVR_OS_ANDROID
 #define LOCAL_PREF_VRAPI_DEBUG_CONSOLE "dev_debugConsole" // "0" = off, "1" = on
+#else
+#define LOCAL_PREF_VRAPI_DEBUG_CONSOLE L"dev_debugConsole" // on if string exist on command line
+#endif
 
 namespace OVR
 {
-
 class DebugConsoleSingleton
 {
 public:
@@ -36,11 +43,7 @@ public:
 	static DebugConsoleSingleton & Instance();
 	void	Init( VrAppInterface * appInterface );
 	void	Shutdown();
-	void	Frame( const ovrFrameInput & vrFrame );
-	void	BeginFrame();
-	void	EndFrame();
-	void	DrawEyeView( const int eye, const float fovDegreesX, const float fovDegreesY,
-						 ovrFrameParms & frameParms, ovrSurfaceRender & surfaceRender );
+	void	Frame( const ovrFrameInput & vrFrame, ovrFrameResult & frameResult );
 	void	Log( const char * fmt, va_list args );
 	void	Log( const Vector3f& color, const char * fmt, va_list args );
 	bool	OnKeyEvent( const int keyCode, const int repeatCount, const OVR::KeyEventType eventType );
@@ -49,7 +52,7 @@ private:
 	struct LogEntry
 	{
 		LogEntry() {}
-		LogEntry( Vector3f color, const char* text ) : Color( color, 1.0f ), Text( text ) {}
+		LogEntry( Vector3f color, const char * text ) : Color( color, 1.0f ), Text( text ) {}
 
 		Vector4f Color;
 		String Text;
@@ -57,40 +60,47 @@ private:
 	DebugConsoleSingleton() = default;
 	~DebugConsoleSingleton() = default;
 
-	void	SetConsoleTextColor( const char * colorText );
-	void	SetConsoleTextSize( const char * sizeText );
-	void	SetConsoleTextPosition( const char * positionText );
-	void	SetConsoleWidth( const char * widthText );
-	void	GetConsoleTextSettings( const char * );
-	void	PrintConsoleTestText( const char * );
+	void	SetTextColor( const char * colorText );
+	void	SetUseTWLayer ( const char * text );
+	void	Echo ( const char * text );
+	void	PrintTestText();
 
 	static const int MaxLogEntries = 1024;
-	static const int MaxLinesToDisplay = 128;
+	static const int MaxLinesToDisplay = 88;
 	static const int MaxRecentCommands = 16;
-	static const int MaxCharsPerLine = 128; // text has to be unreadably small, or the console fairly wide to go over this.
-	static const int MinLinesToDisplay = 8; // For scrolling, keep at least this many lines on screen if there are this many.
+	static const int MaxCharsPerLine = 128;		// text has to be unreadably small, or the console fairly wide to go over this.
+	static const int MinLinesToDisplay = 8;		// For scrolling, keep at least this many lines on screen if there are this many.
 	static const char * Prompt;
 
-	CircularBuffer<LogEntry>	LogEntries;
+	CircularBuffer<LogEntry>	LogEntries { MaxLogEntries };
 	CircularBuffer<String>		RecentCommands;
 	int							RecentCommandIndex { 0 };
 	char						Command[MaxCharsPerLine];
 	BitmapFont *				Font { nullptr };
 	BitmapFontSurface *			FontSurface { nullptr };
-	ovrEyeBuffers *				EyeBuffers { nullptr };
 	bool						DisplayConsole { false };
 	bool						ShiftDown[2]; //left, right
-	VrAppInterface *			AppInterface;
+	VrAppInterface *			AppInterface{nullptr};
 	int							NumCharsPerLine { MaxCharsPerLine };
 	int							ScrollPosition { 0 };
 
-	Vector3f					TextDefaultColor { 0.0f, 1.0f, 0.0f }; //green has highest legibility on pentile
-	float						TextSize { 0.04f };
-	Vector3f					TextPosition { -0.08f, -0.07f, -0.35f };
-	float						ConsoleWidth { 0.085f };
+	Vector3f					TextDefaultColor { 0.0f, 1.0f, 0.0f }; // green has highest legibility on pentile
+#if defined( OVR_OS_ANDROID )
+	bool						UseTWLayer { true };
+#else
+	bool						UseTWLayer { false }; // doesn't work on pc currently
+#endif
+	float						TextSize { 130.0f };
+	Vector3f					TextPosition { -192.0f, 310.0f, -1.0f }; // xy opposite of what you expect, portrait cylinder layer
+	float						ConsoleWidth { 620.0f };
 
-	ovrTracking					CurrentTracking;
-	ovrMatrix4f					CenterEyeTransform;
+	int							LayerWidth { 2048 };
+	int							LayerHeight { 640 };
+
+	ovrSurfaceRender			SurfaceRender;
+#if defined( USE_LAYERIMAGE )
+	LayerImage *				UILayer { nullptr };
+#endif
 };
 
 const char * DebugConsoleSingleton::Prompt = ">";
@@ -103,8 +113,30 @@ DebugConsoleSingleton & DebugConsoleSingleton::Instance()
 
 void DebugConsoleSingleton::Init( VrAppInterface * appInterface )
 {
-	if ( OVR_strcmp( ovr_GetLocalPreferenceValueForKey( LOCAL_PREF_VRAPI_DEBUG_CONSOLE, "0" ), "1" ) == 0 )
+	bool useDebugConsole = false;
+#ifdef OVR_OS_ANDROID
+	useDebugConsole = OVR_strcmp( ovr_GetLocalPreferenceValueForKey( LOCAL_PREF_VRAPI_DEBUG_CONSOLE, "0" ), "1" ) == 0;
+#else
+	LPWSTR * commandLineArgs;
+	int numArgs;
+
+	commandLineArgs = CommandLineToArgvW( GetCommandLineW(), &numArgs );
+	for ( int i = 0; i < numArgs; ++i )
 	{
+		useDebugConsole |= wcscmp( commandLineArgs[i], LOCAL_PREF_VRAPI_DEBUG_CONSOLE ) == 0;
+	}
+	LocalFree( commandLineArgs );
+
+#endif
+	if ( useDebugConsole )
+	{
+#if defined( USE_LAYERIMAGE )
+		// just a debug console, so skip the slightly improved quality we would get from an 888srgb with cac and mips.
+		UILayer = new LayerImage( LayerWidth, LayerHeight, VRAPI_TEXTURE_FORMAT_4444 );
+		UILayer->SetChromaticCorrection( false ); // causes issues with text, no border pixels of color in the alpha parts
+		UILayer->SetFilter ( LayerFilter::LF_LINEAR );
+#endif
+		
 		ShiftDown[0] = ShiftDown[1] = false;
 		AppInterface = appInterface;
 		Font = BitmapFont::Create();
@@ -126,28 +158,17 @@ void DebugConsoleSingleton::Init( VrAppInterface * appInterface )
 			FAIL( "Failed to create a bitmap font surface" );
 		}
 		static const int vertsPerChar = 4;
+		//disable culling. there are some hacks on our projection matrix to flip our rendering around to align with the current portrait cylinder mode.
+		//It works but leaves bindings backwards, so just disabled culling.
 		FontSurface->Init( MaxLinesToDisplay * MaxCharsPerLine * vertsPerChar );
+		FontSurface->SetCullEnabled( false );
 
-		ovrEyeBufferParms eyeBufferParams;
-		eyeBufferParams.depthFormat = DEPTH_0;
-		eyeBufferParams.colorFormat = COLOR_5551; //don't really need high quality color for a text console
-		eyeBufferParams.multisamples = 1; //we only render sdf text, so no need for additional antialiasing
-		// TODO: Could use a function in vrapi that returns something like highest useful resolution, for now these numbers work on currently supported devices
-		eyeBufferParams.resolutionWidth = 1536;
-		eyeBufferParams.resolutionHeight = 1536;
-
-		EyeBuffers = new ovrEyeBuffers { };
-		EyeBuffers->Initialize( eyeBufferParams, false );
-
-		RegisterConsoleFunction( "SetConsoleTextColor",		[] ( void *, const char * cmd ) { DebugConsoleSingleton::Instance().SetConsoleTextColor( cmd );	} );
-		RegisterConsoleFunction( "SetConsoleTextSize",		[] ( void *, const char * cmd ) { DebugConsoleSingleton::Instance().SetConsoleTextSize( cmd ); } );
-		RegisterConsoleFunction( "SetConsoleTextPosition",  [] ( void *, const char * cmd ) { DebugConsoleSingleton::Instance().SetConsoleTextPosition( cmd ); } );
-		RegisterConsoleFunction( "SetConsoleWidth",			[] ( void *, const char * cmd ) { DebugConsoleSingleton::Instance().SetConsoleWidth( cmd );	} );
-
-		RegisterConsoleFunction( "GetConsoleSettings",		[] ( void *, const char * cmd ) { DebugConsoleSingleton::Instance().GetConsoleTextSettings( cmd ); } );
-		RegisterConsoleFunction( "PrintConsoleTestText",	[] ( void *, const char * cmd ) { DebugConsoleSingleton::Instance().PrintConsoleTestText( cmd ); } );
+		RegisterConsoleFunction( "DCTextColor",		[] ( void *, const char * cmd ) { DebugConsoleSingleton::Instance().SetTextColor( cmd );	} );
+		RegisterConsoleFunction ( "Echo", [] ( void *, const char * cmd ) { DebugConsoleSingleton::Instance().Echo ( cmd );	} );
+		RegisterConsoleFunction( "DCPrintTestText",	[] ( void *, const char * ) { DebugConsoleSingleton::Instance().PrintTestText(); } );
+		RegisterConsoleFunction ( "DCUseTwLayer", [] ( void *, const char * cmd ) { DebugConsoleSingleton::Instance().SetUseTWLayer ( cmd );	} );
 		
-		RegisterConsoleFunction( "List", [] ( void*, const char * )
+		RegisterConsoleFunction( "List", [] ( void *, const char * )
 		{
 			DebugConsole::Log( "Registered Console Commands:" );
 			GetConsoleCmds( [] ( const char * cmd )
@@ -156,46 +177,31 @@ void DebugConsoleSingleton::Init( VrAppInterface * appInterface )
 			} );
 		} );
 
-		float charWidth, charHeight, charAdvancex, charAdvancey;
-		Font->GetGlyphMetrics( 'a', charWidth, charHeight, charAdvancex, charAdvancey ); //assume monospace
+		float charAdvancex = Font->CalcTextWidth ( "a" ); //assume monospace, so all chars are the same
 		NumCharsPerLine = ( int )Alg::Clamp<int>( ( int )( ConsoleWidth / ( charAdvancex * TextSize ) ), 1, MaxCharsPerLine );
 
 		StringUtils::Copy( Command, Prompt );
+
+		SurfaceRender.Init();
 	}
 }
 
 void DebugConsoleSingleton::Shutdown()
 {
+	SurfaceRender.Shutdown();
+
 	BitmapFontSurface::Free( FontSurface );
 	BitmapFont::Free( Font );
-	delete EyeBuffers;
-
 	FontSurface = nullptr;
 	Font = nullptr;
-	EyeBuffers = nullptr;
+
+#if defined( USE_LAYERIMAGE )
+	delete UILayer;
+	UILayer = nullptr;
+#endif
 }
 
-void DebugConsoleSingleton::BeginFrame()
-{
-	if ( !DisplayConsole || !FontSurface )
-	{
-		return;
-	}
-
-	EyeBuffers->BeginFrame();
-}
-
-void DebugConsoleSingleton::EndFrame()
-{
-	if ( !DisplayConsole || !FontSurface )
-	{
-		return;
-	}
-
-	EyeBuffers->EndFrame();
-}
-
-void DebugConsoleSingleton::Frame( const ovrFrameInput & vrFrame )
+void DebugConsoleSingleton::Frame( const ovrFrameInput & vrFrame, ovrFrameResult & frameResult )
 {
 	if ( !DisplayConsole || !FontSurface )
 	{
@@ -217,7 +223,7 @@ void DebugConsoleSingleton::Frame( const ovrFrameInput & vrFrame )
 			char temp = Command[endPos]; //save making a copy of the string
 			Command[endPos] = '\0';
 			auto positionStep = FontSurface->DrawText3D( *Font, fontParams, commandTextPosition, Vector3f( 0.0f, 0.0f, 1.0f ),
-															Vector3f( 0.0f, 1.0f, 0.0f ), TextSize, Vector4f( TextDefaultColor, 1.0f ), &Command[currentPos] );
+															Vector3f( 1.0f, 0.0f, 0.0f ), TextSize, Vector4f( TextDefaultColor, 1.0f ), &Command[currentPos] );
 			commandTextPosition += positionStep;
 			if ( currentPos == 0 )
 			{
@@ -229,51 +235,60 @@ void DebugConsoleSingleton::Frame( const ovrFrameInput & vrFrame )
 		}
 	}
 
-	for ( int i = ScrollPosition; i < Alg::Min<int>(ScrollPosition + ( MaxLinesToDisplay - linesPrinted ), static_cast<int>( LogEntries.GetSize() ) ); ++i )
+	for ( int i = ScrollPosition; i < Alg::Min<int>( ScrollPosition + ( MaxLinesToDisplay - linesPrinted ), static_cast<int>( LogEntries.GetSize() ) ); ++i )
 	{
 		logTextPosition -= FontSurface->DrawText3D( *Font, fontParams, logTextPosition, Vector3f( 0.0f, 0.0f, 1.0f ),
-														Vector3f( 0.0f, 1.0f, 0.0f ), TextSize, LogEntries.PeekFront( i ).Color, LogEntries.PeekFront( i ).Text.ToCStr() );
+														Vector3f( 1.0f, 0.0f, 0.0f ), TextSize, LogEntries.PeekFront( i ).Color, LogEntries.PeekFront( i ).Text.ToCStr() );
 	}
 
-	const ovrMatrix4f input = Matrix4f::Identity();
-	CenterEyeTransform = vrapi_GetCenterEyeTransform( &AppInterface->app->GetHeadModelParms(), &vrFrame.Tracking, &input );
-	CenterEyeTransform = ovrMatrix4f_Inverse( &CenterEyeTransform );
+	Matrix4f textProj = Matrix4f::Identity();
+	//create an orthographic projection, hacked to deal with the mirrored texture with portrait layerimage
+	float znear = VRAPI_ZNEAR;
+	float zfar = 100;
+	textProj.M[0][0] =  2.0f / LayerWidth;
+	textProj.M[1][1] = -2.0f / LayerHeight;
+	textProj.M[2][2] = -2.0f / ( zfar - znear );
+	textProj.M[2][3] = -( zfar + znear ) / ( zfar - znear );
 
-	FontSurface->Finish( CenterEyeTransform );
-}
+	FontSurface->Finish( Matrix4f::Identity() );
 
-void DebugConsoleSingleton::DrawEyeView( const int eye, const float fovDegreesX, const float fovDegreesY,
-										 ovrFrameParms & frameParms,  ovrSurfaceRender & surfaceRender )
-{
-	if ( !DisplayConsole || FontSurface == nullptr )
-	{
-		return;
-	}
+#if defined( USE_LAYERIMAGE )
+	auto nextFbo = UILayer->NextFramebufferObject();
+	glBindFramebuffer ( GL_DRAW_FRAMEBUFFER, nextFbo );
+	glScissor ( 0, 0, LayerWidth, LayerHeight );
+	glViewport ( 0, 0, LayerWidth, LayerHeight );
+	glClearColor ( 0.0f, 0.0f, 0.0f, 0.0f );
+	glClear ( GL_COLOR_BUFFER_BIT );
 
-	const Matrix4f viewMatrix = vrapi_GetEyeViewMatrix( &AppInterface->app->GetHeadModelParms(), &CenterEyeTransform, eye );
-	const Matrix4f projectionMatrix = ovrMatrix4f_CreateProjectionFov( fovDegreesX, fovDegreesY, 0.0f, 0.0f, VRAPI_ZNEAR, 0.0f );
-
-	EyeBuffers->BeginRenderingEye( eye );
-	glClearColor( 0, 0, 0, 1 );
-	glClear( GL_COLOR_BUFFER_BIT );
-
-	/// FIXME: this probably should output its surfaces in a frame result like everything else so we're not calling 
-	/// RenderSurfaceList again in this special case.
 	OVR::Array< ovrDrawSurface > surfaces;
 	FontSurface->AppendSurfaceList( *Font, surfaces );
-	surfaceRender.RenderSurfaceList( surfaces, viewMatrix, projectionMatrix );
+	SurfaceRender.RenderSurfaceList( surfaces, Matrix4f::Identity(), textProj, 0 );
 
-	EyeBuffers->EndRenderingEye( eye );
+	glBindFramebuffer ( GL_DRAW_FRAMEBUFFER, 0 );
+#endif
 
-	frameParms.LayerCount = 1;
+	auto centerView = vrapi_GetCenterEyeViewMatrix ( &AppInterface->app->GetHeadModelParms(), &vrFrame.Tracking, nullptr );
+	frameResult.FrameMatrices.CenterView = centerView;
+	frameResult.FrameMatrices.EyeView[0] = vrapi_GetEyeViewMatrix ( &AppInterface->app->GetHeadModelParms(), &centerView, 0 );
+	frameResult.FrameMatrices.EyeView[1] = vrapi_GetEyeViewMatrix ( &AppInterface->app->GetHeadModelParms(), &centerView, 1 );
 
-	ovrFrameLayer & layer = frameParms.Layers[VRAPI_FRAME_LAYER_TYPE_WORLD];
-	layer.SrcBlend = VRAPI_FRAME_LAYER_BLEND_ONE;
-	layer.DstBlend = VRAPI_FRAME_LAYER_BLEND_ZERO;
-	layer.Flags = 0;
-	const auto consoleSwapChain = EyeBuffers->GetCurrentFrameTextureSwapChains();
-	layer.Textures[eye].ColorTextureSwapChain = consoleSwapChain.ColorTextureSwapChain[eye];
-	layer.Textures[eye].TextureSwapChainIndex = consoleSwapChain.TextureSwapChainIndex;
+	//clear out anything else being rendered when debug console is up, we let that code go through the motions to catch any logs.
+	frameResult.ClearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+	frameResult.ClearColorBuffer = true;
+	frameResult.ClearDepthBuffer = true;
+	frameResult.Surfaces.Clear();
+
+#if defined( USE_LAYERIMAGE )
+	UILayer->SetModelMatrix( UILayer->PortraitCylinder( Vector3f( 0.0f, 0.0f, -1.0f ), Vector3f( 0.0f, 0.0f, 0.0f ) ), true );
+	if ( UseTWLayer )
+	{
+		UILayer->PresentLayer( frameResult.FrameParms, frameResult.FrameMatrices.EyeView[0], frameResult.FrameMatrices.EyeView[1] );
+	}
+	else
+	{
+		frameResult.Surfaces.PushBack( UILayer->LayerAsSurface() );
+	}
+#endif
 }
 
 void DebugConsoleSingleton::Log( const char * fmt, va_list args )
@@ -294,7 +309,7 @@ void DebugConsoleSingleton::Log( const Vector3f& color, const char * fmt, va_lis
 	int startLine = 0;
 	for ( int pos = 0; buffer[pos] != '\0'; ++pos )
 	{
-		if ( buffer[pos] == '\n' || (pos - startLine) >= NumCharsPerLine )
+		if ( buffer[pos] == '\n' || ( pos - startLine ) >= NumCharsPerLine )
 		{
 			if ( pos == startLine ) // for a line with no text go ahead and add a space, need something in the string for BitmapFont to move the line
 			{
@@ -310,7 +325,6 @@ void DebugConsoleSingleton::Log( const Vector3f& color, const char * fmt, va_lis
 			startLine = pos;
 			if ( buffer[pos] == '\n' ) //skip newline, don't want it in our text
 			{
-				++pos;
 				++startLine;
 			}
 		}
@@ -323,9 +337,8 @@ void DebugConsoleSingleton::Log( const Vector3f& color, const char * fmt, va_lis
 	}
 }
 
-void DebugConsoleSingleton::SetConsoleTextColor( const char * colorText )
+void DebugConsoleSingleton::SetTextColor( const char * colorText )
 {
-	//Very likely to have text errors, so use lexer
 	ovrLexer lexer { colorText };
 	Vector3f newColor;
 	ovrLexer::ovrResult parseResult = lexer.ParseFloat( newColor.x, 0 );
@@ -351,69 +364,22 @@ void DebugConsoleSingleton::SetConsoleTextColor( const char * colorText )
 	TextDefaultColor = newColor;
 }
 
-void DebugConsoleSingleton::SetConsoleTextPosition( const char * positionText )
+void DebugConsoleSingleton::SetUseTWLayer( const char * text )
 {
-	//Very likely to have text errors, so use lexer
-	ovrLexer lexer { positionText };
-	Vector3f newPosition;
-	ovrLexer::ovrResult parseResult = lexer.ParseFloat( newPosition.x, 0 );
+	ovrLexer lexer { text };
+	int useTWLayer;
+	ovrLexer::ovrResult parseResult = lexer.ParseInt ( useTWLayer, 0 );
 	if ( parseResult != ovrLexer::LEX_RESULT_OK )
 	{
-		WARN( "SetConsoleTextPosition failed, ill formed arguments %s", positionText );
+		WARN ( "SetUseTWLayer failed, ill formed arguments %s", text );
 		return;
 	}
-	parseResult = lexer.ParseFloat( newPosition.y, 0 );
-	if ( parseResult != ovrLexer::LEX_RESULT_OK )
-	{
-		WARN( "SetConsoleTextPosition failed, ill formed arguments %s", positionText );
-		return;
-	}
-	parseResult = lexer.ParseFloat( newPosition.z, 0 );
-	if ( parseResult != ovrLexer::LEX_RESULT_OK )
-	{
-		WARN( "SetConsoleTextPosition failed, ill formed arguments %s", positionText );
-		return;
-	}
-	TextPosition = newPosition;
+	UseTWLayer = useTWLayer != 0;
 }
 
-void DebugConsoleSingleton::SetConsoleTextSize( const char * sizeText )
+void DebugConsoleSingleton::Echo ( const char * text )
 {
-	//Very likely to have text errors, so use lexer
-	ovrLexer lexer { sizeText };
-	float newSize;
-	ovrLexer::ovrResult parseResult = lexer.ParseFloat( newSize, 0 );
-	if ( parseResult != ovrLexer::LEX_RESULT_OK )
-	{
-		WARN( "SetConsoleTextSize failed, ill formed arguments %s", sizeText );
-		return;
-	}
-	TextSize = Alg::Clamp( newSize, 0.01f, 10.0f );
-	//This will change the layout, so for ease just wipe out the log, changing the text size isn't going to happen often (only when setting up the console)
-	LogEntries.Clear();
-}
-
-void DebugConsoleSingleton::SetConsoleWidth( const char * widthText )
-{
-	ovrLexer lexer { widthText };
-	float newWidth;
-	ovrLexer::ovrResult parseResult = lexer.ParseFloat( newWidth, 0 );
-	if ( parseResult != ovrLexer::LEX_RESULT_OK )
-	{
-		WARN( "SetConsoleTextSize failed, ill formed arguments %s", widthText );
-		return;
-	}
-	ConsoleWidth = Alg::Clamp( newWidth, 0.0f, 10.0f );
-	//This will change the layout, so for ease just wipe out the log, changing the console width isn't going to happen often (only when setting up the console)
-	LogEntries.Clear();
-}
-
-void DebugConsoleSingleton::GetConsoleTextSettings( const char * )
-{
-	DebugConsole::Log( "Text Color: %0.2f %0.2f %0.2f", TextDefaultColor.x, TextDefaultColor.y, TextDefaultColor.z );
-	DebugConsole::Log( "Text Size: %0.3f", TextSize );
-	DebugConsole::Log( "Text Position: %0.2f %0.2f %0.2f", TextPosition.x, TextPosition.y, TextPosition.z );
-	DebugConsole::Log( "Console Width: %0.2f", ConsoleWidth );
+	DebugConsole::Log ( text );
 }
 
 bool DebugConsoleSingleton::OnKeyEvent( const int keyCode, const int repeatCount, const OVR::KeyEventType eventType )
@@ -423,9 +389,9 @@ bool DebugConsoleSingleton::OnKeyEvent( const int keyCode, const int repeatCount
 		return false;
 	}
 
-	//TODO: This is not a 100% reliable way to handle shift state. Could use a getasynckeystate type api, as it is now we could
-	//miss a shift upkey event and get a stuck shift key. or maybe when recieving key events it passes along a flag with shift states
-	//at the time of the event.
+	// TODO: This is not a 100% reliable way to handle shift state. Could use a getasynckeystate type api, as it is now we could
+	// miss a shift upkey event and get a stuck shift key. or maybe when recieving key events it passes along a flag with shift states
+	// at the time of the event.
 	if ( keyCode == OVR_KEY_LSHIFT )
 	{
 		ShiftDown[0] = eventType == KEY_EVENT_DOWN;
@@ -436,7 +402,7 @@ bool DebugConsoleSingleton::OnKeyEvent( const int keyCode, const int repeatCount
 		ShiftDown[1] = eventType == KEY_EVENT_DOWN;
 		return false;
 	}
-	if ( eventType == KEY_EVENT_DOWN && keyCode == OVR_KEY_GRAVE )
+	if ( eventType == KEY_EVENT_DOWN && ( keyCode == OVR_KEY_GRAVE || keyCode == OVR_KEY_TILDE ) )
 	{
 		DisplayConsole = !DisplayConsole;
 		return true;
@@ -469,26 +435,26 @@ bool DebugConsoleSingleton::OnKeyEvent( const int keyCode, const int repeatCount
 			StringUtils::Copy( Command, Prompt );
 			return true;
 		}
-		else if ( keyCode == OVR_KEY_DPAD_UP && !RecentCommands.IsEmpty() )
+		else if ( ( keyCode == OVR_KEY_DPAD_UP || keyCode == OVR_KEY_UP ) && !RecentCommands.IsEmpty() )
 		{
 			StringUtils::Copy( Command, Prompt );
 			OVR_strcat( Command, sizeof( Command ), RecentCommands.PeekFront( RecentCommandIndex ).ToCStr() );
 			RecentCommandIndex = Alg::Max( RecentCommandIndex - 1, 0 );
 			return true;
 		}
-		else if ( keyCode == OVR_KEY_DPAD_DOWN && !RecentCommands.IsEmpty() )
+		else if ( ( keyCode == OVR_KEY_DPAD_DOWN || keyCode == OVR_KEY_DOWN ) && !RecentCommands.IsEmpty() )
 		{
 			RecentCommandIndex = Alg::Min<int>( RecentCommandIndex + 1, static_cast<int>( RecentCommands.GetSize() ) - 1 );
 			StringUtils::Copy( Command, Prompt );
 			OVR_strcat( Command, sizeof( Command ), RecentCommands.PeekFront( RecentCommandIndex ).ToCStr() );
 			return true;
 		}
-		else if ( keyCode == OVR_KEY_LEFT_TRIGGER )
+		else if ( keyCode == OVR_KEY_LEFT_TRIGGER || keyCode == OVR_KEY_BUTTON_LEFT_SHOULDER )
 		{
 			ScrollPosition = Alg::Max( ScrollPosition - 1, 0 );
 			return true;
 		}
-		else if ( keyCode == OVR_KEY_RIGHT_TRIGGER )
+		else if ( keyCode == OVR_KEY_RIGHT_TRIGGER || keyCode == OVR_KEY_BUTTON_RIGHT_SHOULDER )
 		{
 			ScrollPosition = Alg::Min<int>( ScrollPosition + 1, static_cast<int>( LogEntries.GetSize() ) - MinLinesToDisplay );
 			return true;
@@ -505,7 +471,7 @@ bool DebugConsoleSingleton::OnKeyEvent( const int keyCode, const int repeatCount
 	return false;
 }
 
-void DebugConsoleSingleton::PrintConsoleTestText( const char * )
+void DebugConsoleSingleton::PrintTestText( )
 {
 	static const char* testText =
 		R"(    Android's standard OpenGL ES implementation triple buffers window surfaces.
@@ -513,13 +479,12 @@ void DebugConsoleSingleton::PrintConsoleTestText( const char * )
     Android should probably offer a strictly double buffered mode, and possibly a swap - tear option, but it is a sad truth that if you present a buffer to the system, there is a good chance it won't do what you want with it immediately. The best case is to have no chain of buffers at all -- a single buffer that you can render to while it is being scanned to the screen. To avoid tear lines, it is up to the application to draw only in areas of the window that aren't currently being scanned out.
     The mobile displays are internally scanned in portrait mode from top to bottom when the home button is on the bottom, or left to right when the device is in the headset.VrApi receives timestamped events at display vsync, and uses them to determine where the video raster is scanning at a given time.The current code waits until the right eye is being displayed to warp the left eye, then waits until the left eye is being displayed to warp the right eye.This gives a latency of only 8 milliseconds before the first pixel is changed on the screen.It takes 8 milliseconds to display scan half of the screen, so the latency will vary by that much across each eye.
 )";
-
-	DebugConsole::Log( Vector3f { 0.5f, 1.0f, 0.5f }, testText );
+	
 	DebugConsole::Log( Vector3f { 1.0f, 0.0f, 1.0f }, testText );
-	DebugConsole::Log( Vector3f { 0.0f, 0.0f, 1.0f }, testText );
-	DebugConsole::Log( Vector3f { 1.0f, 0.0f, 0.0f }, testText );
 	DebugConsole::Log( Vector3f { 0.0f, 1.0f, 1.0f }, testText );
 	DebugConsole::Log( Vector3f { 1.0f, 1.0f, 0.0f }, testText );
+	DebugConsole::Log( Vector3f { 0.0f, 0.0f, 1.0f }, testText );
+	DebugConsole::Log( Vector3f { 1.0f, 0.0f, 0.0f }, testText );
 	DebugConsole::Log( Vector3f { 1.0f, 1.0f, 1.0f }, testText );
 	DebugConsole::Log( testText ); //defaultcolor
 }
@@ -530,7 +495,6 @@ External Interface
 
 namespace DebugConsole
 {
-#ifdef OVR_OS_ANDROID
 	void Init( VrAppInterface * appInterface )
 	{
 		DebugConsoleSingleton::Instance().Init( appInterface );
@@ -546,25 +510,9 @@ namespace DebugConsole
 		return DebugConsoleSingleton::Instance().OnKeyEvent( keyCode, repeatCount, eventType );
 	}
 
-	void Frame( const ovrFrameInput & vrFrame )
+	void Frame( const ovrFrameInput & vrFrame, ovrFrameResult& frameResult )
 	{
-		DebugConsoleSingleton::Instance().Frame( vrFrame );
-	}
-
-	void BeginFrame()
-	{
-		DebugConsoleSingleton::Instance().BeginFrame();
-	}
-
-	void EndFrame()
-	{
-		DebugConsoleSingleton::Instance().EndFrame();
-	}
-
-	void DrawEyeView( const int eye, const float fovDegreesX, const float fovDegreesY,
-					  ovrFrameParms & frameParms, ovrSurfaceRender & surfaceRender )
-	{
-		DebugConsoleSingleton::Instance().DrawEyeView( eye, fovDegreesX, fovDegreesY, frameParms, surfaceRender );
+		DebugConsoleSingleton::Instance().Frame( vrFrame, frameResult );
 	}
 
 	void Log( const char * fmt, ... )
@@ -582,44 +530,6 @@ namespace DebugConsole
 		DebugConsoleSingleton::Instance().Log( color, fmt, args );
 		va_end( args );
 	}
-#else //crash on PC, and no way to enable anyway (requires a pref), so disable
-	void Init( VrAppInterface * )
-	{
-	}
-
-	void Shutdown()
-	{
-	}
-
-	bool OnKeyEvent( const int, const int,  const OVR::KeyEventType )
-	{
-		return false;
-	}
-
-	void Frame( const ovrFrameInput & )
-	{
-	}
-
-	void BeginFrame()
-	{
-	}
-
-	void EndFrame()
-	{
-	}
-
-	void DrawEyeView( const int, const float, const float, ovrFrameParms &, ovrSurfaceRender & )
-	{
-	}
-
-	void Log( const char *, ... )
-	{
-	}
-
-	void Log( const Vector3f, const char *, ... )
-	{
-	}
-#endif
 }
 
 }

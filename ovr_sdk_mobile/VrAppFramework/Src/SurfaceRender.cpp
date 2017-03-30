@@ -13,9 +13,9 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 #include <stdlib.h>
 
-#include "Kernel/OVR_GlUtils.h"
 #include "Kernel/OVR_LogUtils.h"
 
+#include "OVR_GlUtils.h"
 #include "GlTexture.h"
 #include "GlProgram.h"
 #include "GlBuffer.h"
@@ -67,7 +67,6 @@ static void ChangeGpuState( const ovrGpuState oldState, const ovrGpuState newSta
 			glBlendEquation( newState.blendMode );
 		}
 	}
-	GL_CheckErrors( "blendSrc/blendDst" );
 
 	if ( force || newState.depthFunc != oldState.depthFunc )
 	{
@@ -249,6 +248,7 @@ ovrDrawCounters ovrSurfaceRender::RenderSurfaceList( const Array<ovrDrawSurface>
 													 const int eye )
 {
 	OVR_PERF_TIMER( SurfaceRender_RenderSurfaceList );
+	OVR_ASSERT( eye >= 0 && eye < GlProgram::MAX_VIEWS );
 
 	// Force the GPU state to a known value, then only set on changes
 	ovrGpuState			currentGpuState;
@@ -259,11 +259,11 @@ ovrDrawCounters ovrSurfaceRender::RenderSurfaceList( const Array<ovrDrawSurface>
 	GLuint				currentTextures[ ovrUniform::MAX_UNIFORMS ] = {};
 	GLuint				currentProgramObject = 0;
 
-	// ----DEPRECATED_DRAWEYEVIEW
-	const Matrix4f vpMatrix = eye < 0 ? projectionMatrix * viewMatrix : (&projectionMatrix)[eye] * (&viewMatrix)[eye];
-	// ----DEPRECATED_DRAWEYEVIEW
+	// ----DEPRECATED_GLPROGRAM
+	const Matrix4f vpMatrix = (&projectionMatrix)[eye] * (&viewMatrix)[eye];
+	// ----DEPRECATED_GLPROGRAM
 
-	const int sceneMatricesIdx = UpdateSceneMatrices( &viewMatrix, &projectionMatrix, eye < 0 ? 1 : 2 /* num eyes */ );
+	const int sceneMatricesIdx = UpdateSceneMatrices( &viewMatrix, &projectionMatrix, GlProgram::MAX_VIEWS /* num eyes */ );
 
 	// counters
 	ovrDrawCounters counters;
@@ -279,7 +279,7 @@ ovrDrawCounters ovrSurfaceRender::RenderSurfaceList( const Array<ovrDrawSurface>
 		{
 			ChangeGpuState( currentGpuState, cmd.GpuState );
 			currentGpuState = cmd.GpuState;
-			GL_CheckErrors( surfaceDef.surfaceName.ToCStr() );
+			//GL_CheckErrors( surfaceDef.surfaceName.ToCStr() );
 
 			// update the program object
 			if ( cmd.Program.Program != currentProgramObject )
@@ -295,7 +295,7 @@ ovrDrawCounters ovrSurfaceRender::RenderSurfaceList( const Array<ovrDrawSurface>
 			{
 				if ( cmd.Program.ViewID.Location >= 0 )	// not defined when multiview enabled
 				{
-					glUniform1i( cmd.Program.ViewID.Location, eye < 0 ? 0 : eye );
+					glUniform1i( cmd.Program.ViewID.Location, eye );
 				}
 				glUniformMatrix4fv( cmd.Program.ModelMatrix.Location, 1, GL_TRUE, drawSurface.modelMatrix.M[0] );
 
@@ -309,25 +309,23 @@ ovrDrawCounters ovrSurfaceRender::RenderSurfaceList( const Array<ovrDrawSurface>
 				{
 					/// WORKAROUND: setting glUniformMatrix4fv transpose to GL_TRUE for an array of matrices
 					/// produces garbage using the Adreno 420 OpenGL ES 3.0 driver.
-					static Matrix4f projMatrixT[2];
-					const int numMatrices = eye < 0 ? 1 : 2;
-					for ( int j = 0; j < numMatrices; j++ )
+					static Matrix4f projMatrixT[GlProgram::MAX_VIEWS];
+					for ( int j = 0; j < GlProgram::MAX_VIEWS; j++ )
 					{
 						projMatrixT[j] = (&projectionMatrix)[j].Transposed();
 					}
-					glUniformMatrix4fv( cmd.Program.ProjectionMatrix.Location, eye < 0 ? 1 : 2, GL_FALSE, projMatrixT[0].M[0] );
+					glUniformMatrix4fv( cmd.Program.ProjectionMatrix.Location, GlProgram::MAX_VIEWS, GL_FALSE, projMatrixT[0].M[0] );
 				}
 				if ( cmd.Program.ViewMatrix.Location >= 0 )
 				{
 					/// WORKAROUND: setting glUniformMatrix4fv transpose to GL_TRUE for an array of matrices
 					/// produces garbage using the Adreno 420 OpenGL ES 3.0 driver.
-					static Matrix4f viewMatrixT[2];
-					const int numMatrices = eye < 0 ? 1 : 2;
-					for ( int j = 0; j < numMatrices; j++ )
+					static Matrix4f viewMatrixT[GlProgram::MAX_VIEWS];
+					for ( int j = 0; j < GlProgram::MAX_VIEWS; j++ )
 					{
 						viewMatrixT[j] = (&viewMatrix)[j].Transposed();
 					}
-					glUniformMatrix4fv( cmd.Program.ViewMatrix.Location, eye < 0 ? 1 : 2, GL_FALSE, viewMatrixT[0].M[0] );
+					glUniformMatrix4fv( cmd.Program.ViewMatrix.Location, GlProgram::MAX_VIEWS, GL_FALSE, viewMatrixT[0].M[0] );
 				}
 				// ----IMAGE_EXTERNAL_WORKAROUND
 			}
@@ -485,31 +483,29 @@ ovrDrawCounters ovrSurfaceRender::RenderSurfaceList( const Array<ovrDrawSurface>
 				}
 			}
 		}
-		else // ----DEPRECATED_DRAWEYEVIEW
+		else // ----DEPRECATED_GLPROGRAM
 		{
 			Matrix4f mvp = vpMatrix * drawSurface.modelMatrix;
 
 			// Update GPU state -- blending, etc
 			ChangeGpuState( currentGpuState, cmd.GpuState );
 			currentGpuState = cmd.GpuState;
-			GL_CheckErrors( surfaceDef.surfaceName.ToCStr() );
 
 			// Update texture bindings
-			OVR_ASSERT( cmd.numTextures <= ovrUniform::MAX_UNIFORMS );
-			for ( int textureNum = 0; textureNum < cmd.numTextures; textureNum++ )
+			OVR_ASSERT( cmd.numUniformTextures <= ovrUniform::MAX_UNIFORMS );
+			for ( int textureNum = 0; textureNum < cmd.numUniformTextures; textureNum++ )
 			{
-				const GLuint texNObj = cmd.textures[textureNum].texture;
+				const GLuint texNObj = cmd.uniformTextures[textureNum].texture;
 				if ( currentTextures[textureNum] != texNObj )
 				{
 					counters.numTextureBinds++;
 					currentTextures[textureNum] = texNObj;
 					glActiveTexture( GL_TEXTURE0 + textureNum );
 					// Something is leaving target set to 0; assume GL_TEXTURE_2D
-					glBindTexture( cmd.textures[textureNum].target ?
-							cmd.textures[textureNum].target : GL_TEXTURE_2D, texNObj );
+					glBindTexture( cmd.uniformTextures[textureNum].target ?
+							cmd.uniformTextures[textureNum].target : GL_TEXTURE_2D, texNObj );
 				}
 			}
-			GL_CheckErrors( surfaceDef.surfaceName.ToCStr() );
 
 			{
 				OVR_PERF_ACCUMULATE( SurfaceRender_ChangeProgram );
@@ -523,7 +519,6 @@ ovrDrawCounters ovrSurfaceRender::RenderSurfaceList( const Array<ovrDrawSurface>
 					glUseProgram( currentProgramObject );
 				}
 			}
-			GL_CheckErrors( surfaceDef.surfaceName.ToCStr() );
 
 			// Update the program parameters
 			{
@@ -534,7 +529,7 @@ ovrDrawCounters ovrSurfaceRender::RenderSurfaceList( const Array<ovrDrawSurface>
 				{
 					if ( cmd.Program.ViewID.Location >= 0 ) // not defined when multiview enabled
 					{
-						glUniform1i( cmd.Program.ViewID.Location, eye < 0 ? 0 : eye );
+						glUniform1i( cmd.Program.ViewID.Location, eye );
 					}
 					glUniformMatrix4fv( cmd.Program.ModelMatrix.Location, 1, GL_TRUE, drawSurface.modelMatrix.M[0] );
 
@@ -548,25 +543,23 @@ ovrDrawCounters ovrSurfaceRender::RenderSurfaceList( const Array<ovrDrawSurface>
 					{
 						/// WORKAROUND: setting glUniformMatrix4fv transpose to GL_TRUE for an array of matrices
 						/// produces garbage using the Adreno 420 OpenGL ES 3.0 driver.
-						static Matrix4f projMatrixT[2];
-						const int numMatrices = eye < 0 ? 1 : 2;
-						for ( int j = 0; j < numMatrices; j++ )
+						static Matrix4f projMatrixT[GlProgram::MAX_VIEWS];
+						for ( int j = 0; j < GlProgram::MAX_VIEWS; j++ )
 						{
 							projMatrixT[j] = (&projectionMatrix)[j].Transposed();
 						}
-						glUniformMatrix4fv( cmd.Program.ProjectionMatrix.Location, eye < 0 ? 1 : 2, GL_FALSE, projMatrixT[0].M[0] );
+						glUniformMatrix4fv( cmd.Program.ProjectionMatrix.Location, GlProgram::MAX_VIEWS, GL_FALSE, projMatrixT[0].M[0] );
 					}
 					if ( cmd.Program.ViewMatrix.Location >= 0 )
 					{
 						/// WORKAROUND: setting glUniformMatrix4fv transpose to GL_TRUE for an array of matrices
 						/// produces garbage using the Adreno 420 OpenGL ES 3.0 driver.
-						static Matrix4f viewMatrixT[2];
-						const int numMatrices = eye < 0 ? 1 : 2;
-						for ( int j = 0; j < numMatrices; j++ )
+						static Matrix4f viewMatrixT[GlProgram::MAX_VIEWS];
+						for ( int j = 0; j < GlProgram::MAX_VIEWS; j++ )
 						{
 							viewMatrixT[j] = (&viewMatrix)[j].Transposed();
 						}
-						glUniformMatrix4fv( cmd.Program.ViewMatrix.Location, eye < 0 ? 1 : 2, GL_FALSE, viewMatrixT[0].M[0] );
+						glUniformMatrix4fv( cmd.Program.ViewMatrix.Location, GlProgram::MAX_VIEWS, GL_FALSE, viewMatrixT[0].M[0] );
 					}
 					// ----IMAGE_EXTERNAL_WORKAROUND
 				}
@@ -587,7 +580,7 @@ ovrDrawCounters ovrSurfaceRender::RenderSurfaceList( const Array<ovrDrawSurface>
 				if ( cmd.Program.uJoints != -1 )
 				{
 					OVR_ASSERT( cmd.Program.uJointsBinding != -1 );
-					const GLuint bufferObj = cmd.joints.GetBuffer();
+					const GLuint bufferObj = cmd.uniformJoints.GetBuffer();
 					if ( currentBuffers[cmd.Program.uJointsBinding] != bufferObj )
 					{
 						counters.numBufferBinds++;
@@ -596,7 +589,6 @@ ovrDrawCounters ovrSurfaceRender::RenderSurfaceList( const Array<ovrDrawSurface>
 					}
 				}
 			}
-			GL_CheckErrors( surfaceDef.surfaceName.ToCStr() );
 
 			{
 				OVR_PERF_ACCUMULATE( SurfaceRender_UpdateUniforms );
@@ -611,8 +603,7 @@ ovrDrawCounters ovrSurfaceRender::RenderSurfaceList( const Array<ovrDrawSurface>
 					glUniform4fv( slot, 1, cmd.uniformValues[unif] );
 				}
 			}
-			GL_CheckErrors( surfaceDef.surfaceName.ToCStr() );
-		}	// ----DEPRECATED_DRAWEYEVIEW
+		}	// ----DEPRECATED_GLPROGRAM
 
 		counters.numDrawCalls++;
 
@@ -627,11 +618,11 @@ ovrDrawCounters ovrSurfaceRender::RenderSurfaceList( const Array<ovrDrawSurface>
 			glBindVertexArray( surfaceDef.geo.vertexArrayObject );
 			if ( surfaceDef.numInstances > 1 )
 			{
-				glDrawElementsInstanced( surfaceDef.geo.primitiveType, surfaceDef.geo.indexCount, ( sizeof( TriangleIndex ) == 2 ) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, NULL, surfaceDef.numInstances );
+				glDrawElementsInstanced( surfaceDef.geo.primitiveType, surfaceDef.geo.indexCount, surfaceDef.geo.IndexType, NULL, surfaceDef.numInstances );
 			}
 			else
 			{
-				glDrawElements( surfaceDef.geo.primitiveType, surfaceDef.geo.indexCount, ( sizeof( TriangleIndex ) == 2 ) ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, NULL );
+				glDrawElements( surfaceDef.geo.primitiveType, surfaceDef.geo.indexCount, surfaceDef.geo.IndexType, NULL );
 			}
 		}
 

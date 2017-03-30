@@ -9,6 +9,9 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 *************************************************************************************/
 
+// Make sure we get PRIu64
+#define __STDC_FORMAT_MACROS 1
+
 #include "OVR_TextureManager.h"
 
 #include "Kernel/OVR_Types.h"
@@ -91,7 +94,8 @@ public:
 										ovrTextureWrap const wrapType = WRAP_DEFAULT ) OVR_OVERRIDE;
 	virtual textureHandle_t		LoadRGBATexture( char const * uri, void const * imageData, 
 										int const imageWidth, int const imageHeight,
-										ovrTextureFilter const filterType, ovrTextureWrap const wrapType );
+										ovrTextureFilter const filterType = FILTER_DEFAULT,
+										ovrTextureWrap const wrapType = WRAP_DEFAULT ) OVR_OVERRIDE;
 	virtual textureHandle_t		LoadRGBATexture( int const iconId, void const * imageData, 
 										int const imageWidth, int const imageHeight,
 										ovrTextureFilter const filterType = FILTER_DEFAULT,
@@ -315,7 +319,7 @@ textureHandle_t	ovrTextureManagerImpl::LoadTexture( char const * uri, void const
 
 	if ( !tex.IsValid() )
 	{
-		LOG( "LoadTextureFromBuffer( '%s', %p, %llu ) failed!", uri, buffer, static_cast< uint64_t >( bufferSize ) );
+		LOG( "LoadTextureFromBuffer( '%s', %p, %" PRIu64 " ) failed!", uri, buffer, static_cast< uint64_t >( bufferSize ) );
 		return textureHandle_t();
 	}
 
@@ -348,6 +352,8 @@ textureHandle_t	ovrTextureManagerImpl::LoadRGBATexture( char const * uri, void c
 		ovrTextureFilter const filterType, ovrTextureWrap const wrapType )
 {
 	OVR_PERF_TIMER( LoadRGBATexture_uri );
+
+	LOG( "LoadRGBATexture: uri = '%s' ", uri );
 
 	NumBufferLoads++;
 	if ( imageData == nullptr || imageWidth <= 0 || imageHeight <= 0 )

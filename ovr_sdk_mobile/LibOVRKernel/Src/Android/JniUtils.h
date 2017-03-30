@@ -23,7 +23,8 @@ enum
 	ANDROID_KITKAT_WATCH	= 20,		// Build.VERSION_CODES.KITKAT_WATCH
 	ANDROID_LOLLIPOP		= 21,		// Build.VERSION_CODES.LOLLIPOP
 	ANDROID_LOLLIPOP_MR1	= 22,		// Build.VERSION_CODES.LOLLIPOP_MR1
-	ANDROID_MARSHMALLOW		= 23		// Build.VERSION_CODES.M
+	ANDROID_MARSHMALLOW		= 23,		// Build.VERSION_CODES.M
+	ANDROID_NOUGAT			= 24,		// Build.VERSION_CODES.N		
 };
 
 int				ovr_GetBuildVersionSDK( JNIEnv * jni );
@@ -105,7 +106,8 @@ public:
 		}
 		else
 		{
-			LOG( "Using caller's JNIEnv" );
+			// Current thread is attached to the VM.
+			//LOG( "Using caller's JNIEnv" );
 		}
 	}
 	~TempJniEnv()
@@ -187,6 +189,40 @@ public:
 
 	jclass			GetJClass() const { return static_cast< jclass >( GetJObject() ); }
 };
+
+#if defined( OVR_OS_ANDROID )
+//==============================================================
+// JavaFloatArray
+//
+// Releases a java float array local reference on destruction.
+//==============================================================
+class JavaFloatArray : public JavaObject
+{
+public:
+	JavaFloatArray( JNIEnv * jni_, jfloatArray const floatArray_ ) :
+		JavaObject( jni_, floatArray_ )
+	{
+	}
+
+	jfloatArray		GetJFloatArray() const { return static_cast< jfloatArray >( GetJObject() ); }
+};
+
+//==============================================================
+// JavaObjectArray
+//
+// Releases a java float array local reference on destruction.
+//==============================================================
+class JavaObjectArray : public JavaObject
+{
+public:
+	JavaObjectArray( JNIEnv * jni_, jobjectArray const floatArray_ ) :
+		JavaObject( jni_, floatArray_ )
+	{
+	}
+
+	jobjectArray		GetJobjectArray() const { return static_cast< jobjectArray >( GetJObject() ); }
+};
+#endif
 
 //==============================================================
 // JavaString
