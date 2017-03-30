@@ -11,6 +11,9 @@ dependencies {
      */
     compile 'com.android.support:support-v4:25.2.0'
     compile 'org.joml:joml:1.9.2'
+
+    // AudioEngine dependency is declared in app if neccessary
+    provided 'com.google.vr:sdk-audio:1.40.0'
 }
 
 android {

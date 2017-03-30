@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.joml.Quaternionf;
+import org.meganekkovr.audio_engine.AudioEngine;
 import org.meganekkovr.ovrjni.OVRApp;
 import org.meganekkovr.xml.XmlParser;
 import org.meganekkovr.xml.XmlParserException;
@@ -24,6 +25,7 @@ public class MeganekkoApp {
     private MeganekkoContext context;
     private long glThreadId;
     private XmlParser xmlParser;
+    private AudioEngine audioEngine;
 
     /**
      * Called at app is launching. Override this to implement custom initialization.
@@ -40,6 +42,10 @@ public class MeganekkoApp {
      * @param frame Frame information
      */
     public void update(@NonNull FrameInput frame) {
+
+        if (audioEngine != null) {
+            audioEngine.update(frame);
+        }
 
         // runOnGlThread handling
         while (!commands.isEmpty()) {
@@ -168,6 +174,19 @@ public class MeganekkoApp {
             xmlParser = createXmlParser(getContext());
         }
         return xmlParser;
+    }
+
+    /**
+     * Get an {@link AudioEngine}.
+     * You have to include {@code compile 'com.google.vr:sdk-audio:X.X.X'} in build.gradle to use {@link AudioEngine}.
+     *
+     * @return AudioEngine
+     */
+    public AudioEngine getAudioEngine() {
+        if (audioEngine == null) {
+            audioEngine = new AudioEngine(context.getContext());
+        }
+        return audioEngine;
     }
 
     /**
