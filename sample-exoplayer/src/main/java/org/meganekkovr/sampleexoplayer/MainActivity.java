@@ -2,20 +2,22 @@ package org.meganekkovr.sampleexoplayer;
 
 import android.os.Bundle;
 
-import com.google.android.exoplayer.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 
 import org.meganekkovr.GearVRActivity;
 
 public class MainActivity extends GearVRActivity {
 
-    private ExoPlayer exoPlayer;
+    private SimpleExoPlayer exoPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // ExoPlayer.Factory.newInstance() must be called in UI thread
-        exoPlayer = ExoPlayer.Factory.newInstance(2);
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(this, new DefaultTrackSelector());
     }
 
     @Override
@@ -24,7 +26,7 @@ public class MainActivity extends GearVRActivity {
         super.onDestroy();
     }
 
-    public ExoPlayer getExoPlayer() {
+    public SimpleExoPlayer getExoPlayer() {
         return exoPlayer;
     }
 }

@@ -1,18 +1,14 @@
 package org.meganekkovr.sampleexoplayer;
 
-import android.media.MediaCodec;
 import android.net.Uri;
 
-import com.google.android.exoplayer.ExoPlayer;
-import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
-import com.google.android.exoplayer.MediaCodecSelector;
-import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
-import com.google.android.exoplayer.TrackRenderer;
-import com.google.android.exoplayer.extractor.ExtractorSampleSource;
-import com.google.android.exoplayer.upstream.Allocator;
-import com.google.android.exoplayer.upstream.DataSource;
-import com.google.android.exoplayer.upstream.DefaultAllocator;
-import com.google.android.exoplayer.upstream.DefaultUriDataSource;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 
 import org.meganekkovr.Entity;
 import org.meganekkovr.MeganekkoApp;
@@ -20,11 +16,7 @@ import org.meganekkovr.SurfaceRendererComponent;
 
 public class App extends MeganekkoApp {
 
-    private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
-    private static final int BUFFER_SEGMENT_COUNT = 256;
-    private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2763.0 Safari/537.36";
-
-    private ExoPlayer exoPlayer;
+    private SimpleExoPlayer exoPlayer;
 
     @Override
     public void init() {
@@ -50,17 +42,13 @@ public class App extends MeganekkoApp {
 
         // Load video
         String videoUrl = getContext().getString(R.string.video_url);
-        DataSource dataSource = new DefaultUriDataSource(context, USER_AGENT);
-        Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
-        ExtractorSampleSource sampleSource = new ExtractorSampleSource(Uri.parse(videoUrl), dataSource, allocator, BUFFER_SEGMENT_SIZE * BUFFER_SEGMENT_COUNT);
-
-        TrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(context, sampleSource, MediaCodecSelector.DEFAULT, MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT);
-        TrackRenderer audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource, MediaCodecSelector.DEFAULT);
-
-        exoPlayer.prepare(videoRenderer, audioRenderer);
+        String userAgent = Util.getUserAgent(getContext(), "MeganekkoSample");
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(), userAgent);
+        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+        exoPlayer.prepare(new ExtractorMediaSource(Uri.parse(videoUrl), dataSourceFactory, extractorsFactory, null, null));
 
         // Connect ExoPlayer output to SurfaceRendererComponent
-        exoPlayer.sendMessage(videoRenderer, MediaCodecVideoTrackRenderer.MSG_SET_SURFACE, surfaceRenderer.getSurface());
+        exoPlayer.setVideoSurface(surfaceRenderer.getSurface());
         exoPlayer.setPlayWhenReady(true);
     }
 
