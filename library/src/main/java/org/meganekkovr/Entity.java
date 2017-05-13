@@ -651,4 +651,38 @@ public class Entity {
     public boolean isRenderable() {
         return renderable;
     }
+
+    /**
+     * Returns the component of type in the {@link Entity} or any of its children using depth first search.
+     *
+     * @param type Component class
+     * @return Found {@link Component}. If no one is found, null.
+     */
+    public <T extends Component> T getComponentInChildren(@NonNull Class<T> type) {
+
+        for (Entity child : children) {
+            T component = child.getComponentInChildren(type);
+            if (component != null) {
+                return component;
+            }
+        }
+
+        return getComponent(type);
+    }
+
+    /**
+     * Returns the component of type in the {@link Entity} or any of its parents.
+     * Recurses upwards until it finds a valid component. Returns null if no component found.
+     *
+     * @param type Component class
+     * @return Found {@link Component}. If no one is found, null.
+     */
+    public <T extends Component> T getComponentInParent(@NonNull Class<T> type) {
+
+        if (hasComponent(type)) {
+            return getComponent(type);
+        }
+
+        return parent != null ? parent.getComponentInParent(type) : null;
+    }
 }

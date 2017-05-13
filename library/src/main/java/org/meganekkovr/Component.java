@@ -1,5 +1,6 @@
 package org.meganekkovr;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -85,5 +86,54 @@ public abstract class Component {
                 }
             });
         }
+    }
+
+    /**
+     * Get Android context.
+     *
+     * @return Android context
+     */
+    public Context getContext() {
+        return entity.getApp().getContext();
+    }
+
+    /**
+     * Get {@link MeganekkoApp}.
+     *
+     * @return Android context
+     */
+    public MeganekkoApp getApp() {
+        return entity.getApp();
+    }
+
+    /**
+     * Returns the component of type in the {@link Entity}.
+     *
+     * @param type Component class
+     * @return Found {@link Component}.
+     */
+    public <T extends Component> T getComponent(Class<T> type) {
+        return entity.getComponent(type);
+    }
+
+    /**
+     * Returns the component of type in the {@link Entity} or any of its children using depth first search.
+     *
+     * @param type Component class
+     * @return Found {@link Component}. If no one is found, null.
+     */
+    public <T extends Component> T getComponentInChildren(Class<T> type) {
+        return entity.getComponentInChildren(type);
+    }
+
+    /**
+     * Returns the component of type in the {@link Entity} or any of its parents.
+     * Recurses upwards until it finds a valid component. Returns null if no component found.
+     *
+     * @param type Component class
+     * @return Found {@link Component}. If no one is found, null.
+     */
+    public <T extends Component> T getComponentInParent(@NonNull Class<T> type) {
+        return entity.getComponentInParent(type);
     }
 }
