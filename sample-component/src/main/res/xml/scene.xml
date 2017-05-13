@@ -1,0 +1,20 @@
+<scene>
+
+    <!-- Demo for getComponent -->
+    <img
+        component="org.meganekkovr.sample_component.RotatorComponent org.meganekkovr.sample_component.RotatorControllerComponent"
+        position="0 0 -10"
+        src="@drawable/ic_android" />
+
+    <!-- Demo for getComponentInChildren -->
+    <entity
+        component="org.meganekkovr.sample_component.ChildControllerComponent"
+        position="5 1 -5">
+
+        <entity scale="1.5 0.75 1">
+            <img
+                component="org.meganekkovr.sample_component.RotatorComponent"
+                src="@drawable/ic_android" />
+        </entity>
+    </entity>
+</scene>
