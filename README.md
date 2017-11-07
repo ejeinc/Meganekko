@@ -1,6 +1,6 @@
 # Meganekko
 
-**Caution: This project is no longer being actively developed. Project which is using Meganekko cannot be built with new com.android.tools.build:gradle:3.0.0. Recommended alternative solution is [GearVR Framework](https://github.com/Samsung/GearVRf).**
+**Caution: This project is no longer being actively developed. Recommended alternative solution is [GearVR Framework](https://github.com/Samsung/GearVRf).**
 
 Gear VR Application Framework.
 
