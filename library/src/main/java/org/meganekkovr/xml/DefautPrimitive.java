@@ -72,6 +72,13 @@ class DefautPrimitive implements XmlPrimitiveFactory.XmlPrimitiveHandler {
 
             String srcVal = src.getNodeValue();
 
+            // Android Gradle 3.0's xml resource
+            if (srcVal.matches("@\\d+")) {
+                int id = Integer.parseInt(srcVal.substring(1));
+                View view = LayoutInflater.from(context).inflate(id, null);
+                return Entity.from(view);
+            }
+
             // src="@layout/xxx"
             Pattern pattern = Pattern.compile("@layout/(.+)");
             Matcher matcher = pattern.matcher(srcVal);
@@ -107,6 +114,15 @@ class DefautPrimitive implements XmlPrimitiveFactory.XmlPrimitiveHandler {
         if (src != null) {
 
             String srcVal = src.getNodeValue();
+
+            // Android Gradle 3.0's xml resource
+            if (srcVal.matches("@\\d+")) {
+                int id = Integer.parseInt(srcVal.substring(1));
+                Drawable drawable = ContextCompat.getDrawable(context, id);
+                return Entity.from(drawable);
+            }
+
+            // src="@drawable/xxx"
             Pattern pattern = Pattern.compile("@drawable/(.+)");
             Matcher matcher = pattern.matcher(srcVal);
             if (matcher.find()) {

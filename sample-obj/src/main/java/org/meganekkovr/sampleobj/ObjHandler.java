@@ -1,6 +1,7 @@
 package org.meganekkovr.sampleobj;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -17,20 +18,17 @@ import java.util.Arrays;
  */
 public class ObjHandler implements XmlAttributeParser.XmlAttributeHandler {
 
+    @NonNull
     @Override
     public String attributeName() {
         return "obj";
     }
 
     @Override
-    public void parse(Entity entity, String rawValue, Context context) {
+    public void parse(@NonNull Entity entity, @NonNull String rawValue, @NonNull Context context) {
 
-        if (XmlAttributeParser.isRawResource(rawValue)) {
-
-            // rawValue = @raw/xxx
-
-            int resId = XmlAttributeParser.toResourceId(rawValue, context);
-            if (resId == 0) return;
+        if (rawValue.startsWith("@")) {
+            int resId = Integer.parseInt(rawValue.substring(1));
 
             try (InputStream stream = context.getResources().openRawResource(resId)) {
                 GeometryComponent geo = new GeometryComponent();

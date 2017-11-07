@@ -129,6 +129,12 @@ public class XmlAttributeParser {
      */
     public static int toResourceId(@NonNull String str, @NonNull Context context) {
 
+        // Android Gradle 3.0's xml resource
+        if (str.matches("@\\d+")) {
+            return Integer.parseInt(str.substring(1));
+        }
+
+        // @drawable/ @+id/ @layout etc...
         Pattern pattern = Pattern.compile("@\\+?(.+)/(.+)");
         Matcher matcher = pattern.matcher(str);
 
