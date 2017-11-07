@@ -1,5 +1,3 @@
-import org.gradle.internal.os.OperatingSystem
-
 apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release'
 
@@ -18,6 +16,14 @@ dependencies {
 
 android {
     compileSdkVersion 26
+    defaultConfig {
+        externalNativeBuild {
+            ndkBuild {
+                abiFilters 'armeabi-v7a'
+                arguments "NDK_PROJECT_PATH=$projectDir/src/main"
+            }
+        }
+    }
     sourceSets {
         main {
             java.srcDirs = [
@@ -25,52 +31,17 @@ android {
                     "$ovrSdkMobile/VrAppFramework/java"
             ]
             jniLibs.srcDir 'src/main/libs'
-            jni.srcDirs = [] //disable automatic ndk-build call
             res.srcDirs = [
                     'src/main/res',
                     "$ovrSdkMobile/VrAppFramework/res"
             ]
         }
     }
-}
-
-/*
- * NDK integration
- */
-
-def GetNDKBuildCmd() {
-
-    def ndkDir = System.getenv('ANDROID_NDK_HOME')
-    if (ndkDir == null) {
-        ndkDir = System.getenv('ANDROID_NDK')
+    externalNativeBuild {
+        ndkBuild {
+            path 'src/main/jni/Android.mk'
+        }
     }
-    if (ndkDir == null) {
-        ndkDir = System.getenv('NDKROOT')
-    }
-    if (ndkDir == null) {
-        Properties properties = new Properties()
-        properties.load(project.rootProject.file('local.properties').newDataInputStream())
-        ndkDir = properties.getProperty('ndk.dir')
-    }
-    if (ndkDir == null) {
-        throw new GradleException('NDK not found! Check your environment for ANDROID_NDK or your local.properties contains ndk.dir')
-    }
-    if (OperatingSystem.current().isWindows()) {
-        return ndkDir + '/ndk-build.cmd'
-    } else {
-        return ndkDir + '/ndk-build'
-    }
-}
-
-preBuild.dependsOn 'NDKBuild'
-clean.dependsOn 'NDKBuildCleanMGN'
-
-task NDKBuild(type: Exec) {
-    commandLine GetNDKBuildCmd(), "NDK_PROJECT_PATH=$projectDir/src/main"
-}
-
-task NDKBuildCleanMGN(type: Exec) {
-    commandLine GetNDKBuildCmd(), 'clean', "NDK_PROJECT_PATH=$projectDir/src/main"
 }
 
 /*
