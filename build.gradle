@@ -20,6 +20,7 @@ allprojects {
             dir "$ovrSdkMobile/VrAppFramework/Libs/Android"
         }
 
+        google()
         jcenter()
     }
     tasks.withType(Javadoc) {
