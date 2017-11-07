@@ -19,6 +19,13 @@ class IdHandler implements XmlAttributeParser.XmlAttributeHandler {
     @Override
     public void parse(@NonNull Entity entity, @NonNull String rawValue, @NonNull Context context) {
 
+        // Android Gradle 3.0's xml resource
+        if (rawValue.matches("@\\d+")) {
+            int id = Integer.parseInt(rawValue.substring(1));
+            entity.setId(id);
+            return;
+        }
+
         if (XmlAttributeParser.isIdResource(rawValue)) {
 
             // rawValue = @id/xxx or @+id/xxx
