@@ -3,16 +3,20 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "org.meganekkovr.sampleexoplayer"
+        applicationId 'org.meganekkovr.sampleexoplayer'
         minSdkVersion 21
         targetSdkVersion 21
         versionCode 1
-        versionName "1.0"
+        versionName '1.0'
+        ndk {
+            abiFilters 'armeabi-v7a'
+        }
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':library')
-    compile 'com.google.android.exoplayer:exoplayer-core:r2.4.0'
+    implementation project(':library')
+    implementation 'com.google.android.exoplayer:exoplayer-core:r2.5.4'
+    implementation 'com.google.android.exoplayer:extension-gvr:r2.5.4'
+    implementation 'com.google.vr:sdk-audio:1.101.0'
 }

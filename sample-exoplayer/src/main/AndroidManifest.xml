@@ -18,7 +18,7 @@
             android:value="org.meganekkovr.sampleexoplayer.App"/>
 
         <activity
-            android:name="org.meganekkovr.sampleexoplayer.MainActivity"
+            android:name="org.meganekkovr.GearVRActivity"
             android:configChanges="orientation|screenSize|keyboard|keyboardHidden"
             android:excludeFromRecents="true"
             android:label="@string/app_name"
