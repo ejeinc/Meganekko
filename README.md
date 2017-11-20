@@ -28,7 +28,12 @@ Add a dependency in your module's **build.gradle**.
 
 ```gradle
 dependencies {
-    compile 'org.meganekkovr:meganekko:3.0.+'
+    implementation 'org.meganekkovr:meganekko:3.2.1'
+    implementation 'com.android.support:support-v4:27.0.1'
+    implementation 'org.joml:joml:1.9.2'
+    
+    // Optional for org.meganekkovr.audio_engine.AudioEngine
+    implementation 'com.google.vr:sdk-audio:1.101.0'
 }
 ```
 
