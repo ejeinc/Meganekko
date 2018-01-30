@@ -14,6 +14,7 @@ public class CameraComponent extends Component {
         // Update entity rotation to match to head tracking.
         Entity entity = getEntity();
         entity.setRotation(HeadTransform.getInstance().getQuaternion());
+        entity.setPosition(HeadTransform.getInstance().getPosition());
 
         super.update(frame);
     }

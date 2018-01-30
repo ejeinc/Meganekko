@@ -21,14 +21,11 @@ using namespace OVR;
 
 extern "C" {
 
-void Java_org_meganekkovr_HeadTransform_getQuaternion(JNIEnv *jni, jclass clazz,
-                                                      jlong appPtr,
-                                                      jfloatArray values) {
-  mgn::GearVRActivity *activity =
-      (mgn::GearVRActivity *)((App *)appPtr)->GetAppInterface();
-  Matrix4f centerM = activity->GetCenterEyeViewMatrix();
-  Quatf orientation = Quatf(centerM.InvertedHomogeneousTransform());
-  mgn::FillElementsUnSafe(jni, values, orientation);
+void Java_org_meganekkovr_HeadTransform_getCenterEyeViewMatrix(JNIEnv *jni, jclass clazz,
+                                                               jlong appPtr,
+                                                               jfloatArray values) {
+  mgn::GearVRActivity *activity = (mgn::GearVRActivity *)((App *)appPtr)->GetAppInterface();
+  mgn::FillElementsUnSafe(jni, values, activity->GetCenterEyeViewMatrix());
 }
 
 } // extern "C"

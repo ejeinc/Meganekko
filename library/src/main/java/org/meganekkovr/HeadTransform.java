@@ -2,6 +2,7 @@ package org.meganekkovr;
 
 import android.support.annotation.NonNull;
 
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -12,6 +13,8 @@ public class HeadTransform {
     private static final int VALID_FLAG_FORWARD_VECTOR_BIT = 1 << 1;
     private static final int VALID_FLAG_UP_VECTOR_BIT = 1 << 2;
     private static final int VALID_FLAG_RIGHT_VECTOR_BIT = 1 << 3;
+    private static final int VALID_FLAG_POSITION_BIT = 1 << 4;
+    private static final int VALID_FLAG_MATRIX_BIT = 1 << 5;
 
     private static final Vector3f WORLD_FORWARD = new Vector3f(0, 0, -1);
     private static final Vector3f WORLD_UP = new Vector3f(0, 1, 0);
@@ -19,9 +22,10 @@ public class HeadTransform {
 
     private static HeadTransform instance; // singleton
 
-    private final float[] tmpValues = new float[4]; // For JNI value getter
-
+    private final float[] tmpValues = new float[16]; // For JNI value getter
     // These are set when needed and cached.
+    private final Matrix4f matrix = new Matrix4f();
+    private final Vector3f position = new Vector3f();
     private final Quaternionf quaternion = new Quaternionf();
     private final Vector3f forward = new Vector3f();
     private final Vector3f up = new Vector3f();
@@ -45,7 +49,7 @@ public class HeadTransform {
         return instance;
     }
 
-    private static native void getQuaternion(long appPtr, float[] values);
+    private static native void getCenterEyeViewMatrix(long appPtr, float[] values);
 
     /**
      * Called on every frame update.
@@ -77,12 +81,36 @@ public class HeadTransform {
 
         // Update at first time
         if ((validFlags & VALID_FLAG_QUATERNION_BIT) == 0) {
-            getQuaternion(appPtr, tmpValues);
-            quaternion.set(tmpValues[0], tmpValues[1], tmpValues[2], tmpValues[3]);
+            quaternion.setFromNormalized(getMatrix());
             validFlags |= VALID_FLAG_QUATERNION_BIT;
         }
 
         return quaternion;
+    }
+
+    @NonNull
+    public Vector3f getPosition() {
+
+        // Update at first time
+        if ((validFlags & VALID_FLAG_POSITION_BIT) == 0) {
+            getMatrix().transformPosition(0, 0, 0, position);
+            validFlags |= VALID_FLAG_POSITION_BIT;
+        }
+
+        return position;
+    }
+
+    @NonNull
+    public Matrix4f getMatrix() {
+
+        // Update at first time
+        if ((validFlags & VALID_FLAG_MATRIX_BIT) == 0) {
+            getCenterEyeViewMatrix(appPtr, tmpValues);
+            matrix.set(tmpValues);
+            validFlags |= VALID_FLAG_MATRIX_BIT;
+        }
+
+        return matrix;
     }
 
     /**
