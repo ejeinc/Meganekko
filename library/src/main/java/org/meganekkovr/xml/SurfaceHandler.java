@@ -2,11 +2,11 @@ package org.meganekkovr.xml;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 
 import org.meganekkovr.Entity;
 import org.meganekkovr.SurfaceRendererComponent;
+import org.meganekkovr.util.ContextCompat;
 import org.meganekkovr.util.ObjectFactory;
 
 import java.lang.reflect.InvocationTargetException;

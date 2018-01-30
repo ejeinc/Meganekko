@@ -2,7 +2,6 @@ package org.meganekkovr.audio_engine;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.util.ArraySet;
 
 import com.google.vr.sdk.audio.GvrAudioEngine;
 
@@ -10,6 +9,7 @@ import org.joml.Quaternionf;
 import org.meganekkovr.FrameInput;
 import org.meganekkovr.HeadTransform;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -28,7 +28,7 @@ import java.util.Set;
 public class AudioEngine {
 
     private final GvrAudioEngine audioEngine;
-    private final Set<SoundImpl> sounds = new ArraySet<>();
+    private final Set<SoundImpl> sounds = new HashSet<>();
     private boolean resumed = true;
 
     /**

@@ -2,7 +2,7 @@ package org.meganekkovr.xml;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.util.ArrayMap;
+import android.util.ArrayMap;
 
 import org.meganekkovr.Entity;
 import org.w3c.dom.NamedNodeMap;
