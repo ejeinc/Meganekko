@@ -27,14 +27,14 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include <sys/stat.h>
 #endif
 
-#include "OVR_Log.h"
+#include "OVR_LogUtils.h"
 
 namespace OVR
 {
 
 bool MemBuffer::WriteToFile( const char * filename )
 {
-	LogText( "Writing %i bytes to %s\n", Length, filename );
+	LOG( "Writing %i bytes to %s\n", Length, filename );
 	FILE * f = fopen( filename, "wb" );
 	if ( f != NULL )
 	{
@@ -44,7 +44,7 @@ bool MemBuffer::WriteToFile( const char * filename )
 	}
 	else
 	{
-		LogText( "MemBuffer::WriteToFile failed to write to %s\n", filename );
+		LOG( "MemBuffer::WriteToFile failed to write to %s\n", filename );
 	}
 	return false;
 }
@@ -79,7 +79,7 @@ bool MemBufferFile::LoadFile( const char * filename )
 	FILE * f = fopen( filename, "rb" );
 	if ( !f )
 	{
-		LogText( "Couldn't open %s\n", filename );
+		LOG( "Couldn't open %s\n", filename );
 		return false;
 	}
 	fseek( f, 0, SEEK_END );
@@ -90,7 +90,7 @@ bool MemBufferFile::LoadFile( const char * filename )
 	fclose( f );
 	if ( readRet != 1 )
 	{
-		LogText( "Only read %zu of %i bytes in %s\n", readRet, Length, filename );
+		LOG( "Only read %zu of %i bytes in %s\n", readRet, Length, filename );
 		FreeData();
 		return false;
 	}
@@ -101,14 +101,14 @@ bool MemBufferFile::LoadFile( const char * filename )
 	const int fd = open( filename, O_RDONLY, 0 );
 	if ( fd < 0 )
 	{
-		LogText( "Couldn't open %s\n", filename );
+		LOG( "Couldn't open %s\n", filename );
 		return false;
 	}
 	struct stat buf;
 	if ( -1 == fstat( fd, &buf ) )
 	{
 		close( fd );
-		LogText( "Couldn't fstat %s\n", filename );
+		LOG( "Couldn't fstat %s\n", filename );
 		return false;
 	}
 	Length = (int)buf.st_size;
@@ -117,7 +117,7 @@ bool MemBufferFile::LoadFile( const char * filename )
 	close( fd );
 	if ( readRet != (size_t)Length )
 	{
-		LogText( "Only read %zu of %i bytes in %s\n", readRet, Length, filename );
+		LOG( "Only read %zu of %i bytes in %s\n", readRet, Length, filename );
 		FreeData();
 		return false;
 	}

@@ -21,16 +21,15 @@ char const * KeyEventNames[KEY_EVENT_MAX] =
 {
 	"KEY_EVENT_NONE",
 	"KEY_EVENT_SHORT_PRESS",
-	"KEY_EVENT_DOUBLE_TAP",
 	"KEY_EVENT_DOWN",
 	"KEY_EVENT_UP",
 };
 
 //==========================
 // KeyState::KeyState
-KeyState::KeyState( float const doubleTapTime ) :
+KeyState::KeyState( float const shortPressTime ) :
 	NumEvents( 0 ),
-	DoubleTapTime( doubleTapTime ),
+	ShortPressTime( shortPressTime ),
 	Down( false )
 {
 	Reset();
@@ -73,45 +72,13 @@ void KeyState::HandleEvent( double const time, bool const down, int const repeat
 		EventTimes[NumEvents++] = time;
 	}
 
-	if ( !down )
+	// key going down
+	if ( down &&  NumEvents == 1 && repeatCount == 0 )
 	{
-		if ( NumEvents == 2 )
-		{
-			// the button was held longer than a double-tap time, but came up before the long-press time
-			if ( time - EventTimes[0] > DoubleTapTime )
-			{
-				// returning a short-press here allows a kinda-long-press to act as a short press, which
-				// is fairly annoying if the user is just trying to abort a long press before the menu appears.
-				//PendingEvent = KEY_EVENT_SHORT_PRESS;
-				PendingEvent = KEY_EVENT_UP;
-				return;
-			}
-			else
-			{
-				// coming up for the first time
-				PendingEvent = KEY_EVENT_UP;
-				return;
-			}
-		}
+		PendingEvent = KEY_EVENT_DOWN;	// initial down event
+		return;
 	}
-	else 
-	{
-		// key going down
-		if ( NumEvents == 1 && repeatCount == 0 )
-		{
-			PendingEvent = KEY_EVENT_DOWN;	// initial down event
-			return;
-		}
-		if ( NumEvents == 3 )	// second down event
-		{
-			if ( time - EventTimes[0] <= DoubleTapTime )
-			{
-				Reset();
-				PendingEvent = KEY_EVENT_DOUBLE_TAP;
-				return;
-			}
-		}
-	}
+
 	PendingEvent = KEY_EVENT_NONE;
 }
 
@@ -131,23 +98,20 @@ KeyEventType KeyState::Update( double const time )
 		}
 		if ( NumEvents == 2 )
 		{
-			// we've had a down ---> up sequence.
-			if ( time - EventTimes[0] > DoubleTapTime )
+
+			// Only send a short press if the button went down once and up in less than the short press time.
+			if ( EventTimes[1] - EventTimes[0] < ShortPressTime )
 			{
-				// Only send a short press if the button went down once and up in less than the double-tap time.
-				if ( EventTimes[1] - EventTimes[0] < DoubleTapTime )
-				{
-					// the HMT button always releases a hold at 0.8 seconds right now :(
-					LOG_WITH_TAG( "KeyState", "(%.4f) Update() - press released after %.2f seconds.", vrapi_GetTimeInSeconds(), time - EventTimes[0] );
-					Reset();
-					return KEY_EVENT_SHORT_PRESS;
-				}
-				else
-				{
-					LOG_WITH_TAG( "KeyState", "(%.4f) Update() - discarding short-press after %.2f seconds.", vrapi_GetTimeInSeconds(), time - EventTimes[0] );
-					Reset();
-					return KEY_EVENT_UP;
-				}
+				// the HMT button always releases a hold at 0.8 seconds right now :(
+				LOG_WITH_TAG( "KeyState", "(%.4f) Update() - press released after %.2f seconds.", vrapi_GetTimeInSeconds(), time - EventTimes[0] );
+				Reset();
+				return KEY_EVENT_SHORT_PRESS;
+			}
+			else
+			{
+				LOG_WITH_TAG( "KeyState", "(%.4f) Update() - discarding short-press after %.2f seconds.", vrapi_GetTimeInSeconds(), time - EventTimes[0] );
+				Reset();
+				return KEY_EVENT_UP;
 			}
 		}
 	}

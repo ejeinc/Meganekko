@@ -13,6 +13,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 #if defined( OVR_OS_ANDROID )
 #include <dirent.h>
+#include <unistd.h>
 #endif
 
 #include <sys/stat.h>
@@ -409,7 +410,7 @@ bool MatchesHead( const char * head, const char * check )
 float LinearRangeMapFloat( float inValue, float inStart, float inEnd, float outStart, float outEnd )
 {
 	float outValue = inValue;
-	if ( fabsf( inEnd - inStart ) < Mathf::SmallestNonDenormal )
+	if ( fabsf( inEnd - inStart ) < MATH_FLOAT_SMALLEST_NON_DENORMAL )
 	{
 		return 0.5f * ( outStart + outEnd );
 	}
@@ -417,7 +418,7 @@ float LinearRangeMapFloat( float inValue, float inStart, float inEnd, float outS
 	outValue /= ( inEnd - inStart );
 	outValue *= ( outEnd - outStart );
 	outValue += outStart;
-	if ( fabsf( outValue ) < Mathf::SmallestNonDenormal )
+	if ( fabsf( outValue ) < MATH_FLOAT_SMALLEST_NON_DENORMAL )
 	{
 		return 0.0f;
 	}

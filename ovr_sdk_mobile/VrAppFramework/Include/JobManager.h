@@ -33,15 +33,15 @@ public:
 	{
 	}
 
-	JavaVM *	GetJvm() { return Jvm; }
-	JNIEnv *	GetJni() { return Jni; }
+	JavaVM *	GetJvm() const { return Jvm; }
+	JNIEnv *	GetJni() const { return Jni; }
 
 private:
 	ovrJobThreadContext( ovrJobThreadContext const & others ) = delete;
 	ovrJobThreadContext operator = ( ovrJobThreadContext const & rhs ) = delete;
 
-	JavaVM *	Jvm;
-	JNIEnv *	Jni;
+	JavaVM *			Jvm;
+	JNIEnv *			Jni;
 };
 
 //==============================================================
@@ -54,17 +54,17 @@ public:
 	ovrJob( char const * name );
 	virtual ~ovrJob() { }
 
-	threadReturn_t		DoWork( ovrJobThreadContext & jtc );
+	threadReturn_t			DoWork( ovrJobThreadContext const & jtc );
 
-	char const *		GetName() const { return &Name[0]; }
+	char const *			GetName() const { return &Name[0]; }
 
-	virtual	uint32_t	GetTypeId() const = 0;
-
-private:
-	virtual threadReturn_t	DoWork_Impl( ovrJobThreadContext & jtc ) = 0;
+	virtual	uint32_t		GetTypeId() const = 0;
 
 private:
-	char			Name[128];
+	virtual threadReturn_t	DoWork_Impl( ovrJobThreadContext const & jtc ) = 0;
+
+private:
+	char					Name[128];
 };
 
 //==============================================================
@@ -123,6 +123,8 @@ public:
 	virtual void	EnqueueJob( ovrJob * job ) = 0;
 
 	virtual void	ServiceJobs( OVR::Array< ovrJobResult > & finishedJobs ) = 0;
+
+	virtual bool 	IsExiting() const = 0;
 };
 
 }	// namespace OVR

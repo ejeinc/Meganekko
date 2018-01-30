@@ -38,9 +38,6 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "OVR_FileSys.h"
 #include "OVR_Uri.h"
 
-#include "VrApi_LocalPrefs.h"
-
-
 namespace OVR {
 static char const * FontSingleTextureVertexShaderSrc =
 	"attribute vec4 Position;\n"
@@ -693,16 +690,8 @@ VertexBlockType DrawTextToVertexBlock( BitmapFont const & font, fontParms_t cons
 	float const distanceScale = imageWidth / FontInfoType::DEFAULT_SCALE_FACTOR;
 	float const imageScaleFactor = 1024.0f / imageWidth;
 
-#if 1
 	float const weightOffset = 0.0f;
 	float const edgeWidth = fontInfo.EdgeWidth * imageScaleFactor;
-#else // uncomment for testing "on the fly" using local prefs
-	const char * weightOffsetStr = ovr_GetLocalPreferenceValueForKey( "dev_fontWeightOffset", "0.0" );
-	float const weightOffset = static_cast< float >( atof( weightOffsetStr ) );
-
-	const char * edgeWidthStr = ovr_GetLocalPreferenceValueForKey( "dev_fontEdgeWidth", "32.0" );
-	float const edgeWidth = static_cast< float >( atof( edgeWidthStr ) ) * imageScaleFactor;
-#endif
 
 	uint8_t vertexParms[4] =
 	{
@@ -1401,7 +1390,7 @@ bool BitmapFontLocal::LoadImageFromBuffer( char const * imageName, unsigned char
 
 	if ( isASTC )
 	{
-		FontTexture = LoadASTCTextureFromMemory( buffer, bufferSize, 1 );
+		FontTexture = LoadASTCTextureFromMemory( buffer, bufferSize, 1, false );
 	}
 	else
 	{
@@ -2029,7 +2018,7 @@ Vector3f BitmapFontSurfaceLocal::DrawText3Df( BitmapFont const & font, fontParms
 	char buffer[256];
 	va_list args;
 	va_start( args, fmt );
-	vsnprintf( buffer, sizeof( buffer ), fmt, args );
+	OVR_vsprintf( buffer, sizeof( buffer ), fmt, args );
 	va_end( args );
 	return DrawText3D( font, parms, pos, normal, up, scale, color, buffer );
 }
@@ -2053,7 +2042,7 @@ Vector3f BitmapFontSurfaceLocal::DrawTextBillboarded3Df( BitmapFont const & font
 	char buffer[256];
 	va_list args;
 	va_start( args, fmt );
-	vsnprintf( buffer, sizeof( buffer ), fmt, args );
+	OVR_vsprintf( buffer, sizeof( buffer ), fmt, args );
 	va_end( args );
 	return DrawTextBillboarded3D( font, parms, pos, scale, color, buffer );
 }
@@ -2127,7 +2116,7 @@ void BitmapFontSurfaceLocal::Finish( Matrix4f const & viewMatrix )
 			{
                 Vector3f textNormal = viewPos - vb.Pivot;
 				float const len = textNormal.Length();
-				if ( len < Mathf::SmallestNonDenormal )
+				if ( len < MATH_FLOAT_SMALLEST_NON_DENORMAL )
 				{
 					vb.Free();
 					continue;

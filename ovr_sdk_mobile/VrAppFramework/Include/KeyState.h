@@ -1,7 +1,7 @@
 /************************************************************************************
 
 Filename    :   KeyState.h
-Content     :   Tracking of short-press, long-press and double-tapping of keys.
+Content     :   Tracking of short-press, long-press
 Created     :   June 18, 2014
 Authors     :   Jonathan E. Wright
 
@@ -21,7 +21,6 @@ namespace OVR {
 //
 // Single-press / Short-press
 // |-------------------------|
-// |----------------- Double-tap Time --------------|
 // down ---> down_time ---> up ---> up_time .........
 //
 // Because we're detecting long-presses, we don't know at the point of a down
@@ -35,23 +34,13 @@ namespace OVR {
 // or something like a cursor change). Because we are acting on the time 
 // threshold and not a button up, the up will come after the long-press is 
 // released and we need to ignore that button up to avoid it being treated
-// as if it were the up from a short-press or double-tap.
-//
-// Double-tap
-// |--------------------------- Total Time --------------------------------|
-// |----------------- Double-tap Time --------------|
-// down ---> down_time ---> up ---> up_time ---> down ---> down_time ---> up
-// 
-// In addition to differentiating short- and long- presses, we must 
-// differentiate short-press and double-tap.  We cannot know on an initial
-// button-up if the user intends a double-tap.  We must wait for some time
-// threshold from the initial down to be exceeded without another down before 
-// we know it's not a double-tap.
+// as if it were the up from a short-press
+
 
 class KeyState
 {
 public:
-	static const int MAX_EVENTS = 3;
+	static const int MAX_EVENTS = 2;
 
 					KeyState( float const doubleTapTime );
 
@@ -63,13 +52,13 @@ public:
 
 	bool			IsDown() const { return Down; }
 
-	float			GetDoubleTapTime() const { return DoubleTapTime; }
-	void			SetDoubleTapTime( const float doubleTapTime ) { DoubleTapTime = doubleTapTime; }
+	float			GetShortPressTime() const { return ShortPressTime; }
+	void			SetShortPressTime( const float shortPressTime ) { ShortPressTime = shortPressTime; }
 
 private:
 	int				NumEvents;				// number of events that have occurred
 	double			EventTimes[MAX_EVENTS];	// times for first down, up, second down
-	float			DoubleTapTime;			// two down events must occur within this time for a double-tap to occur
+	float			ShortPressTime;			// down up must occur in this time for a short press to occur
 	bool			Down;					// true if the key is down
 	KeyEventType	PendingEvent;			// next pending event== stored so that the client only has to handle events in one place
 };

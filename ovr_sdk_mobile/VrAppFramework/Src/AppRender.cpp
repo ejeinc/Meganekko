@@ -18,10 +18,11 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "AppLocal.h"
 #include "VrCommon.h"
 #include "DebugLines.h"
-#include "DebugConsole.h"
 
 //#define OVR_USE_PERF_TIMER
 #include "OVR_PerfTimer.h"
+
+#include <algorithm>				// for min, max
 
 namespace OVR
 {
@@ -37,7 +38,7 @@ static int ClipPolygonToPlane( Vector4f * dstPoints, const Vector4f * srcPoints,
 		const float d0 = srcPoints[p0].w * planeDir * planeDist - srcPoints[p0][planeAxis];
 		const float d1 = srcPoints[p1].w * planeDir * planeDist - srcPoints[p1][planeAxis];
 		const float delta = d0 - d1;
-		const float fraction = fabsf( delta ) > Mathf::SmallestNonDenormal ? ( d0 / delta ) : 1.0f;
+		const float fraction = fabsf( delta ) > MATH_FLOAT_SMALLEST_NON_DENORMAL ? ( d0 / delta ) : 1.0f;
 		const float clamped = Alg::Clamp( fraction, 0.0f, 1.0f );
 
 		dstPoints[p0 * 2 + 0] = srcPoints[p0];
@@ -116,7 +117,7 @@ static ovrRectf TextureRectForBounds( const Bounds3f & bounds, const Matrix4f & 
 	Bounds3f clippedBounds( Bounds3f::Init );
 	for ( int i = 0; i < clippedCornerCount; i++ )
 	{
-		OVR_ASSERT( clippedCorners[i].w > Mathf::SmallestNonDenormal );
+		OVR_ASSERT( clippedCorners[i].w > MATH_FLOAT_SMALLEST_NON_DENORMAL );
 		const float recip = 0.5f / clippedCorners[i].w;
 		const Vector3f point(
 			clippedCorners[i].x * recip + 0.5f,
@@ -167,6 +168,50 @@ static Bounds3f BoundsForSurfaceList( const OVR::Array< ovrDrawSurface > & surfa
 	return surfaceBounds;
 }
 
+void AppLocal::CreateFence( ovrFence * fence )
+{
+	fence->Display = 0;
+	fence->Sync = EGL_NO_SYNC_KHR;
+}
+
+void AppLocal::DestroyFence( ovrFence * fence )
+{
+#if defined( OVR_OS_ANDROID )
+	if ( fence->Sync != EGL_NO_SYNC_KHR )
+	{
+		if ( eglDestroySyncKHR_( fence->Display, fence->Sync ) ==  EGL_FALSE )
+		{
+			WARN( "eglDestroySyncKHR() : EGL_FALSE" );
+			return;
+		}
+		fence->Display = 0;
+		fence->Sync = EGL_NO_SYNC_KHR;
+	}
+#endif
+}
+
+void AppLocal::InsertFence( ovrFence * fence )
+{
+#if defined( OVR_OS_ANDROID )
+	DestroyFence( fence );
+
+	fence->Display = eglGetCurrentDisplay();
+	fence->Sync = eglCreateSyncKHR_( fence->Display, EGL_SYNC_FENCE_KHR, NULL );
+	if ( fence->Sync == EGL_NO_SYNC_KHR )
+	{
+		WARN( "eglCreateSyncKHR() : EGL_NO_SYNC_KHR" );
+		return;
+	}
+	// Force flushing the commands.
+	// Note that some drivers will already flush when calling eglCreateSyncKHR.
+	if ( eglClientWaitSyncKHR_( fence->Display, fence->Sync, EGL_SYNC_FLUSH_COMMANDS_BIT_KHR, 0 ) == EGL_FALSE )
+	{
+		WARN( "eglClientWaitSyncKHR() : EGL_FALSE" );
+		return;
+	}
+#endif
+}
+
 void AppLocal::DrawEyeViews( ovrFrameResult & res )
 {
 	OVR_PERF_TIMER( AppLocal_DrawEyeViews );
@@ -174,17 +219,14 @@ void AppLocal::DrawEyeViews( ovrFrameResult & res )
 	// Flush out and report any errors
 	GL_CheckErrors( "FrameStart" );
 
-	OVR_ASSERT( res.FrameParms != NULL );
-
-	// FrameParm modifications.
+	// If TexRectLayer is specified, compute a texRect which covers the render surface list for the layer.
+	if ( res.TexRectLayer >= 0 && res.TexRectLayer < ovrMaxLayerCount )
 	{
-		ovrFrameParms & frameParms = *vrapi_GetFrameParms( res.FrameParms );
+		const Bounds3f surfaceBounds = BoundsForSurfaceList( res.Surfaces );
 
-		// If TexRectLayer specified, compute a texRect which covers the render surface list for the layer.
-		if ( res.TexRectLayer >= 0 && res.TexRectLayer < VRAPI_FRAME_LAYER_TYPE_MAX )
+		if ( res.Layers[res.TexRectLayer].Header.Type == VRAPI_LAYER_TYPE_PROJECTION2 )
 		{
-			const Bounds3f surfaceBounds = BoundsForSurfaceList( res.Surfaces );
-			ovrFrameLayer & layer = frameParms.Layers[res.TexRectLayer];
+			ovrLayerProjection2 & layer = res.Layers[res.TexRectLayer].Projection;
 			for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )
 			{
 				layer.Textures[eye].TextureRect = TextureRectForBounds( surfaceBounds, res.FrameMatrices.EyeProjection[eye] * res.FrameMatrices.EyeView[eye] );
@@ -214,22 +256,8 @@ void AppLocal::DrawEyeViews( ovrFrameResult & res )
 		}
 		else if ( res.ClearColorBuffer )
 		{
-			//--- MV_INVALIDATE_WORKAROUND
-			// On the Exynos 8890 with multiview enabled, we get rendering corruption in view 0
-			// when issuing an invalidate or clear at the start of the frame. As a workaround,
-			// we render a quad with the clear color. This likely introduces extra timing into
-			// the system which happens to fix the issue for our use case.
-			if ( UseMultiview )
-			{
-				ScreenClearColor = res.ClearColor;
-				res.Surfaces.InsertAt( 0, ovrDrawSurface( &ScreenClearSurf ) );
-			}
-			//--- MV_INVALIDATE_WORKAROUND
-			else
-			{
-				glClearColor( res.ClearColor.x, res.ClearColor.y, res.ClearColor.z, res.ClearColor.w );
-				glClear( GL_COLOR_BUFFER_BIT );
-			}
+			glClearColor( res.ClearColor.x, res.ClearColor.y, res.ClearColor.z, res.ClearColor.w );
+			glClear( GL_COLOR_BUFFER_BIT );
 		}
 		else if ( res.ClearDepthBuffer )
 		{
@@ -290,16 +318,94 @@ void AppLocal::DrawEyeViews( ovrFrameResult & res )
 		}
 	}
 
-	OVR_PERF_TIMER_STOP( AppLocal_DrawEyeViews_RenderEyes );
-
 	EyeBuffers->EndFrame();
+
+	// Insert a single fence to indicate the frame is ready to be displayed.
+	ovrFence * fence = &CompletionFences[CompletionFenceIndex];
+	InsertFence( fence );
+	CompletionFenceIndex = ( CompletionFenceIndex + 1 ) % MAX_FENCES;
+
+	OVR_PERF_TIMER_STOP( AppLocal_DrawEyeViews_RenderEyes );
 
 	OVR_PERF_TIMER_STOP( AppLocal_DrawEyeViews );
 
 	{
 		OVR_PERF_TIMER( AppLocal_DrawEyeViews_SubmitFrame );
-		vrapi_SubmitFrame( OvrMobile, (ovrFrameParms *) res.FrameParms );
+
+		ovrLayerHeader2 * layers[ovrMaxLayerCount] = {};
+		const int layerCount = std::min( res.LayerCount, static_cast<int>( ovrMaxLayerCount ) );
+		for ( int i = 0; i < layerCount; i++ )
+		{
+			layers[i] = &res.Layers[i].Header;
+		}
+
+		ovrSubmitFrameDescription2 frameDesc = {};
+		frameDesc.Flags = res.FrameFlags;
+		frameDesc.SwapInterval = res.SwapInterval;
+		frameDesc.FrameIndex = res.FrameIndex;
+		frameDesc.CompletionFence = (size_t)fence->Sync;
+		frameDesc.DisplayTime = res.DisplayTime;
+		frameDesc.LayerCount = layerCount;
+		frameDesc.Layers = layers;
+
+		vrapi_SubmitFrame2( OvrMobile, &frameDesc );
 	}
+}
+
+void AppLocal::DrawBlackFrame( const int frameFlags_ )
+{
+	int frameFlags = 0;
+	frameFlags |= VRAPI_FRAME_FLAG_INHIBIT_SRGB_FRAMEBUFFER;
+	frameFlags |= VRAPI_FRAME_FLAG_FLUSH;
+	frameFlags |= frameFlags_;
+
+	// Push black images to the screen to eliminate any frames of lost head tracking.
+	ovrLayerProjection2 layer = vrapi_DefaultLayerBlackProjection2();
+
+	const ovrLayerHeader2 * layers[] =
+	{
+		&layer.Header
+	};
+
+	ovrSubmitFrameDescription2 frameDesc = {};
+	frameDesc.Flags = frameFlags;
+	frameDesc.SwapInterval = GetSwapInterval();
+	frameDesc.FrameIndex = TheVrFrame.Get().FrameNumber;
+	frameDesc.DisplayTime = TheVrFrame.Get().PredictedDisplayTimeInSeconds;
+	frameDesc.LayerCount = 1;
+	frameDesc.Layers = layers;
+
+	vrapi_SubmitFrame2( OvrMobile, &frameDesc );
+}
+
+void AppLocal::DrawLoadingIcon( ovrTextureSwapChain * swapChain, const float spinSpeed, const float spinScale )
+{
+	int frameFlags = 0;
+	frameFlags |= VRAPI_FRAME_FLAG_INHIBIT_SRGB_FRAMEBUFFER;
+	frameFlags |= VRAPI_FRAME_FLAG_FLUSH;
+
+	ovrLayerProjection2 blackLayer = vrapi_DefaultLayerBlackProjection2();
+
+	ovrLayerLoadingIcon2 iconLayer = vrapi_DefaultLayerLoadingIcon2();
+	iconLayer.SpinSpeed = spinSpeed;
+	iconLayer.SpinScale = spinScale;
+	iconLayer.ColorSwapChain = swapChain;
+
+	const ovrLayerHeader2 * layers[] =
+	{
+		&blackLayer.Header,
+		&iconLayer.Header
+	};
+
+	ovrSubmitFrameDescription2 frameDesc = {};
+	frameDesc.Flags = frameFlags;
+	frameDesc.SwapInterval = GetSwapInterval();
+	frameDesc.FrameIndex = TheVrFrame.Get().FrameNumber;
+	frameDesc.DisplayTime = TheVrFrame.Get().PredictedDisplayTimeInSeconds;
+	frameDesc.LayerCount = 2;
+	frameDesc.Layers = layers;
+
+	vrapi_SubmitFrame2( OvrMobile, &frameDesc );
 }
 
 }	// namespace OVR

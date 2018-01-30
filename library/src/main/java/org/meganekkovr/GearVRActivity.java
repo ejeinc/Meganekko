@@ -219,26 +219,6 @@ public class GearVRActivity extends VrActivity implements MeganekkoContext {
         return this;
     }
 
-    /**
-     * Will be removed in future update.
-     *
-     * @param cpuLevel CPU level
-     * @deprecated Use {@link OVRApp#setCpuLevel(int)}.
-     */
-    public void setCpuLevel(int cpuLevel) {
-        OVRApp.getInstance().setCpuLevel(cpuLevel);
-    }
-
-    /**
-     * Will be removed in future update.
-     *
-     * @param gpuLevel GPU level
-     * @deprecated Use {@link OVRApp#setGpuLevel(int)}.
-     */
-    public void setGpuLevel(int gpuLevel) {
-        OVRApp.getInstance().setGpuLevel(gpuLevel);
-    }
-
     public MeganekkoApp getApp() {
         return app;
     }

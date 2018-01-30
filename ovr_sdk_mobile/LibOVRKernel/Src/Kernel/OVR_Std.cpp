@@ -26,7 +26,6 @@ limitations under the License.
 
 #include "OVR_Std.h"
 #include "OVR_Alg.h"
-#include "OVR_Allocator.h"
 
 #if !defined(OVR_OS_ANDROID)
 // localeconv() call in OVR_strtod()
@@ -235,14 +234,18 @@ char * OVR_CDECL OVR_strdup( const char * str )
         // for POSIX strdup, str == NULL is undefined.
         // assert, and just allocate a small buffer and make it empty-string
         OVR_ASSERT( str != NULL );     
-        char * result = static_cast< char* >( OVR_ALLOC( 8 ) );
+        char * result = static_cast< char* >( malloc( 8 ) );
+        if ( result == NULL )
+        {
+                return NULL;
+        }
         result[0] = '\0';
         return result;
     }
 
     const size_t size = OVR_strlen( str ) + 1;
 
-    char * result = static_cast< char* >( OVR_ALLOC( size ) );
+    char * result = static_cast< char* >( malloc( size ) );
     if ( result == NULL )
     {
         return NULL;

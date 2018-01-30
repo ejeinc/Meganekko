@@ -323,14 +323,14 @@ glSetup_t GL_Setup( const EGLContext shareContext,
 	}
 
 	const char * glVendorString = (const char *) glGetString(GL_VENDOR);
-	LOG( "GL_VENDOR: %s", glVendorString);
+	LOG( "GL_VENDOR: %s", glVendorString );
 	const char * glRendererString = (const char *) glGetString(GL_RENDERER);
-	LOG( "GL_RENDERER: %s", glRendererString);
+	LOG( "GL_RENDERER: %s", glRendererString );
 	const char * glVersionString = (const char *) glGetString(GL_VERSION);
-	LOG( "GL_VERSION: %s", glVersionString);
+	LOG( "GL_VERSION: %s", glVersionString );
 	const char * glSlVersionString = (const char *) glGetString(
-			GL_SHADING_LANGUAGE_VERSION);
-	LOG( "GL_SHADING_LANGUAGE_VERSION: %s", glSlVersionString);
+			GL_SHADING_LANGUAGE_VERSION );
+	LOG( "GL_SHADING_LANGUAGE_VERSION: %s", glSlVersionString );
 
 	return egl;
 }

@@ -11,10 +11,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 #include "OVR_LogUtils.h"
 
-#if defined( ANDROID )
-#include <unistd.h>			// for gettid()
-#include <sys/syscall.h>	// for syscall()
-#elif defined( WIN32 ) || defined( WIN64 ) || defined( _WIN32 ) || defined( _WIN64 )
+#if defined( WIN32 ) || defined( WIN64 ) || defined( _WIN32 ) || defined( _WIN64 )
 #define NOMINMAX	// stop Windows.h from redefining min and max and breaking std::min / std::max
 #include <windows.h>		// OutputDebugString
 #endif
@@ -22,41 +19,6 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include <stdarg.h>
 #include <string.h>
 #include <assert.h>
-
-void SetThreadAffinityMask( int tid, int mask )
-{
-#if defined( OVR_OS_ANDROID )
-	int syscallres = syscall( __NR_sched_setaffinity, tid, sizeof( mask ), &mask );
-	if ( syscallres != 0 )
-	{
-		int err = errno;
-		WARN( "Error in the syscall setaffinity: mask=0x%x err=0x%x", mask, err );
-	}
-#endif
-}
-
-int GetThreadAffinityMask( int tid )
-{
-#if defined( OVR_OS_ANDROID )
-	if ( tid != 0 )
-	{
-		int mask;
-		for ( size_t len = sizeof( mask ); len != 0; len >>= 1 )
-		{
-			int syscallres = syscall( __NR_sched_getaffinity, tid, len, &mask );
-			if ( syscallres >= 0 )
-			{
-				return mask;
-			}
-			if ( errno == ENOSYS )
-			{
-				break;
-			}
-		}
-	}
-#endif
-	return 0;
-}
 
 // Log with an explicit tag
 void LogWithTag( const int prio, const char * tag, const char * fmt, ... )
@@ -67,6 +29,9 @@ void LogWithTag( const int prio, const char * tag, const char * fmt, ... )
 	__android_log_vprint( prio, tag, fmt, ap );
 	va_end( ap );
 #elif defined( OVR_OS_WIN32 )
+	OVR_UNUSED( tag );
+	OVR_UNUSED( prio );
+
 	va_list args;
 	va_start( args, fmt );
 
@@ -149,6 +114,9 @@ void LogWithFileTag( const int prio, const char * fileTag, const char * fmt, ...
 
 	va_end( ap );
 #elif defined( OVR_OS_WIN32 )
+	OVR_UNUSED( fileTag );
+	OVR_UNUSED( prio );
+
 	va_list args;
 	va_start( args, fmt );
 

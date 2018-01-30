@@ -19,6 +19,7 @@
 #include "GeometryComponent.h"
 #include "util/convert.h"
 #include <jni.h>
+#include <VrApi_Types.h>
 
 using namespace OVR;
 
@@ -37,6 +38,7 @@ jmethodID GearVRActivity::GetMethodID(const char *name, const char *signature) {
 void GearVRActivity::Configure(ovrSettings &settings) {
   settings.RenderMode = RENDERMODE_MULTIVIEW;
   settings.EyeBufferParms.multisamples = 4;
+  settings.TrackingTransform = VRAPI_TRACKING_TRANSFORM_IDENTITY;
 }
 
 void GearVRActivity::EnteredVrMode(const ovrIntentType intentType,
@@ -93,8 +95,7 @@ ovrFrameResult GearVRActivity::Frame(const ovrFrameInput &frame) {
   HandleInput(frame.Input);
 
   // Update frame
-  centerEyeViewMatrix = vrapi_GetCenterEyeViewMatrix(&app->GetHeadModelParms(),
-                                                     &frame.Tracking, nullptr);
+  centerEyeViewMatrix = vrapi_GetViewMatrixFromPose(&frame.Tracking.HeadPose.Pose);
 
   jni->CallVoidMethod(java->ActivityObject, updateMethodID, (jlong)&frame);
 
@@ -116,28 +117,28 @@ ovrFrameResult GearVRActivity::Frame(const ovrFrameInput &frame) {
     surfaceDef->graphicsCommand.Program = shader->GetProgram();
   }
 
-  frameParms = vrapi_DefaultFrameParms(java, VRAPI_FRAME_INIT_DEFAULT,
-                                       vrapi_GetTimeInSeconds(), nullptr);
-  ovrFrameLayer &layer = frameParms.Layers[0];
 
+  res.FrameIndex = frame.FrameNumber;
+  res.DisplayTime = frame.PredictedDisplayTimeInSeconds;
+  res.SwapInterval = app->GetSwapInterval();
+
+  res.FrameFlags = 0;
+  res.LayerCount = 0;
+
+  ovrLayerProjection2 & worldLayer = res.Layers[ res.LayerCount++ ].Projection;
+  worldLayer = vrapi_DefaultLayerProjection2();
+
+  worldLayer.HeadPose = frame.Tracking.HeadPose;
   for (int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++) {
-    res.FrameMatrices.EyeView[eye] = vrapi_GetEyeViewMatrix(
-        &app->GetHeadModelParms(), &centerEyeViewMatrix, eye);
-    res.FrameMatrices.EyeProjection[eye] = ovrMatrix4f_CreateProjectionFov(
-        frame.FovX, frame.FovY, 0.0f, 0.0f, 1.0f, 0.0f);
+    res.FrameMatrices.EyeView[eye] = frame.Tracking.Eye[eye].ViewMatrix;
+    // Calculate projection matrix using custom near plane value.
+    res.FrameMatrices.EyeProjection[eye] = ovrMatrix4f_CreateProjectionFov(frame.FovX, frame.FovY, 0.0f, 0.0f, 1.0f, 0.0f);
 
-    layer.Textures[eye].ColorTextureSwapChain =
-        frame.ColorTextureSwapChain[eye];
-    layer.Textures[eye].DepthTextureSwapChain =
-        frame.DepthTextureSwapChain[eye];
-    layer.Textures[eye].TextureSwapChainIndex = frame.TextureSwapChainIndex;
-
-    layer.Textures[eye].TexCoordsFromTanAngles = frame.TexCoordsFromTanAngles;
-    layer.Textures[eye].HeadPose = frame.Tracking.HeadPose;
+    worldLayer.Textures[eye].ColorSwapChain = frame.ColorTextureSwapChain[eye];
+    worldLayer.Textures[eye].SwapChainIndex = frame.TextureSwapChainIndex;
+    worldLayer.Textures[eye].TexCoordsFromTanAngles = frame.TexCoordsFromTanAngles;
   }
-  layer.Flags |= VRAPI_FRAME_LAYER_FLAG_CHROMATIC_ABERRATION_CORRECTION;
-
-  res.FrameParms = (ovrFrameParmsExtBase *)&frameParms;
+  worldLayer.Header.Flags |= VRAPI_FRAME_LAYER_FLAG_CHROMATIC_ABERRATION_CORRECTION;
 
   return res;
 }

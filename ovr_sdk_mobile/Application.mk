@@ -1,4 +1,8 @@
 # Common build settings for all VR apps
+# NOTE: These properties are ignored for any libraries or applications
+# using the externalNativeBuild path. This file can go away, once
+# remaining usage can be stripped from test libraries and applications.
+
 ifeq ($(OVR_DEBUG),1)
   BUILDTYPE := Debug
 else
@@ -6,15 +10,10 @@ else
 endif
 
 # This needs to be defined to get the right header directories for egl / etc
-APP_PLATFORM := android-19
+# NOTE: this is ignored from here now, and must be specified in build.gradle!
+APP_PLATFORM := android-21
 
-ifeq ($(OVR_TEST_ARM64),1)
-	# 32+64 bit support... experimental!
-	APP_ABI := armeabi-v7a,arm64-v8a
-else
-	# 32-bit only mode
-	APP_ABI := armeabi-v7a
-endif
+APP_ABI := armeabi-v7a
 
 # Statically link the GNU STL. This may not be safe for multi-so libraries but
 # we don't know of any problems yet.
@@ -28,3 +27,7 @@ NDK_TOOLCHAIN_VERSION := clang
 # Define the directories for $(import-module, ...) to look in
 ROOT_DIR := $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
 NDK_MODULE_PATH := $(ROOT_DIR)
+
+# ndk-r14 introduced failure for missing dependencies. If 'false', the clean
+# step will error as we currently remove prebuilt artifacts on clean.
+APP_ALLOW_MISSING_DEPS=true

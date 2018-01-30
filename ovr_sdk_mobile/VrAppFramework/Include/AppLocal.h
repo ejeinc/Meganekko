@@ -73,19 +73,8 @@ public:
 	virtual	const ovrEyeBufferParms &	GetEyeBufferParms() const;
 	virtual void						SetEyeBufferParms( const ovrEyeBufferParms & parms );
 
-	virtual const ovrHeadModelParms &	GetHeadModelParms() const;
-	virtual void						SetHeadModelParms( const ovrHeadModelParms & parms );
-
-	virtual const ovrPerformanceParms & GetPerformanceParms() const;
-
-	virtual int							GetCpuLevel() const;
-	virtual void						SetCpuLevel( const int cpuLevel );
-
-	virtual int							GetGpuLevel() const;
-	virtual void						SetGpuLevel( const int gpuLevel );
-
-	virtual int							GetMinimumVsyncs() const;
-	virtual void						SetMinimumVsyncs( const int mininumVsyncs );
+	virtual int							GetSwapInterval() const;
+	virtual void						SetSwapInterval( const int swapInterval );
 
 	virtual	bool						GetFramebufferIsSrgb() const;
 	virtual bool						GetFramebufferIsProtected() const;
@@ -94,10 +83,7 @@ public:
 	virtual void						SetLastViewMatrix( Matrix4f const & m );
 	virtual void						RecenterLastViewMatrix();
 
-	// ----DEPRECATED
-	// This function will be removed in a future update.
 	virtual ovrMobile *					GetOvrMobile();
-	// ----DEPRECATED
 	virtual ovrFileSys &				GetFileSys();
 	virtual	ovrTextureManager *			GetTextureManager();
 
@@ -160,6 +146,8 @@ private:
 
 	bool				UseMultiview;
 
+	bool				GraphicsObjectsInitialized;
+
 	// From vrapi_EnterVrMode, used for vrapi_SubmitFrame and vrapi_LeaveVrMode
 	ovrMobile *			OvrMobile;
 
@@ -167,6 +155,10 @@ private:
 	// for drawing the eye views, which might be in different texture
 	// configurations for CPU warping, etc.
 	ovrEyeBuffers *		EyeBuffers;
+
+	static const int MAX_FENCES = 4;
+	ovrFence *			CompletionFences;
+	int					CompletionFenceIndex;
 
 	ovrJava				Java;
 	jclass				VrActivityClass;
@@ -231,6 +223,12 @@ private:
 	void				ShutdownGlObjects();
 
 	void 				DrawEyeViews( ovrFrameResult & res );
+	void				DrawBlackFrame( const int frameFlags = 0 );
+	void				DrawLoadingIcon( ovrTextureSwapChain * swapChain, const float spinSpeed = 1.0f, const float spinScale = 16.0f );
+
+	void				CreateFence( ovrFence * fence );
+	void				DestroyFence( ovrFence * fence );
+	void				InsertFence( ovrFence * fence );
 
 	static threadReturn_t ThreadStarter( Thread *, void * parm );
 	void *				VrThreadFunction();
@@ -253,11 +251,6 @@ private:
 	virtual void		TtjCommand( JNIEnv & jni, const char * commandString );
 
 	void				BuildVrFrame();
-
-	//--- MV_INVALIDATE_WORKAROUND
-	ovrSurfaceDef		ScreenClearSurf;
-	Vector4f			ScreenClearColor;
-	//--- MV_INVALIDATE_WORKAROUND
 };
 
 } // namespace OVR

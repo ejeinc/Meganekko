@@ -43,45 +43,12 @@ void Java_org_meganekkovr_ovrjni_OVRApp_showSystemUI(JNIEnv *jni, jclass clazz,
   vrapi_ShowSystemUI(java, nativeType);
 }
 
-jint Java_org_meganekkovr_ovrjni_OVRApp_getCpuLevel(JNIEnv *jni, jclass clazz,
-                                                    jlong appPtr) {
-  App *app = reinterpret_cast<App *>(appPtr);
-  return app->GetCpuLevel();
-}
-
-void Java_org_meganekkovr_ovrjni_OVRApp_setCpuLevel(JNIEnv *jni, jclass clazz,
+void Java_org_meganekkovr_ovrjni_OVRApp_setClockLevels(JNIEnv *jni, jclass clazz,
                                                     jlong appPtr,
-                                                    jint cpuLevel) {
-  App *app = reinterpret_cast<App *>(appPtr);
-  app->SetCpuLevel(cpuLevel);
-}
-
-jint Java_org_meganekkovr_ovrjni_OVRApp_getGpuLevel(JNIEnv *jni, jclass clazz,
-                                                    jlong appPtr) {
-  App *app = reinterpret_cast<App *>(appPtr);
-  return app->GetGpuLevel();
-}
-
-void Java_org_meganekkovr_ovrjni_OVRApp_setGpuLevel(JNIEnv *jni, jclass clazz,
-                                                    jlong appPtr,
+                                                    jint cpuLevel,
                                                     jint gpuLevel) {
   App *app = reinterpret_cast<App *>(appPtr);
-  app->SetGpuLevel(gpuLevel);
-}
-
-jint Java_org_meganekkovr_ovrjni_OVRApp_getMinimumVsyncs(JNIEnv *jni,
-                                                         jclass clazz,
-                                                         jlong appPtr) {
-  App *app = reinterpret_cast<App *>(appPtr);
-  return app->GetMinimumVsyncs();
-}
-
-void Java_org_meganekkovr_ovrjni_OVRApp_setMinimumVsyncs(JNIEnv *jni,
-                                                         jclass clazz,
-                                                         jlong appPtr,
-                                                         jint minimumVsyncs) {
-  App *app = reinterpret_cast<App *>(appPtr);
-  app->SetMinimumVsyncs(minimumVsyncs);
+  vrapi_SetClockLevels(app->GetOvrMobile(), cpuLevel, gpuLevel);
 }
 
 } // extern "C"

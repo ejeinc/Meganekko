@@ -14,7 +14,6 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 #include "GlTexture.h"
 
-#include "Kernel/OVR_SysFile.h"
 #include "OVR_GlUtils.h"
 #include "Kernel/OVR_LogUtils.h"
 
@@ -26,6 +25,8 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 //#define OVR_USE_PERF_TIMER
 #include "OVR_PerfTimer.h"
+
+#include <algorithm>
 
 #if defined( OVR_OS_ANDROID )
 #define GL_COMPRESSED_RGBA_ASTC_4x4_KHR   0x93B0
@@ -67,6 +68,29 @@ GlTexture::GlTexture( const unsigned texture_, const int w, const int h )
 	, Width( w )
 	, Height( h )
 {
+}
+
+static int RoundUpToPow2( int i )
+{
+	if ( i == 0 )
+	{
+		return 0;
+	}
+	return static_cast<int>( pow( 2, ceil( log( double( i ) ) / log( 2 ) ) ) );
+}
+
+static int IntegerLog2( int i )
+{
+	if ( i == 0 )
+	{
+		return 0;
+	}
+	return static_cast<int>( log( double( i ) ) / log( 2.0 ) );
+}
+
+int ComputeFullMipChainNumLevels( const int width, const int height )
+{
+	return IntegerLog2( RoundUpToPow2( std::max( width, height ) ) );
 }
 
 static bool IsCompressedFormat( const eTextureFormat format )
@@ -565,7 +589,7 @@ struct astcHeader
 	unsigned char		zsize[3];
 };
 
-GlTexture LoadASTCTextureFromMemory( uint8_t const * buffer, const size_t bufferSize, const int numPlanes )
+GlTexture LoadASTCTextureFromMemory( uint8_t const * buffer, const size_t bufferSize, const int numPlanes, const bool useSrgbFormat )
 {
 	astcHeader const * header = reinterpret_cast< astcHeader const * >( buffer );
 
@@ -664,7 +688,7 @@ GlTexture LoadASTCTextureFromMemory( uint8_t const * buffer, const size_t buffer
 		return GlTexture();
 	}
 	return CreateGlTexture("memory-ASTC", format, w, h, buffer + sizeof(struct astcHeader), 
-		bufferSize - sizeof(struct astcHeader), 1, false, false);
+		bufferSize - sizeof(struct astcHeader), 1, useSrgbFormat, false);
 }
 /*
 
@@ -1066,6 +1090,19 @@ void FreeRGBABuffer( const unsigned char * buffer )
 	stbi_image_free( (void*)buffer );
 }
 
+static int MipLevelsForSize( int width, int height )
+{
+	int levels = 1;
+
+	while ( width > 1 || height > 1 )
+	{
+		levels++;
+		width >>= 1;
+		height >>= 1;
+	}
+	return levels;
+}
+
 GlTexture LoadTextureFromBuffer( const char * fileName, const MemBuffer & buffer,
 		const TextureFlags_t & flags, int & width, int & height )
 {
@@ -1108,7 +1145,8 @@ GlTexture LoadTextureFromBuffer( const char * fileName, const MemBuffer & buffer
 
 			const size_t dataSize = GetOvrTextureSize( Texture_RGBA, width, height );
 			texId = CreateGlTexture( fileName, Texture_RGBA, width, height, image, dataSize,
-					1 /* one mip level */, flags & TEXTUREFLAG_USE_SRGB, false );
+				( flags & TEXTUREFLAG_NO_MIPMAPS ) ? 1 : MipLevelsForSize( width, height ),
+				flags & TEXTUREFLAG_USE_SRGB, false );
 			free( image );
 			if ( !( flags & TEXTUREFLAG_NO_MIPMAPS ) )
 			{
@@ -1138,7 +1176,7 @@ GlTexture LoadTextureFromBuffer( const char * fileName, const MemBuffer & buffer
 	}
 	else if ( ext == ".astc" )
 	{
-		texId = LoadASTCTextureFromMemory( (const unsigned char*)buffer.Buffer, buffer.Length, 4 );
+		texId = LoadASTCTextureFromMemory( (const unsigned char*)buffer.Buffer, buffer.Length, 4, flags & TEXTUREFLAG_USE_SRGB );
 	}
 	else if ( ext == ".pkm" )
 	{

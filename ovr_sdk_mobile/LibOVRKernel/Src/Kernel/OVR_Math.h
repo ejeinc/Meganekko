@@ -8,7 +8,7 @@
 #define OVR_Math_h
 
 
-// This file is intended to be independent of the rest of LibOVR and LibOVRKernel and thus 
+// This file is intended to be independent of the rest of LibOVR and LibOVRKernel and thus
 // has no #include dependencies on either.
 
 #include <math.h>
@@ -110,7 +110,11 @@ const T OVRMath_Max(const T a, const T b)
 { return (b < a) ? a : b; }
 
 template<class T>
-void OVRMath_Swap(T& a, T& b) 
+const T OVRMath_Clamp(const T v, const T minVal, const T maxVal)
+{ return OVRMath_Max<T>(minVal, OVRMath_Min<T>(v, maxVal)); }
+
+template<class T>
+void OVRMath_Swap(T& a, T& b)
 {  T temp(a); a = b; b = temp; }
 
 
@@ -133,7 +137,7 @@ enum Axis
 enum RotateDirection
 {
     Rotate_CCW = 1,
-    Rotate_CW  = -1 
+    Rotate_CW  = -1
 };
 
 // Constants for right handed and left handed coordinate systems
@@ -158,7 +162,7 @@ struct WorldAxes
     AxisDirection XAxis, YAxis, ZAxis;
 
     WorldAxes(AxisDirection x, AxisDirection y, AxisDirection z)
-        : XAxis(x), YAxis(y), ZAxis(z) 
+        : XAxis(x), YAxis(y), ZAxis(z)
     { OVR_MATH_ASSERT(abs(x) != abs(y) && abs(y) != abs(z) && abs(z) != abs(x));}
 };
 
@@ -178,6 +182,7 @@ typedef struct ovrSizei_ ovrSizei;
 typedef struct ovrSizef_ ovrSizef;
 typedef struct ovrSized_ ovrSized;
 typedef struct ovrRecti_ ovrRecti;
+typedef struct ovrRectf_ ovrRectf;
 typedef struct ovrVector2i_ ovrVector2i;
 typedef struct ovrVector2f_ ovrVector2f;
 typedef struct ovrVector2d_ ovrVector2d;
@@ -214,7 +219,7 @@ template<class T> class PoseState;
 // CompatibleTypes::Type is used to lookup a compatible C-version of a C++ class.
 template<class C>
 struct CompatibleTypes
-{    
+{
     // Declaration here seems necessary for MSVC; specializations are
     // used instead.
     typedef struct {} Type;
@@ -233,6 +238,7 @@ template<> struct CompatibleTypes<Size<int> >       { typedef ovrSizei Type; };
 template<> struct CompatibleTypes<Size<float> >     { typedef ovrSizef Type; };
 template<> struct CompatibleTypes<Size<double> >    { typedef ovrSized Type; };
 template<> struct CompatibleTypes<Rect<int> >       { typedef ovrRecti Type; };
+template<> struct CompatibleTypes<Rect<float> >     { typedef ovrRectf Type; };
 template<> struct CompatibleTypes<Vector2<int> >    { typedef ovrVector2i Type; };
 template<> struct CompatibleTypes<Vector2<float> >  { typedef ovrVector2f Type; };
 template<> struct CompatibleTypes<Vector2<double> > { typedef ovrVector2d Type; };
@@ -250,7 +256,7 @@ template<> struct CompatibleTypes<Pose<double> >    { typedef ovrPosed Type; };
 // per type, with Math<float> and Math<double> being distinct.
 template<class T>
 class Math
-{  
+{
 public:
     // By default, support explicit conversion to float. This allows Vector2<int> to
     // compile, for example.
@@ -266,7 +272,7 @@ public:
 #define MATH_DOUBLE_TWOPI           (2*MATH_DOUBLE_PI)
 #define MATH_DOUBLE_PIOVER2         (0.5*MATH_DOUBLE_PI)
 #define MATH_DOUBLE_PIOVER4         (0.25*MATH_DOUBLE_PI)
-#define MATH_FLOAT_MAXVALUE             (FLT_MAX) 
+#define MATH_FLOAT_MAXVALUE             (FLT_MAX)
 
 #define MATH_DOUBLE_RADTODEGREEFACTOR (360.0 / MATH_DOUBLE_TWOPI)
 #define MATH_DOUBLE_DEGREETORADFACTOR (MATH_DOUBLE_TWOPI / 360.0)
@@ -281,7 +287,10 @@ public:
 #define MATH_DOUBLE_SQRT1_2         0.707106781186547524401
 
 #define MATH_DOUBLE_TOLERANCE       1e-12   // a default number for value equality tolerance: about 4500*Epsilon;
-#define MATH_DOUBLE_SINGULARITYRADIUS 1e-12 // about 1-cos(.0001 degree), for gimbal lock numerical problems    
+#define MATH_DOUBLE_SINGULARITYRADIUS 1e-12 // about 1-cos(.0001 degree), for gimbal lock numerical problems
+
+#define MATH_DOUBLE_SMALLEST_NON_DENORMAL	2.2250738585072014e-308 // ( 1ULL << 52 )
+#define MATH_DOUBLE_HUGE_NUMBER				1.3407807929942596e+154	// ( ( ( 1023ULL * 3 / 2 ) << 52 ) | ( ( 1 << 52 ) - 1 ) )
 
 //------------------------------------------------------------------------------------//
 // ***** float constants
@@ -303,34 +312,23 @@ public:
 #define MATH_FLOAT_SQRT1_2          float(MATH_DOUBLE_SQRT1_2)
 
 #define MATH_FLOAT_TOLERANCE        1e-5f   // a default number for value equality tolerance: 1e-5, about 84*EPSILON;
-#define MATH_FLOAT_SINGULARITYRADIUS 1e-7f  // about 1-cos(.025 degree), for gimbal lock numerical problems   
+#define MATH_FLOAT_SINGULARITYRADIUS 1e-7f  // about 1-cos(.025 degree), for gimbal lock numerical problems
 
-
+#define MATH_FLOAT_SMALLEST_NON_DENORMAL 1.1754943508222875e-038f	// ( 1U << 23 )
+#define MATH_FLOAT_HUGE_NUMBER			 1.8446742974197924e+019f	// ( ( ( 127U * 3 / 2 ) << 23 ) | ( ( 1 << 23 ) - 1 ) )
 
 // Single-precision Math constants class.
 template<>
 class Math<float>
 {
 public:
-     typedef double OtherFloatType;
+    typedef double OtherFloatType;
 
+    static inline float SmallestNonDenormal() { return MATH_FLOAT_SMALLEST_NON_DENORMAL; }
+    static inline float HugeNumber()		{ return MATH_FLOAT_HUGE_NUMBER; }
+    static inline float MaxValue()			{ return FLT_MAX; }
     static inline float Tolerance()         { return MATH_FLOAT_TOLERANCE; } // a default number for value equality tolerance
     static inline float SingularityRadius() { return MATH_FLOAT_SINGULARITYRADIUS; }    // for gimbal lock numerical problems
-#if 1 // deprecated
-    static const float Pi;
-    static const float TwoPi;
-    static const float PiOver2;
-    static const float PiOver4;
-    static const float E;
-
-    static const float MaxValue;			// Largest positive float Value
-
-    static const float RadToDegreeFactor;
-    static const float DegreeToRadFactor;
-
-    static const float SmallestNonDenormal;	// ( numerator <= 4 ) / ( denominator > SmallestNonDenormal ) < infinite
-    static const float HugeNumber;			// HugeNumber * HugeNumber < infinite
-#endif // deprecated
 };
 
 // Double-precision Math constants class
@@ -340,23 +338,10 @@ class Math<double>
 public:
     typedef float OtherFloatType;
 
+    static inline double SmallestNonDenormal() { return MATH_DOUBLE_SMALLEST_NON_DENORMAL; }
+    static inline double HugeNumber()		 { return MATH_DOUBLE_HUGE_NUMBER; }
     static inline double Tolerance()         { return MATH_DOUBLE_TOLERANCE; } // a default number for value equality tolerance
     static inline double SingularityRadius() { return MATH_DOUBLE_SINGULARITYRADIUS; }    // for gimbal lock numerical problems
-#if 1 // deprecated
-    static const double Pi;
-    static const double TwoPi;
-    static const double PiOver2;
-    static const double PiOver4;
-    static const double E;
-
-    static const double MaxValue;				// Largest positive double Value
-
-    static const double RadToDegreeFactor;
-    static const double DegreeToRadFactor;
-
-    static const double SmallestNonDenormal;	// ( numerator <= 4 ) / ( denominator > SmallestNonDenormal ) < infinite
-    static const double HugeNumber;				// HugeNumber * HugeNumber < infinite
-#endif
 };
 
 typedef Math<float>  Mathf;
@@ -377,7 +362,7 @@ inline T Sqr(T x) { return x*x; }
 // MERGE_MOBILE_SDK
 // Safe reciprocal square root.
 template<class T>
-T RcpSqrt( const T f ) { return ( f >= Math<T>::SmallestNonDenormal ) ? static_cast<T>( 1.0 / sqrt( f ) ) : Math<T>::HugeNumber; }
+T RcpSqrt( const T f ) { return ( f >= Math<T>::SmallestNonDenormal() ) ? static_cast<T>( 1.0 / sqrt( f ) ) : Math<T>::HugeNumber(); }
 // MERGE_MOBILE_SDK
 
 // Sign: returns 0 if x == 0, -1 if x < 0, and 1 if x > 0
@@ -394,8 +379,6 @@ inline double Asin(double x) { return (x > 1.0) ? MATH_DOUBLE_PIOVER2 : (x < -1.
 
 #if defined(_MSC_VER)
     inline int isnan(double x) { return ::_isnan(x); }
-#elif !defined(isnan) // Some libraries #define isnan.
-    inline int isnan(double x) { return ::isnan(x); }
 #endif
 
 template<class T>
@@ -436,10 +419,10 @@ public:
         return reinterpret_cast<const CompatibleType&>(*this);
     }
 
-        
+
     bool     operator== (const Vector2& b) const  { return x == b.x && y == b.y; }
     bool     operator!= (const Vector2& b) const  { return x != b.x || y != b.y; }
-             
+
     Vector2  operator+  (const Vector2& b) const  { return Vector2(x + b.x, y + b.y); }
     Vector2& operator+= (const Vector2& b)        { x += b.x; y += b.y; return *this; }
     Vector2  operator-  (const Vector2& b) const  { return Vector2(x - b.x, y - b.y); }
@@ -470,13 +453,13 @@ public:
             return *this * (maxMag / sqrt(magSquared));
     }
 
-    // Compare two vectors for equality with tolerance. Returns true if vectors match withing tolerance.
+    // Compare two vectors for equality with tolerance. Returns true if vectors match within tolerance.
     bool IsEqual(const Vector2& b, T tolerance =Math<T>::Tolerance()) const
     {
         return (fabs(b.x-x) <= tolerance) &&
                (fabs(b.y-y) <= tolerance);
     }
-    bool Compare(const Vector2& b, T tolerance = Math<T>::Tolerance()) const 
+    bool Compare(const Vector2& b, T tolerance = Math<T>::Tolerance()) const
     {
         return IsEqual(b, tolerance);
     }
@@ -507,8 +490,8 @@ public:
     T        Dot(const Vector2& b) const                 { return x*b.x + y*b.y; }
 
     // Returns the angle from this vector to b, in radians.
-    T       Angle(const Vector2& b) const        
-    { 
+    T       Angle(const Vector2& b) const
+    {
         T div = LengthSq()*b.LengthSq();
         OVR_MATH_ASSERT(div != T(0));
         T result = static_cast<T>( Acos((this->Dot(b))/sqrt(div)) );
@@ -530,8 +513,8 @@ public:
     // Determine if this a unit vector.
     bool    IsNormalized() const                 { return fabs(LengthSq() - T(1)) < Math<T>::Tolerance(); }
 
-    // Normalize, convention vector length to 1.    
-    void    Normalize()                          
+    // Normalize, convention vector length to 1.
+    void    Normalize()
     {
         T s = Length();
         if (s != T(0))
@@ -540,12 +523,12 @@ public:
     }
 
     // Returns normalized (unit) version of the vector without modifying itself.
-    Vector2 Normalized() const                   
-    { 
+    Vector2 Normalized() const
+    {
         T s = Length();
         if (s != T(0))
             s = T(1) / s;
-        return *this * s; 
+        return *this * s;
     }
 
     // Linearly interpolates from this vector to another.
@@ -554,13 +537,13 @@ public:
 
     // Projects this vector onto the argument; in other words,
     // A.Project(B) returns projection of vector A onto B.
-    Vector2 ProjectTo(const Vector2& b) const    
-    { 
+    Vector2 ProjectTo(const Vector2& b) const
+    {
         T l2 = b.LengthSq();
         OVR_MATH_ASSERT(l2 != T(0));
-        return b * ( Dot(b) / l2 ); 
+        return b * ( Dot(b) / l2 );
     }
-    
+
     // returns true if vector b is clockwise from this vector
     bool IsClockwise(const Vector2& b) const
     {
@@ -626,7 +609,7 @@ public:
 
     bool     operator== (const Vector3& b) const  { return x == b.x && y == b.y && z == b.z; }
     bool     operator!= (const Vector3& b) const  { return x != b.x || y != b.y || z != b.z; }
-             
+
     Vector3  operator+  (const Vector3& b) const  { return Vector3(x + b.x, y + b.y, z + b.z); }
     Vector3& operator+= (const Vector3& b)        { x += b.x; y += b.y; z += b.z; return *this; }
     Vector3  operator-  (const Vector3& b) const  { return Vector3(x - b.x, y - b.y, z - b.z); }
@@ -650,11 +633,11 @@ public:
                        (a.z < b.z) ? a.z : b.z);
     }
     static Vector3  Max(const Vector3& a, const Vector3& b)
-    { 
+    {
         return Vector3((a.x > b.x) ? a.x : b.x,
                        (a.y > b.y) ? a.y : b.y,
                        (a.z > b.z) ? a.z : b.z);
-    }        
+    }
 
     Vector3 Clamped(T maxMag) const
     {
@@ -665,11 +648,11 @@ public:
             return *this * (maxMag / sqrt(magSquared));
     }
 
-    // Compare two vectors for equality with tolerance. Returns true if vectors match withing tolerance.
+    // Compare two vectors for equality with tolerance. Returns true if vectors match within tolerance.
     bool IsEqual(const Vector3& b, T tolerance = Math<T>::Tolerance()) const
     {
-        return (fabs(b.x-x) <= tolerance) && 
-               (fabs(b.y-y) <= tolerance) && 
+        return (fabs(b.x-x) <= tolerance) &&
+               (fabs(b.y-y) <= tolerance) &&
                (fabs(b.z-z) <= tolerance);
     }
     bool Compare(const Vector3& b, T tolerance = Math<T>::Tolerance()) const
@@ -690,17 +673,17 @@ public:
     }
 
     // Entrywise product of two vectors
-    Vector3    EntrywiseMultiply(const Vector3& b) const    { return Vector3(x * b.x, 
-                                                                         y * b.y, 
+    Vector3    EntrywiseMultiply(const Vector3& b) const    { return Vector3(x * b.x,
+                                                                         y * b.y,
                                                                          z * b.z);}
 
     // Multiply and divide operators do entry-wise math
-    Vector3  operator*  (const Vector3& b) const        { return Vector3(x * b.x, 
-                                                                         y * b.y, 
+    Vector3  operator*  (const Vector3& b) const        { return Vector3(x * b.x,
+                                                                         y * b.y,
                                                                          z * b.z); }
 
-    Vector3  operator/  (const Vector3& b) const        { return Vector3(x / b.x, 
-                                                                         y / b.y, 
+    Vector3  operator/  (const Vector3& b) const        { return Vector3(x / b.x,
+                                                                         y / b.y,
                                                                          z / b.z); }
 
 
@@ -717,7 +700,7 @@ public:
                                                                   x*b.y - y*b.x); }
 
     // Returns the angle from this vector to b, in radians.
-    T       Angle(const Vector3& b) const 
+    T       Angle(const Vector3& b) const
     {
         T div = LengthSq()*b.LengthSq();
         OVR_MATH_ASSERT(div != T(0));
@@ -736,11 +719,11 @@ public:
 
     // Returns distance between two points represented by vectors.
     T       Distance(Vector3 const& b) const     { return (*this - b).Length(); }
-    
+
     bool    IsNormalized() const                 { return fabs(LengthSq() - T(1)) < Math<T>::Tolerance(); }
 
-    // Normalize, convention vector length to 1.    
-    void    Normalize()                          
+    // Normalize, convention vector length to 1.
+    void    Normalize()
     {
         T s = Length();
         if (s != T(0))
@@ -749,8 +732,8 @@ public:
     }
 
     // Returns normalized (unit) version of the vector without modifying itself.
-    Vector3 Normalized() const                   
-    { 
+    Vector3 Normalized() const
+    {
         T s = Length();
         if (s != T(0))
             s = T(1) / s;
@@ -763,15 +746,17 @@ public:
 
     // Projects this vector onto the argument; in other words,
     // A.Project(B) returns projection of vector A onto B.
-    Vector3 ProjectTo(const Vector3& b) const    
-    { 
+    Vector3 ProjectTo(const Vector3& b) const
+    {
         T l2 = b.LengthSq();
         OVR_MATH_ASSERT(l2 != T(0));
-        return b * ( Dot(b) / l2 ); 
+        return b * ( Dot(b) / l2 );
     }
 
     // Projects this vector onto a plane defined by a normal vector
     Vector3 ProjectToPlane(const Vector3& normal) const { return *this - this->ProjectTo(normal); }
+
+    bool IsNan() const { return isnan(x) || isnan(y) || isnan(z); }
 };
 
 // Implicit instantiation
@@ -790,7 +775,7 @@ Vector3<T> operator* ( T s, const Vector3<T> & v )
 typedef Vector3<float>  Vector3f;
 typedef Vector3<double> Vector3d;
 typedef Vector3<int32_t>  Vector3i;
-    
+
 OVR_MATH_STATIC_ASSERT((sizeof(Vector3f) == 3*sizeof(float)), "sizeof(Vector3f) failure");
 OVR_MATH_STATIC_ASSERT((sizeof(Vector3d) == 3*sizeof(double)), "sizeof(Vector3d) failure");
 OVR_MATH_STATIC_ASSERT((sizeof(Vector3i) == 3*sizeof(int32_t)), "sizeof(Vector3i) failure");
@@ -842,7 +827,7 @@ public:
     Vector4& operator= (const Vector3<T>& other)  { x=other.x; y=other.y; z=other.z; w=1; return *this; }
     bool     operator== (const Vector4& b) const  { return x == b.x && y == b.y && z == b.z && w == b.w; }
     bool     operator!= (const Vector4& b) const  { return x != b.x || y != b.y || z != b.z || w != b.w; }
-             
+
     Vector4  operator+  (const Vector4& b) const  { return Vector4(x + b.x, y + b.y, z + b.z, w + b.w); }
     Vector4& operator+= (const Vector4& b)        { x += b.x; y += b.y; z += b.z; w += b.w; return *this; }
     Vector4  operator-  (const Vector4& b) const  { return Vector4(x - b.x, y - b.y, z - b.z, w - b.w); }
@@ -867,12 +852,12 @@ public:
                        (a.w < b.w) ? a.w : b.w);
     }
     static Vector4  Max(const Vector4& a, const Vector4& b)
-    { 
+    {
         return Vector4((a.x > b.x) ? a.x : b.x,
                        (a.y > b.y) ? a.y : b.y,
                        (a.z > b.z) ? a.z : b.z,
                        (a.w > b.w) ? a.w : b.w);
-    }        
+    }
 
     Vector4 Clamped(T maxMag) const
     {
@@ -883,11 +868,11 @@ public:
             return *this * (maxMag / sqrt(magSquared));
     }
 
-    // Compare two vectors for equality with tolerance. Returns true if vectors match withing tolerance.
+    // Compare two vectors for equality with tolerance. Returns true if vectors match within tolerance.
     bool IsEqual(const Vector4& b, T tolerance = Math<T>::Tolerance()) const
     {
-        return (fabs(b.x-x) <= tolerance) && 
-               (fabs(b.y-y) <= tolerance) && 
+        return (fabs(b.x-x) <= tolerance) &&
+               (fabs(b.y-y) <= tolerance) &&
                (fabs(b.z-z) <= tolerance) &&
                (fabs(b.w-w) <= tolerance);
     }
@@ -895,7 +880,7 @@ public:
     {
         return IsEqual(b, tolerance);
     }
-    
+
     T& operator[] (int idx)
     {
         OVR_MATH_ASSERT(0 <= idx && idx < 4);
@@ -909,19 +894,19 @@ public:
     }
 
     // Entry wise product of two vectors
-    Vector4    EntrywiseMultiply(const Vector4& b) const    { return Vector4(x * b.x, 
-                                                                         y * b.y, 
+    Vector4    EntrywiseMultiply(const Vector4& b) const    { return Vector4(x * b.x,
+                                                                         y * b.y,
                                                                          z * b.z,
                                                                          w * b.w);}
 
     // Multiply and divide operators do entry-wise math
-    Vector4  operator*  (const Vector4& b) const        { return Vector4(x * b.x, 
-                                                                         y * b.y, 
+    Vector4  operator*  (const Vector4& b) const        { return Vector4(x * b.x,
+                                                                         y * b.y,
                                                                          z * b.z,
                                                                          w * b.w); }
 
-    Vector4  operator/  (const Vector4& b) const        { return Vector4(x / b.x, 
-                                                                         y / b.y, 
+    Vector4  operator/  (const Vector4& b) const        { return Vector4(x / b.x,
+                                                                         y / b.y,
                                                                          z / b.z,
                                                                          w / b.w); }
 
@@ -934,11 +919,11 @@ public:
 
     // Return vector length.
     T       Length() const                       { return sqrt(LengthSq()); }
-    
+
     bool    IsNormalized() const                 { return fabs(LengthSq() - T(1)) < Math<T>::Tolerance(); }
 
-    // Normalize, convention vector length to 1.    
-    void    Normalize()                          
+    // Normalize, convention vector length to 1.
+    void    Normalize()
     {
         T s = Length();
         if (s != T(0))
@@ -947,8 +932,8 @@ public:
     }
 
     // Returns normalized (unit) version of the vector without modifying itself.
-    Vector4 Normalized() const                   
-    { 
+    Vector4 Normalized() const
+    {
         T s = Length();
         if (s != T(0))
             s = T(1) / s;
@@ -1031,8 +1016,8 @@ public:
 
     void Clear()
     {
-        b[0].x = b[0].y = b[0].z = Math<T>::MaxValue;
-        b[1].x = b[1].y = b[1].z = -Math<T>::MaxValue;
+        b[0].x = b[0].y = b[0].z = Math<T>::MaxValue();
+        b[1].x = b[1].y = b[1].z = -Math<T>::MaxValue();
     }
 
     void AddPoint( const Vector3<T> & v )
@@ -1160,7 +1145,7 @@ public:
 
     bool     operator== (const Size& b) const  { return w == b.w && h == b.h; }
     bool     operator!= (const Size& b) const  { return w != b.w || h != b.h; }
-             
+
     Size  operator+  (const Size& b) const  { return Size(w + b.w, h + b.h); }
     Size& operator+= (const Size& b)        { w += b.w; h += b.h; return *this; }
     Size  operator-  (const Size& b) const  { return Size(w - b.w, h - b.h); }
@@ -1173,7 +1158,7 @@ public:
 
     // Scalar multiplication/division scales both components.
     Size  operator*  (T s) const            { return Size(w*s, h*s); }
-    Size& operator*= (T s)                  { w *= s; h *= s; return *this; }    
+    Size& operator*= (T s)                  { w *= s; h *= s; return *this; }
     Size  operator/  (T s) const            { return Size(w/s, h/s); }
     Size& operator/= (T s)                  { w /= s; h /= s; return *this; }
 
@@ -1181,7 +1166,7 @@ public:
                                                                  (a.h < b.h) ? a.h : b.h); }
     static Size Max(const Size& a, const Size& b)  { return Size((a.w  > b.w)  ? a.w  : b.w,
                                                                  (a.h > b.h) ? a.h : b.h); }
-    
+
     T       Area() const                    { return w * h; }
 
     inline  Vector2<T> ToVector() const     { return Vector2<T>(w, h); }
@@ -1207,10 +1192,10 @@ public:
     T w, h;
 
     Rect() { }
-    Rect(T x1, T y1, T w1, T h1)                   : x(x1), y(y1), w(w1), h(h1) { }    
+    Rect(T x1, T y1, T w1, T h1)                   : x(x1), y(y1), w(w1), h(h1) { }
     Rect(const Vector2<T>& pos, const Size<T>& sz) : x(pos.x), y(pos.y), w(sz.w), h(sz.h) { }
     Rect(const Size<T>& sz)                        : x(0), y(0), w(sz.w), h(sz.h) { }
-    
+
     // C-interop support.
     typedef  typename CompatibleTypes<Rect<T> >::Type CompatibleType;
 
@@ -1233,7 +1218,7 @@ public:
     { return !operator == (vp); }
 };
 
-typedef Rect<int>	Recti;
+typedef Rect<int> Recti;
 typedef Rect<float> Rectf;
 
 template< typename T >
@@ -1252,7 +1237,7 @@ T SineOfHalfAngleFromCosineOfAngle( const T cosineOfAngle )
 // ***** Quat
 //
 // Quatf represents a quaternion class used for rotations.
-// 
+//
 // Quaternion multiplications are done in right-to-left order, to match the
 // behavior of matrices.
 
@@ -1265,7 +1250,7 @@ public:
     static const size_t ElementCount = 4;
 
     // x,y,z = axis*sin(angle), w = cos(angle)
-    T x, y, z, w;    
+    T x, y, z, w;
 
     Quat() : x(0), y(0), z(0), w(1) { }
     Quat(T x_, T y_, T z_, T w_) : x(x_), y(y_), z(z_), w(w_) { }
@@ -1296,7 +1281,7 @@ public:
     // Constructs quaternion for rotation around the axis by an angle.
     Quat(const Vector3<T>& axis, T angle)
     {
-        // Make sure we don't divide by zero. 
+        // Make sure we don't divide by zero.
         if (axis.LengthSq() == T(0))
         {
             // Assert if the axis is zero, but the angle isn't
@@ -1347,8 +1332,8 @@ public:
 	static Quat FromBasisVectors( const Vector3< T > & fwd, const Vector3< T > & right, const Vector3< T > & up )
 	{
 		const T dot = fwd.Dot( Vector3< T >( (T)0, (T)0, (T)-1 ) );
-		const RotateDirection dir = right.Dot( Vector3f( (T)0, (T)0, (T)-1 ) ) < 0.0f ? Rotate_CCW : Rotate_CW;
-		return FromAxisAndCosineOfAngle( Vector3f( (T)0, (T)1, (T)0 ), dot, dir );
+		const RotateDirection dir = right.Dot( Vector3< T >( (T)0, (T)0, (T)-1 ) ) < (T)0 ? Rotate_CCW : Rotate_CW;
+		return FromAxisAndCosineOfAngle( Vector3< T >( (T)0, (T)1, (T)0 ), dot, dir );
 	}
 
     Quat operator-() { return Quat(-x, -y, -z, -w); }   // unary minus
@@ -1367,7 +1352,7 @@ public:
                 *axis = *axis * (-1);
             }
         }
-        else 
+        else
         {
             *axis = Vector3<T>(static_cast<T>(1), static_cast<T>(0), static_cast<T>(0));
             *angle= T(0);
@@ -1476,31 +1461,31 @@ public:
         // In almost all cases, the first part is executed.
         // However, if the trace is not positive, the other
         // cases arise.
-        if (trace > T(0)) 
+        if (trace > T(0))
         {
             T s = (T)sqrt(trace + T(1)) * T(2); // s=4*qw
             w = T(0.25) * s;
             x = (m.M[2][1] - m.M[1][2]) / s;
             y = (m.M[0][2] - m.M[2][0]) / s;
-            z = (m.M[1][0] - m.M[0][1]) / s; 
-        } 
-        else if ((m.M[0][0] > m.M[1][1])&&(m.M[0][0] > m.M[2][2])) 
+            z = (m.M[1][0] - m.M[0][1]) / s;
+        }
+        else if ((m.M[0][0] > m.M[1][1])&&(m.M[0][0] > m.M[2][2]))
         {
             T s = (T)sqrt(T(1) + m.M[0][0] - m.M[1][1] - m.M[2][2]) * T(2);
             w = (m.M[2][1] - m.M[1][2]) / s;
             x = T(0.25) * s;
             y = (m.M[0][1] + m.M[1][0]) / s;
             z = (m.M[2][0] + m.M[0][2]) / s;
-        } 
-        else if (m.M[1][1] > m.M[2][2]) 
+        }
+        else if (m.M[1][1] > m.M[2][2])
         {
             T s = (T)sqrt(T(1) + m.M[1][1] - m.M[0][0] - m.M[2][2]) * T(2); // S=4*qy
             w = (m.M[0][2] - m.M[2][0]) / s;
             x = (m.M[0][1] + m.M[1][0]) / s;
             y = T(0.25) * s;
             z = (m.M[1][2] + m.M[2][1]) / s;
-        } 
-        else 
+        }
+        else
         {
             T s = (T)sqrt(T(1) + m.M[2][2] - m.M[0][0] - m.M[1][1]) * T(2); // S=4*qz
             w = (m.M[1][0] - m.M[0][1]) / s;
@@ -1519,31 +1504,31 @@ public:
         // In almost all cases, the first part is executed.
         // However, if the trace is not positive, the other
         // cases arise.
-        if (trace > T(0)) 
+        if (trace > T(0))
         {
             T s = T( sqrt(trace + T(1)) ) * T(2); // s=4*qw
             w = T(0.25) * s;
             x = (m.M[2][1] - m.M[1][2]) / s;
             y = (m.M[0][2] - m.M[2][0]) / s;
-            z = (m.M[1][0] - m.M[0][1]) / s; 
-        } 
-        else if ((m.M[0][0] > m.M[1][1])&&(m.M[0][0] > m.M[2][2])) 
+            z = (m.M[1][0] - m.M[0][1]) / s;
+        }
+        else if ((m.M[0][0] > m.M[1][1])&&(m.M[0][0] > m.M[2][2]))
         {
             T s = T( sqrt(T(1) + m.M[0][0] - m.M[1][1] - m.M[2][2]) ) * T(2);
             w = (m.M[2][1] - m.M[1][2]) / s;
             x = T(0.25) * s;
             y = (m.M[0][1] + m.M[1][0]) / s;
             z = (m.M[2][0] + m.M[0][2]) / s;
-        } 
-        else if (m.M[1][1] > m.M[2][2]) 
+        }
+        else if (m.M[1][1] > m.M[2][2])
         {
             T s = T( sqrt(T(1) + m.M[1][1] - m.M[0][0] - m.M[2][2]) ) * T(2); // S=4*qy
             w = (m.M[0][2] - m.M[2][0]) / s;
             x = (m.M[0][1] + m.M[1][0]) / s;
             y = T(0.25) * s;
             z = (m.M[1][2] + m.M[2][1]) / s;
-        } 
-        else 
+        }
+        else
         {
             T s = T( sqrt(T(1) + m.M[2][2] - m.M[0][0] - m.M[1][1]) ) * T(2); // S=4*qz
             w = (m.M[1][0] - m.M[0][1]) / s;
@@ -1565,7 +1550,7 @@ public:
         const T crossLengthSq = cx * cx + cy * cy + cz * cz;
         const T magnitude = static_cast<T>( sqrt( crossLengthSq + dot * dot ) );
         const T cw = dot + magnitude;
-        if ( cw < Math<T>::SmallestNonDenormal )
+        if ( cw < Math<T>::SmallestNonDenormal() )
         {
             const T sx = to.y * to.y + to.z * to.z;
             const T sz = to.x * to.x + to.y * to.y;
@@ -1608,11 +1593,19 @@ public:
     Quat  operator/  (T s) const            { T rcp = T(1)/s; return Quat(x * rcp, y * rcp, z * rcp, w *rcp); }
     Quat& operator/= (T s)                  { T rcp = T(1)/s; w *= rcp; x *= rcp; y *= rcp; z *= rcp; return *this; }
 
-    // Compare two quats for equality within tolerance. Returns true if quats match withing tolerance.
+    // Compare two quats for equality within tolerance. Returns true if quats match within tolerance.
     bool IsEqual(const Quat& b, T tolerance = Math<T>::Tolerance()) const
     {
         return Abs(Dot(b)) >= T(1) - tolerance;
     }
+
+    // Compare two quats for equality within tolerance while checking matching hemispheres. Returns true if quats match within tolerance.
+    bool IsEqualMatchHemisphere(Quat b, T tolerance = Math<T>::Tolerance()) const
+    {
+        b.EnsureSameHemisphere(*this);
+        return Abs(Dot(b)) >= T(1) - tolerance;
+    }
+
 
     static T Abs(const T v)                 { return (v >= 0) ? v : -v; }
 
@@ -1626,8 +1619,8 @@ public:
     T       LengthSq() const                { return (x * x + y * y + z * z + w * w); }
 
     // Simple Euclidean distance in R^4 (not SLERP distance, but at least respects Haar measure)
-    T       Distance(const Quat& q) const    
-    { 
+    T       Distance(const Quat& q) const
+    {
         T d1 = (*this - q).Length();
         T d2 = (*this + q).Length(); // Antipodal point check
         return (d1 < d2) ? d1 : d2;
@@ -1669,7 +1662,7 @@ public:
     }
 
     Quat    Normalized() const
-    { 
+    {
         T s = Length();
         if (s != T(0))
             s = T(1) / s;
@@ -1690,7 +1683,7 @@ public:
     // Returns conjugate of the quaternion. Produces inverse rotation if quaternion is normalized.
     Quat    Conj() const                    { return Quat(-x, -y, -z, w); }
 
-    // Quaternion multiplication. Combines quaternion rotations, performing the one on the 
+    // Quaternion multiplication. Combines quaternion rotations, performing the one on the
     // right hand side first.
     Quat  operator* (const Quat& b) const   { return Quat(w * b.x + x * b.w + y * b.z - z * b.y,
                                                           w * b.y - x * b.z + y * b.w + z * b.x,
@@ -1705,7 +1698,7 @@ public:
     }
     // MERGE_MOBILE_SDK
 
-    // 
+    //
     // this^p normalized; same as rotating by this p times.
     Quat PowNormalized(T p) const
     {
@@ -1787,7 +1780,7 @@ public:
     // MERGE_MOBILE_SDK
 
     // Rotate transforms vector in a manner that matches Matrix rotations (counter-clockwise,
-    // assuming negative direction of the axis). Standard formula: q(t) * V * q(t)^-1. 
+    // assuming negative direction of the axis). Standard formula: q(t) * V * q(t)^-1.
     Vector3<T> Rotate(const Vector3<T>& v) const
     {
         return ((*this * Quat<T>(v.x, v.y, v.z, T(0))) * Inverted()).Imag();
@@ -1815,9 +1808,9 @@ public:
     {
         *this = Quat(-x, -y, -z, w);
     }
-    
+
     // Time integration of constant angular velocity over dt
-    Quat TimeIntegrate(Vector3<T> angularVelocity, T dt) const
+    Quat TimeIntegrate(const Vector3<T>& angularVelocity, T dt) const
     {
         // solution is: this * exp( omega*dt/2 ); FromRotationVector(v) gives exp(v*.5).
         return (*this * FastFromRotationVector(angularVelocity * dt, false)).Normalized();
@@ -1829,12 +1822,12 @@ public:
     //   o = o * exp( W=(W1 + W2 + W3+...) * 0.5 );
     //
     //  omega1 = (omega + omegaDot*dt)
-    //  W1 = (omega + omega1)*dt/2              
+    //  W1 = (omega + omega1)*dt/2
     //  W2 = cross(omega, omega1)/12*dt^2 % (= -cross(omega_dot, omega)/12*dt^3)
     // Terms 3 and beyond are vanishingly small:
-    //  W3 = cross(omega_dot, cross(omega_dot, omega))/240*dt^5 
+    //  W3 = cross(omega_dot, cross(omega_dot, omega))/240*dt^5
     //
-    Quat TimeIntegrate(Vector3<T> angularVelocity, Vector3<T> angularAcceleration, T dt) const
+    Quat TimeIntegrate(const Vector3<T>& angularVelocity, const Vector3<T>& angularAcceleration, T dt) const
     {
         const Vector3<T>& omega = angularVelocity;
         const Vector3<T>& omegaDot = angularAcceleration;
@@ -1863,9 +1856,9 @@ public:
     // is followed by rotation b around axis A2
     // is followed by rotation a around axis A1
     // rotations are CCW or CW (D) in LH or RH coordinate system (S)
-    // 
+    //
     template <Axis A1, Axis A2, Axis A3, RotateDirection D, HandedSystem S>
-    void GetEulerAngles(T *a, T *b, T *c) const 
+    void GetEulerAngles(T *a, T *b, T *c) const
     {
         OVR_MATH_ASSERT(IsNormalized());
         OVR_MATH_STATIC_ASSERT((A1 != A2) && (A2 != A3) && (A1 != A3), "(A1 != A2) && (A2 != A3) && (A1 != A3)");
@@ -1881,7 +1874,7 @@ public:
         // Determine whether even permutation
         if (((A1 + 1) % 3 == A2) && ((A2 + 1) % 3 == A3))
             psign = T(1);
-        
+
         T s2 = psign * T(2) * (psign*w*Q[A2] + Q[A1]*Q[A3]);
 
         T singularityRadius = Math<T>::SingularityRadius();
@@ -1902,7 +1895,7 @@ public:
             if (a) *a = -S*D*static_cast<T>( atan2(T(-2)*(w*Q[A1] - psign*Q[A2]*Q[A3]), ww + Q33 - Q11 - Q22) );
             if (b) *b = S*D*static_cast<T>( asin(s2) );
             if (c) *c = S*D*static_cast<T>( atan2(T(2)*(w*Q[A3] - psign*Q[A1]*Q[A2]), ww + Q11 - Q22 - Q33) );
-        }      
+        }
     }
 
     template <Axis A1, Axis A2, Axis A3, RotateDirection D>
@@ -1968,6 +1961,8 @@ public:
                            w*Q[A2] + psign*Q[A1]*Q[m]);
         }
     }
+
+    bool IsNan() const { return isnan(x) || isnan(y) || isnan(z) || isnan(w); }
 };
 
 // MERGE_MOBILE_SDK
@@ -1998,15 +1993,33 @@ class Pose
 public:
     typedef typename CompatibleTypes<Pose<T> >::Type CompatibleType;
 
-    Pose() { }
+    Pose() 
+    { 
+    }
+    
     Pose(const Quat<T>& orientation, const Vector3<T>& pos)
-        : Rotation(orientation), Translation(pos) {  }
+        : Rotation(orientation)
+        , Translation(pos) 
+    {  
+    }
+
     Pose(const Pose& s)
-        : Rotation(s.Rotation), Translation(s.Translation) {  }
+        : Rotation(s.Rotation)
+        , Translation(s.Translation) 
+    {
+    }
+    
     Pose(const Matrix3<T>& R, const Vector3<T>& t)
-        : Rotation((Quat<T>)R), Translation(t) {  }
+        : Rotation((Quat<T>)R)
+        , Translation(t) 
+    {  
+    }
+    
     Pose(const CompatibleType& s)
-        : Rotation(s.Orientation), Translation(s.Position) {  }
+        : Rotation(s.Orientation)
+        , Translation(s.Position) 
+    {  
+    }
 
     explicit Pose(const Pose<typename Math<T>::OtherFloatType> &s)
         : Rotation(s.Rotation), Translation(s.Translation)
@@ -2014,6 +2027,12 @@ public:
         // Ensure normalized rotation if converting from float to double
         if (sizeof(T) > sizeof(typename Math<T>::OtherFloatType))
             Rotation.Normalize();
+    }
+
+    explicit Pose( const Matrix4<T> & m )
+    	: Rotation( m )
+    	, Translation( m.GetTranslation() ) 
+    {
     }
 
     static Pose Identity() { return Pose(Quat<T>(0, 0, 0, 1), Vector3<T>(0, 0, 0)); }
@@ -2028,6 +2047,11 @@ public:
         return Translation.IsEqual(b.Translation, tolerance) && Rotation.IsEqual(b.Rotation, tolerance);
     }
 
+    bool IsEqualMatchHemisphere(const Pose&b, T tolerance = Math<T>::Tolerance()) const
+    {
+        return Translation.IsEqual(b.Translation, tolerance) && Rotation.IsEqualMatchHemisphere(b.Rotation, tolerance);
+    }
+
     operator typename CompatibleTypes<Pose<T> >::Type () const
     {
         typename CompatibleTypes<Pose<T> >::Type result;
@@ -2038,7 +2062,7 @@ public:
 
     Quat<T>    Rotation;
     Vector3<T> Translation;
-    
+
     OVR_MATH_STATIC_ASSERT((sizeof(T) == sizeof(double) || sizeof(T) == sizeof(float)), "(sizeof(T) == sizeof(double) || sizeof(T) == sizeof(float))");
 
     void ToArray(T* arr) const
@@ -2086,12 +2110,12 @@ public:
         return Transform(v);
     }
 
-    Pose operator*(const Pose& other) const   
+    Pose operator*(const Pose& other) const
     {
         return Pose(Rotation * other.Rotation, Apply(other.Translation));
     }
 
-    Pose Inverted() const   
+    Pose Inverted() const
     {
         Quat<T> inv = Rotation.Inverted();
         return Pose(inv, inv.Rotate(-Translation));
@@ -2099,13 +2123,13 @@ public:
 
     // Interpolation between two poses: translation is interpolated with Lerp(),
     // and rotations are interpolated with Slerp().
-    Pose Lerp(const Pose& b, T s)
+    Pose Lerp(const Pose& b, T s) const
     {
         return Pose(Rotation.Slerp(b.Rotation, s), Translation.Lerp(b.Translation, s));
     }
 
     // Similar to Lerp above, except faster in case of small rotation differences.  See Quat<T>::FastSlerp.
-    Pose FastLerp(const Pose& b, T s)
+    Pose FastLerp(const Pose& b, T s) const
     {
         return Pose(Rotation.FastSlerp(b.Rotation, s), Translation.Lerp(b.Translation, s));
     }
@@ -2124,6 +2148,8 @@ public:
         return Pose(Rotation.TimeIntegrate(angularVelocity, angularAcceleration, dt),
                     Translation + linearVelocity*dt + linearAcceleration*dt*dt * T(0.5));
     }
+
+    bool IsNan() const { return Translation.IsNan() || Rotation.IsNan(); }
 };
 
 typedef Pose<float>  Posef;
@@ -2131,7 +2157,7 @@ typedef Pose<double> Posed;
 
 OVR_MATH_STATIC_ASSERT((sizeof(Posed) == sizeof(Quatd) + sizeof(Vector3d)), "sizeof(Posed) failure");
 OVR_MATH_STATIC_ASSERT((sizeof(Posef) == sizeof(Quatf) + sizeof(Vector3f)), "sizeof(Posef) failure");
-    
+
 
 //-------------------------------------------------------------------------------------
 // ***** Matrix4
@@ -2141,19 +2167,19 @@ OVR_MATH_STATIC_ASSERT((sizeof(Posef) == sizeof(Quatf) + sizeof(Vector3f)), "siz
 // The matrix is stored in row-major order in memory, meaning that values
 // of the first row are stored before the next one.
 //
-// The arrangement of the matrix is chosen to be in Right-Handed 
+// The arrangement of the matrix is chosen to be in Right-Handed
 // coordinate system and counterclockwise rotations when looking down
 // the axis
 //
 // Transformation Order:
 //   - Transformations are applied from right to left, so the expression
 //     M1 * M2 * M3 * V means that the vector V is transformed by M3 first,
-//     followed by M2 and M1. 
+//     followed by M2 and M1.
 //
 // Coordinate system: Right Handed
 //
 // Rotations: Counterclockwise when looking down the axis. All angles are in radians.
-//    
+//
 //  | sx   01   02   tx |    // First column  (sx, 10, 20): Axis X basis vector.
 //  | 10   sy   12   ty |    // Second column (01, sy, 21): Axis Y basis vector.
 //  | 20   21   sz   tz |    // Third columnt (02, 12, sz): Axis Z basis vector.
@@ -2246,7 +2272,7 @@ public:
     }
 
     // C-interop support.
-    Matrix4(const typename CompatibleTypes<Matrix4<T> >::Type& s) 
+    Matrix4(const typename CompatibleTypes<Matrix4<T> >::Type& s)
     {
         OVR_MATH_STATIC_ASSERT(sizeof(s) == sizeof(Matrix4), "sizeof(s) == sizeof(Matrix4)");
         memcpy(M, s.M, sizeof(M));
@@ -2447,7 +2473,7 @@ public:
     Vector3<T> Transform(const Vector3<T>& v) const
     {
         const T w = (M[3][0] * v.x + M[3][1] * v.y + M[3][2] * v.z + M[3][3]);
-        OVR_MATH_ASSERT( fabs( w ) >= Math<T>::SmallestNonDenormal );
+        OVR_MATH_ASSERT( fabs( w ) >= Math<T>::SmallestNonDenormal() );
         const T rcpW = T(1) / w;
         return Vector3<T>((M[0][0] * v.x + M[0][1] * v.y + M[0][2] * v.z + M[0][3]) * rcpW,
                           (M[1][0] * v.x + M[1][1] * v.y + M[1][2] * v.z + M[1][3]) * rcpW,
@@ -2496,8 +2522,8 @@ public:
 
     Matrix4 Adjugated() const
     {
-        return Matrix4(Cofactor(0,0), Cofactor(1,0), Cofactor(2,0), Cofactor(3,0), 
-                        Cofactor(0,1), Cofactor(1,1), Cofactor(2,1), Cofactor(3,1), 
+        return Matrix4(Cofactor(0,0), Cofactor(1,0), Cofactor(2,0), Cofactor(3,0),
+                        Cofactor(0,1), Cofactor(1,1), Cofactor(2,1), Cofactor(3,1),
                         Cofactor(0,2), Cofactor(1,2), Cofactor(2,2), Cofactor(3,2),
                         Cofactor(0,3), Cofactor(1,3), Cofactor(2,3), Cofactor(3,3));
     }
@@ -2505,7 +2531,7 @@ public:
     Matrix4 Inverted() const
     {
         T det = Determinant();
-        OVR_MATH_ASSERT(fabs(det) >= Math<T>::SmallestNonDenormal);
+        OVR_MATH_ASSERT(fabs(det) >= Math<T>::SmallestNonDenormal());
         return Adjugated() * (T(1)/det);
     }
 
@@ -2548,7 +2574,7 @@ public:
         T psign = T(-1);
         if (((A1 + 1) % 3 == A2) && ((A2 + 1) % 3 == A3)) // Determine whether even permutation
             psign = T(1);
-        
+
         T pm = psign*M[A1][A3];
         T singularityRadius = Math<T>::SingularityRadius();
         if (pm < T(-1) + singularityRadius)
@@ -2579,9 +2605,9 @@ public:
     // rotations are CCW or CW (D) in LH or RH coordinate system (S)
     template <Axis A1, Axis A2, RotateDirection D, HandedSystem S>
     void ToEulerAnglesABA(T *a, T *b, T *c) const
-    {        
+    {
          OVR_MATH_STATIC_ASSERT(A1 != A2, "A1 != A2");
-  
+
         // Determine the axis that was not supplied
         int m = 3 - A1 - A2;
 
@@ -2610,21 +2636,21 @@ public:
             *c = S*D*atan2( M[A1][A2],psign*M[A1][m]);
         }
     }
-  
+
     // Creates a matrix that converts the vertices from one coordinate system
     // to another.
     static Matrix4 AxisConversion(const WorldAxes& to, const WorldAxes& from)
-    {        
+    {
         // Holds axis values from the 'to' structure
         int toArray[3] = { to.XAxis, to.YAxis, to.ZAxis };
 
         // The inverse of the toArray
-        int inv[4]; 
+        int inv[4];
         inv[0] = inv[abs(to.XAxis)] = 0;
         inv[abs(to.YAxis)] = 1;
         inv[abs(to.ZAxis)] = 2;
 
-        Matrix4 m(0,  0,  0, 
+        Matrix4 m(0,  0,  0,
                   0,  0,  0,
                   0,  0,  0);
 
@@ -2633,7 +2659,7 @@ public:
         m.M[inv[abs(from.YAxis)]][1] = T(from.YAxis/toArray[inv[abs(from.YAxis)]]);
         m.M[inv[abs(from.ZAxis)]][2] = T(from.ZAxis/toArray[inv[abs(from.ZAxis)]]);
         return m;
-    } 
+    }
 
 
     // Creates a matrix for translation by vector
@@ -2700,8 +2726,8 @@ public:
     }
 
     // Simple L1 distance in R^12
-    T Distance(const Matrix4& m2) const           
-    { 
+    T Distance(const Matrix4& m2) const
+    {
         T d = fabs(M[0][0] - m2.M[0][0]) + fabs(M[0][1] - m2.M[0][1]);
         d += fabs(M[0][2] - m2.M[0][2]) + fabs(M[0][3] - m2.M[0][3]);
         d += fabs(M[1][0] - m2.M[1][0]) + fabs(M[1][1] - m2.M[1][1]);
@@ -2710,7 +2736,7 @@ public:
         d += fabs(M[2][2] - m2.M[2][2]) + fabs(M[2][3] - m2.M[2][3]);
         d += fabs(M[3][0] - m2.M[3][0]) + fabs(M[3][1] - m2.M[3][1]);
         d += fabs(M[3][2] - m2.M[3][2]) + fabs(M[3][3] - m2.M[3][3]);
-        return d; 
+        return d;
     }
 
     // Creates a rotation matrix rotating around the X axis by 'angle' radians.
@@ -2719,19 +2745,19 @@ public:
     {
         T sina = s * d *sin(angle);
         T cosa = cos(angle);
-        
+
         switch(A)
         {
         case Axis_X:
-            return Matrix4(1,  0,     0, 
+            return Matrix4(1,  0,     0,
                            0,  cosa,  -sina,
                            0,  sina,  cosa);
         case Axis_Y:
-            return Matrix4(cosa,  0,   sina, 
+            return Matrix4(cosa,  0,   sina,
                            0,     1,   0,
                            -sina, 0,   cosa);
         case Axis_Z:
-            return Matrix4(cosa,  -sina,  0, 
+            return Matrix4(cosa,  -sina,  0,
                            sina,  cosa,   0,
                            0,     0,      1);
         default:
@@ -2751,7 +2777,7 @@ public:
     {
         T sina = (T)sin(angle);
         T cosa = (T)cos(angle);
-        return Matrix4(1,  0,     0, 
+        return Matrix4(1,  0,     0,
                        0,  cosa,  -sina,
                        0,  sina,  cosa);
     }
@@ -2767,7 +2793,7 @@ public:
     {
         T sina = (T)sin(angle);
         T cosa = (T)cos(angle);
-        return Matrix4(cosa,  0,   sina, 
+        return Matrix4(cosa,  0,   sina,
                        0,     1,   0,
                        -sina, 0,   cosa);
     }
@@ -2783,7 +2809,7 @@ public:
     {
         T sina = (T)sin(angle);
         T cosa = (T)cos(angle);
-        return Matrix4(cosa,  -sina,  0, 
+        return Matrix4(cosa,  -sina,  0,
                        sina,  cosa,   0,
                        0,     0,      1);
     }
@@ -2821,10 +2847,10 @@ public:
                   0,    0,    0,    1 );
         return m;
     }
-    
+
     // LookAtLH creates a View transformation matrix for left-handed coordinate system.
     // The resulting matrix points camera from 'eye' towards 'at' direction, with 'up'
-    // specifying the up vector. 
+    // specifying the up vector.
     static Matrix4 LookAtLH(const Vector3<T>& eye, const Vector3<T>& at, const Vector3<T>& up)
     {
         // FIXME: this fails when looking straight up, should probably at least assert
@@ -2835,7 +2861,7 @@ public:
         Matrix4 m(x.x,  x.y,  x.z,  -(x.Dot(eye)),
                   y.x,  y.y,  y.z,  -(y.Dot(eye)),
                   z.x,  z.y,  z.z,  -(z.Dot(eye)),
-                  0,    0,    0,    1 ); 
+                  0,    0,    0,    1 );
         return m;
     }
     
@@ -2866,7 +2892,7 @@ public:
     // MERGE_MOBILE_SDK
 
     // PerspectiveRH creates a right-handed perspective projection matrix that can be
-    // used with the Oculus sample renderer. 
+    // used with the Oculus sample renderer.
     //  yfov   - Specifies vertical field of view in radians.
     //  aspect - Screen aspect ration, which is usually width/height for square pixels.
     //           Note that xfov = yfov * aspect.
@@ -2891,9 +2917,9 @@ public:
         // This is the case even for RHS coordinate input.
         return m;
     }
-    
+
     // PerspectiveLH creates a left-handed perspective projection matrix that can be
-    // used with the Oculus sample renderer. 
+    // used with the Oculus sample renderer.
     //  yfov   - Specifies vertical field of view in radians.
     //  aspect - Screen aspect ration, which is usually width/height for square pixels.
     //           Note that xfov = yfov * aspect.
@@ -2902,7 +2928,7 @@ public:
     static Matrix4 PerspectiveLH(T yfov, T aspect, T znear, T zfar)
     {
         Matrix4 m;
-        T tanHalfFov = tan(yfov * T(0.5));
+        T tanHalfFov = static_cast<T>( tan(yfov * T(0.5)) );
 
         m.M[0][0] = T(1) / (aspect * tanHalfFov);
         m.M[1][1] = T(1) / tanHalfFov;
@@ -2912,9 +2938,9 @@ public:
         m.M[2][3] = (zfar * znear) / (znear - zfar);
         m.M[3][3] = T(0);
 
-        // Note: Post-projection matrix result assumes Left-Handed coordinate system,    
+        // Note: Post-projection matrix result assumes Left-Handed coordinate system,
         //       with Y up, X right and Z forward. This supports positive z-buffer values.
-        // This is the case even for RHS coordinate input. 
+        // This is the case even for RHS coordinate input.
         return m;
     }
 
@@ -2944,14 +2970,14 @@ typedef Matrix4<double> Matrix4d;
 // The matrix is stored in row-major order in memory, meaning that values
 // of the first row are stored before the next one.
 //
-// The arrangement of the matrix is chosen to be in Right-Handed 
+// The arrangement of the matrix is chosen to be in Right-Handed
 // coordinate system and counterclockwise rotations when looking down
 // the axis
 //
 // Transformation Order:
 //   - Transformations are applied from right to left, so the expression
 //     M1 * M2 * M3 * V means that the vector V is transformed by M3 first,
-//     followed by M2 and M1. 
+//     followed by M2 and M1.
 //
 // Coordinate system: Right Handed
 //
@@ -2989,7 +3015,7 @@ public:
         M[1][0] = m21; M[1][1] = m22; M[1][2] = m23;
         M[2][0] = m31; M[2][1] = m32; M[2][2] = m33;
     }
-    
+
     // Construction from X, Y, Z basis vectors
     Matrix3(const Vector3<T>& xBasis, const Vector3<T>& yBasis, const Vector3<T>& zBasis)
     {
@@ -3009,7 +3035,7 @@ public:
         M[1][0] = txy + twz;            M[1][1] = T(1) - (txx + tzz);    M[1][2] = tyz - twx;
         M[2][0] = txz - twy;            M[2][1] = tyz + twx;            M[2][2] = T(1) - (txx + tyy);
     }
-    
+
     inline explicit Matrix3(T s)
     {
         M[0][0] = M[1][1] = M[2][2] = s;
@@ -3031,7 +3057,7 @@ public:
     }
 
     // C-interop support.
-    Matrix3(const typename CompatibleTypes<Matrix3<T> >::Type& s) 
+    Matrix3(const typename CompatibleTypes<Matrix3<T> >::Type& s)
     {
         OVR_MATH_STATIC_ASSERT(sizeof(s) == sizeof(Matrix3), "sizeof(s) == sizeof(Matrix3)");
         memcpy(M, s.M, sizeof(M));
@@ -3096,7 +3122,7 @@ public:
     static Matrix3 Diagonal(const Vector3<T>& v) { return Diagonal(v.x, v.y, v.z); }
 
     T Trace() const { return M[0][0] + M[1][1] + M[2][2]; }
-    
+
     bool operator== (const Matrix3& b) const
     {
         bool isEqual = true;
@@ -3255,7 +3281,7 @@ public:
              + M[rows[0]][cols[2]] * (M[rows[1]][cols[0]] * M[rows[2]][cols[1]] - M[rows[1]][cols[1]] * M[rows[2]][cols[0]]);
     }
 
-    
+
     // M += a*b.t()
     inline void Rank1Add(const Vector3<T> &a, const Vector3<T> &b)
     {
@@ -3309,7 +3335,7 @@ public:
     inline T Determinant() const
     {
         const Matrix3<T>& m = *this;
-        T d; 
+        T d;
 
         d  = m.M[0][0] * (m.M[1][1]*m.M[2][2] - m.M[1][2] * m.M[2][1]);
         d -= m.M[0][1] * (m.M[1][0]*m.M[2][2] - m.M[1][2] * m.M[2][0]);
@@ -3317,31 +3343,31 @@ public:
 
         return d;
     }
-    
+
     inline Matrix3<T> Inverse() const
     {
         Matrix3<T> a;
         const  Matrix3<T>& m = *this;
         T d = Determinant();
 
-        OVR_MATH_ASSERT(fabs(d) >= Math<T>::SmallestNonDenormal);
+        OVR_MATH_ASSERT(fabs(d) >= Math<T>::SmallestNonDenormal());
         T s = T(1)/d;
 
-        a.M[0][0] = s * (m.M[1][1] * m.M[2][2] - m.M[1][2] * m.M[2][1]);   
-        a.M[1][0] = s * (m.M[1][2] * m.M[2][0] - m.M[1][0] * m.M[2][2]);   
-        a.M[2][0] = s * (m.M[1][0] * m.M[2][1] - m.M[1][1] * m.M[2][0]);   
+        a.M[0][0] = s * (m.M[1][1] * m.M[2][2] - m.M[1][2] * m.M[2][1]);
+        a.M[1][0] = s * (m.M[1][2] * m.M[2][0] - m.M[1][0] * m.M[2][2]);
+        a.M[2][0] = s * (m.M[1][0] * m.M[2][1] - m.M[1][1] * m.M[2][0]);
 
-        a.M[0][1] = s * (m.M[0][2] * m.M[2][1] - m.M[0][1] * m.M[2][2]);   
-        a.M[1][1] = s * (m.M[0][0] * m.M[2][2] - m.M[0][2] * m.M[2][0]);   
-        a.M[2][1] = s * (m.M[0][1] * m.M[2][0] - m.M[0][0] * m.M[2][1]);   
-        
-        a.M[0][2] = s * (m.M[0][1] * m.M[1][2] - m.M[0][2] * m.M[1][1]);   
-        a.M[1][2] = s * (m.M[0][2] * m.M[1][0] - m.M[0][0] * m.M[1][2]);   
-        a.M[2][2] = s * (m.M[0][0] * m.M[1][1] - m.M[0][1] * m.M[1][0]);   
-        
+        a.M[0][1] = s * (m.M[0][2] * m.M[2][1] - m.M[0][1] * m.M[2][2]);
+        a.M[1][1] = s * (m.M[0][0] * m.M[2][2] - m.M[0][2] * m.M[2][0]);
+        a.M[2][1] = s * (m.M[0][1] * m.M[2][0] - m.M[0][0] * m.M[2][1]);
+
+        a.M[0][2] = s * (m.M[0][1] * m.M[1][2] - m.M[0][2] * m.M[1][1]);
+        a.M[1][2] = s * (m.M[0][2] * m.M[1][0] - m.M[0][0] * m.M[1][2]);
+        a.M[2][2] = s * (m.M[0][0] * m.M[1][1] - m.M[0][1] * m.M[1][0]);
+
         return a;
     }
-    
+
     // Outer Product of two column vectors: a * b.Transpose()
     static Matrix3 OuterProduct(const Vector3<T>& a, const Vector3<T>& b)
     {
@@ -3679,7 +3705,7 @@ public:
     }
 
     inline T operator()(int i, int j) const { return v[Index(i,j)]; }
-    
+
     inline T &operator()(int i, int j) { return v[Index(i,j)]; }
 
     inline this_type& operator+=(const this_type& b)
@@ -3716,41 +3742,41 @@ public:
 
         return *this;
     }
-        
+
     inline SymMat3 operator*(T s) const
     {
         SymMat3 d;
-        d.v[0] = v[0]*s; 
-        d.v[1] = v[1]*s; 
-        d.v[2] = v[2]*s; 
-        d.v[3] = v[3]*s; 
-        d.v[4] = v[4]*s; 
-        d.v[5] = v[5]*s; 
-                        
+        d.v[0] = v[0]*s;
+        d.v[1] = v[1]*s;
+        d.v[2] = v[2]*s;
+        d.v[3] = v[3]*s;
+        d.v[4] = v[4]*s;
+        d.v[5] = v[5]*s;
+
         return d;
     }
 
     // Multiplies two matrices into destination with minimum copying.
     static SymMat3& Multiply(SymMat3* d, const SymMat3& a, const SymMat3& b)
-    {        
+    {
         // _00 _01 _02 _11 _12 _22
 
         d->v[0] = a.v[0] * b.v[0];
         d->v[1] = a.v[0] * b.v[1] + a.v[1] * b.v[3];
         d->v[2] = a.v[0] * b.v[2] + a.v[1] * b.v[4];
-                    
+
         d->v[3] = a.v[3] * b.v[3];
         d->v[4] = a.v[3] * b.v[4] + a.v[4] * b.v[5];
-                
+
         d->v[5] = a.v[5] * b.v[5];
-    
+
         return *d;
     }
-    
+
     inline T Determinant() const
     {
         const this_type& m = *this;
-        T d; 
+        T d;
 
         d  = m(0,0) * (m(1,1)*m(2,2) - m(1,2) * m(2,1));
         d -= m(0,1) * (m(1,0)*m(2,2) - m(1,2) * m(2,0));
@@ -3765,17 +3791,17 @@ public:
         const this_type& m = *this;
         T d = Determinant();
 
-        OVR_MATH_ASSERT(fabs(d) >= Math<T>::SmallestNonDenormal);
+        OVR_MATH_ASSERT(fabs(d) >= Math<T>::SmallestNonDenormal());
         T s = T(1)/d;
 
-        a(0,0) = s * (m(1,1) * m(2,2) - m(1,2) * m(2,1));   
+        a(0,0) = s * (m(1,1) * m(2,2) - m(1,2) * m(2,1));
 
-        a(0,1) = s * (m(0,2) * m(2,1) - m(0,1) * m(2,2));   
-        a(1,1) = s * (m(0,0) * m(2,2) - m(0,2) * m(2,0));   
+        a(0,1) = s * (m(0,2) * m(2,1) - m(0,1) * m(2,2));
+        a(1,1) = s * (m(0,0) * m(2,2) - m(0,2) * m(2,0));
 
-        a(0,2) = s * (m(0,1) * m(1,2) - m(0,2) * m(1,1));   
-        a(1,2) = s * (m(0,2) * m(1,0) - m(0,0) * m(1,2));   
-        a(2,2) = s * (m(0,0) * m(1,1) - m(0,1) * m(1,0));   
+        a(0,2) = s * (m(0,1) * m(1,2) - m(0,2) * m(1,1));
+        a(1,2) = s * (m(0,2) * m(1,0) - m(0,0) * m(1,2));
+        a(2,2) = s * (m(0,0) * m(1,1) - m(0,1) * m(1,0));
 
         return a;
     }
@@ -3849,7 +3875,7 @@ public:
     };
 
     Angle() : a(0) {}
-    
+
     // Fix the range to be between -Pi and Pi
     Angle(T a_, AngularUnits u = Radians) : a((u == Radians) ? a_ : a_*((T)MATH_DOUBLE_DEGREETORADFACTOR)) { FixRange(); }
 
@@ -3860,10 +3886,10 @@ public:
 
     bool operator== (const Angle& b) const    { return a == b.a; }
     bool operator!= (const Angle& b) const    { return a != b.a; }
-//    bool operator<  (const Angle& b) const    { return a < a.b; } 
-//    bool operator>  (const Angle& b) const    { return a > a.b; } 
-//    bool operator<= (const Angle& b) const    { return a <= a.b; } 
-//    bool operator>= (const Angle& b) const    { return a >= a.b; } 
+//    bool operator<  (const Angle& b) const    { return a < a.b; }
+//    bool operator>  (const Angle& b) const    { return a > a.b; }
+//    bool operator<= (const Angle& b) const    { return a <= a.b; }
+//    bool operator>= (const Angle& b) const    { return a >= a.b; }
 //    bool operator= (const T& x)               { a = x; FixRange(); }
 
     // These operations assume a is already between -Pi and Pi.
@@ -3875,7 +3901,7 @@ public:
     Angle& operator-= (const T& x)            { a = a - x; FixRange(); return *this; }
     Angle  operator-  (const Angle& b) const  { Angle res = *this; res -= b; return res; }
     Angle  operator-  (const T& x) const      { Angle res = *this; res -= x; return res; }
-    
+
     T   Distance(const Angle& b)              { T c = fabs(a - b.a); return (c <= ((T)MATH_DOUBLE_PI)) ? c : ((T)MATH_DOUBLE_TWOPI) - c; }
 
 private:
@@ -3883,7 +3909,7 @@ private:
     // The stored angle, which should be maintained between -Pi and Pi
     T a;
 
-    // Fixes the angle range to [-Pi,Pi], but assumes no more than 2Pi away on either side 
+    // Fixes the angle range to [-Pi,Pi], but assumes no more than 2Pi away on either side
     inline void FastFixRange()
     {
         if (a < -((T)MATH_DOUBLE_PI))
@@ -3930,7 +3956,7 @@ public:
     Plane(T x, T y, T z, T d) : N(x,y,z), D(d) {}
 
     // construct from a point on the plane and the normal
-    Plane(const Vector3<T>& p, const Vector3<T>& n) : N(n), D(-(p * n)) {}
+    Plane(const Vector3<T>& p, const Vector3<T>& n) : N(n), D(-(p.Dot(n))) {}
 
     // Find the point to plane distance. The sign indicates what side of the plane the point is on (0 = point on plane).
     T TestSide(const Vector3<T>& p) const
@@ -3970,7 +3996,7 @@ struct ScaleAndOffset2D
     Vector2f Offset;
 
     ScaleAndOffset2D(float sx = 0.0f, float sy = 0.0f, float ox = 0.0f, float oy = 0.0f)
-        : Scale(sx, sy), Offset(ox, oy)        
+        : Scale(sx, sy), Offset(ox, oy)
     { }
 };
 
@@ -3979,10 +4005,10 @@ struct ScaleAndOffset2D
 // ***** FovPort
 
 // FovPort describes Field Of View (FOV) of a viewport.
-// This class has values for up, down, left and right, stored in 
+// This class has values for up, down, left and right, stored in
 // tangent of the angle units to simplify calculations.
 //
-// As an example, for a standard 90 degree vertical FOV, we would 
+// As an example, for a standard 90 degree vertical FOV, we would
 // have: { UpTan = tan(90 degrees / 2), DownTan = tan(90 degrees / 2) }.
 //
 // CreateFromRadians/Degrees helper functions can be used to
@@ -4004,19 +4030,20 @@ struct FovPort
         UpTan(u), DownTan(d), LeftTan(l), RightTan(r) { }
 
 #if 0
-    // C-interop support: FovPort <-> ovrFovPort (implementation in OVR_CAPI.cpp).
-    FovPort(const ovrFovPort &src)
-        : UpTan(src.UpTan), DownTan(src.DownTan), LeftTan(src.LeftTan), RightTan(src.RightTan)
-    { }    
+    // C-interop support.
+    typedef CompatibleTypes<FovPort >::Type CompatibleType;
 
-    operator ovrFovPort () const
+    FovPort(const CompatibleType& s)
+        : UpTan(s.UpTan)
+        , DownTan(s.DownTan)
+        , LeftTan(s.LeftTan)
+        , RightTan(s.RightTan)
+    {  }
+
+    operator const CompatibleType& () const
     {
-        ovrFovPort result;
-        result.LeftTan  = LeftTan;
-        result.RightTan = RightTan;
-        result.UpTan    = UpTan;
-        result.DownTan  = DownTan;
-        return result;
+        OVR_MATH_STATIC_ASSERT(sizeof(FovPort) == sizeof(CompatibleType), "sizeof(FovPort) failure");
+        return reinterpret_cast<const CompatibleType&>(*this);
     }
 #endif
 
@@ -4069,15 +4096,15 @@ struct FovPort
 
     // Converts Fov Tan angle units to [-1,1] render target NDC space
     Vector2f TanAngleToRendertargetNDC(Vector2f const &tanEyeAngle)
-    {  
+    {
         ScaleAndOffset2D eyeToSourceNDC = CreateNDCScaleAndOffsetFromFov(*this);
         return tanEyeAngle * eyeToSourceNDC.Scale + eyeToSourceNDC.Offset;
     }
 
     // Compute per-channel minimum and maximum of Fov.
     static FovPort Min(const FovPort& a, const FovPort& b)
-    {   
-        FovPort fov( OVRMath_Min( a.UpTan   , b.UpTan    ),   
+    {
+        FovPort fov( OVRMath_Min( a.UpTan   , b.UpTan    ),
                      OVRMath_Min( a.DownTan , b.DownTan  ),
                      OVRMath_Min( a.LeftTan , b.LeftTan  ),
                      OVRMath_Min( a.RightTan, b.RightTan ) );
@@ -4085,8 +4112,8 @@ struct FovPort
     }
 
     static FovPort Max(const FovPort& a, const FovPort& b)
-    {   
-        FovPort fov( OVRMath_Max( a.UpTan   , b.UpTan    ),   
+    {
+        FovPort fov( OVRMath_Max( a.UpTan   , b.UpTan    ),
                      OVRMath_Max( a.DownTan , b.DownTan  ),
                      OVRMath_Max( a.LeftTan , b.LeftTan  ),
                      OVRMath_Max( a.RightTan, b.RightTan ) );

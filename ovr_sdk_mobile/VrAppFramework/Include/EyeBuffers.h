@@ -84,7 +84,6 @@ struct ovrFrameTextureSwapChains
 {
 	// For time warp.
 	ovrTextureSwapChain *	ColorTextureSwapChain[2];
-	ovrTextureSwapChain *	DepthTextureSwapChain[2];
 
 	// Index to the texture from the set that should be displayed.
 	int						TextureSwapChainIndex;

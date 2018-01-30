@@ -15,6 +15,8 @@
 #endif
 #define IOAPI_NO_64
 
+#include <stdio.h> // for ftello
+
 #if defined(__APPLE__) || defined(IOAPI_NO_64)
 // In darwin and perhaps other BSD variants off_t is a 64 bit value, hence no need for specific 64 bit functions
 #define FOPEN_FUNC(filename, mode) fopen(filename, mode)

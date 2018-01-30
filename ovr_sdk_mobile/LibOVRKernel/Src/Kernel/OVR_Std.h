@@ -271,7 +271,7 @@ inline long OVR_CDECL OVR_strtol(const char* string, char** tailptr, int radix)
     return strtol(string, tailptr, radix);
 }
 
-inline long OVR_CDECL OVR_strtoul(const char* string, char** tailptr, int radix)
+inline unsigned long OVR_CDECL OVR_strtoul(const char* string, char** tailptr, int radix)
 {
     return strtoul(string, tailptr, radix);
 }

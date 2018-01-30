@@ -24,7 +24,8 @@ enum
 	ANDROID_LOLLIPOP		= 21,		// Build.VERSION_CODES.LOLLIPOP
 	ANDROID_LOLLIPOP_MR1	= 22,		// Build.VERSION_CODES.LOLLIPOP_MR1
 	ANDROID_MARSHMALLOW		= 23,		// Build.VERSION_CODES.M
-	ANDROID_NOUGAT			= 24,		// Build.VERSION_CODES.N		
+	ANDROID_NOUGAT			= 24,		// Build.VERSION_CODES.N
+	ANDROID_N_MR1			= 25,		// Build.VERSION_CODES.N_MR1
 };
 
 int				ovr_GetBuildVersionSDK( JNIEnv * jni );
@@ -100,7 +101,7 @@ public:
 	{
 		if ( JNI_OK != Vm->GetEnv( reinterpret_cast<void**>( &Jni ), JNI_VERSION_1_6 ) )
 		{
-			LOG( "Creating temporary JNIEnv" );
+			LOG( "Creating temporary JNIEnv. This is a heavy operation and should be infrequent. To optimize, use JNI AttachCurrentThread on calling thread" );
 			ovr_AttachCurrentThread( Vm, &Jni, NULL );
 			PrivateEnv = true;
 		}

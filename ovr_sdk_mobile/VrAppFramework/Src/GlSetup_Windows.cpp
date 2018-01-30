@@ -15,7 +15,6 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #if defined( OVR_OS_WIN32 )
 
 #include <string.h>
-#include <assert.h>
 #include <stdlib.h>
 
 #include "Kernel/OVR_LogUtils.h"

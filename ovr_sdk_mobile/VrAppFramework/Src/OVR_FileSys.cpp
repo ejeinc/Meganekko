@@ -254,19 +254,13 @@ ovrFileSysLocal::ovrFileSysLocal( ovrJava const & javaContext ) : Jvm( javaConte
 		// FIXME: change this to use command line parameters that specify additional paths.
 		AddRelativePathToHost( scheme, "localhost", curWorkingDir, "../../../VrAppFramework" );
 		AddRelativePathToHost( scheme, "localhost", curWorkingDir, "../../../VrAppSupport/VrGUI" );
-		AddRelativePathToHost( scheme, "localhost", curWorkingDir, "../../../VrAppSupport/Net" );
-		AddRelativePathToHost( scheme, "localhost", curWorkingDir, "../Libraries/ovr_sdks/ovr_sdk_mobile/VrAppFramework" );
-		AddRelativePathToHost( scheme, "localhost", curWorkingDir, "../Libraries/ovr_sdks/ovr_sdk_mobile/VrAppSupport/VrGUI" );
-		AddRelativePathToHost( scheme, "localhost", curWorkingDir, "../Libraries/AppSupport/Net" );
 		scheme->AddHostSourceUri( "localhost", dataUri );
 
 		AddRelativePathToHost( scheme, PUI_PACKAGE_NAME, curWorkingDir, "../../../VrAppFramework" );
 		AddRelativePathToHost( scheme, PUI_PACKAGE_NAME, curWorkingDir, "../../../VrAppSupport/VrGUI" );
 		// MA: This path works if target is within Projects
 		AddRelativePathToHost( scheme, PUI_PACKAGE_NAME, curWorkingDir, "../../../../../../VrAppFramework" );
-		AddRelativePathToHost( scheme, PUI_PACKAGE_NAME, curWorkingDir, "../../../../../../VrAppSupport/VrGUI" );        
-		AddRelativePathToHost( scheme, PUI_PACKAGE_NAME, curWorkingDir, "../Libraries/ovr_sdks/ovr_sdk_mobile/VrAppFramework" );
-		AddRelativePathToHost( scheme, PUI_PACKAGE_NAME, curWorkingDir, "../Libraries/ovr_sdks/ovr_sdk_mobile/VrAppSupport/VrGUI" );
+		AddRelativePathToHost( scheme, PUI_PACKAGE_NAME, curWorkingDir, "../../../../../../VrAppSupport/VrGUI" );
 		scheme->AddHostSourceUri( PUI_PACKAGE_NAME, dataUri );
 
 		AddRelativePathToHost( scheme, "font", curWorkingDir, "../../../VrAppFramework" );
@@ -274,8 +268,6 @@ ovrFileSysLocal::ovrFileSysLocal( ovrJava const & javaContext ) : Jvm( javaConte
 		// MA: This path works if target is within Projects
 		AddRelativePathToHost( scheme, "font", curWorkingDir, "../../../../../../VrAppFramework");
 		AddRelativePathToHost( scheme, "font", curWorkingDir, "../../../../../../VrAppSupport/VrGUI");
-		AddRelativePathToHost( scheme, "font", curWorkingDir, "../Libraries/ovr_sdks/ovr_sdk_mobile/VrAppFramework" );
-		AddRelativePathToHost( scheme, "font", curWorkingDir, "../Libraries/ovr_sdks/ovr_sdk_mobile/VrAppSupport/VrGUI" );
 		scheme->AddHostSourceUri( "font", dataUri );
 
 		Schemes.PushBack( scheme );	
@@ -319,10 +311,10 @@ ovrStream *	ovrFileSysLocal::OpenStream( char const * uri, ovrStreamMode const m
 	}
 
 #if defined( OVR_OS_ANDROID )
-	//If apk scheme, need to check if this is a package we haven't seen before, and add a host if so.
-	if( OVR_stricmp( scheme, "apk" ) == 0 )
+	// If apk scheme, need to check if this is a package we haven't seen before, and add a host if so.
+	if ( OVR_stricmp( scheme, "apk" ) == 0 )
 	{
-		if( !uriScheme->HostExists( host ) )
+		if ( !uriScheme->HostExists( host ) )
 		{
 			TempJniEnv env{ Jvm };
 			char packagePath[OVR_MAX_PATH_LEN];
@@ -464,7 +456,7 @@ void ovrFileSysLocal::Shutdown()
 
 //==============================
 // ovrFileSys::Create
-ovrFileSys *	ovrFileSys::Create( ovrJava const & javaContext )
+ovrFileSys * ovrFileSys::Create( ovrJava const & javaContext )
 {
 	ovrFileSys * fs = new ovrFileSysLocal( javaContext );
 	return fs;

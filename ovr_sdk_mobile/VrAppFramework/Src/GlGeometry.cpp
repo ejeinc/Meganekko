@@ -238,8 +238,8 @@ GlGeometry BuildTesselatedCylinder( const float radius, const float height, cons
 		{
 			const float xf = (float) x / (float) horizontal;
 			const int index = y * ( horizontal + 1 ) + x;
-			attribs.position[index].x = cosf( Mathf::Pi * 2 * xf ) * radius;
-			attribs.position[index].y = sinf( Mathf::Pi * 2 * xf ) * radius;
+			attribs.position[index].x = cosf( MATH_FLOAT_PI * 2 * xf ) * radius;
+			attribs.position[index].y = sinf( MATH_FLOAT_PI * 2 * xf ) * radius;
 			attribs.position[index].z = -height + yf * 2 * height;
 			attribs.uv0[index].x = xf * uScale;
 			attribs.uv0[index].y = ( 1.0f - yf ) * vScale;
@@ -371,12 +371,12 @@ GlGeometry BuildDome( const float latRads, const float uScale, const float vScal
 	for ( int y = 0; y <= vertical; y++ )
 	{
 		const float yf = (float) y / (float) vertical;
-		const float lat = Mathf::Pi - yf * latRads - 0.5f * Mathf::Pi;
+		const float lat = MATH_FLOAT_PI - yf * latRads - 0.5f * MATH_FLOAT_PI;
 		const float cosLat = cosf( lat );
 		for ( int x = 0; x <= horizontal; x++ )
 		{
 			const float xf = (float) x / (float) horizontal;
-			const float lon = ( 0.5f + xf ) * Mathf::Pi * 2;
+			const float lon = ( 0.5f + xf ) * MATH_FLOAT_PI * 2;
 			const int index = y * ( horizontal + 1 ) + x;
 
 			if ( x == horizontal )
@@ -454,12 +454,12 @@ GlGeometry BuildGlobe( const float uScale /*= 1.0f*/, const float vScale /*= 1.0
 		{
 			yf = (float) ( y - poleVertical ) / uniformVertical;
 		}
-		const float lat = ( yf - 0.5f ) * Mathf::Pi;
+		const float lat = ( yf - 0.5f ) * MATH_FLOAT_PI;
 		const float cosLat = cosf( lat );
 		for ( int x = 0; x <= horizontal; x++ )
 		{
 			const float xf = (float) x / (float) horizontal;
-			const float lon = ( 0.25f + xf ) * Mathf::Pi * 2;
+			const float lon = ( 0.25f + xf ) * MATH_FLOAT_PI * 2;
 			const int index = y * ( horizontal + 1 ) + x;
 
 			if ( x == horizontal )

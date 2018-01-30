@@ -60,7 +60,7 @@ public:
 
 	void				AdvanceVrFrame( const ovrInputEvents & inputEvents, ovrMobile * ovr,
 										const ovrJava & java,
-										const ovrHeadModelParms & headModelParms,
+										const ovrTrackingTransform trackingTransform,
 										const long long enteredVrModeFrameNumber );
 	const ovrFrameInput &		Get() const { return vrFrame; }
 

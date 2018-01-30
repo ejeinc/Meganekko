@@ -52,7 +52,6 @@ private:
   bool clearColorBuffer;
   Vector4f clearColor;
   ovrMatrix4f centerEyeViewMatrix;
-  ovrFrameParms frameParms;
   jmethodID updateMethodID;
   jmethodID collectSurfaceDefsMethodID;
   jmethodID onKeyEventMethodID;

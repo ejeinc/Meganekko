@@ -14,7 +14,6 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include <math.h>
 
 #include "VrApi.h"
-#include "VrApi_LocalPrefs.h"
 
 #include "Framebuffer.h"
 
@@ -41,25 +40,7 @@ void ovrEyeBuffers::Initialize( const ovrEyeBufferParms & appBufferParms, const 
 {
 	BufferCount = ( useMultiview_ ) ? 1 : 2;
 
-	// Check for localparms forcing values
-	ovrEyeBufferParms bufferParms_ = appBufferParms;
-	const char * notFound = "<NOT FOUND>";
-	const char * overrideVal;
-	overrideVal = ovr_GetLocalPreferenceValueForKey( "app_forceMultisamples", notFound );
-	if ( overrideVal != notFound )
-	{
-		bufferParms_.multisamples = atoi( overrideVal );
-	}
-	overrideVal = ovr_GetLocalPreferenceValueForKey( "app_forceColorFormat", notFound );
-	if ( overrideVal != notFound )
-	{
-		bufferParms_.colorFormat = (OVR::colorFormat_t)atoi( overrideVal );
-	}
-	overrideVal = ovr_GetLocalPreferenceValueForKey( "app_forceDepthFormat", notFound );
-	if ( overrideVal != notFound )
-	{
-		bufferParms_.depthFormat = (OVR::depthFormat_t)atoi( overrideVal );
-	}
+	const ovrEyeBufferParms bufferParms_ = appBufferParms;
 
 	// Update the buffers if parameters have changed
 	if ( Framebuffers[0] != NULL &&
@@ -233,7 +214,6 @@ ovrFrameTextureSwapChains ovrEyeBuffers::GetCurrentFrameTextureSwapChains()
 	for ( int eye = 0; eye < 2; eye++ )
 	{
 		eyes.ColorTextureSwapChain[eye] = Framebuffers[( BufferCount == 1 ) ? 0 : eye]->GetColorTextureSwapChain();
-		eyes.DepthTextureSwapChain[eye] = Framebuffers[( BufferCount == 1 ) ? 0 : eye]->GetDepthTextureSwapChain();
 	}
 	eyes.TextureSwapChainIndex = Framebuffers[0]->GetTextureSwapChainIndex();
 

@@ -21,6 +21,9 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#if defined( OVR_OS_ANDROID )
+#include <unistd.h>
+#endif
 #include "ScopedMutex.h"
 
 namespace OVR
@@ -109,19 +112,29 @@ bool ovr_OtherPackageFileExists( void* zipFile, const char * nameInZip )
 	return true;
 }
 
-
-bool ovr_ReadFileFromOtherApplicationPackage( void * zipFile, const char * nameInZip, MemBufferT< uint8_t > & outBuffer )
+static bool ovr_ReadFileFromOtherApplicationPackageInternal( void * zipFile, const char * nameInZip, int & length, void * & buffer, const bool useMalloc )
 {
-	int length = 0;
-	void * buffer = NULL;
-	bool const success = ovr_ReadFileFromOtherApplicationPackage( zipFile, nameInZip, length, buffer );
+	auto allocBuffer = [] ( const size_t size, const bool useMalloc )
+	{
+		if ( useMalloc )
+		{
+			return malloc( size );
+		}
+		return (void*)( new unsigned char [size] );
+	};
 
-	outBuffer.TakeOwnershipOfBuffer( buffer, length );
-	return success;
-}
+	auto freeBuffer = [] ( void * buffer, const bool useMalloc )
+	{
+		if ( useMalloc )
+		{
+			free( buffer );
+		}
+		else
+		{
+			delete [] (unsigned char*)buffer;
+		}
+	};
 
-bool ovr_ReadFileFromOtherApplicationPackage( void * zipFile, const char * nameInZip, int & length, void * & buffer )
-{
 	length = 0;
 	buffer = NULL;
 	if ( zipFile == 0 )
@@ -172,14 +185,14 @@ bool ovr_ReadFileFromOtherApplicationPackage( void * zipFile, const char * nameI
 				}
 				else
 				{
-					buffer = malloc( length );
+					buffer = allocBuffer( length, useMalloc );
 					const int r = read( fd, buffer, length );
 					close( fd );
 					if ( r != length )
 					{
 						LOG( "Cached file for %s only read %i != %i", nameInZip,
 								r, length );
-						free( buffer );
+						freeBuffer( buffer, useMalloc );
 						// Fall through to normal load.
 					}
 					else
@@ -205,13 +218,13 @@ bool ovr_ReadFileFromOtherApplicationPackage( void * zipFile, const char * nameI
 	}
 
 	length = info.uncompressed_size;
-	buffer = malloc( length );
+	buffer = allocBuffer( length, useMalloc );
 
 	const int readRet = unzReadCurrentFile( zipFile, buffer, length );
 	if ( readRet != length )
 	{
 		WARN( "Error reading file '%s' from apk!", nameInZip );
-		free( buffer );
+		freeBuffer( buffer, useMalloc );
 		length = 0;
 		buffer = NULL;
 		return false;
@@ -257,6 +270,23 @@ bool ovr_ReadFileFromOtherApplicationPackage( void * zipFile, const char * nameI
 	}
 
 	return true;
+}
+
+bool ovr_ReadFileFromOtherApplicationPackage( void * zipFile, const char * nameInZip, MemBufferT< uint8_t > & outBuffer )
+{
+	int length = 0;
+	void * buffer = NULL;
+	// allocate using new / delete
+	bool const success = ovr_ReadFileFromOtherApplicationPackageInternal( zipFile, nameInZip, length, buffer, false );
+
+	outBuffer.TakeOwnershipOfBuffer( buffer, length );
+	return success;
+}
+
+bool ovr_ReadFileFromOtherApplicationPackage( void * zipFile, const char * nameInZip, int & length, void * & buffer )
+{
+	// allocate using malloc / free
+	return ovr_ReadFileFromOtherApplicationPackageInternal( zipFile, nameInZip, length, buffer, true );
 }
 
 //--------------------------------------------------------------

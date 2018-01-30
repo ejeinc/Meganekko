@@ -14,7 +14,6 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "Kernel/OVR_LogUtils.h"
 
 #include <string.h>
-#include <assert.h>
 #include <stdlib.h>
 
 ovrOpenGLExtensions extensionsOpenGL;
@@ -688,7 +687,7 @@ bool GL_CheckErrors( const char * logTitle )
 			break;
 		}
 		hadError = true;
-		WARN( "%s GL Error: %s", logTitle, GL_ErrorForEnum( err ) );
+		WARN( "%s GL Error: %s", ( logTitle != nullptr ) ? logTitle : "<untitled>", GL_ErrorForEnum( err ) );
 		if ( err == GL_OUT_OF_MEMORY )
 		{
 			FAIL( "GL_OUT_OF_MEMORY" );

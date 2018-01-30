@@ -174,12 +174,14 @@ public:
 	ovrJobManagerImpl();
 	virtual ~ovrJobManagerImpl();
 
-	void	Init( JavaVM & javaVM );
-	void	Shutdown();
+	void	Init( JavaVM & javaVM ) OVR_OVERRIDE;
+	void	Shutdown() OVR_OVERRIDE;
 
-	void	EnqueueJob( ovrJob * job );
+	void	EnqueueJob( ovrJob * job ) OVR_OVERRIDE;
 
-	void	ServiceJobs( OVR::Array< ovrJobResult > & finishedJobs );
+	void	ServiceJobs( OVR::Array< ovrJobResult > & finishedJobs ) OVR_OVERRIDE;
+
+	bool	IsExiting() const OVR_OVERRIDE { return Exiting; }
 
 	JavaVM *GetJvm() { return Jvm; }
 
@@ -187,7 +189,6 @@ private:
 	//--------------------------
 	// thread function interface
 	//--------------------------
-	bool		IsExiting() const { return Exiting; }
 	void		JobCompleted( ovrJob * job, bool const succeeded );
 	ovrJob *	GetPendingJob();
 	ovrSignal *	GetNewJobSignal() { return NewJobSignal; }
@@ -222,7 +223,7 @@ ovrJob::ovrJob( char const * name )
 	OVR_strcpy( Name, sizeof( Name ), name );
 }
 
-threadReturn_t ovrJob::DoWork( ovrJobThreadContext & jtc )
+threadReturn_t ovrJob::DoWork( ovrJobThreadContext const & jtc )
 {
 	clock_t startTime = std::clock();
 
@@ -385,6 +386,8 @@ void ovrJobManagerImpl::Init( JavaVM & javaVM )
 
 void ovrJobManagerImpl::Shutdown()
 {
+	LOG( "ovrJobManagerImpl::Shutdown" );
+
 	Exiting = true;
 
 	// allow all threads to complete their current job
@@ -415,6 +418,8 @@ void ovrJobManagerImpl::Shutdown()
 	ovrSignal::Destroy( NewJobSignal );
 
 	Initialized = false;
+
+	LOG( "ovrJobManagerImpl::Shutdown - complete." );
 }
 
 void ovrJobManagerImpl::EnqueueJob( ovrJob * job )

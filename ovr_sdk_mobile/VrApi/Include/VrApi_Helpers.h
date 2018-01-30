@@ -5,6 +5,7 @@ Content     :   Pure, stateless, inlined helper functions, used to initialize
                 parameters to the VrApi.
 Created     :   March 2, 2015
 Authors     :   J.M.P. van Waveren
+Language    :   C99
 
 Copyright   :   Copyright 2015 Oculus VR, LLC. All Rights reserved.
 
@@ -31,7 +32,17 @@ Copyright   :   Copyright 2015 Oculus VR, LLC. All Rights reserved.
 // Matrix helper functions.
 //-----------------------------------------------------------------
 
-// Use left-multiplication to accumulate transformations.
+static inline ovrVector4f ovrVector4f_MultiplyMatrix4f( const ovrMatrix4f * a, const ovrVector4f * v )
+{
+	ovrVector4f out;
+	out.x = a->M[0][0] * v->x + a->M[0][1] * v->y + a->M[0][2] * v->z + a->M[0][3] * v->w;
+	out.y = a->M[1][0] * v->x + a->M[1][1] * v->y + a->M[1][2] * v->z + a->M[1][3] * v->w;
+	out.z = a->M[2][0] * v->x + a->M[2][1] * v->y + a->M[2][2] * v->z + a->M[2][3] * v->w;
+	out.w = a->M[3][0] * v->x + a->M[3][1] * v->y + a->M[3][2] * v->z + a->M[3][3] * v->w;
+	return out;
+}
+
+/// Use left-multiplication to accumulate transformations.
 static inline ovrMatrix4f ovrMatrix4f_Multiply( const ovrMatrix4f * a, const ovrMatrix4f * b )
 {
 	ovrMatrix4f out;
@@ -57,7 +68,7 @@ static inline ovrMatrix4f ovrMatrix4f_Multiply( const ovrMatrix4f * a, const ovr
 	return out;
 }
 
-// Returns the transpose of a 4x4 matrix.
+/// Returns the transpose of a 4x4 matrix.
 static inline ovrMatrix4f ovrMatrix4f_Transpose( const ovrMatrix4f * a )
 {
 	ovrMatrix4f out;
@@ -68,15 +79,15 @@ static inline ovrMatrix4f ovrMatrix4f_Transpose( const ovrMatrix4f * a )
 	return out;
 }
 
-// Returns a 3x3 minor of a 4x4 matrix.
+/// Returns a 3x3 minor of a 4x4 matrix.
 static inline float ovrMatrix4f_Minor( const ovrMatrix4f * m, int r0, int r1, int r2, int c0, int c1, int c2 )
 {
 	return	m->M[r0][c0] * ( m->M[r1][c1] * m->M[r2][c2] - m->M[r2][c1] * m->M[r1][c2] ) -
 			m->M[r0][c1] * ( m->M[r1][c0] * m->M[r2][c2] - m->M[r2][c0] * m->M[r1][c2] ) +
 			m->M[r0][c2] * ( m->M[r1][c0] * m->M[r2][c1] - m->M[r2][c0] * m->M[r1][c1] );
 }
- 
-// Returns the inverse of a 4x4 matrix.
+
+/// Returns the inverse of a 4x4 matrix.
 static inline ovrMatrix4f ovrMatrix4f_Inverse( const ovrMatrix4f * m )
 {
 	const float rcpDet = 1.0f / (	m->M[0][0] * ovrMatrix4f_Minor( m, 1, 2, 3, 1, 2, 3 ) -
@@ -103,7 +114,7 @@ static inline ovrMatrix4f ovrMatrix4f_Inverse( const ovrMatrix4f * m )
 	return out;
 }
 
-// Returns a 4x4 identity matrix.
+/// Returns a 4x4 identity matrix.
 static inline ovrMatrix4f ovrMatrix4f_CreateIdentity()
 {
 	ovrMatrix4f out;
@@ -114,7 +125,18 @@ static inline ovrMatrix4f ovrMatrix4f_CreateIdentity()
 	return out;
 }
 
-// Returns a 4x4 homogeneous translation matrix.
+/// Returns a 4x4 scaling matrix.
+static inline ovrMatrix4f ovrMatrix4f_CreateScale( const float x, const float y, const float z )
+{
+	ovrMatrix4f out;
+	out.M[0][0] = x;    out.M[0][1] = 0.0f; out.M[0][2] = 0.0f; out.M[0][3] = 0.0f;
+	out.M[1][0] = 0.0f; out.M[1][1] = y;	out.M[1][2] = 0.0f; out.M[1][3] = 0.0f;
+	out.M[2][0] = 0.0f; out.M[2][1] = 0.0f; out.M[2][2] = z;    out.M[2][3] = 0.0f;
+	out.M[3][0] = 0.0f; out.M[3][1] = 0.0f; out.M[3][2] = 0.0f; out.M[3][3] = 1.0f;
+	return out;
+}
+
+/// Returns a 4x4 homogeneous translation matrix.
 static inline ovrMatrix4f ovrMatrix4f_CreateTranslation( const float x, const float y, const float z )
 {
 	ovrMatrix4f out;
@@ -125,7 +147,7 @@ static inline ovrMatrix4f ovrMatrix4f_CreateTranslation( const float x, const fl
 	return out;
 }
 
-// Returns a 4x4 homogeneous rotation matrix.
+/// Returns a 4x4 homogeneous rotation matrix.
 static inline ovrMatrix4f ovrMatrix4f_CreateRotation( const float radiansX, const float radiansY, const float radiansZ )
 {
 	const float sinX = sinf( radiansX );
@@ -159,14 +181,14 @@ static inline ovrMatrix4f ovrMatrix4f_CreateRotation( const float radiansX, cons
 	return ovrMatrix4f_Multiply( &rotationZ, &rotationXY );
 }
 
-// Returns a projection matrix based on the specified dimensions.
-// The projection matrix transforms -Z=forward, +Y=up, +X=right to the appropriate clip space for the graphics API.
-// The far plane is placed at infinity if farZ <= nearZ.
-// An infinite projection matrix is preferred for rasterization because, except for
-// things *right* up against the near plane, it always provides better precision:
-//		"Tightening the Precision of Perspective Rendering"
-//		Paul Upchurch, Mathieu Desbrun
-//		Journal of Graphics Tools, Volume 16, Issue 1, 2012
+/// Returns a projection matrix based on the specified dimensions.
+/// The projection matrix transforms -Z=forward, +Y=up, +X=right to the appropriate clip space for the graphics API.
+/// The far plane is placed at infinity if farZ <= nearZ.
+/// An infinite projection matrix is preferred for rasterization because, except for
+/// things *right* up against the near plane, it always provides better precision:
+///		"Tightening the Precision of Perspective Rendering"
+///		Paul Upchurch, Mathieu Desbrun
+///		Journal of Graphics Tools, Volume 16, Issue 1, 2012
 static inline ovrMatrix4f ovrMatrix4f_CreateProjection( const float minX, const float maxX,
 											float const minY, const float maxY, const float nearZ, const float farZ )
 {
@@ -224,7 +246,7 @@ static inline ovrMatrix4f ovrMatrix4f_CreateProjection( const float minX, const 
 	return out;
 }
 
-// Returns a projection matrix based on the given FOV.
+/// Returns a projection matrix based on the given FOV.
 static inline ovrMatrix4f ovrMatrix4f_CreateProjectionFov( const float fovDegreesX, const float fovDegreesY,
 												const float offsetX, const float offsetY, const float nearZ, const float farZ )
 {
@@ -240,7 +262,7 @@ static inline ovrMatrix4f ovrMatrix4f_CreateProjectionFov( const float fovDegree
 	return ovrMatrix4f_CreateProjection( minX, maxX, minY, maxY, nearZ, farZ );
 }
 
-// Returns the 4x4 rotation matrix for the given quaternion.
+/// Returns the 4x4 rotation matrix for the given quaternion.
 static inline ovrMatrix4f ovrMatrix4f_CreateFromQuaternion( const ovrQuatf * q )
 {
 	const float ww = q->w * q->w;
@@ -271,8 +293,8 @@ static inline ovrMatrix4f ovrMatrix4f_CreateFromQuaternion( const ovrQuatf * q )
 	return out;
 }
 
-// Convert a standard projection matrix into a TexCoordsFromTanAngles matrix for
-// the primary time warp surface.
+/// Convert a standard projection matrix into a TexCoordsFromTanAngles matrix for
+/// the primary time warp surface.
 static inline ovrMatrix4f ovrMatrix4f_TanAngleMatrixFromProjection( const ovrMatrix4f * projection )
 {
 	/*
@@ -307,22 +329,22 @@ static inline ovrMatrix4f ovrMatrix4f_TanAngleMatrixFromProjection( const ovrMat
 	return tanAngleMatrix;
 }
 
-// If a simple quad defined as a -1 to 1 XY unit square is transformed to
-// the camera view with the given modelView matrix, it can alternately be
-// drawn as a time warp overlay image to take advantage of the full window
-// resolution, which is usually higher than the eye buffer textures, and
-// avoids resampling both into the eye buffer, and again to the screen.
-// This is used for high quality movie screens and user interface planes.
-//
-// Note that this is NOT an MVP matrix -- the "projection" is handled
-// by the distortion process.
-//
-// This utility functions converts a model-view matrix that would normally
-// draw a -1 to 1 unit square to the view into a TexCoordsFromTanAngles matrix 
-// for an overlay surface.
-//
-// The resulting z value should be straight ahead distance to the plane.
-// The x and y values will be pre-multiplied by z for projective texturing.
+/// If a simple quad defined as a -1 to 1 XY unit square is transformed to
+/// the camera view with the given modelView matrix, it can alternately be
+/// drawn as a time warp overlay image to take advantage of the full window
+/// resolution, which is usually higher than the eye buffer textures, and
+/// avoids resampling both into the eye buffer, and again to the screen.
+/// This is used for high quality movie screens and user interface planes.
+///
+/// Note that this is NOT an MVP matrix -- the "projection" is handled
+/// by the distortion process.
+///
+/// This utility functions converts a model-view matrix that would normally
+/// draw a -1 to 1 unit square to the view into a TexCoordsFromTanAngles matrix
+/// for an overlay surface.
+///
+/// The resulting z value should be straight ahead distance to the plane.
+/// The x and y values will be pre-multiplied by z for projective texturing.
 static inline ovrMatrix4f ovrMatrix4f_TanAngleMatrixFromUnitSquare( const ovrMatrix4f * modelView )
 {
 	/*
@@ -381,8 +403,8 @@ static inline ovrMatrix4f ovrMatrix4f_TanAngleMatrixFromUnitSquare( const ovrMat
 	return m;
 }
 
-// Convert a standard view matrix into a TexCoordsFromTanAngles matrix for
-// the looking into a cube map.
+/// Convert a standard view matrix into a TexCoordsFromTanAngles matrix for
+/// the looking into a cube map.
 static inline ovrMatrix4f ovrMatrix4f_TanAngleMatrixForCubeMap( const ovrMatrix4f * viewMatrix )
 {
     ovrMatrix4f m = *viewMatrix;
@@ -394,10 +416,10 @@ static inline ovrMatrix4f ovrMatrix4f_TanAngleMatrixForCubeMap( const ovrMatrix4
     return ovrMatrix4f_Inverse( &m );
 }
 
-// Utility function to calculate external velocity for smooth stick yaw turning.
-// To reduce judder in FPS style experiences when the application framerate is
-// lower than the vsync rate, the rotation from a joypad can be applied to the
-// view space distorted eye vectors before applying the time warp.
+/// Utility function to calculate external velocity for smooth stick yaw turning.
+/// To reduce judder in FPS style experiences when the application framerate is
+/// lower than the vsync rate, the rotation from a joypad can be applied to the
+/// view space distorted eye vectors before applying the time warp.
 static inline ovrMatrix4f ovrMatrix4f_CalculateExternalVelocity( const ovrMatrix4f * viewMatrix, const float yawRadiansPerSecond )
 {
 	const float angle = yawRadiansPerSecond * ( -1.0f / 60.0f );
@@ -413,11 +435,25 @@ static inline ovrMatrix4f ovrMatrix4f_CalculateExternalVelocity( const ovrMatrix
 	return ovrMatrix4f_CreateFromQuaternion( &quat );
 }
 
+/// Utility function to rotate a point about a pivot
+static inline ovrVector3f ovrVector3f_RotateAboutPivot( const ovrQuatf * rotation, const ovrVector3f * pivot, const ovrVector3f * point )
+{
+	const ovrMatrix4f t0 = ovrMatrix4f_CreateTranslation( pivot->x, pivot->y, pivot->z );
+	const ovrMatrix4f r = ovrMatrix4f_CreateFromQuaternion( rotation );
+	const ovrMatrix4f t1 = ovrMatrix4f_CreateTranslation( -pivot->x, -pivot->y, -pivot->z );
+	const ovrMatrix4f c0 = ovrMatrix4f_Multiply( &t0, &r );
+	const ovrMatrix4f c1 = ovrMatrix4f_Multiply( &c0, &t1 );
+	const ovrVector4f v = { point->x, point->y, point->z, 1.0f };
+	const ovrVector4f v2 = ovrVector4f_MultiplyMatrix4f( &c1, &v );
+	const ovrVector3f v3 = { v2.x, v2.y, v2.z };
+	return v3;
+}
+
 //-----------------------------------------------------------------
 // Default initialization helper functions.
 //-----------------------------------------------------------------
 
-// Utility function to default initialize the ovrInitParms.
+/// Utility function to default initialize the ovrInitParms.
 static inline ovrInitParms vrapi_DefaultInitParms( const ovrJava * java )
 {
 	ovrInitParms parms;
@@ -434,7 +470,7 @@ static inline ovrInitParms vrapi_DefaultInitParms( const ovrJava * java )
 	return parms;
 }
 
-// Utility function to default initialize the ovrModeParms.
+/// Utility function to default initialize the ovrModeParms.
 static inline ovrModeParms vrapi_DefaultModeParms( const ovrJava * java )
 {
 	ovrModeParms parms;
@@ -448,7 +484,8 @@ static inline ovrModeParms vrapi_DefaultModeParms( const ovrJava * java )
 	return parms;
 }
 
-// Utility function to default initialize the ovrPerformanceParms.
+
+/// Utility function to default initialize the ovrPerformanceParms.
 static inline ovrPerformanceParms vrapi_DefaultPerformanceParms()
 {
 	ovrPerformanceParms parms;
@@ -461,18 +498,20 @@ static inline ovrPerformanceParms vrapi_DefaultPerformanceParms()
 
 typedef enum
 {
-	VRAPI_FRAME_INIT_DEFAULT,
-	VRAPI_FRAME_INIT_BLACK,
-	VRAPI_FRAME_INIT_BLACK_FLUSH,
-	VRAPI_FRAME_INIT_BLACK_FINAL,
-	VRAPI_FRAME_INIT_LOADING_ICON,
-	VRAPI_FRAME_INIT_LOADING_ICON_FLUSH,
-	VRAPI_FRAME_INIT_MESSAGE,
-	VRAPI_FRAME_INIT_MESSAGE_FLUSH
+	VRAPI_FRAME_INIT_DEFAULT			= 0,
+	VRAPI_FRAME_INIT_BLACK				= 1,
+	VRAPI_FRAME_INIT_BLACK_FLUSH		= 2,
+	VRAPI_FRAME_INIT_BLACK_FINAL		= 3,
+	VRAPI_FRAME_INIT_LOADING_ICON		= 4,
+	VRAPI_FRAME_INIT_LOADING_ICON_FLUSH = 5,
+
+	// enum 6 used to be VRAPI_FRAME_INIT_MESSAGE
+
+	// enum 7 used to be VRAPI_FRAME_INIT_MESSAGE_FLUSH
 } ovrFrameInit;
 
-// Utility function to default initialize the ovrFrameParms.
-static inline ovrFrameParms vrapi_DefaultFrameParms( const ovrJava * java, const ovrFrameInit init, const double currentTime, 
+/// Utility function to default initialize the ovrFrameParms.
+static inline ovrFrameParms vrapi_DefaultFrameParms( const ovrJava * java, const ovrFrameInit init, const double currentTime,
 													 ovrTextureSwapChain * textureSwapChain )
 {
 	const ovrMatrix4f projectionMatrix = ovrMatrix4f_CreateProjectionFov( 90.0f, 90.0f, 0.0f, 0.0f, 0.1f, 0.0f );
@@ -495,7 +534,7 @@ static inline ovrFrameParms vrapi_DefaultFrameParms( const ovrJava * java, const
 		}
 	}
 	parms.LayerCount = 1;
-	parms.MinimumVsyncs = 1;
+	parms.SwapInterval = 1;
 	parms.ExtraLatencyMode = VRAPI_EXTRA_LATENCY_MODE_OFF;
 	parms.ExternalVelocity.M[0][0] = 1.0f;
 	parms.ExternalVelocity.M[1][1] = 1.0f;
@@ -523,9 +562,11 @@ static inline ovrFrameParms vrapi_DefaultFrameParms( const ovrJava * java, const
 		case VRAPI_FRAME_INIT_BLACK_FINAL:
 		{
 			parms.Flags = VRAPI_FRAME_FLAG_INHIBIT_SRGB_FRAMEBUFFER;
+			// NOTE: When requesting a solid black frame, set ColorScale to 0.0f
+			parms.Layers[0].ColorScale = 0.0f;
 			for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )
 			{
-				parms.Layers[0].Textures[eye].ColorTextureSwapChain = (ovrTextureSwapChain *)VRAPI_DEFAULT_TEXTURE_SWAPCHAIN_BLACK;
+				parms.Layers[0].Textures[eye].ColorTextureSwapChain = (ovrTextureSwapChain *)VRAPI_DEFAULT_TEXTURE_SWAPCHAIN;
 			}
 			break;
 		}
@@ -534,33 +575,21 @@ static inline ovrFrameParms vrapi_DefaultFrameParms( const ovrJava * java, const
 		{
 			parms.LayerCount = 2;
 			parms.Flags = VRAPI_FRAME_FLAG_INHIBIT_SRGB_FRAMEBUFFER;
+			// NOTE: When requesting a solid black frame, set ColorScale to 0.0f
+			parms.Layers[0].ColorScale = 0.0f;
 			parms.Layers[1].Flags = VRAPI_FRAME_LAYER_FLAG_SPIN;
 			parms.Layers[1].SpinSpeed = 1.0f;		// rotation in radians per second
 			parms.Layers[1].SpinScale = 16.0f;		// icon size factor smaller than fullscreen
 			for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )
 			{
-				parms.Layers[0].Textures[eye].ColorTextureSwapChain = (ovrTextureSwapChain *)VRAPI_DEFAULT_TEXTURE_SWAPCHAIN_BLACK;
-				parms.Layers[1].Textures[eye].ColorTextureSwapChain = ( textureSwapChain != NULL ) ? textureSwapChain : (ovrTextureSwapChain *)VRAPI_DEFAULT_TEXTURE_SWAPCHAIN_LOADING_ICON;
-			}
-			break;
-		}
-		case VRAPI_FRAME_INIT_MESSAGE:
-		case VRAPI_FRAME_INIT_MESSAGE_FLUSH:
-		{
-			parms.LayerCount = 2;
-			parms.Flags = VRAPI_FRAME_FLAG_INHIBIT_SRGB_FRAMEBUFFER;
-			parms.Layers[1].SpinSpeed = 0.0f;		// rotation in radians per second
-			parms.Layers[1].SpinScale = 2.0f;		// message size factor smaller than fullscreen
-			for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )
-			{
-				parms.Layers[0].Textures[eye].ColorTextureSwapChain = (ovrTextureSwapChain *)VRAPI_DEFAULT_TEXTURE_SWAPCHAIN_BLACK;
+				parms.Layers[0].Textures[eye].ColorTextureSwapChain = (ovrTextureSwapChain *)VRAPI_DEFAULT_TEXTURE_SWAPCHAIN;
 				parms.Layers[1].Textures[eye].ColorTextureSwapChain = ( textureSwapChain != NULL ) ? textureSwapChain : (ovrTextureSwapChain *)VRAPI_DEFAULT_TEXTURE_SWAPCHAIN_LOADING_ICON;
 			}
 			break;
 		}
 	}
 
-	if ( init == VRAPI_FRAME_INIT_BLACK_FLUSH || init == VRAPI_FRAME_INIT_LOADING_ICON_FLUSH || init == VRAPI_FRAME_INIT_MESSAGE_FLUSH )
+	if ( init == VRAPI_FRAME_INIT_BLACK_FLUSH || init == VRAPI_FRAME_INIT_LOADING_ICON_FLUSH )
 	{
 		parms.Flags |= VRAPI_FRAME_FLAG_FLUSH;
 	}
@@ -572,79 +601,249 @@ static inline ovrFrameParms vrapi_DefaultFrameParms( const ovrJava * java, const
 	return parms;
 }
 
-
 //-----------------------------------------------------------------
-// Head Model
+// Layer Types - default initialization.
 //-----------------------------------------------------------------
 
-// Utility function to default initialize the ovrHeadModelParms.
-static inline ovrHeadModelParms vrapi_DefaultHeadModelParms()
+static inline ovrLayerProjection2 vrapi_DefaultLayerProjection2()
 {
-	ovrHeadModelParms parms;
-	memset( &parms, 0, sizeof( parms ) );
+	ovrLayerProjection2 layer = {};
 
-	parms.InterpupillaryDistance	= 0.0640f;	// average interpupillary distance
-	parms.EyeHeight					= 1.6750f;	// average eye height above the ground when standing
-	parms.HeadModelDepth			= 0.0805f;
-	parms.HeadModelHeight			= 0.0750f;
+	const ovrMatrix4f projectionMatrix			= ovrMatrix4f_CreateProjectionFov( 90.0f, 90.0f, 0.0f, 0.0f, 0.1f, 0.0f );
+	const ovrMatrix4f texCoordsFromTanAngles	= ovrMatrix4f_TanAngleMatrixFromProjection( &projectionMatrix );
 
-	return parms;
+	layer.Header.Type	= VRAPI_LAYER_TYPE_PROJECTION2;
+	layer.Header.Flags  = 0;
+	layer.Header.ColorScale.x	= 1.0f;
+	layer.Header.ColorScale.y	= 1.0f;
+	layer.Header.ColorScale.z	= 1.0f;
+	layer.Header.ColorScale.w	= 1.0f;
+	layer.Header.SrcBlend		= VRAPI_FRAME_LAYER_BLEND_ONE;
+	layer.Header.DstBlend		= VRAPI_FRAME_LAYER_BLEND_ZERO;
+	layer.Header.SurfaceTextureObject = NULL;
+
+	layer.HeadPose.Pose.Orientation.w = 1.0f;
+
+	for ( int i = 0; i < VRAPI_FRAME_LAYER_EYE_MAX; i++ )
+	{
+		layer.Textures[i].TexCoordsFromTanAngles		= texCoordsFromTanAngles;
+		layer.Textures[i].TextureRect.x					= 0.0f;
+		layer.Textures[i].TextureRect.y					= 0.0f;
+		layer.Textures[i].TextureRect.width				= 1.0f;
+		layer.Textures[i].TextureRect.height			= 1.0f;
+	}
+
+	return layer;
 }
+
+static inline ovrLayerProjection2 vrapi_DefaultLayerBlackProjection2()
+{
+	ovrLayerProjection2 layer = {};
+
+	layer.Header.Type	= VRAPI_LAYER_TYPE_PROJECTION2;
+	layer.Header.Flags  = 0;
+	// NOTE: When requesting a solid black frame, set ColorScale to { 0.0f, 0.0f, 0.0f, 0.0f }
+	layer.Header.ColorScale.x	= 0.0f;
+	layer.Header.ColorScale.y	= 0.0f;
+	layer.Header.ColorScale.z	= 0.0f;
+	layer.Header.ColorScale.w	= 0.0f;
+	layer.Header.SrcBlend		= VRAPI_FRAME_LAYER_BLEND_ONE;
+	layer.Header.DstBlend		= VRAPI_FRAME_LAYER_BLEND_ZERO;
+	layer.Header.SurfaceTextureObject = NULL;
+
+	layer.HeadPose.Pose.Orientation.w = 1.0f;
+
+	for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )
+	{
+		layer.Textures[eye].SwapChainIndex = 0;
+		layer.Textures[eye].ColorSwapChain = (ovrTextureSwapChain *)VRAPI_DEFAULT_TEXTURE_SWAPCHAIN;
+	}
+
+	return layer;
+}
+
+static inline ovrLayerProjection2 vrapi_DefaultLayerSolidColorProjection2( const ovrVector4f * colorScale )
+{
+	ovrLayerProjection2 layer = {};
+
+	layer.Header.Type	= VRAPI_LAYER_TYPE_PROJECTION2;
+	layer.Header.Flags  = 0;
+	layer.Header.ColorScale.x	= colorScale->x;
+	layer.Header.ColorScale.y	= colorScale->y;
+	layer.Header.ColorScale.z	= colorScale->z;
+	layer.Header.ColorScale.w	= colorScale->w;
+	layer.Header.SrcBlend		= VRAPI_FRAME_LAYER_BLEND_ONE;
+	layer.Header.DstBlend		= VRAPI_FRAME_LAYER_BLEND_ZERO;
+	layer.Header.SurfaceTextureObject = NULL;
+
+	layer.HeadPose.Pose.Orientation.w = 1.0f;
+
+	for ( int eye = 0; eye < VRAPI_FRAME_LAYER_EYE_MAX; eye++ )
+	{
+		layer.Textures[eye].SwapChainIndex = 0;
+		layer.Textures[eye].ColorSwapChain = (ovrTextureSwapChain *)VRAPI_DEFAULT_TEXTURE_SWAPCHAIN;
+	}
+
+	return layer;
+}
+
+static inline ovrLayerCylinder2 vrapi_DefaultLayerCylinder2()
+{
+	ovrLayerCylinder2 layer = {};
+
+	const ovrMatrix4f projectionMatrix			= ovrMatrix4f_CreateProjectionFov( 90.0f, 90.0f, 0.0f, 0.0f, 0.1f, 0.0f );
+	const ovrMatrix4f texCoordsFromTanAngles	= ovrMatrix4f_TanAngleMatrixFromProjection( &projectionMatrix );
+
+	layer.Header.Type	= VRAPI_LAYER_TYPE_CYLINDER2;
+	layer.Header.Flags  = 0;
+	layer.Header.ColorScale.x	= 1.0f;
+	layer.Header.ColorScale.y	= 1.0f;
+	layer.Header.ColorScale.z	= 1.0f;
+	layer.Header.ColorScale.w	= 1.0f;
+	layer.Header.SrcBlend		= VRAPI_FRAME_LAYER_BLEND_ONE;
+	layer.Header.DstBlend		= VRAPI_FRAME_LAYER_BLEND_ZERO;
+	layer.Header.SurfaceTextureObject = NULL;
+
+	layer.HeadPose.Pose.Orientation.w = 1.0f;
+
+	for ( int i = 0; i < VRAPI_FRAME_LAYER_EYE_MAX; i++ )
+	{
+		layer.Textures[i].TexCoordsFromTanAngles	= texCoordsFromTanAngles;
+		layer.Textures[i].TextureRect.x			= 0.0f;
+		layer.Textures[i].TextureRect.y			= 0.0f;
+		layer.Textures[i].TextureRect.width		= 1.0f;
+		layer.Textures[i].TextureRect.height	= 1.0f;
+		layer.Textures[i].TextureMatrix.M[0][0] = 1.0f;
+		layer.Textures[i].TextureMatrix.M[1][1] = 1.0f;
+		layer.Textures[i].TextureMatrix.M[2][2] = 1.0f;
+		layer.Textures[i].TextureMatrix.M[3][3] = 1.0f;
+	}
+
+	return layer;
+}
+
+static inline ovrLayerCube2 vrapi_DefaultLayerCube2()
+{
+	ovrLayerCube2 layer = {};
+
+	const ovrMatrix4f projectionMatrix			= ovrMatrix4f_CreateProjectionFov( 90.0f, 90.0f, 0.0f, 0.0f, 0.1f, 0.0f );
+	const ovrMatrix4f texCoordsFromTanAngles	= ovrMatrix4f_TanAngleMatrixFromProjection( &projectionMatrix );
+
+	layer.Header.Type	= VRAPI_LAYER_TYPE_CUBE2;
+	layer.Header.Flags  = 0;
+	layer.Header.ColorScale.x	= 1.0f;
+	layer.Header.ColorScale.y	= 1.0f;
+	layer.Header.ColorScale.z	= 1.0f;
+	layer.Header.ColorScale.w	= 1.0f;
+	layer.Header.SrcBlend		= VRAPI_FRAME_LAYER_BLEND_ONE;
+	layer.Header.DstBlend		= VRAPI_FRAME_LAYER_BLEND_ZERO;
+	layer.Header.SurfaceTextureObject = NULL;
+
+	layer.HeadPose.Pose.Orientation.w = 1.0f;
+	layer.TexCoordsFromTanAngles = texCoordsFromTanAngles;
+
+	layer.Offset.x = 0.0f;
+	layer.Offset.y = 0.0f;
+	layer.Offset.z = 0.0f;
+
+	return layer;
+}
+
+static inline ovrLayerEquirect2 vrapi_DefaultLayerEquirect2()
+{
+	ovrLayerEquirect2 layer = {};
+
+	const ovrMatrix4f projectionMatrix			= ovrMatrix4f_CreateProjectionFov( 90.0f, 90.0f, 0.0f, 0.0f, 0.1f, 0.0f );
+	const ovrMatrix4f texCoordsFromTanAngles	= ovrMatrix4f_TanAngleMatrixFromProjection( &projectionMatrix );
+
+	layer.Header.Type	= VRAPI_LAYER_TYPE_EQUIRECT2;
+	layer.Header.Flags  = 0;
+	layer.Header.ColorScale.x	= 1.0f;
+	layer.Header.ColorScale.y	= 1.0f;
+	layer.Header.ColorScale.z	= 1.0f;
+	layer.Header.ColorScale.w	= 1.0f;
+	layer.Header.SrcBlend		= VRAPI_FRAME_LAYER_BLEND_ONE;
+	layer.Header.DstBlend		= VRAPI_FRAME_LAYER_BLEND_ZERO;
+	layer.Header.SurfaceTextureObject = NULL;
+
+	layer.HeadPose.Pose.Orientation.w = 1.0f;
+	layer.TexCoordsFromTanAngles = texCoordsFromTanAngles;
+
+	for ( int i = 0; i < VRAPI_FRAME_LAYER_EYE_MAX; i++ )
+	{
+		layer.Textures[i].TextureRect.x			= 0.0f;
+		layer.Textures[i].TextureRect.y			= 0.0f;
+		layer.Textures[i].TextureRect.width		= 1.0f;
+		layer.Textures[i].TextureRect.height	= 1.0f;
+		layer.Textures[i].TextureMatrix.M[0][0] = 1.0f;
+		layer.Textures[i].TextureMatrix.M[1][1] = 1.0f;
+		layer.Textures[i].TextureMatrix.M[2][2] = 1.0f;
+		layer.Textures[i].TextureMatrix.M[3][3] = 1.0f;
+	}
+
+	return layer;
+}
+
+static inline ovrLayerLoadingIcon2 vrapi_DefaultLayerLoadingIcon2()
+{
+	ovrLayerLoadingIcon2 layer = {};
+
+	layer.Header.Type	= VRAPI_LAYER_TYPE_LOADING_ICON2;
+	layer.Header.Flags  = 0;
+	layer.Header.ColorScale.x	= 1.0f;
+	layer.Header.ColorScale.y	= 1.0f;
+	layer.Header.ColorScale.z	= 1.0f;
+	layer.Header.ColorScale.w	= 1.0f;
+	layer.Header.SrcBlend		= VRAPI_FRAME_LAYER_BLEND_SRC_ALPHA;
+	layer.Header.DstBlend		= VRAPI_FRAME_LAYER_BLEND_ONE_MINUS_SRC_ALPHA;
+	layer.Header.SurfaceTextureObject = NULL;
+
+	layer.SpinSpeed			= 1.0f;
+	layer.SpinScale			= 16.0f;
+
+	layer.ColorSwapChain	= (ovrTextureSwapChain *)VRAPI_DEFAULT_TEXTURE_SWAPCHAIN_LOADING_ICON;
+	layer.SwapChainIndex	= 0;
+
+	return layer;
+}
+
 
 //-----------------------------------------------------------------
 // Eye view matrix helper functions.
 //-----------------------------------------------------------------
 
-// Apply the head-on-a-stick model if head tracking is not available.
-static inline ovrTracking vrapi_ApplyHeadModel( const ovrHeadModelParms * headModelParms, const ovrTracking * tracking )
+static inline float vrapi_GetInterpupillaryDistance( const ovrTracking2 * tracking2 )
 {
-	if ( ( tracking->Status & VRAPI_TRACKING_STATUS_POSITION_TRACKED ) == 0 )
-	{
-		// Calculate the head position based on the head orientation using a head-on-a-stick model.
-		const ovrHeadModelParms * p = headModelParms;
-		const ovrMatrix4f m = ovrMatrix4f_CreateFromQuaternion( &tracking->HeadPose.Pose.Orientation );
-		ovrTracking newTracking = *tracking;
-		newTracking.HeadPose.Pose.Position.x = m.M[0][1] * p->HeadModelHeight - m.M[0][2] * p->HeadModelDepth;
-		newTracking.HeadPose.Pose.Position.y = m.M[1][1] * p->HeadModelHeight - m.M[1][2] * p->HeadModelDepth - p->HeadModelHeight;
-		newTracking.HeadPose.Pose.Position.z = m.M[2][1] * p->HeadModelHeight - m.M[2][2] * p->HeadModelDepth;
-		return newTracking;
-	}
-	return *tracking;
+	const ovrMatrix4f leftView = tracking2->Eye[0].ViewMatrix;
+	const ovrMatrix4f rightView = tracking2->Eye[1].ViewMatrix;
+	const ovrVector3f delta = { rightView.M[0][3] - leftView.M[0][3], rightView.M[1][3] - leftView.M[1][3], rightView.M[2][3] - leftView.M[2][3] };
+	return sqrtf( delta.x * delta.x + delta.y * delta.y + delta.z * delta.z );
 }
 
-// Utility function to get the center eye transform.
-// Pass in NULL for 'input' if there is no additional controller input.
-static inline ovrMatrix4f vrapi_GetCenterEyeTransform(	const ovrHeadModelParms * headModelParms,
-														const ovrTracking * tracking,
-														const ovrMatrix4f * input )
+static inline float vrapi_GetEyeHeight( const ovrPosef * eyeLevelTrackingPose, const ovrPosef * currentTrackingPose )
 {
-	VRAPI_UNUSED( headModelParms );
-
-	// Controller input is expected to be applied relative to the head in neutral position, which means
-	// ovrTracking::HeadPose.Pose.Translation should be relative to the center of the head in neutral position.
-	const ovrMatrix4f centerEyeRotation = ovrMatrix4f_CreateFromQuaternion( &tracking->HeadPose.Pose.Orientation );
-	const ovrVector3f centerEyeOffset = tracking->HeadPose.Pose.Position;
-	const ovrMatrix4f centerEyeTranslation = ovrMatrix4f_CreateTranslation( centerEyeOffset.x, centerEyeOffset.y, centerEyeOffset.z );
-	const ovrMatrix4f centerEyeTransform = ovrMatrix4f_Multiply( &centerEyeTranslation, &centerEyeRotation );
-	return ( input == NULL ) ? centerEyeTransform : ovrMatrix4f_Multiply( input, &centerEyeTransform );
+	return eyeLevelTrackingPose->Position.y - currentTrackingPose->Position.y;
 }
 
-// Utility function to get the center eye view matrix.
-// Pass in NULL for 'input' if there is no additional controller input.
-static inline ovrMatrix4f vrapi_GetCenterEyeViewMatrix(	const ovrHeadModelParms * headModelParms,
-														const ovrTracking * tracking,
-														const ovrMatrix4f * input )
+static inline ovrMatrix4f vrapi_GetTransformFromPose( const ovrPosef * pose )
 {
-	const ovrMatrix4f centerEyeTransform = vrapi_GetCenterEyeTransform( headModelParms, tracking, input );
-	return ovrMatrix4f_Inverse( &centerEyeTransform );
+	const ovrMatrix4f rotation = ovrMatrix4f_CreateFromQuaternion( &pose->Orientation );
+	const ovrMatrix4f translation = ovrMatrix4f_CreateTranslation( pose->Position.x, pose->Position.y, pose->Position.z );
+	return ovrMatrix4f_Multiply( &translation, &rotation );
 }
 
-// Utility function to get the eye view matrix based on the center eye view matrix and the IPD.
-static inline ovrMatrix4f vrapi_GetEyeViewMatrix(	const ovrHeadModelParms * headModelParms,
-													const ovrMatrix4f * centerEyeViewMatrix,
+static inline ovrMatrix4f vrapi_GetViewMatrixFromPose( const ovrPosef * pose )
+{
+	const ovrMatrix4f transform = vrapi_GetTransformFromPose( pose );
+	return ovrMatrix4f_Inverse( &transform );
+}
+
+/// Utility function to get the eye view matrix based on the center eye view matrix and the IPD.
+static inline ovrMatrix4f vrapi_GetEyeViewMatrix(	const ovrMatrix4f * centerEyeViewMatrix,
+													const float interpupillaryDistance,
 													const int eye )
 {
-	const float eyeOffset = ( eye ? -0.5f : 0.5f ) * headModelParms->InterpupillaryDistance;
+	const float eyeOffset = ( eye ? -0.5f : 0.5f ) * interpupillaryDistance;
 	const ovrMatrix4f eyeOffsetMatrix = ovrMatrix4f_CreateTranslation( eyeOffset, 0.0f, 0.0f );
 	return ovrMatrix4f_Multiply( &eyeOffsetMatrix, centerEyeViewMatrix );
 }

@@ -50,17 +50,17 @@ typedef BitFlagsT< eTextureFlags > TextureFlags_t;
 enum eTextureFormat
 {
 	Texture_None			= 0x00000,
-    Texture_R               = 0x00100,
-    Texture_RGB				= 0x00200,
-    Texture_RGBA            = 0x00300,
-    Texture_DXT1            = 0x01100,
-    Texture_DXT3            = 0x01200,
-    Texture_DXT5            = 0x01300,
-    Texture_PVR4bRGB        = 0x01400,
-    Texture_PVR4bRGBA       = 0x01500,
-    Texture_ATC_RGB         = 0x01600,
-    Texture_ATC_RGBA        = 0x01700,
-    Texture_ETC1			= 0x01800,
+	Texture_R               = 0x00100,
+	Texture_RGB				= 0x00200,
+	Texture_RGBA            = 0x00300,
+	Texture_DXT1            = 0x01100,
+	Texture_DXT3            = 0x01200,
+	Texture_DXT5            = 0x01300,
+	Texture_PVR4bRGB        = 0x01400,
+	Texture_PVR4bRGBA       = 0x01500,
+	Texture_ATC_RGB         = 0x01600,
+	Texture_ATC_RGBA        = 0x01700,
+	Texture_ETC1			= 0x01800,
 	Texture_ETC2_RGB		= 0x01900,
 	Texture_ETC2_RGBA		= 0x01A00,
 
@@ -100,12 +100,12 @@ enum eTextureFormat
 	Texture_ASTC_End		= 0x03700,
 
 
-    Texture_Depth           = 0x08000,
+	Texture_Depth           = 0x08000,
 
 	Texture_TypeMask        = 0x0ff00,
-    Texture_SamplesMask     = 0x000ff,
-    Texture_RenderTarget    = 0x10000,
-    Texture_GenMipmaps      = 0x20000
+	Texture_SamplesMask     = 0x000ff,
+	Texture_RenderTarget    = 0x10000,
+	Texture_GenMipmaps      = 0x20000
 };
 
 // texture id/target pair
@@ -146,12 +146,15 @@ public:
 bool TextureFormatToGlFormat( const eTextureFormat format, const bool useSrgbFormat, GLenum & glFormat, GLenum & glInternalFormat );
 bool GlFormatToTextureFormat( eTextureFormat & format, const GLenum glFormat, const GLenum glInternalFormat );
 
+// Calculate the full mip chain levels based on width and height.
+int	 ComputeFullMipChainNumLevels( const int width, const int height );
+
 // Allocates a GPU texture and uploads the raw data.
 GlTexture	LoadRGBATextureFromMemory( const uint8_t * texture, const int width, const int height, const bool useSrgbFormat );
 GlTexture	LoadRGBACubeTextureFromMemory( const uint8_t * texture, const int dim, const bool useSrgbFormat );
 GlTexture	LoadRGBTextureFromMemory( const uint8_t * texture, const int width, const int height, const bool useSrgbFormat );
 GlTexture	LoadRTextureFromMemory( const uint8_t * texture, const int width, const int height );
-GlTexture	LoadASTCTextureFromMemory( const uint8_t * buffer, const size_t bufferSize, const int numPlanes );
+GlTexture	LoadASTCTextureFromMemory( const uint8_t * buffer, const size_t bufferSize, const int numPlanes, const bool useSrgbFormat );
 
 void		MakeTextureClamped( GlTexture texid );
 void		MakeTextureLodClamped( GlTexture texId, int maxLod );
@@ -202,7 +205,7 @@ GlTexture	LoadTextureFromApplicationPackage( const char * nameInZip,
 //
 // You can also specify an explicit host:
 //
-// localhost will oad from the application's own apk:
+// localhost will load from the application's own apk:
 //     apk://localhost/res/raw/texture_name.tga
 //
 // Other apk's (assuming they were added to the apk scheme in ovrFileSys::Init() can be specified
@@ -223,12 +226,6 @@ unsigned char * LoadPVRBuffer( const char * fileName, int & width, int & height 
 // Can be safely called on a 0 texture without checking.
 void		FreeTexture( GlTexture texId );
 void		DeleteTexture( GlTexture & texture );
-
-// These are just wrappers over the vrapi swap chain calls, and should probably be removed.
-ovrTextureSwapChain * CreateTextureSwapChain( ovrTextureType type, ovrTextureFormat format, int width, int height, int levels, bool buffered );
-void DestroyTextureSwapChain( ovrTextureSwapChain * chain );
-int GetTextureSwapChainLength( ovrTextureSwapChain * chain );
-unsigned int GetTextureSwapChainHandle( ovrTextureSwapChain * chain, int index );
 
 }	// namespace OVR
 

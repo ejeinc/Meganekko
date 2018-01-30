@@ -14,9 +14,6 @@ LOCAL_CFLAGS	+= -Wno-multichar	# used in internal Android headers:  DISPLAY_EVEN
 LOCAL_CPPFLAGS += -Wno-invalid-offsetof
 LOCAL_CPPFLAGS += -std=c++11
 
-# disable deprecation errors, but keep the warnings
-LOCAL_CFLAGS += -Wno-error=deprecated-declarations
-
 ifeq ($(OVR_DEBUG),1)
   LOCAL_CFLAGS += -DOVR_BUILD_DEBUG=1 -O0 -g
 else

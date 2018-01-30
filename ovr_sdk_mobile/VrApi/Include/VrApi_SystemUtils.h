@@ -4,6 +4,7 @@ Filename    :   VrApi_SystemUtils.h
 Content     :   Interface for SystemUtils functionality.
 Created     :   August 15, 2014
 Authors     :   Gloria Kennickell, Jonathan E. Wright
+Language    :   C99
 
 Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
@@ -20,28 +21,26 @@ extern "C" {
 
 typedef enum
 {
-	VRAPI_SYS_UI_GLOBAL_MENU,					// Display the Universal Menu.
-	VRAPI_SYS_UI_CONFIRM_QUIT_MENU,				// Display the 'Confirm Quit' Menu.
+	// enum  0 used to be VRAPI_SYS_UI_GLOBAL_MENU.
 
-	VRAPI_SYS_UI_KEYBOARD_MENU,					// Display a Keyboard Menu for editing a single string.
-	VRAPI_SYS_UI_FILE_DIALOG_MENU,				// Display a Folder Browser Menu for selecting the path to a file or folder.
+	VRAPI_SYS_UI_CONFIRM_QUIT_MENU		= 1,	// Display the 'Confirm Quit' Menu.
+
+	VRAPI_SYS_UI_KEYBOARD_MENU			= 2,	// Display a Keyboard Menu for editing a single string.
+	VRAPI_SYS_UI_FILE_DIALOG_MENU		= 3,	// Display a Folder Browser Menu for selecting the path to a file or folder.
 
 } ovrSystemUIType;
 
-// Display a specific System UI.
+/// Display a specific System UI.
 OVR_VRAPI_EXPORT bool vrapi_ShowSystemUI( const ovrJava * java, const ovrSystemUIType type );
 
-// ----DEPRECATED
-// This function is DEPRECATED. Please do not write any new code which
-// relies on it's use.
-// Display a specific System UI and pass extra JSON text data.
+/// \deprecated Display a specific System UI and pass extra JSON text data.
 OVR_VRAPI_EXPORT bool vrapi_ShowSystemUIWithExtra( const ovrJava * java, const ovrSystemUIType type, const char * extraJsonText );
 
-// Launch the Oculus Home application.
-// NOTE: This exits the current application by executing a finishAffinity.
+/// Launch the Oculus Home application.
+/// NOTE: This exits the current application by executing a finishAffinity.
 OVR_VRAPI_EXPORT void vrapi_ReturnToHome( const ovrJava * java );
 
-// Display a Fatal Error Message using the System UI.
+/// Display a Fatal Error Message using the System UI.
 OVR_VRAPI_EXPORT void vrapi_ShowFatalError( const ovrJava * java, const char * title, const char * message,
 		const char * fileName, const unsigned int lineNumber );
 

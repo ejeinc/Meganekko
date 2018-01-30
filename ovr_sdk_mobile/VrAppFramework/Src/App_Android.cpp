@@ -18,7 +18,6 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 #include "VrApi.h"
 #include "VrApi_Helpers.h"
-#include "VrApi_LocalPrefs.h"
 
 #include <android/native_window_jni.h>	// for native window JNI
 #include "OVR_Input.h"
@@ -47,7 +46,8 @@ void Java_com_oculus_vrappframework_VrApp_nativeOnCreate( JNIEnv *jni, jclass cl
 	int32_t initResult = vrapi_Initialize( &initParms );
 	if ( initResult != VRAPI_INITIALIZE_SUCCESS )
 	{
-		vrapi_Shutdown();
+		LOG( "vrapi_Initialize failed" );
+		// If intialization failed, vrapi_* function calls will not be available.
 		exit( 0 );
 	}
 }

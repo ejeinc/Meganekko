@@ -17,7 +17,7 @@
 #define LOOK_DETECTION_H
 
 #include "GlGeometry.h"
-#include "Kernel/OVR_Geometry.h"
+#include "OVR_Geometry.h"
 #include "Kernel/OVR_Math.h"
 
 using namespace OVR;

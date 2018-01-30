@@ -13,7 +13,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 #include "Kernel/OVR_Types.h"
 #include "Kernel/OVR_Math.h"
-#include "VrApi_Types.h"
+#include "VrApi.h"
 
 namespace OVR
 {
@@ -89,7 +89,6 @@ enum KeyEventType
 {
 	KEY_EVENT_NONE,
 	KEY_EVENT_SHORT_PRESS,
-	KEY_EVENT_DOUBLE_TAP,
 	KEY_EVENT_DOWN,
 	KEY_EVENT_UP,
 	KEY_EVENT_MAX
@@ -348,7 +347,7 @@ struct VrInput
 	{
 		ovrKeyCode		KeyCode;		// Android key code from <android/keycodes.h>
 		int				RepeatCount;	// > 0 if down event from a key that is held down.
-		KeyEventType	EventType;		// up, down, short-press, long-press, double-tap
+		KeyEventType	EventType;		// up, down, short-press, long-press
 	}	KeyEvents[MAX_KEY_EVENTS_PER_FRAME];
 
 
@@ -369,8 +368,7 @@ struct VrDeviceStatus
 		DeviceIsDocked( false ),
 		HeadsetIsMounted( false ),
 		WifiIsConnected( false ),
-		PowerLevelStateThrottled( false ),
-		PowerLevelStateMinimum( false ) 
+		PowerLevelStateThrottled( false )
 	{
 	}
 
@@ -379,7 +377,6 @@ struct VrDeviceStatus
 	bool				HeadsetIsMounted;							// true if headset is mounted
 	bool				WifiIsConnected;							// true if there is an active WiFi connection
 	bool				PowerLevelStateThrottled;					// true if in power save mode, 30 FPS etc.
-	bool				PowerLevelStateMinimum;						// true if not able to continue, must undock / shut off
 };
 
 // Passed to an application each frame.
@@ -392,8 +389,11 @@ public:
 			FrameNumber( 0 ),
 			FovX( 0.0f ),
 			FovY( 0.0f ),
+			// FIXME: ideally EyeHeight and IPD properties would default initialize to 0.0f, but there are a handful of
+			// menus which cache these values before a frame has had a chance to run.
+			EyeHeight( 1.6750f ),	// average eye height above the ground when standing
+			IPD( 0.0640f ),			// average interpupillary distance
 			ColorTextureSwapChain(),
-			DepthTextureSwapChain(),
 			TextureSwapChainIndex( 0 ),
 			EnteredVrMode( false ) {}
 
@@ -414,8 +414,7 @@ public:
 	// Head tracking.
 	// The time warp will transform from the tracking head pose to whatever
 	// the current pose is when displaying the latest eye buffers.
-	ovrTracking		BaseTracking;	// head pose without head model applied
-	ovrTracking		Tracking;		// head pose with head model applied
+	ovrTracking2	Tracking;		// head pose with head model applied
 
 	// Various different joypad button combinations are mapped to
 	// standard positions.
@@ -426,11 +425,12 @@ public:
 
 	float			FovX;
 	float			FovY;
+	float			EyeHeight;
+	float			IPD;
 
 	ovrMatrix4f		TexCoordsFromTanAngles;
 
 	ovrTextureSwapChain *	ColorTextureSwapChain[2];
-	ovrTextureSwapChain *	DepthTextureSwapChain[2];
 
 	// Index to the texture from the set that should be displayed.
 	int						TextureSwapChainIndex;

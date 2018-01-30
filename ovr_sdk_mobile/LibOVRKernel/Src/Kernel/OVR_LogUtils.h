@@ -25,8 +25,6 @@ void FilePathToTag( const char * filePath, char * strippedTag, size_t const stri
 #if defined( OVR_OS_WIN32 )		// allow this file to be included in PC projects
 
 // stub common functions for non-Android platforms
-// TODO: Review latest Desktop LibOVRKernel for new cross-platform variants of these
-// utilities.
 
 // Log with an explicit tag
 void LogWithTag( const int prio, const char * tag, const char * fmt, ... );
@@ -58,11 +56,19 @@ void LogWithFileTag( const int prio, const char * fileTag, const char * fmt, ...
 // Our standard logging (and far too much of our debugging) involves writing
 // to the system log for viewing with logcat.  Previously we defined separate
 // LOG() macros in each file to give them file-specific tags for filtering;
-// now we use this helper function to massage the __FILE__ macro into just a
-// file base -- jni/App.cpp becomes the tag "App".
+// now we use this helper function to use a LOG_TAG define (via cflags or
+// #define LOG_TAG in source file) when available. Fallback to using a massaged
+// __FILE__ macro turning the file base in to a tag -- jni/App.cpp becomes the
+// tag "App".
+#ifdef LOG_TAG
+#define LOG(...) ( (void)LogWithTag( ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__) )
+#define WARN(...) ( (void)LogWithTag( ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__) )
+#define FAIL(...) { (void)LogWithTag( ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__); abort(); }
+#else
 #define LOG( ... ) LogWithFileTag( ANDROID_LOG_INFO, __FILE__, __VA_ARGS__ )
 #define WARN( ... ) LogWithFileTag( ANDROID_LOG_WARN, __FILE__, __VA_ARGS__ )
 #define FAIL( ... ) {LogWithFileTag( ANDROID_LOG_ERROR, __FILE__, __VA_ARGS__ );abort();}
+#endif
 
 #define LOG_WITH_TAG( __tag__, ...) ( (void)LogWithTag( ANDROID_LOG_INFO, __tag__, __VA_ARGS__) )
 #define WARN_WITH_TAG( __tag__, ...) ( (void)LogWithTag( ANDROID_LOG_WARN, __tag__, __VA_ARGS__) )
@@ -95,8 +101,9 @@ void LogWithFileTag( const int prio, const char * fileTag, const char * fmt, ...
 #error "unknown platform"
 #endif	
 
-// For CPU performance testing ONLY!
-void SetThreadAffinityMask( int tid, int mask );
-int GetThreadAffinityMask( int tid );
+#define LOGD LOG
+#define LOGI LOG
+#define LOGW WARN
+#define LOGE WARN
 
 #endif // OVRLib_Log_h

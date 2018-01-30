@@ -76,18 +76,12 @@ jint ovr_DetachCurrentThread( JavaVM * vm )
 
 jobject ovr_NewStringUTF( JNIEnv * jni, char const * str )
 {
-	//if ( strstr( str, "com.oculus.home" ) != NULL || strstr( str, "globalMenu" ) != NULL ) {
-	//	LOG_WITH_TAG( "OvrJNI", "ovr_NewStringUTF: These are not the strings you're looking for: %s", str );
-	//}
 	return jni->NewStringUTF( str );
 }
 
 char const * ovr_GetStringUTFChars( JNIEnv * jni, jstring javaStr, jboolean * isCopy ) 
 {
 	char const * str = jni->GetStringUTFChars( javaStr, isCopy );
-	//if ( strstr( str, "com.oculus.home" ) != NULL || strstr( str, "globalMenu" ) != NULL ) {
-	//	LOG_WITH_TAG( "OvrJNI", "ovr_GetStringUTFChars: These are not the strings you're looking for: %s", str );
-	//}
 	return str;
 }
 

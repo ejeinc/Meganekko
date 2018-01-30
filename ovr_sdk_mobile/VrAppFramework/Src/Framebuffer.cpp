@@ -105,8 +105,8 @@ ovrFramebuffer::ovrFramebuffer( const ovrTextureFormat colorFormat, const ovrTex
 			if ( extensionsOpenGL.EXT_texture_border_clamp )
 			{
 				glBindTexture( GL_TEXTURE_2D_ARRAY, colorTexture );
-				glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-				glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+				glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER );
+				glTexParameteri( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER );
 				GLfloat borderColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 				glTexParameterfv( GL_TEXTURE_2D_ARRAY, GL_TEXTURE_BORDER_COLOR, borderColor );
 				glBindTexture( GL_TEXTURE_2D_ARRAY, 0 );
@@ -290,8 +290,8 @@ ovrFramebuffer::ovrFramebuffer( const ovrTextureFormat colorFormat, const ovrTex
 			if ( extensionsOpenGL.EXT_texture_border_clamp )
 			{
 				glBindTexture( GL_TEXTURE_2D, colorTexture );
-				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER );
+				glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER );
 				GLfloat borderColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 				glTexParameterfv( GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor );
 				glBindTexture( GL_TEXTURE_2D, 0 );

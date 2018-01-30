@@ -34,7 +34,6 @@ public:
 
 	// Texture swap chains passed to the time warp.
 	ovrTextureSwapChain *	GetColorTextureSwapChain() const { return ColorTextureSwapChain; }
-	ovrTextureSwapChain *	GetDepthTextureSwapChain() const { return DepthTextureSwapChain; }
 	int						GetTextureSwapChainIndex() const { return TextureSwapChainIndex; }
 
 private:

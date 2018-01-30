@@ -11,7 +11,6 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 
 #include "MessageQueue.h"
 
-#include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 

@@ -14,6 +14,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #if defined( OVR_OS_ANDROID )
 #include <jni.h>
 #include <android/native_window_jni.h>	// for native window JNI
+#include <android/input.h>				// for AMOTION_EVENT_ACTION_*
 #include <unistd.h>						// gettid(), etc
 #endif
 
@@ -31,7 +32,6 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "VrApi.h"
 #include "VrApi_Helpers.h"
 #include "VrApi_Input.h"
-#include "VrApi_LocalPrefs.h"
 #include "VrApi_SystemUtils.h"
 
 
@@ -46,7 +46,6 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "OVR_FileSys.h"
 #include "OVR_TextureManager.h"
 #include "OVR_Input.h"
-#include "DebugConsole.h"
 
 #include "embedded/dependency_error_de.h"
 #include "embedded/dependency_error_en.h"
@@ -92,24 +91,6 @@ static struct InitShutdown
 
 namespace OVR
 {
-//--- MV_INVALIDATE_WORKAROUND
-static const char * clearVertexShaderSrc =
-	"attribute vec4 Position;\n"
-	"uniform lowp vec4 UniformColor;\n"
-	"varying  lowp vec4 oColor;\n"
-	"void main()\n"
-	"{\n"
-	"   gl_Position = Position;\n"
-	"   oColor = UniformColor;\n"
-	"}\n";
-
-static const char * clearFragmentShaderSrc =
-	"varying lowp vec4	oColor;\n"
-	"void main()\n"
-	"{\n"
-	"	gl_FragColor = oColor;\n"
-	"}\n";
-//--- MV_INVALIDATE_WORKAROUND
 
 //=======================================================================================
 // Default handlers for VrAppInterface
@@ -203,8 +184,11 @@ AppLocal::AppLocal( JNIEnv & jni_, jobject activityObject_, VrAppInterface & int
 	, FramebufferIsSrgb( false )
 	, FramebufferIsProtected( false )
 	, UseMultiview( false )
+	, GraphicsObjectsInitialized( false )
 	, OvrMobile( NULL )
 	, EyeBuffers( NULL )
+	, CompletionFences( NULL )
+	, CompletionFenceIndex( 0 )
 	, VrActivityClass( NULL )
 	, finishActivityMethodId( NULL )
 	, IntentURI()
@@ -264,7 +248,8 @@ AppLocal::AppLocal( JNIEnv & jni_, jobject activityObject_, VrAppInterface & int
 	VrSettings.UseSrgbFramebuffer = false;
 	VrSettings.UseProtectedFramebuffer = false;
 	VrSettings.Use16BitFramebuffer = false;
-	VrSettings.MinimumVsyncs = 1;
+	VrSettings.SwapInterval = 1;
+	VrSettings.TrackingTransform = VRAPI_TRACKING_TRANSFORM_SYSTEM_CENTER_FLOOR_LEVEL;
 	VrSettings.RenderMode = RENDERMODE_STEREO;
 
 	// Default ovrModeParms
@@ -284,9 +269,6 @@ AppLocal::AppLocal( JNIEnv & jni_, jobject activityObject_, VrAppInterface & int
 	VrSettings.EyeBufferParms.multisamples = 4;
 	VrSettings.EyeBufferParms.colorFormat = COLOR_8888;
 	VrSettings.EyeBufferParms.depthFormat = DEPTH_24;
-
-	// Default ovrHeadModelParms
-	VrSettings.HeadModelParms = vrapi_DefaultHeadModelParms();
 
 #if defined( OVR_OS_WIN32 )
 	VrSettings.WindowParms.IconResourceId = 32517;	// TODO: Make a default appframework icon, currently defaults to IDI_WINLOGO
@@ -366,9 +348,7 @@ void AppLocal::SendIntent( const char * actionName, const char * toPackageName,
 			( uri != NULL ) ? uri : "<NULL>" );
 
 	// Push black images to the screen to eliminate any frames of lost head tracking.
-	ovrFrameParms blackFrameParms = vrapi_DefaultFrameParms( &Java, VRAPI_FRAME_INIT_BLACK_FINAL, vrapi_GetTimeInSeconds(), NULL );
-	blackFrameParms.FrameIndex = TheVrFrame.Get().FrameNumber;
-	vrapi_SubmitFrame( OvrMobile, &blackFrameParms );
+	DrawBlackFrame( VRAPI_FRAME_FLAG_FINAL );
 
 #if defined( OVR_OS_ANDROID )
 	JavaString actionString( Java.Env, actionName );
@@ -397,11 +377,8 @@ void AppLocal::SendLaunchIntent( const char * toPackageName, const char * comman
 			( action != NULL ) ? action : "<NULL>" );
 
 	// Push black images to the screen to eliminate any frames of lost head tracking.
-	ovrFrameParms blackFrameParms = vrapi_DefaultFrameParms( &Java, VRAPI_FRAME_INIT_BLACK_FINAL, vrapi_GetTimeInSeconds(), NULL );
-	blackFrameParms.FrameIndex = TheVrFrame.Get().FrameNumber;
-	vrapi_SubmitFrame( OvrMobile, &blackFrameParms );
+	DrawBlackFrame( VRAPI_FRAME_FLAG_FINAL );
 
-	OVR_ASSERT( command != NULL );
 #if defined( OVR_OS_ANDROID )
 	JavaString packageString( Java.Env, toPackageName );
 	JavaString commandString( Java.Env, command == NULL ? "" : command );
@@ -567,9 +544,7 @@ void AppLocal::ShowSystemUI( const ovrSystemUIType uiType )
 	if ( vrapi_ShowSystemUI( &Java, uiType ) )
 	{
 		// Push black images to the screen to eliminate any frames of lost head tracking.
-		ovrFrameParms blackFrameParms = vrapi_DefaultFrameParms( &Java, VRAPI_FRAME_INIT_BLACK_FINAL, vrapi_GetTimeInSeconds(), NULL );
-		blackFrameParms.FrameIndex = TheVrFrame.Get().FrameNumber;
-		vrapi_SubmitFrame( OvrMobile, &blackFrameParms );
+		DrawBlackFrame( VRAPI_FRAME_FLAG_FINAL );
 		return;
 	}
 	if ( ErrorTextureSwapChain != NULL )
@@ -587,9 +562,7 @@ void AppLocal::ShowSystemUI( const ovrSystemUIType uiType )
 void AppLocal::FinishActivity( const ovrAppFinishType type )
 {
 	// Push black images to the screen to eliminate any frames of lost head tracking.
-	ovrFrameParms blackFrameParms = vrapi_DefaultFrameParms( &Java, VRAPI_FRAME_INIT_BLACK_FINAL, vrapi_GetTimeInSeconds(), NULL );
-	blackFrameParms.FrameIndex = TheVrFrame.Get().FrameNumber;
-	vrapi_SubmitFrame( OvrMobile, &blackFrameParms );
+	DrawBlackFrame( VRAPI_FRAME_FLAG_FINAL );
 
 #if defined( OVR_OS_ANDROID )
 	if ( type == FINISH_NORMAL )
@@ -690,25 +663,18 @@ void AppLocal::InitGlObjects()
 
 	GlProgram::SetUseMultiview( UseMultiview );
 
-	//--- MV_INVALIDATE_WORKAROUND
-	static ovrProgramParm screenClearParms[] = 
-	{
-		{ "UniformColor",	ovrProgramParmType::FLOAT_VECTOR4 },
-	};
-	ScreenClearSurf.geo = BuildTesselatedQuad( 1, 1 );
-	ScreenClearSurf.graphicsCommand.Program = GlProgram::Build( clearVertexShaderSrc, clearFragmentShaderSrc,
-															screenClearParms, sizeof( screenClearParms ) / sizeof( ovrProgramParm )  );
-	ScreenClearSurf.graphicsCommand.UniformData[0].Data = &ScreenClearColor;
-	ScreenClearSurf.graphicsCommand.GpuState.depthEnable = false;
-	ScreenClearSurf.graphicsCommand.GpuState.depthMaskEnable = false;
-	ScreenClearSurf.graphicsCommand.GpuState.cullEnable = false;
-	//--- MV_INVALIDATE_WORKAROUND	
-
 	TextureManager = ovrTextureManager::Create();
 
 	SurfaceRender.Init();
 
 	EyeBuffers = new ovrEyeBuffers;
+
+	CompletionFences = new ovrFence[MAX_FENCES];
+	for ( int i = 0; i < MAX_FENCES; i++ )
+	{
+		CreateFence( &CompletionFences[i] );
+	}
+	CompletionFenceIndex = 0;
 
 	DebugLines = OvrDebugLines::Create();
 	DebugLines->Init();
@@ -739,38 +705,51 @@ void AppLocal::InitGlObjects()
 		}
 	}
 
-	DebugConsole::Init( appInterface );
+	GraphicsObjectsInitialized = true;
 }
 
 void AppLocal::ShutdownGlObjects()
 {
-	DebugConsole::Shutdown();
+	if ( GraphicsObjectsInitialized == false )
+	{
+		LOG( "GlObjects not initialized" );
+		return;
+	}
 
-	DebugLines->Shutdown();
-	OvrDebugLines::Free( DebugLines );
+	if ( DebugLines != nullptr )
+	{
+		DebugLines->Shutdown();
+		OvrDebugLines::Free( DebugLines );
+	}
 
-	delete EyeBuffers;
-	EyeBuffers = NULL;
+	if ( EyeBuffers != nullptr )
+	{
+		delete EyeBuffers;
+		EyeBuffers = nullptr;
+	}
 
-	if ( LoadingIconTextureChain != NULL )
+	for ( int i = 0; i < MAX_FENCES; i++ )
+	{
+		DestroyFence( &CompletionFences[i] );
+	}
+	delete [] CompletionFences;
+
+	if ( LoadingIconTextureChain != nullptr )
 	{
 		vrapi_DestroyTextureSwapChain( LoadingIconTextureChain );
-		LoadingIconTextureChain = NULL;
+		LoadingIconTextureChain = nullptr;
 	}
-	if ( ErrorTextureSwapChain != NULL )
+	if ( ErrorTextureSwapChain != nullptr )
 	{
 		vrapi_DestroyTextureSwapChain( ErrorTextureSwapChain );
-		ErrorTextureSwapChain = NULL;
+		ErrorTextureSwapChain = nullptr;
 	}
-
-	//--- MV_INVALIDATE_WORKAROUND
-	GlProgram::Free( ScreenClearSurf.graphicsCommand.Program );
-	ScreenClearSurf.geo.Free();
-	//--- MV_INVALIDATE_WORKAROUND
 
 	SurfaceRender.Shutdown();
 
 	GL_Shutdown( glSetup );
+
+	GraphicsObjectsInitialized = false;
 }
 
 Vector3f ViewOrigin( const Matrix4f & view )
@@ -812,6 +791,20 @@ void AppLocal::EnterVrMode()
 	// Enter VR mode.
 	OvrMobile = vrapi_EnterVrMode( &VrSettings.ModeParms );
 
+	// Set the coordinate system to use.
+	ovrPosef trackingTransformPose = vrapi_GetTrackingTransform( OvrMobile, VrSettings.TrackingTransform );
+	vrapi_SetTrackingTransform( OvrMobile, trackingTransformPose );
+	LOG( "Setting tracking transform (%d)", VrSettings.TrackingTransform );
+
+	// Set the initial clock and application performance threads.
+	vrapi_SetClockLevels( GetOvrMobile(), VrSettings.PerformanceParms.CpuLevel, VrSettings.PerformanceParms.GpuLevel );
+	LOG( "Setting clock levels to cpu=%d, gpu=%d", VrSettings.PerformanceParms.CpuLevel, VrSettings.PerformanceParms.GpuLevel );
+
+	// Set the performance thread ids
+	vrapi_SetPerfThread( GetOvrMobile(), VRAPI_PERF_THREAD_TYPE_MAIN, VrSettings.PerformanceParms.MainThreadTid );
+	vrapi_SetPerfThread( GetOvrMobile(), VRAPI_PERF_THREAD_TYPE_RENDERER, VrSettings.PerformanceParms.RenderThreadTid );
+	LOG( "Setting perf thread tids to main=%d, render=%d", VrSettings.PerformanceParms.MainThreadTid, VrSettings.PerformanceParms.RenderThreadTid );
+
 #if defined( OVR_OS_WIN32 )
 	// TODO: these are just mirroring the values in VrSettings as some parts of the app query these.
 	// afaik nothing else is being done to support these for PC.
@@ -825,9 +818,6 @@ void AppLocal::EnterVrMode()
 	LOG( "FramebufferIsSrgb: %s", FramebufferIsSrgb ? "true" : "false" );
 	LOG( "FramebufferIsProtected: %s", FramebufferIsProtected ? "true" : "false" );
 
-	// Optionally enable GPU timings for the eye buffers
-	SetAllowGpuTimerQueries( atoi( ovr_GetLocalPreferenceValueForKey( LOCAL_PREF_VRAPI_GPU_TIMINGS, "0" ) ) );
-
 	// Now that we are in VR mode, release the UI thread before doing a potentially long load.
 	MessageQueue.NotifyMessageProcessed();
 
@@ -840,9 +830,7 @@ void AppLocal::EnterVrMode()
 	{
 		if ( VrSettings.ShowLoadingIcon )
 		{
-			ovrFrameParms loadingIconFrameParms = vrapi_DefaultFrameParms( &Java, VRAPI_FRAME_INIT_LOADING_ICON_FLUSH, vrapi_GetTimeInSeconds(), LoadingIconTextureChain );
-			loadingIconFrameParms.FrameIndex = TheVrFrame.Get().FrameNumber;
-			vrapi_SubmitFrame( OvrMobile, &loadingIconFrameParms );
+			DrawLoadingIcon( LoadingIconTextureChain );
 		}
 	}
 
@@ -868,6 +856,14 @@ void AppLocal::EnterVrMode()
 		LOG( "Time to finish OneTimeInit = %f", vrapi_GetTimeInSeconds() - AppLocalConstructTime );
 		AppLocalConstructTime = -1.0;
 	}
+
+#if defined( OVR_OS_ANDROID )
+	// Reset InputEvents.TouchAction since we would not have received messages telling us it had changed.
+	if ( InputEvents.TouchAction == AMOTION_EVENT_ACTION_DOWN || InputEvents.TouchAction == AMOTION_EVENT_ACTION_MOVE )
+	{
+		InputEvents.TouchAction = AMOTION_EVENT_ACTION_UP;
+	}
+#endif
 }
 
 void AppLocal::LeaveVrMode()
@@ -878,11 +874,8 @@ void AppLocal::LeaveVrMode()
 	appInterface->LeavingVrMode();
 
 	// Push black images to the screen so that we don't see last front buffer image without any head tracking
-	ovrFrameParms blackFrameParms = vrapi_DefaultFrameParms( &Java, VRAPI_FRAME_INIT_BLACK_FINAL, vrapi_GetTimeInSeconds(), NULL );
 	// when exiting VR mode, don't show a frame of a volume layer because the app may have disabled the layer
-	blackFrameParms.Flags |= VRAPI_FRAME_FLAG_INHIBIT_VOLUME_LAYER;	
-	blackFrameParms.FrameIndex = TheVrFrame.Get().FrameNumber;
-	vrapi_SubmitFrame( OvrMobile, &blackFrameParms );
+	DrawBlackFrame( VRAPI_FRAME_FLAG_FINAL | VRAPI_FRAME_FLAG_INHIBIT_VOLUME_LAYER );
 
 	vrapi_LeaveVrMode( OvrMobile );
 	OvrMobile = NULL;
@@ -909,12 +902,6 @@ void AppLocal::Configure()
 
 	// Make sure the app didn't mess up the Java pointers.
 	VrSettings.ModeParms.Java = Java;
-
-	// Allow localparms to override some settings.
-	if ( atoi( ovr_GetLocalPreferenceValueForKey( "app_force16BitFramebuffer", "0" ) ) )
-	{
-		VrSettings.Use16BitFramebuffer = true;
-	}
 
 	// FIXME: have apps set these flags directly.
 
@@ -1092,20 +1079,6 @@ void AppLocal::Command( const char * msg )
 
 void AppLocal::FrameworkInputProcessing( const VrInput & input )
 {
-	// Process key events.
-	for ( int i = 0; i < input.NumKeyEvents; i++ )
-	{
-		const int keyCode = input.KeyEvents[i].KeyCode;
-		const int repeatCount = input.KeyEvents[i].RepeatCount;
-		const KeyEventType eventType = input.KeyEvents[i].EventType;
-
-		// Give debug console a chance next.
-		if ( DebugConsole::OnKeyEvent( keyCode, repeatCount, eventType ) )
-		{
-			continue;
-		}
-	}
-
 	// Process button presses.
 	bool const rightTrigger = ( input.buttonState & BUTTON_RIGHT_TRIGGER ) != 0;
 	bool const leftTrigger = ( input.buttonState & BUTTON_LEFT_TRIGGER ) != 0;
@@ -1173,6 +1146,18 @@ void * AppLocal::VrThreadFunction()
 		SuggestedEyeFovDegreesX = vrapi_GetSystemPropertyFloat( &Java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_X );
 		SuggestedEyeFovDegreesY = vrapi_GetSystemPropertyFloat( &Java, VRAPI_SYS_PROP_SUGGESTED_EYE_FOV_DEGREES_Y );
 
+#if defined( OVR_OS_ANDROID )
+		// Register the headset receiver.
+		{
+			JavaClass javaHeadsetReceiverClass( Java.Env, ovr_GetLocalClassReference( Java.Env, Java.ActivityObject, "com/oculus/vrappframework/HeadsetReceiver" ) );
+			const jmethodID startReceiverMethodId = ovr_GetStaticMethodID( Java.Env, javaHeadsetReceiverClass.GetJClass(), "startReceiver", "(Landroid/content/Context;)V" );
+			if ( startReceiverMethodId != NULL )
+			{
+				Java.Env->CallStaticVoidMethod( javaHeadsetReceiverClass.GetJClass(), startReceiverMethodId, Java.ActivityObject );
+			}
+		}
+#endif
+
 		// Init the adb 'console' and register console functions
 		InitConsole( Java );
 		RegisterConsoleFunction( "print", OVR::DebugPrint );
@@ -1211,10 +1196,7 @@ void * AppLocal::VrThreadFunction()
 		{
 			if ( vrapi_GetTimeInSeconds() >= ErrorMessageEndTime )
 			{
-				// Push black images to the screen to eliminate any frames of lost head tracking.
-				ovrFrameParms blackFrameParms = vrapi_DefaultFrameParms( &Java, VRAPI_FRAME_INIT_BLACK_FINAL, vrapi_GetTimeInSeconds(), NULL );
-				blackFrameParms.FrameIndex = TheVrFrame.Get().FrameNumber;
-				vrapi_SubmitFrame( OvrMobile, &blackFrameParms );
+				DrawBlackFrame( VRAPI_FRAME_FLAG_FINAL );
 
 #if defined( OVR_OS_ANDROID )
 				vrapi_ReturnToHome( &Java );
@@ -1227,11 +1209,7 @@ void * AppLocal::VrThreadFunction()
 			{
 				// TODO: Should we update the FrameIndex while displaying the error message? On PC, not updating results
 				// in the following error: ovrError_InvalidParameter: ovr_SubmitFrame called with unrecognized frameIndex
-				ovrFrameParms warpSwapMessageParms = vrapi_DefaultFrameParms( &Java, VRAPI_FRAME_INIT_MESSAGE, vrapi_GetTimeInSeconds(), ErrorTextureSwapChain );
-				warpSwapMessageParms.FrameIndex = TheVrFrame.Get().FrameNumber;
-				warpSwapMessageParms.Layers[1].SpinSpeed = 0.0f;												// rotation in radians
-				warpSwapMessageParms.Layers[1].SpinScale = 1024.0f / static_cast<float>( ErrorTextureSize );	// message size factor
-				vrapi_SubmitFrame( OvrMobile, &warpSwapMessageParms );
+				DrawLoadingIcon( ErrorTextureSwapChain, 0.0f, 1024.0f / static_cast<float>( ErrorTextureSize ) );
 			}
 			continue;
 		}
@@ -1249,7 +1227,7 @@ void * AppLocal::VrThreadFunction()
 		{
 			OVR_PERF_TIMER( VrThreadFunction_Loop_AdvanceVrFrame );
 			// Update ovrFrameInput.
-			TheVrFrame.AdvanceVrFrame( InputEvents, OvrMobile, *GetJava(), VrSettings.HeadModelParms, EnteredVrModeFrame );
+			TheVrFrame.AdvanceVrFrame( InputEvents, OvrMobile, *GetJava(), VrSettings.TrackingTransform, EnteredVrModeFrame );
 			InputEvents.NumKeyEvents = 0;
 		}
 
@@ -1273,9 +1251,10 @@ void * AppLocal::VrThreadFunction()
 
 		// FIXME: move this to VrFrameBuilder::AdvanceVrFrame
 		{
-			const float fovIncrease = ( ( VrSettings.MinimumVsyncs > 1 ) || input.DeviceStatus.PowerLevelStateThrottled ) ? 10.0f : 0.0f;
-			input.FovX = SuggestedEyeFovDegreesX + fovIncrease;
-			input.FovY = SuggestedEyeFovDegreesY + fovIncrease;
+			// NOTE: Removed fovIncrease when minvsync > 1 as slightly more black pull-in is better than the
+			// resolution quality loss.
+			input.FovX = SuggestedEyeFovDegreesX;
+			input.FovY = SuggestedEyeFovDegreesY;
 
 			const Matrix4f projectionMatrix = ovrMatrix4f_CreateProjectionFov( input.FovX, input.FovY, 0.0f, 0.0f, VRAPI_ZNEAR, 0.0f );
 			input.TexCoordsFromTanAngles = ovrMatrix4f_TanAngleMatrixFromProjection( (ovrMatrix4f*)( &projectionMatrix ) );
@@ -1285,7 +1264,6 @@ void * AppLocal::VrThreadFunction()
 			for ( int eye = 0; eye < 2; eye++ )
 			{
 				input.ColorTextureSwapChain[eye] = eyes.ColorTextureSwapChain[renderMonoMode ? 0 : eye];
-				input.DepthTextureSwapChain[eye] = eyes.DepthTextureSwapChain[renderMonoMode ? 0 : eye];
 			}
 			input.TextureSwapChainIndex = eyes.TextureSwapChainIndex;
 		}
@@ -1296,12 +1274,6 @@ void * AppLocal::VrThreadFunction()
 		// Add any system-level debug surfaces to the FrameResult surface list.
 		{
 			GetDebugLines().AppendSurfaceList( res.Surfaces );
-		}
-
-		{
-			OVR_PERF_TIMER( VrThreadFunction_Loop_DebugConsole_Frame );
-			// Update debug console, trivial cost if console isn't up.
-			DebugConsole::Frame( input, res );
 		}
 
 		// stop the loop perf timer now or it will show the wait on Timewarp in vrapi_SubmitFrame
@@ -1339,6 +1311,18 @@ void * AppLocal::VrThreadFunction()
 		ShutdownInput();
 
 		ovrFileSys::Destroy( FileSys );
+
+#if defined( OVR_OS_ANDROID )
+		// Unregister the Headset receiver
+		{
+			JavaClass javaHeadsetReceiverClass( Java.Env, ovr_GetLocalClassReference( Java.Env, Java.ActivityObject, "com/oculus/vrappframework/HeadsetReceiver" ) );
+			const jmethodID stopReceiverMethodId = ovr_GetStaticMethodID( Java.Env, javaHeadsetReceiverClass.GetJClass(), "stopReceiver", "(Landroid/content/Context;)V" );
+			if ( stopReceiverMethodId != NULL )
+			{
+				Java.Env->CallStaticVoidMethod( javaHeadsetReceiverClass.GetJClass(), stopReceiverMethodId, Java.ActivityObject );
+			}
+		}
+#endif
 
 		// Detach from the Java VM before exiting.
 		ovr_DetachCurrentThread( Java.Vm );
@@ -1393,49 +1377,14 @@ void AppLocal::SetEyeBufferParms( const ovrEyeBufferParms & parms )
 	VrSettings.EyeBufferParms = parms;
 }
 
-const ovrHeadModelParms & AppLocal::GetHeadModelParms() const
+int AppLocal::GetSwapInterval() const
 {
-	return VrSettings.HeadModelParms;
+	return VrSettings.SwapInterval;
 }
 
-void AppLocal::SetHeadModelParms( const ovrHeadModelParms & parms ) 
+void AppLocal::SetSwapInterval( const int swapInterval )
 {
-	VrSettings.HeadModelParms = parms;
-}
-
-const ovrPerformanceParms & AppLocal::GetPerformanceParms() const
-{
-	return VrSettings.PerformanceParms;
-}
-
-int AppLocal::GetCpuLevel() const
-{
-	return VrSettings.PerformanceParms.CpuLevel;
-}
-
-void AppLocal::SetCpuLevel( const int cpuLevel )
-{
-	VrSettings.PerformanceParms.CpuLevel = cpuLevel;
-}
-
-int AppLocal::GetGpuLevel() const
-{
-	return VrSettings.PerformanceParms.GpuLevel;
-}
-
-void AppLocal::SetGpuLevel( const int gpuLevel )
-{
-	VrSettings.PerformanceParms.GpuLevel = gpuLevel;
-}
-
-int AppLocal::GetMinimumVsyncs() const
-{
-	return VrSettings.MinimumVsyncs;
-}
-
-void AppLocal::SetMinimumVsyncs( const int minimumVsyncs )
-{
-	VrSettings.MinimumVsyncs = minimumVsyncs;
+	VrSettings.SwapInterval = swapInterval;
 }
 
 bool AppLocal::GetFramebufferIsSrgb() const
@@ -1529,9 +1478,7 @@ void AppLocal::RecenterYaw( const bool showBlack )
 	LOG( "AppLocal::RecenterYaw" );
 	if ( showBlack )
 	{
-		ovrFrameParms blackFrameParms = vrapi_DefaultFrameParms( &Java, VRAPI_FRAME_INIT_BLACK_FLUSH, vrapi_GetTimeInSeconds(), NULL );
-		blackFrameParms.FrameIndex = TheVrFrame.Get().FrameNumber;
-		vrapi_SubmitFrame( OvrMobile, &blackFrameParms );
+		DrawBlackFrame();
 	}
 	vrapi_RecenterPose( OvrMobile );
 

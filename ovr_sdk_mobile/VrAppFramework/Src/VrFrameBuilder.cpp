@@ -70,6 +70,8 @@ static struct
 	{ OVR_KEY_MAX, 0 }
 };
 
+static ovrHeadSetPluggedState HeadPhonesPluggedState = OVR_HEADSET_PLUGGED_UNKNOWN;
+
 VrFrameBuilder::VrFrameBuilder() :
 	BackKeyState( 0.25f ),	// NOTE: This is the default value. System specified value will be set on init.
 	lastTouchpadTime( 0.0 ),
@@ -83,9 +85,9 @@ void VrFrameBuilder::Init( ovrJava * java )
 {
 	OVR_ASSERT( java != NULL );
 
-	const float BackButtonDoubleTapTimeInSec = vrapi_GetSystemPropertyFloat( java, VRAPI_SYS_PROP_BACK_BUTTON_DOUBLETAP_TIME );
+	const float BackButtonShortPressTimeInSec = vrapi_GetSystemPropertyFloat( java, VRAPI_SYS_PROP_BACK_BUTTON_SHORTPRESS_TIME );
 
-	BackKeyState.SetDoubleTapTime( BackButtonDoubleTapTimeInSec );
+	BackKeyState.SetShortPressTime( BackButtonShortPressTimeInSec );
 }
 
 void VrFrameBuilder::UpdateNetworkState( JNIEnv * jni, jclass activityClass, jobject activityObject )
@@ -262,7 +264,7 @@ void VrFrameBuilder::AddKeyEventToFrame( ovrKeyCode const keyCode, KeyEventType 
 
 void VrFrameBuilder::AdvanceVrFrame( const ovrInputEvents & inputEvents, ovrMobile * ovr,
 									const ovrJava & java,
-									const ovrHeadModelParms & headModelParms,
+									const ovrTrackingTransform trackingTransform,
 									const long long enteredVrModeFrameNumber )
 {
 	const VrInput lastVrInput = vrFrame.Input;
@@ -304,7 +306,7 @@ void VrFrameBuilder::AdvanceVrFrame( const ovrInputEvents & inputEvents, ovrMobi
 	const double currentTime = vrapi_GetTimeInSeconds();
 	for ( int i = 0; i < inputEvents.NumKeyEvents; i++ )
 	{
-		// The back key is special because it has to handle short-press, long-press and double-tap.
+		// The back key is special because it has to handle short-press and long-press
 		if ( inputEvents.KeyEvents[i].KeyCode == OVR_KEY_ESCAPE )
 		{
 			BackKeyState.HandleEvent( currentTime, inputEvents.KeyEvents[i].Down, inputEvents.KeyEvents[i].RepeatCount );
@@ -407,20 +409,32 @@ void VrFrameBuilder::AdvanceVrFrame( const ovrInputEvents & inputEvents, ovrMobi
 		predictedDisplayTime = vrFrame.PredictedDisplayTimeInSeconds + 0.001;
 	}
 
-	vrFrame.BaseTracking = vrapi_GetPredictedTracking( ovr, predictedDisplayTime );
-
+	vrFrame.Tracking = vrapi_GetPredictedTracking2( ovr, predictedDisplayTime );
 	vrFrame.DeltaSeconds = Alg::Clamp( (float)( predictedDisplayTime - vrFrame.PredictedDisplayTimeInSeconds ), 0.0f, 0.1f );
 	vrFrame.PredictedDisplayTimeInSeconds = predictedDisplayTime;
-	vrFrame.Tracking = vrapi_ApplyHeadModel( &headModelParms, &vrFrame.BaseTracking );
+
+	const ovrPosef trackingPose = vrapi_GetTrackingTransform( ovr, trackingTransform );
+	const ovrPosef eyeLevelTrackingPose = vrapi_GetTrackingTransform( ovr, VRAPI_TRACKING_TRANSFORM_SYSTEM_CENTER_EYE_LEVEL );
+	vrFrame.EyeHeight = vrapi_GetEyeHeight( &eyeLevelTrackingPose, &trackingPose );
+
+	vrFrame.IPD = vrapi_GetInterpupillaryDistance( &vrFrame.Tracking );
 
 	// Update device status.
-	vrFrame.DeviceStatus.HeadPhonesPluggedState		= vrapi_GetSystemStatusInt( &java, VRAPI_SYS_STATUS_HEADPHONES_PLUGGED_IN ) != VRAPI_FALSE ?
-														 OVR::OVR_HEADSET_PLUGGED : OVR::OVR_HEADSET_UNPLUGGED;
+	vrFrame.DeviceStatus.HeadPhonesPluggedState		= HeadPhonesPluggedState;
 	vrFrame.DeviceStatus.DeviceIsDocked				= ( vrapi_GetSystemStatusInt( &java, VRAPI_SYS_STATUS_DOCKED ) != VRAPI_FALSE );
 	vrFrame.DeviceStatus.HeadsetIsMounted			= ( vrapi_GetSystemStatusInt( &java, VRAPI_SYS_STATUS_MOUNTED ) != VRAPI_FALSE );
 	vrFrame.DeviceStatus.PowerLevelStateThrottled	= ( vrapi_GetSystemStatusInt( &java, VRAPI_SYS_STATUS_THROTTLED ) != VRAPI_FALSE );
-	vrFrame.DeviceStatus.PowerLevelStateMinimum		= ( vrapi_GetSystemStatusInt( &java, VRAPI_SYS_STATUS_THROTTLED2 ) != VRAPI_FALSE );
 }
 
 }	// namespace OVR
 
+#if defined( OVR_OS_ANDROID )
+extern "C"
+{
+JNIEXPORT void Java_com_oculus_vrappframework_HeadsetReceiver_headsetStateChanged( JNIEnv * jni, jclass clazz, jint state )
+{
+	LOG( "nativeHeadsetEvent(%i)", state );
+	OVR::HeadPhonesPluggedState = ( state == 1 ) ? OVR::OVR_HEADSET_PLUGGED : OVR::OVR_HEADSET_UNPLUGGED;
+}
+}	// extern "C"
+#endif

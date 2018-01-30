@@ -27,7 +27,12 @@ limitations under the License.
 #ifndef OVR_Lockless_h
 #define OVR_Lockless_h
 
-#include "OVR_Atomic.h"
+#include <atomic>
+
+#if defined( OVR_OS_WIN32 )
+#define NOMINMAX    // stop Windows.h from redefining min and max and breaking std::min / std::max
+#include <windows.h>        // for MemoryBarrier
+#endif
 
 // Define this to compile-in Lockless test logic
 //#define OVR_LOCKLESS_TEST
@@ -50,6 +55,20 @@ class LocklessUpdater
 public:
 	LocklessUpdater() : UpdateBegin( 0 ), UpdateEnd( 0 ) {}
 
+	LocklessUpdater( const LocklessUpdater & other ) : LocklessUpdater()
+	{
+		SetState( other.GetState() );
+	}
+
+	LocklessUpdater & operator = ( const LocklessUpdater & other )
+	{
+		if ( this != &other )
+		{
+			this->SetState( other.GetState() );
+		}
+		return *this;
+	}
+
 	T GetState() const
 	{
 		// Copy the state out, then retry with the alternate slot
@@ -60,19 +79,29 @@ public:
 
 		for(;;)
 		{
-			// We are adding 0, only using these as atomic memory barriers, so it
-			// is ok to cast off the const, allowing GetState() to remain const.
-            end   = UpdateEnd.ExchangeAdd_Sync(0);
-            state = Slots[ end & 1 ];
-            begin = UpdateBegin.ExchangeAdd_Sync(0);
+			end   = UpdateEnd.load(std::memory_order_acquire);
+			state = Slots[ end & 1 ];
+			// Manually insert an memory barrier here in order to ensure that
+			// memory access between Slots[] and UpdateBegin are properly ordered
+			#if defined(OVR_CC_MSVC)
+				MemoryBarrier();
+			#else
+				__sync_synchronize();
+			#endif
+			begin = UpdateBegin.load(std::memory_order_acquire);
 			if ( begin == end ) {
 				return state;
 			}
 
 			// The producer is potentially blocked while only having partially
 			// written the update, so copy out the other slot.
-            state = Slots[ (begin & 1) ^ 1 ];
-            final = UpdateBegin.ExchangeAdd_NoSync(0);
+			state = Slots[ (begin & 1) ^ 1 ];
+			#if defined(OVR_CC_MSVC)
+				MemoryBarrier();
+			#else
+				__sync_synchronize();
+			#endif
+			final = UpdateBegin.load(std::memory_order_acquire);
 			if ( final == begin ) {
 				return state;
 			}
@@ -84,15 +113,15 @@ public:
 
 	void	SetState( T state )
 	{
-        const int slot = UpdateBegin.ExchangeAdd_Sync(1) & 1;
-        // Write to (slot ^ 1) because ExchangeAdd returns 'previous' value before add.
-        Slots[slot ^ 1] = state;
-        UpdateEnd.ExchangeAdd_Sync(1);
+		const int slot = UpdateBegin.fetch_add(1, std::memory_order_seq_cst) & 1;
+		// Write to (slot ^ 1) because fetch_add returns 'previous' value before add.
+		Slots[slot ^ 1] = state;
+		UpdateEnd.fetch_add(1, std::memory_order_seq_cst);
 	}
 
-    mutable AtomicInt<int> UpdateBegin;
-    mutable AtomicInt<int> UpdateEnd;
-    T		               Slots[2];
+	std::atomic<int> UpdateBegin;
+	std::atomic<int> UpdateEnd;
+	T		 Slots[2];
 };
 
 

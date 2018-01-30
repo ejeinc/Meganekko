@@ -99,7 +99,7 @@ Lock                       TestLock;
 // Consumer thread reads values from TestDataUpdater and
 // ensures that each one is internally consistent.
 
-class Consumer : public Thread
+class Consumer : public ThreadRefCounted
 {
     virtual threadReturn_t Run()
     {
@@ -161,7 +161,7 @@ class Consumer : public Thread
 
 //-------------------------------------------------------------------------------------
 
-class Producer : public Thread
+class Producer : public ThreadRefCounted
 {
 
     virtual threadReturn_t Run()
@@ -212,11 +212,10 @@ void StartLocklessTest()
     producerThread->Start();
     consumerThread->Start();
 
-    /*
-    while (!producerThread->IsFinished() && consumerThread->IsFinished())
+    while (!producerThread->IsFinished() && !consumerThread->IsFinished())
     {
         Thread::MSleep(500);
-    } */
+    }
 }
 
 

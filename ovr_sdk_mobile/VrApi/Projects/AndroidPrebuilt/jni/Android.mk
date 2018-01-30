@@ -1,19 +1,15 @@
 LOCAL_PATH := $(call my-dir)
 
 #--------------------------------------------------------
-# libvrapi.a
+# libvrapi.so
 #
-# VrApi
+# VrApi Loader
 #--------------------------------------------------------
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := vrapi
 
-ifeq ($(USE_INTERNAL_VRAPI_IMPL),1)
-	LOCAL_SRC_FILES := ../../../Libs/Android/$(TARGET_ARCH_ABI)/$(BUILDTYPE)/lib$(LOCAL_MODULE)impl.so
-else
-	LOCAL_SRC_FILES := ../../../Libs/Android/$(TARGET_ARCH_ABI)/$(BUILDTYPE)/lib$(LOCAL_MODULE).so
-endif
+LOCAL_SRC_FILES := ../../../Libs/Android/$(TARGET_ARCH_ABI)/$(BUILDTYPE)/lib$(LOCAL_MODULE).so
 
 # only export public headers
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/../../../Include

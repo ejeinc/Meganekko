@@ -195,8 +195,13 @@ extern PFNGLUNMAPBUFFEROESPROC_				glUnmapBuffer_;
 #define EGL_QCOM_PROTECTED_CONTENT			0x32E0
 #endif
 
+// EXT_texture_border_clamp
 #if !defined( GL_TEXTURE_BORDER_COLOR )
 #define GL_TEXTURE_BORDER_COLOR				0x1004
+#endif
+
+#ifndef GL_CLAMP_TO_BORDER
+#define GL_CLAMP_TO_BORDER					0x812D
 #endif
 
 #elif defined( WIN32 ) || defined( WIN64 ) || defined( _WIN32 ) || defined( _WIN64 )
@@ -225,12 +230,14 @@ typedef void (APIENTRY* PFNGLFRAMEBUFFERTEXTUREMULTISAMPLEMULTIVIEWOVRPROC)(GLen
 typedef void *EGLDisplay;
 typedef void *EGLSurface;
 typedef void *EGLContext;
+typedef void *EGLSyncKHR;
 struct ANativeWindow;
 typedef struct ANativeWindow ANativeWindow;
 #define GL_TEXTURE_EXTERNAL_OES GL_TEXTURE_2D
 #define EGL_NO_SURFACE (EGLSurface)0
 #define EGL_NO_DISPLAY (EGLDisplay)0
 #define EGL_NO_CONTEXT (EGLContext)0
+#define EGL_NO_SYNC_KHR (EGLSyncKHR)0
 
 extern PFNGLBINDFRAMEBUFFERPROC				glBindFramebuffer;
 extern PFNGLGENFRAMEBUFFERSPROC				glGenFramebuffers;
@@ -380,7 +387,7 @@ void GL_InitExtensions();
 // Logs a Found / Not found message after checking for the extension.
 bool GL_ExtensionStringPresent( const char * extension, const char * allExtensions );
 
-// These use a KHR_Sync object if available, so drivers can't "optimze" the finish/flush away.
+// These use a KHR_Sync object if available, so drivers can't "optimize" the finish/flush away.
 void GL_Finish();
 void GL_Flush();
 

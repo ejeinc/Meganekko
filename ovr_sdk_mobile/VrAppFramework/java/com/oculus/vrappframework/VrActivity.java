@@ -552,30 +552,17 @@ public class VrActivity extends Activity {
 
 	public static String getInstalledPackagePath( Context context, String packageName )
 	{
+		final String notInstalled = "";
+
 		Log.d( TAG, "Searching installed packages for '" + packageName + "'" );
-		List<ApplicationInfo> appList = context.getPackageManager().getInstalledApplications( 0 );
-		String outString = "";
-		for ( ApplicationInfo info : appList )
-		{
-/*
-			if ( info.className != null && info.className.toLowerCase().contains( "oculus" ) )
-			{
-				Log.d( TAG, "info.className = '" + info.className + "'" );
-			}
-			else if ( info.sourceDir != null && info.sourceDir.toLowerCase().contains( "oculus" ) )
-			{
-				Log.d( TAG, "info.sourceDir = '" + info.sourceDir + "'" );
-			}
-*/
-			if ( ( info.className != null && info.className.toLowerCase().contains( packageName ) ) || 
-			     ( info.sourceDir != null && info.sourceDir.toLowerCase().contains( packageName ) ) )
-			{			
-				Log.d( TAG, "Found installed application package " + packageName );
-				outString = info.sourceDir;
-				return outString;
-			}
+		try {
+			ApplicationInfo info = context.getPackageManager().getApplicationInfo( packageName, 0 );
+			return info.sourceDir != null ? info.sourceDir : notInstalled;
+		} catch ( NameNotFoundException e ) {
+			Log.w( TAG, "Package '" + packageName + "' not installed", e );
 		}
-		return outString;
+
+		return notInstalled;
 	}
 
 	public static boolean isWifiConnected( final Activity act ) {

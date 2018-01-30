@@ -23,7 +23,6 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include "VrApi_Types.h"
 #include "VrApi_Helpers.h"
 #include "VrApi_SystemUtils.h"
-#include "VrApi_Ext.h"
 #include "OVR_GlUtils.h"
 #include "GlProgram.h"
 #include "GlTexture.h"
@@ -67,6 +66,13 @@ enum ovrRenderMode
 	RENDERMODE_MULTIVIEW				= 0x1400,	// Render both eye views simultaneously.
 };
 
+struct ovrFence
+{
+	EGLDisplay	Display;
+	// Note: These sync objects must be EGLSyncKHR because the VrApi still supports OpenGL ES 2.0.
+	EGLSyncKHR	Sync;
+};
+
 #if defined( OVR_OS_WIN32 )
 struct ovrWindowCreationParms
 {
@@ -82,11 +88,11 @@ struct ovrSettings
 	bool				UseSrgbFramebuffer;			// EGL_GL_COLORSPACE_KHR,  EGL_GL_COLORSPACE_SRGB_KHR
 	bool				UseProtectedFramebuffer;	// EGL_PROTECTED_CONTENT_EXT, EGL_TRUE
 	bool				Use16BitFramebuffer;		// Instead of 32 bit, can only be changed on first launch
-	int					MinimumVsyncs;
+	int					SwapInterval;
 	ovrModeParms		ModeParms;
 	ovrPerformanceParms	PerformanceParms;
+	ovrTrackingTransform TrackingTransform;			// Default is VRAPI_TRACKING_TRANSFORM_SYSTEM_CENTER_FLOOR_LEVEL
 	ovrEyeBufferParms	EyeBufferParms;
-	ovrHeadModelParms	HeadModelParms;
 	ovrRenderMode		RenderMode;					// Default is RENDERMODE_STEREO.
 #if defined( OVR_OS_WIN32 )
 	ovrWindowCreationParms	WindowParms;
@@ -104,7 +110,12 @@ class ovrFrameResult
 {
 public:
 	ovrFrameResult()
-		: FrameParms( NULL )
+		: Layers()
+		, LayerCount( 0 )
+		, FrameFlags( 0 )
+		, FrameIndex( 0 )
+		, DisplayTime( 0 )
+		, SwapInterval( 1 )
 		, FrameMatrices()
 		, ClearColorBuffer( false )
 		, ClearDepthBuffer( false )
@@ -113,7 +124,12 @@ public:
 	{
 	}
 
-	ovrFrameParmsExtBase *		FrameParms;			// chain of extended parms terminated with ovrFrameParms
+	ovrLayer_Union2				Layers[ovrMaxLayerCount];
+	int							LayerCount;
+	int							FrameFlags;
+	long long					FrameIndex;
+	double						DisplayTime;
+	int							SwapInterval;
 	ovrFrameMatrices			FrameMatrices;		// view and projection transforms
 	Array< ovrDrawSurface > 	Surfaces;			// list of surfaces to render
 	bool						ClearColorBuffer;	// true if the app wants to color buffer cleared
@@ -265,19 +281,8 @@ public:
 	virtual	const ovrEyeBufferParms &	GetEyeBufferParms() const = 0;
 	virtual void						SetEyeBufferParms( const ovrEyeBufferParms & parms ) = 0;
 
-	virtual const ovrHeadModelParms &	GetHeadModelParms() const = 0;
-	virtual void						SetHeadModelParms( const ovrHeadModelParms & parms ) = 0;
-
-	virtual const ovrPerformanceParms & GetPerformanceParms() const = 0;
-
-	virtual int							GetCpuLevel() const = 0;
-	virtual void						SetCpuLevel( const int cpuLevel ) = 0;
-
-	virtual int							GetGpuLevel() const = 0;
-	virtual void						SetGpuLevel( const int gpuLevel ) = 0;
-
-	virtual int							GetMinimumVsyncs() const = 0;
-	virtual void						SetMinimumVsyncs( const int mininumVsyncs ) = 0;
+	virtual int							GetSwapInterval() const = 0;
+	virtual void						SetSwapInterval( const int swapInterval ) = 0;
 
 	// The framebuffer may not be setup the way it was requested through VrAppInterface::Configure().
 	virtual bool						GetFramebufferIsSrgb() const = 0;
@@ -287,13 +292,8 @@ public:
 	virtual void						SetLastViewMatrix( Matrix4f const & m ) = 0;
 	virtual void						RecenterLastViewMatrix() = 0;
 
-	// ----DEPRECATED
-	// This function will be removed in a future update.
 	virtual ovrMobile *					GetOvrMobile() = 0;
-	// ----DEPRECATED
-	
 	virtual ovrFileSys &				GetFileSys() = 0;
-
 	// it's possible that this could return NULL if it's called before InitGLObjects()
 	virtual	ovrTextureManager *			GetTextureManager() = 0;
 

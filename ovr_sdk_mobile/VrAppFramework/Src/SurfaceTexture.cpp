@@ -14,6 +14,7 @@ Copyright   :   Copyright 2014 Oculus VR, LLC. All Rights reserved.
 #include <stdlib.h>
 
 #include "Kernel/OVR_LogUtils.h"
+#include "VrApi.h"				// for swapchain interface
 
 #include "OVR_GlUtils.h"
 #include "GlTexture.h"
@@ -36,7 +37,7 @@ SurfaceTexture::SurfaceTexture( JNIEnv * jni_ ) :
 	jni = jni_;
 
 	// Gen a gl texture id for the java SurfaceTexture to use.
-	textureSwapChain = CreateTextureSwapChain( VRAPI_TEXTURE_TYPE_2D_EXTERNAL, VRAPI_TEXTURE_FORMAT_8888, 0, 0, 1, false );
+	textureSwapChain = vrapi_CreateTextureSwapChain( VRAPI_TEXTURE_TYPE_2D_EXTERNAL, VRAPI_TEXTURE_FORMAT_8888, 0, 0, 1, false );
 	glBindTexture( GL_TEXTURE_EXTERNAL_OES, GetTextureId() );
 	glTexParameterf( GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	glTexParameterf( GL_TEXTURE_EXTERNAL_OES, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
@@ -105,7 +106,7 @@ SurfaceTexture::~SurfaceTexture()
 #if defined( OVR_OS_ANDROID )
 	if ( textureSwapChain )
 	{
-		DestroyTextureSwapChain( textureSwapChain );
+		vrapi_DestroyTextureSwapChain( textureSwapChain );
 		textureSwapChain = NULL;
 	}
 	if ( javaObject )
@@ -148,7 +149,7 @@ void SurfaceTexture::Update()
 
 unsigned int SurfaceTexture::GetTextureId()
 {
-	return ( textureSwapChain != NULL ) ? GetTextureSwapChainHandle( textureSwapChain, 0 ) : 0;
+	return ( textureSwapChain != NULL ) ? vrapi_GetTextureSwapChainHandle( textureSwapChain, 0 ) : 0;
 }
 
 ovrTextureSwapChain * SurfaceTexture::GetTextureSwapChain()

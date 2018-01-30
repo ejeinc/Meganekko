@@ -25,7 +25,7 @@ namespace OVR
 #define STRINGIZE( x )			#x
 #define STRINGIZE_VALUE( x )	STRINGIZE( x )
 
-#define MAX_JOINTS				17
+#define MAX_JOINTS				64
 #define MAX_JOINTS_STRING		STRINGIZE_VALUE( MAX_JOINTS )
 
 // No attempt is made to support sharing shaders between programs,
