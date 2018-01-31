@@ -62,7 +62,7 @@ interface Sound {
      *
      * @param callback
      */
-    fun onEnd(callback: Runnable)
+    fun onEnd(callback: () -> Unit)
 
     /**
      * Add new timed event.
@@ -70,5 +70,5 @@ interface Sound {
      * @param time  Event time in seconds
      * @param event Event callback
      */
-    fun addTimedEvent(time: Float, event: Runnable)
+    fun addTimedEvent(time: Float, event: () -> Unit)
 }

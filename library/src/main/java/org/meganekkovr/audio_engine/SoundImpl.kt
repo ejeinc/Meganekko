@@ -7,11 +7,11 @@ import com.google.vr.sdk.audio.GvrAudioEngine
 import java.util.*
 
 internal class SoundImpl(private val audioEngine: GvrAudioEngine, private val id: Int) : SoundObject, SoundField, StereoSound {
-    private val timedEvents = TreeMap<Float, Runnable>()
+    private val timedEvents = TreeMap<Float, () -> Unit>()
     private var volume = 1f
     private var currentTime: Float = 0.toFloat()
     private var willBeInPlaying: Boolean = false
-    private var onEndCallback: Runnable? = null
+    private var onEndCallback: (() -> Unit)? = null
 
     override val isPlaying: Boolean
         get() = audioEngine.isSoundPlaying(id)
@@ -68,16 +68,16 @@ internal class SoundImpl(private val audioEngine: GvrAudioEngine, private val id
         audioEngine.setSoundfieldRotation(id, x, y, z, w)
     }
 
-    override fun onEnd(callback: Runnable) {
+    override fun onEnd(callback: () -> Unit) {
         this.onEndCallback = callback
     }
 
     fun notifyOnEnd() {
-        onEndCallback?.run()
+        onEndCallback?.invoke()
         onEndCallback = null
     }
 
-    override fun addTimedEvent(time: Float, event: Runnable) {
+    override fun addTimedEvent(time: Float, event: () -> Unit) {
         timedEvents[time] = event
     }
 
@@ -89,7 +89,7 @@ internal class SoundImpl(private val audioEngine: GvrAudioEngine, private val id
         if (!timedEvents.isEmpty()) {
             val firstKey = timedEvents.firstKey()
             if (firstKey < currentTime) {
-                timedEvents.remove(firstKey)?.run()
+                timedEvents.remove(firstKey)?.invoke()
             }
         }
     }

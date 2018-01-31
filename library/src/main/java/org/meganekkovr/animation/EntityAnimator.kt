@@ -7,7 +7,7 @@ import org.meganekkovr.Entity
 
 class EntityAnimator(private val target: Entity) {
     private val animators = mutableListOf<Animator>()
-    private var callback: Runnable? = null
+    private var callback: (() -> Unit)? = null
     private var duration: Long = -1
     private var interpolator: TimeInterpolator? = null
     private var sequential: Boolean = false
@@ -99,7 +99,7 @@ class EntityAnimator(private val target: Entity) {
      * @param callback Action which will be called after animation.
      * @return This object, allowing calls to methods in this class to be chained.
      */
-    fun onEnd(callback: Runnable?): EntityAnimator {
+    fun onEnd(callback: (() -> Unit)?): EntityAnimator {
         this.callback = callback
         return this
     }

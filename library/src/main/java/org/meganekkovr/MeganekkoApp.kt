@@ -12,7 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue
 
 open class MeganekkoApp {
 
-    private val commands = LinkedBlockingQueue<Runnable>()
+    private val commands = LinkedBlockingQueue<() -> Unit>()
     var scene: Scene? = null
         set(scene) {
             assertGlThread()
@@ -53,7 +53,7 @@ open class MeganekkoApp {
 
         // runOnGlThread handling
         while (!commands.isEmpty()) {
-            commands.poll().run()
+            commands.poll()()
         }
 
         this.scene?.update(frame)
@@ -83,12 +83,12 @@ open class MeganekkoApp {
      *
      * @param command Command
      */
-    fun runOnGlThread(command: Runnable) {
+    fun runOnGlThread(command: () -> Unit) {
         commands.add(command)
     }
 
-    fun runOnUiThread(command: Runnable) {
-        meganekkoContext.runOnUiThread(command)
+    fun runOnUiThread(command: () -> Unit) {
+        meganekkoContext.runOnUiThread(Runnable { command() })
     }
 
     private fun assertGlThread() {
@@ -224,10 +224,10 @@ open class MeganekkoApp {
      * @param endCallback Callback for animation end. This is **not** called when animation is canceled.
      * If you require more complicated callbacks, use `AnimatorListener` instead of this.
      */
-    fun animate(anim: Animator, endCallback: Runnable?) {
+    fun animate(anim: Animator, endCallback: (() -> Unit)?) {
 
         if (anim.isRunning) {
-            cancel(anim, Runnable { animate(anim, endCallback) })
+            cancel(anim, { animate(anim, endCallback) })
             return
         }
 
@@ -245,7 +245,7 @@ open class MeganekkoApp {
             })
         }
 
-        runOnUiThread(Runnable { anim.start() })
+        runOnUiThread({ anim.start() })
     }
 
     /**
@@ -254,8 +254,8 @@ open class MeganekkoApp {
      * @param anim     [Animator].
      * @param callback Callback for canceling operation was called in UI thread.
      */
-    fun cancel(anim: Animator, callback: Runnable?) {
-        runOnUiThread(Runnable {
+    fun cancel(anim: Animator, callback: (() -> Unit)?) {
+        runOnUiThread({
             anim.cancel()
             if (callback != null) runOnGlThread(callback)
         })

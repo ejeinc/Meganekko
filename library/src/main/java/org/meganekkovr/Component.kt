@@ -77,7 +77,7 @@ abstract class Component {
      */
     protected fun removeSelf() {
         if (entity != null) {
-            entity!!.app!!.runOnGlThread(Runnable { entity!!.remove(this@Component) })
+            entity!!.app!!.runOnGlThread { entity!!.remove(this@Component) }
         }
     }
 
