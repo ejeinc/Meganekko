@@ -19,7 +19,7 @@ android {
     defaultConfig {
         externalNativeBuild {
             ndkBuild {
-                abiFilters 'armeabi-v7a'
+                abiFilters 'armeabi-v7a', 'arm64-v8a'
                 arguments "NDK_PROJECT_PATH=$projectDir/src/main"
             }
         }
