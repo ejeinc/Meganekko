@@ -1,5 +1,3 @@
-def ovrSdkMobile = "$rootDir/ovr_sdk_mobile"
-
 buildscript {
     ext.kotlin_version = '1.2.21'
     repositories {
@@ -15,13 +13,6 @@ buildscript {
 
 allprojects {
     repositories {
-
-        flatDir {
-            // Add paths to prebuilt libs to all our subprojects.
-            dir "$ovrSdkMobile/VrApi/Libs/Android"
-            dir "$ovrSdkMobile/VrAppFramework/Libs/Android"
-        }
-
         google()
         jcenter()
     }
