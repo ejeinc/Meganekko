@@ -318,6 +318,7 @@ open class Entity {
     }
 
     fun <T : Component> getComponent(clazz: Class<T>): T? {
+        @Suppress("UNCHECKED_CAST")
         return components[clazz] as T?
     }
 

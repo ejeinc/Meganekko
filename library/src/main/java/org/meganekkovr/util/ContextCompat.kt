@@ -15,6 +15,7 @@ object ContextCompat {
         return if (Build.VERSION.SDK_INT >= 21) {
             context.getDrawable(id)
         } else {
+            @Suppress("DEPRECATION")
             context.resources.getDrawable(id)
         }
     }
