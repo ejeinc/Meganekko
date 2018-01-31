@@ -14,7 +14,7 @@ public class PlaneRenderer extends SurfaceRendererComponent.CanvasRenderer {
     }
 
     @Override
-    protected boolean render(Canvas canvas) {
+    public boolean render(Canvas canvas) {
         canvas.drawColor(color);
 
         // It tells this renderer requires continually drawing.
