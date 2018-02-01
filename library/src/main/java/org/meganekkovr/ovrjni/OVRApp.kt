@@ -20,10 +20,6 @@ class OVRApp private constructor(private val appPtr: Long) {
 
     private external fun setClockLevels(appPtr: Long, cpuLevel: Int, gpuLevel: Int)
 
-    private external fun getMinimumVsyncs(appPtr: Long): Int
-
-    private external fun setMinimumVsyncs(appPtr: Long, mininumVsyncs: Int)
-
     companion object {
 
         //-----------------------------------------------------------------

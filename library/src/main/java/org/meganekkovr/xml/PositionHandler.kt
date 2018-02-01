@@ -9,9 +9,7 @@ import org.meganekkovr.Entity
  */
 internal class PositionHandler : XmlAttributeParser.XmlAttributeHandler {
 
-    override fun attributeName(): String {
-        return "position"
-    }
+    override val attributeName = "position"
 
     override fun parse(entity: Entity, rawValue: String, context: Context) {
 

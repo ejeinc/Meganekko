@@ -7,11 +7,11 @@ class LookDetector private constructor(private val appPtr: Long) {
     @JvmOverloads
     fun isLookingAt(entity: Entity, firstIntersect: FloatArray? = null, secondIntersect: FloatArray? = null, axisInWorld: Boolean = false): Boolean {
 
-        if (!entity.isShown || !entity.hasComponent<GeometryComponent>()) {
+        if (!entity.isShown) {
             return false
         }
 
-        val geometry = entity.getComponent<GeometryComponent>()!!
+        val geometry = entity.getComponent<GeometryComponent>() ?: return false
         return isLookingAt(appPtr, entity.nativePointer, geometry.nativePointer, firstIntersect, secondIntersect, axisInWorld)
     }
 

@@ -6,7 +6,6 @@ import android.app.Activity
 import android.content.Context
 import org.meganekkovr.audio_engine.AudioEngine
 import org.meganekkovr.xml.XmlParser
-import org.meganekkovr.xml.XmlParserException
 import java.io.File
 import java.util.concurrent.LinkedBlockingQueue
 
@@ -23,7 +22,7 @@ open class MeganekkoApp {
             field = scene
 
             if (scene != null) {
-                scene.app = this
+                scene.lateInitialize(this)
                 scene.onStartRendering()
             }
         }
@@ -92,34 +91,26 @@ open class MeganekkoApp {
     }
 
     private fun assertGlThread() {
-        if (Thread.currentThread().id != glThreadId) {
-            throw IllegalStateException("This operation must be in GL Thread")
-        }
+        check(Thread.currentThread().id == glThreadId) { "This operation must be in GL Thread" }
     }
 
-    open fun onKeyPressed(keyCode: Int, repeatCount: Int): Boolean {
-        return this.scene?.onKeyPressed(keyCode, repeatCount) ?: false
-    }
+    open fun onKeyPressed(keyCode: Int, repeatCount: Int): Boolean =
+            this.scene?.onKeyPressed(keyCode, repeatCount) ?: false
 
-    open fun onKeyDoubleTapped(keyCode: Int, repeatCount: Int): Boolean {
-        return this.scene?.onKeyDoubleTapped(keyCode, repeatCount) ?: false
-    }
+    open fun onKeyDoubleTapped(keyCode: Int, repeatCount: Int): Boolean =
+            this.scene?.onKeyDoubleTapped(keyCode, repeatCount) ?: false
 
-    open fun onKeyLongPressed(keyCode: Int, repeatCount: Int): Boolean {
-        return this.scene?.onKeyLongPressed(keyCode, repeatCount) ?: false
-    }
+    open fun onKeyLongPressed(keyCode: Int, repeatCount: Int): Boolean =
+            this.scene?.onKeyLongPressed(keyCode, repeatCount) ?: false
 
-    open fun onKeyDown(keyCode: Int, repeatCount: Int): Boolean {
-        return this.scene?.onKeyDown(keyCode, repeatCount) ?: false
-    }
+    open fun onKeyDown(keyCode: Int, repeatCount: Int): Boolean =
+            this.scene?.onKeyDown(keyCode, repeatCount) ?: false
 
-    open fun onKeyUp(keyCode: Int, repeatCount: Int): Boolean {
-        return this.scene?.onKeyUp(keyCode, repeatCount) ?: false
-    }
+    open fun onKeyUp(keyCode: Int, repeatCount: Int): Boolean =
+            this.scene?.onKeyUp(keyCode, repeatCount) ?: false
 
-    open fun onKeyMax(keyCode: Int, repeatCount: Int): Boolean {
-        return this.scene?.onKeyMax(keyCode, repeatCount) ?: false
-    }
+    open fun onKeyMax(keyCode: Int, repeatCount: Int): Boolean =
+            this.scene?.onKeyMax(keyCode, repeatCount) ?: false
 
     /**
      * Get an [XmlParser].
@@ -158,63 +149,43 @@ open class MeganekkoApp {
     }
 
     fun setSceneFromXmlAsset(assetName: String): Scene {
-        try {
-            val entity = getXmlParser().parseAsset(assetName)
-            if (entity is Scene) {
-                scene = entity
-                return entity
-            } else {
-                throw IllegalArgumentException("XML first element must be <scene>.")
-            }
-        } catch (e: XmlParserException) {
-            throw RuntimeException("Cannot parse XML from $assetName", e)
+        val entity = getXmlParser().parseAsset(assetName)
+        if (entity is Scene) {
+            scene = entity
+            return entity
+        } else {
+            throw IllegalArgumentException("XML first element must be <scene>.")
         }
-
     }
 
     fun setSceneFromXml(uri: String): Scene {
-        try {
-            val entity = getXmlParser().parseUri(uri)
-            if (entity is Scene) {
-                scene = entity
-                return entity
-            } else {
-                throw IllegalArgumentException("XML first element must be <scene>.")
-            }
-        } catch (e: XmlParserException) {
-            throw RuntimeException("Cannot parse XML from $uri", e)
+        val entity = getXmlParser().parseUri(uri)
+        if (entity is Scene) {
+            scene = entity
+            return entity
+        } else {
+            throw IllegalArgumentException("XML first element must be <scene>.")
         }
-
     }
 
     fun setSceneFromXml(xmlRes: Int): Scene {
-        try {
-            val entity = getXmlParser().parseXmlResource(xmlRes)
-            if (entity is Scene) {
-                scene = entity
-                return entity
-            } else {
-                throw IllegalArgumentException("XML first element must be <scene>.")
-            }
-        } catch (e: XmlParserException) {
-            throw RuntimeException("Cannot parse XML from ${context.resources.getResourceName(xmlRes)}", e)
+        val entity = getXmlParser().parseXmlResource(xmlRes)
+        if (entity is Scene) {
+            scene = entity
+            return entity
+        } else {
+            throw IllegalArgumentException("XML first element must be <scene>.")
         }
-
     }
 
     fun setSceneFromXml(file: File): Scene {
-        try {
-            val entity = getXmlParser().parseFile(file)
-            if (entity is Scene) {
-                scene = entity
-                return entity
-            } else {
-                throw IllegalArgumentException("XML first element must be <scene>.")
-            }
-        } catch (e: XmlParserException) {
-            throw RuntimeException("Cannot parse XML from $file", e)
+        val entity = getXmlParser().parseFile(file)
+        if (entity is Scene) {
+            scene = entity
+            return entity
+        } else {
+            throw IllegalArgumentException("XML first element must be <scene>.")
         }
-
     }
 
     /**
@@ -224,7 +195,7 @@ open class MeganekkoApp {
      * @param endCallback Callback for animation end. This is **not** called when animation is canceled.
      * If you require more complicated callbacks, use `AnimatorListener` instead of this.
      */
-    fun animate(anim: Animator, endCallback: (() -> Unit)?) {
+    fun animate(anim: Animator, endCallback: (() -> Unit)? = null) {
 
         if (anim.isRunning) {
             cancel(anim, { animate(anim, endCallback) })
@@ -245,7 +216,7 @@ open class MeganekkoApp {
             })
         }
 
-        runOnUiThread({ anim.start() })
+        runOnUiThread(anim::start)
     }
 
     /**
@@ -254,11 +225,11 @@ open class MeganekkoApp {
      * @param anim     [Animator].
      * @param callback Callback for canceling operation was called in UI thread.
      */
-    fun cancel(anim: Animator, callback: (() -> Unit)?) {
-        runOnUiThread({
+    fun cancel(anim: Animator, callback: (() -> Unit)? = null) {
+        runOnUiThread {
             anim.cancel()
             if (callback != null) runOnGlThread(callback)
-        })
+        }
     }
 
     open fun onHmdMounted() {}

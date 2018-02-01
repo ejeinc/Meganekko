@@ -12,14 +12,7 @@ abstract class Component {
      *
      * @return Entity which is attached to this Component.
      */
-    var entity: Entity? = null
-        internal set
-
-    /**
-     * @return `true` if attached.
-     */
-    val isAttached: Boolean
-        get() = entity != null
+    lateinit var entity: Entity
 
     /**
      * Get Android context.
@@ -27,7 +20,7 @@ abstract class Component {
      * @return Android context
      */
     val context: Context
-        get() = entity!!.app!!.context
+        get() = entity.app.context
 
     /**
      * Get [MeganekkoApp].
@@ -35,21 +28,30 @@ abstract class Component {
      * @return Android context
      */
     val app: MeganekkoApp
-        get() = entity!!.app!!
+        get() = entity.app
+
+    internal fun attachTo(entity: Entity) {
+        this.entity = entity
+        onAttach(entity)
+    }
+
+    internal fun detachFrom(entity: Entity) {
+        onDetach(entity)
+    }
 
     /**
      * Called when this is attached to [Entity].
      *
      * @param entity Entity
      */
-    open fun onAttach(entity: Entity) {}
+    protected open fun onAttach(entity: Entity) {}
 
     /**
      * Called when this is detached from [Entity].
      *
      * @param entity Detached Entity
      */
-    open fun onDetach(entity: Entity) {}
+    protected open fun onDetach(entity: Entity) {}
 
     /**
      * Called on every frame update. About 60 times per second.
@@ -60,25 +62,12 @@ abstract class Component {
 
     /**
      * Remove this from [Entity].
-     *
-     * @return `true` if Successfully removed. Otherwise `false`.
-     * @since 3.0.17
-     */
-    @Deprecated("Use {@link Entity#remove(Component)} or {@link #removeSelf()}.")
-    fun remove(): Boolean {
-        return entity != null && entity!!.remove(this)
-    }
-
-    /**
-     * Remove this from [Entity].
      * Use this if you want to remove myself from [.update].
      *
      * @since 3.0.23
      */
     protected fun removeSelf() {
-        if (entity != null) {
-            entity!!.app!!.runOnGlThread { entity!!.remove(this@Component) }
-        }
+        entity.app.runOnGlThread { entity.remove(this@Component) }
     }
 
     inline fun <reified T : Component> getComponent(): T? {
@@ -92,7 +81,7 @@ abstract class Component {
      * @return Found [Component].
      */
     fun <T : Component> getComponent(type: Class<T>): T? {
-        return entity!!.getComponent(type)
+        return entity.getComponent(type)
     }
 
     inline fun <reified T : Component> getComponentInChildren(): T? {
@@ -106,7 +95,7 @@ abstract class Component {
      * @return Found [Component]. If no one is found, null.
      */
     fun <T : Component> getComponentInChildren(type: Class<T>): T? {
-        return entity!!.getComponentInChildren(type)
+        return entity.getComponentInChildren(type)
     }
 
     inline fun <reified T : Component> getComponentInParent(): T? {
@@ -121,6 +110,6 @@ abstract class Component {
      * @return Found [Component]. If no one is found, null.
      */
     fun <T : Component> getComponentInParent(type: Class<T>): T? {
-        return entity!!.getComponentInParent(type)
+        return entity.getComponentInParent(type)
     }
 }

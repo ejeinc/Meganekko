@@ -24,27 +24,15 @@ open class Scene : Entity() {
      */
     open fun onStopRendering() {}
 
-    open fun onKeyPressed(keyCode: Int, repeatCount: Int): Boolean {
-        return false
-    }
+    open fun onKeyPressed(keyCode: Int, repeatCount: Int): Boolean = false
 
-    open fun onKeyDoubleTapped(keyCode: Int, repeatCount: Int): Boolean {
-        return false
-    }
+    open fun onKeyDoubleTapped(keyCode: Int, repeatCount: Int): Boolean = false
 
-    open fun onKeyLongPressed(keyCode: Int, repeatCount: Int): Boolean {
-        return false
-    }
+    open fun onKeyLongPressed(keyCode: Int, repeatCount: Int): Boolean = false
 
-    open fun onKeyDown(keyCode: Int, repeatCount: Int): Boolean {
-        return false
-    }
+    open fun onKeyDown(keyCode: Int, repeatCount: Int): Boolean = false
 
-    open fun onKeyUp(keyCode: Int, repeatCount: Int): Boolean {
-        return false
-    }
+    open fun onKeyUp(keyCode: Int, repeatCount: Int): Boolean = false
 
-    open fun onKeyMax(keyCode: Int, repeatCount: Int): Boolean {
-        return false
-    }
+    open fun onKeyMax(keyCode: Int, repeatCount: Int): Boolean = false
 }

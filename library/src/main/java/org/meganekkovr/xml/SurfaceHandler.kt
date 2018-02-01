@@ -12,9 +12,7 @@ import org.meganekkovr.util.ObjectFactory
  */
 internal class SurfaceHandler : XmlAttributeParser.XmlAttributeHandler {
 
-    override fun attributeName(): String {
-        return "surface"
-    }
+    override val attributeName = "surface"
 
     override fun parse(entity: Entity, rawValue: String, context: Context) {
 
@@ -37,20 +35,14 @@ internal class SurfaceHandler : XmlAttributeParser.XmlAttributeHandler {
 
             // renderer = class name
 
-            try {
-                val clazz = Class.forName(renderer)
+            val clazz = Class.forName(renderer)
 
-                // renderer is a class that extends CanvasRenderer
-                if (SurfaceRendererComponent.CanvasRenderer::class.java.isAssignableFrom(clazz)) {
-                    SurfaceRendererComponent().apply {
-                        canvasRenderer = ObjectFactory.newInstance(clazz, context) as SurfaceRendererComponent.CanvasRenderer
-                    }
-                } else {
-                    return
+            // renderer is a class that extends CanvasRenderer
+            if (SurfaceRendererComponent.CanvasRenderer::class.java.isAssignableFrom(clazz)) {
+                SurfaceRendererComponent().apply {
+                    canvasRenderer = ObjectFactory.newInstance(clazz, context) as SurfaceRendererComponent.CanvasRenderer
                 }
-
-            } catch (e: Exception) {
-                e.printStackTrace()
+            } else {
                 return
             }
 

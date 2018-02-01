@@ -178,7 +178,7 @@ class SurfaceRendererComponent : Component() {
         }
     }
 
-    class ViewRenderer protected constructor(val view: View, width: Int, height: Int) : CanvasRenderer(width, height) {
+    class ViewRenderer(val view: View, width: Int, height: Int) : CanvasRenderer(width, height) {
 
         override var isDirty: Boolean
             get() = isDirty(view)
@@ -214,12 +214,8 @@ class SurfaceRendererComponent : Component() {
 
                 // Apply this method to all children of view if view is ViewGroup
                 if (view is ViewGroup) {
-
-                    var i = 0
-                    val count = view.childCount
-                    while (i < count) {
+                    for (i in 0 until view.childCount) {
                         if (isDirty(view.getChildAt(i))) return true
-                        ++i
                     }
                 }
 
@@ -238,10 +234,9 @@ class SurfaceRendererComponent : Component() {
             val height = view.measuredHeight
             view.layout(0, 0, width, height)
 
-            val component = SurfaceRendererComponent()
-            component.canvasRenderer = ViewRenderer.from(view)
-
-            return component
+            return SurfaceRendererComponent().apply {
+                canvasRenderer = ViewRenderer.from(view)
+            }
         }
 
         @JvmStatic
@@ -249,10 +244,9 @@ class SurfaceRendererComponent : Component() {
 
             drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
 
-            val component = SurfaceRendererComponent()
-            component.canvasRenderer = DrawableRenderer(drawable)
-
-            return component
+            return SurfaceRendererComponent().apply {
+                canvasRenderer = DrawableRenderer(drawable)
+            }
         }
     }
 }

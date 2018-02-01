@@ -23,13 +23,7 @@ internal class DefautPrimitive : XmlPrimitiveFactory.XmlPrimitiveHandler {
         if (classAttr != null) {
 
             val className = classAttr.nodeValue
-
-            return try {
-                ObjectFactory.newInstance(className, context) as Entity
-            } catch (e: Exception) {
-                e.printStackTrace()
-                null
-            }
+            return ObjectFactory.newInstance(className, context) as Entity
 
         }
 
@@ -72,14 +66,10 @@ internal class DefautPrimitive : XmlPrimitiveFactory.XmlPrimitiveHandler {
         }
 
         // src="com.my.ViewClassName"
-        try {
-            val clazz = Class.forName(srcVal)
-            if (View::class.java.isAssignableFrom(clazz)) {
-                val view = ObjectFactory.newInstance(clazz, context) as View
-                return Entity.from(view)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        val clazz = Class.forName(srcVal)
+        if (View::class.java.isAssignableFrom(clazz)) {
+            val view = ObjectFactory.newInstance(clazz, context) as View
+            return Entity.from(view)
         }
 
         return null

@@ -1,17 +1,14 @@
 package org.meganekkovr.util
 
 import android.content.Context
-import java.lang.reflect.InvocationTargetException
 
 object ObjectFactory {
 
-    @Throws(IllegalAccessException::class, InstantiationException::class, InvocationTargetException::class, ClassNotFoundException::class)
     @JvmStatic
     fun newInstance(className: String, context: Context): Any {
         return newInstance(Class.forName(className), context)
     }
 
-    @Throws(IllegalAccessException::class, InstantiationException::class, InvocationTargetException::class)
     @JvmStatic
     fun newInstance(clazz: Class<*>, context: Context): Any {
 

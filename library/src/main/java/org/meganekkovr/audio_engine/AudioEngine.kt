@@ -165,16 +165,11 @@ class AudioEngine
      *
      * @param fileName path/name of the file to be played
      * @return new [SoundObject].
-     * @throws IllegalArgumentException thrown if the sound file could not be loaded
      */
-    @Throws(IllegalArgumentException::class)
     fun createSoundObject(fileName: String): SoundObject {
         val soundObject = audioEngine.createSoundObject(fileName)
-        return if (soundObject != GvrAudioEngine.INVALID_ID) {
-            createSound(soundObject)
-        } else {
-            throw IllegalArgumentException("Cannot create sound object from $fileName. Is it a mono sound file?")
-        }
+        check(soundObject != GvrAudioEngine.INVALID_ID) { "Cannot create sound object from $fileName. Is it a mono sound file?" }
+        return createSound(soundObject)
     }
 
     /**
@@ -185,16 +180,11 @@ class AudioEngine
      *
      * @param fileName path/name of the file to be played
      * @return new [SoundField].
-     * @throws IllegalArgumentException thrown if the sound file could not be loaded
      */
-    @Throws(IllegalArgumentException::class)
     fun createSoundfield(fileName: String): SoundField {
         val soundfield = audioEngine.createSoundfield(fileName)
-        return if (soundfield != GvrAudioEngine.INVALID_ID) {
-            createSound(soundfield)
-        } else {
-            throw IllegalArgumentException("Cannot create sound field from $fileName. Is it an ambisonic sound file?")
-        }
+        check(soundfield != GvrAudioEngine.INVALID_ID) { "Cannot create sound field from $fileName. Is it an ambisonic sound file?" }
+        return createSound(soundfield)
     }
 
     /**
@@ -204,16 +194,11 @@ class AudioEngine
      *
      * @param fileName path/name of the file to be played
      * @return new [StereoSound].
-     * @throws IllegalArgumentException thrown if the sound file could not be loaded
      */
-    @Throws(IllegalArgumentException::class)
     fun createStereoSound(fileName: String): StereoSound {
         val stereoSound = audioEngine.createStereoSound(fileName)
-        return if (stereoSound != GvrAudioEngine.INVALID_ID) {
-            createSound(stereoSound)
-        } else {
-            throw IllegalArgumentException("Cannot create stereo sound from $fileName. Is it a stereo sound file?")
-        }
+        check(stereoSound != GvrAudioEngine.INVALID_ID) { "Cannot create stereo sound from $fileName. Is it a stereo sound file?" }
+        return createSound(stereoSound)
     }
 
     private fun createSound(id: Int): SoundImpl {

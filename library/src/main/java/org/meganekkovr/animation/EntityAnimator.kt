@@ -159,7 +159,7 @@ class EntityAnimator(private val target: Entity) {
             setupAnimator()
         }
 
-        target.app!!.animate(animator!!, callback)
+        target.app.animate(animator!!, callback)
     }
 
     /**
@@ -169,7 +169,7 @@ class EntityAnimator(private val target: Entity) {
 
         if (animator == null) return
 
-        target.app!!.cancel(animator!!, null)
+        target.app.cancel(animator!!, null)
     }
 
     private fun setupAnimator() {

@@ -10,9 +10,7 @@ import org.meganekkovr.GeometryComponent
  */
 internal class GeometryHandler : XmlAttributeParser.XmlAttributeHandler {
 
-    override fun attributeName(): String {
-        return "geometry"
-    }
+    override val attributeName = "geometry"
 
     override fun parse(entity: Entity, rawValue: String, context: Context) {
 

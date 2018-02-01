@@ -9,9 +9,7 @@ import org.meganekkovr.Entity
  */
 internal class VisibleHandler : XmlAttributeParser.XmlAttributeHandler {
 
-    override fun attributeName(): String {
-        return "visible"
-    }
+    override val attributeName = "visible"
 
     override fun parse(entity: Entity, rawValue: String, context: Context) {
 

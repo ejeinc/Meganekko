@@ -1,17 +1,19 @@
 package org.meganekkovr.xml
 
 import android.content.Context
-
 import org.meganekkovr.Entity
 import org.w3c.dom.Node
-import java.util.concurrent.CopyOnWriteArraySet
 
 /**
  * To add custom primitive, use `XmlPrimitiveFactory.getInstance().install(new YourPrimitiveHandler())`.
  */
-class XmlPrimitiveFactory private constructor() {
+object XmlPrimitiveFactory {
 
-    private val handlers = CopyOnWriteArraySet<XmlPrimitiveHandler>()
+    private val handlers = mutableListOf<XmlPrimitiveHandler>(DefautPrimitive())
+
+    fun install(handler: XmlPrimitiveHandler) {
+        handlers.add(handler)
+    }
 
     fun parse(node: Node, context: Context): Entity? {
 
@@ -21,10 +23,6 @@ class XmlPrimitiveFactory private constructor() {
         }
 
         return null
-    }
-
-    fun install(handler: XmlPrimitiveHandler) {
-        handlers.add(handler)
     }
 
     interface XmlPrimitiveHandler {
@@ -39,22 +37,4 @@ class XmlPrimitiveFactory private constructor() {
         fun createEntity(node: Node, context: Context): Entity?
     }
 
-    companion object {
-
-        // singleton
-        private var _instance: XmlPrimitiveFactory? = null
-
-        init {
-            XmlPrimitiveFactory.getInstance().install(DefautPrimitive())
-        }
-
-        @Synchronized
-        @JvmStatic
-        fun getInstance(): XmlPrimitiveFactory {
-            if (_instance == null) {
-                _instance = XmlPrimitiveFactory()
-            }
-            return _instance!!
-        }
-    }
 }

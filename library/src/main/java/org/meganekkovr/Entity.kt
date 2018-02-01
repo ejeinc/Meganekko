@@ -74,15 +74,7 @@ open class Entity {
 
     private val matrixValues = FloatArray(16)
 
-    /**
-     * This method is not valid until this is attached to [Scene].
-     */
-    // Propagate to children
-    var app: MeganekkoApp? = null
-        set(app) {
-            field = app
-            children.forEach { child -> child.app = app }
-        }
+    lateinit var app: MeganekkoApp
 
     /**
      * Parent [Entity].
@@ -156,6 +148,16 @@ open class Entity {
      * @return Native pointer value return from C++ `new`.
      */
     private external fun newInstance(): Long
+
+    /**
+     * Called at very first time at initialization process.
+     */
+    internal fun lateInitialize(app: MeganekkoApp) {
+        if (!this::app.isInitialized) {
+            this.app = app
+            children.forEach { child -> child.app = app }
+        }
+    }
 
     /**
      * Set string id.
@@ -267,8 +269,7 @@ open class Entity {
     fun add(component: Component): Boolean {
         val componentClass = component.javaClass
         if (!components.containsKey(componentClass)) {
-            component.entity = this
-            component.onAttach(this)
+            component.attachTo(this)
             components[componentClass] = component
 
             if (component.javaClass == GeometryComponent::class.java || component.javaClass == SurfaceRendererComponent::class.java) {
@@ -286,9 +287,7 @@ open class Entity {
      * @param component Component.
      * @return `true` if Successfully removed. Otherwise `false`.
      */
-    fun remove(component: Component): Boolean {
-        return remove(component.javaClass)
-    }
+    fun remove(component: Component) = remove(component.javaClass)
 
     /**
      * Remove [Component] with associated class.
@@ -299,10 +298,8 @@ open class Entity {
      */
     fun <T : Component> remove(clazz: Class<T>): Boolean {
         if (components.containsKey(clazz)) {
-            val component = components[clazz]
-            component!!.onDetach(this)
-            component.entity = null
-            components.remove(clazz)
+            val component = components.remove(clazz)
+            component?.detachFrom(this)
 
             if (clazz == SurfaceRendererComponent::class.java || clazz == GeometryComponent::class.java) {
                 this.isRenderable = hasComponent<GeometryComponent>() && hasComponent<SurfaceRendererComponent>()
@@ -340,7 +337,10 @@ open class Entity {
         val added = children.add(child)
         if (added) {
             child.parent = this
-            child.app = this.app
+
+            if (this::app.isInitialized) {
+                child.lateInitialize(app)
+            }
         }
         return added
     }
@@ -495,7 +495,7 @@ open class Entity {
     }
 
     private fun parentOpacity(): Float {
-        return if (parent != null) parent!!.opacity * parent!!.parentOpacity() else 1.0f
+        return parent?.let { it.opacity * it.parentOpacity() } ?: 1.0f
     }
 
     /**

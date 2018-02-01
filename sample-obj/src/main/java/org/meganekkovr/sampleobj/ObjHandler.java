@@ -20,7 +20,7 @@ public class ObjHandler implements XmlAttributeParser.XmlAttributeHandler {
 
     @NonNull
     @Override
-    public String attributeName() {
+    public String getAttributeName() {
         return "obj";
     }
 

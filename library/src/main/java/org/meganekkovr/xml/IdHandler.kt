@@ -9,9 +9,7 @@ import org.meganekkovr.Entity
  */
 internal class IdHandler : XmlAttributeParser.XmlAttributeHandler {
 
-    override fun attributeName(): String {
-        return "id"
-    }
+    override val attributeName = "id"
 
     override fun parse(entity: Entity, rawValue: String, context: Context) {
 

@@ -13,7 +13,7 @@ public class App extends MeganekkoApp {
         super.init();
 
         // Add custom XML attribute
-        XmlAttributeParser.getInstance().install(new ObjHandler());
+        XmlAttributeParser.INSTANCE.install(new ObjHandler());
         setSceneFromXml(R.xml.scene);
     }
 }

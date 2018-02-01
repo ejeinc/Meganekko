@@ -39,18 +39,10 @@ class GeometryComponent : Component() {
      */
     fun buildGlobe() {
         buildGlobe(nativePointer)
-
-        if (isAttached) {
-            setEntityGeometry(entity!!.nativePointer, nativePointer)
-        }
     }
 
     fun buildDome(latRads: Float) {
         buildDome(nativePointer, latRads)
-
-        if (isAttached) {
-            setEntityGeometry(entity!!.nativePointer, nativePointer)
-        }
     }
 
     /**
@@ -60,30 +52,21 @@ class GeometryComponent : Component() {
      */
     fun buildSpherePatch(fov: Float) {
         buildSpherePatch(nativePointer, fov)
-
-        if (isAttached) {
-            setEntityGeometry(entity!!.nativePointer, nativePointer)
-        }
     }
 
     fun build(positions: FloatArray, colors: FloatArray, uvs: FloatArray, triangles: IntArray) {
 
-        when {
-            positions.size % 3 != 0 -> throw IllegalArgumentException("positions element count must be multiple of 3.")
-            colors.size % 4 != 0 -> throw IllegalArgumentException("positions element count must be multiple of 4.")
-            uvs.size % 2 != 0 -> throw IllegalArgumentException("positions element count must be multiple of 2.")
-            triangles.size % 3 != 0 -> throw IllegalArgumentException("triangles element count must be multiple of 3.")
-        }
+        require(positions.size % 3 == 0) { "positions element count must be multiple of 3." }
+        require(colors.size % 4 == 0) { "positions element count must be multiple of 4." }
+        require(uvs.size % 2 == 0) { "positions element count must be multiple of 2." }
+        require(triangles.size % 3 == 0) { "triangles element count must be multiple of 3." }
 
         val positionSize = positions.size / 3
         val colorSize = colors.size / 4
         val uvSize = uvs.size / 2
 
-        if (positionSize != colorSize) {
-            throw IllegalArgumentException("position elements are $positionSize but color elements are $colorSize.")
-        } else if (colorSize != uvSize) {
-            throw IllegalArgumentException("color elements are $colorSize but uv elements are $uvSize.")
-        }
+        require(positionSize == colorSize) { "position elements are $positionSize but color elements are $colorSize." }
+        require(colorSize == uvSize) { "color elements are $colorSize but uv elements are $uvSize." }
 
         build(nativePointer, positions, colors, uvs, triangles)
     }

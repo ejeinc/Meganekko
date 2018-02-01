@@ -10,7 +10,6 @@ class LookDetectorComponent(private val lookListener: LookListener) : Component(
 
     override fun update(frame: FrameInput) {
 
-        val entity = entity!!
         val isLookingNow = lookDetector.isLookingAt(entity)
 
         if (isLookingNow) {

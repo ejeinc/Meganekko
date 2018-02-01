@@ -10,9 +10,7 @@ import java.util.*
  */
 internal class RotationHandler : XmlAttributeParser.XmlAttributeHandler {
 
-    override fun attributeName(): String {
-        return "rotation"
-    }
+    override val attributeName = "rotation"
 
     override fun parse(entity: Entity, rawValue: String, context: Context) {
 

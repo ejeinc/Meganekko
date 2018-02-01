@@ -9,9 +9,7 @@ import org.meganekkovr.Entity
  */
 internal class ScaleHandler : XmlAttributeParser.XmlAttributeHandler {
 
-    override fun attributeName(): String {
-        return "scale"
-    }
+    override val attributeName = "scale"
 
     override fun parse(entity: Entity, rawValue: String, context: Context) {
 

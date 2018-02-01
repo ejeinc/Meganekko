@@ -23,15 +23,13 @@ open class GearVRActivity : VrActivity(), MeganekkoContext {
         super.onCreate(savedInstanceState)
 
         // Create app
-        val app = createApp()
-
-        if (app == null) {
+        this.app = try {
+            createApp()
+        } catch (e: Exception) {
             Log.e(TAG, "You have to declare <meta-data name=\"org.meganekkovr.App\" value\"YOUR_APP_CLASS_NAME\"/> or implement custom createApp() method.")
             finish()
             return
         }
-
-        this.app = app
 
         val commandString = VrActivity.getCommandStringFromIntent(intent)
         val fromPackageNameString = VrActivity.getPackageStringFromIntent(intent)
@@ -53,17 +51,10 @@ open class GearVRActivity : VrActivity(), MeganekkoContext {
      *
      * @return
      */
-    protected open fun createApp(): MeganekkoApp? {
+    protected open fun createApp(): MeganekkoApp {
 
         val appClassName = applicationInfo.metaData.getString("org.meganekkovr.App", "org.meganekkovr.MeganekkoApp")
-
-        return try {
-            ObjectFactory.newInstance(appClassName, this) as MeganekkoApp
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-
+        return ObjectFactory.newInstance(appClassName, this) as MeganekkoApp
     }
 
     /**
@@ -170,9 +161,7 @@ open class GearVRActivity : VrActivity(), MeganekkoContext {
     }
 
     fun getClearColor(clearColor: FloatArray) {
-        if (clearColor.size != 4) {
-            throw IllegalArgumentException("clearColor must be 4 element array.")
-        }
+        require(clearColor.size == 4) { "clearColor must be 4 element array." }
         getClearColor(appPtr, clearColor)
     }
 

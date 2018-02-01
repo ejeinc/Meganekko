@@ -9,8 +9,8 @@ class CameraComponent : Component() {
     override fun update(frame: FrameInput) {
 
         // Update entity rotation to match to head tracking.
-        entity?.rotation = HeadTransform.instance.quaternion
-        entity?.position = HeadTransform.instance.position
+        entity.rotation = HeadTransform.instance.quaternion
+        entity.position = HeadTransform.instance.position
 
         super.update(frame)
     }
